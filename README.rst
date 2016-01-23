@@ -1,5 +1,8 @@
 tcconfig
 
+.. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
+    :target: https://travis-ci.org/thombashi/tcconfig
+
 About
 =====
 

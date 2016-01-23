@@ -31,8 +31,10 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
     install_requires=requirements,
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
     classifiers=[
-        "Development Status :: 3 - Alpha",
+        "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: System Administrators",
         "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",

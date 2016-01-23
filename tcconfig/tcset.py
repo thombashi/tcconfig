@@ -43,12 +43,12 @@ def main():
     thutils.initialize_library(__file__, options)
     thutils.common.verify_install_command(["tc"])
 
-    sys_wrapper = thutils.syswrapper.SystemWrapper()
+    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
 
     if options.overwrite:
-        tcconfig.delete_tc(sys_wrapper, options.device)
+        tcconfig.delete_tc(subproc_wrapper, options.device)
 
-    tcconfig.set_tc(sys_wrapper, options.device,
+    tcconfig.set_tc(subproc_wrapper, options.device,
                     options.rate, options.delay, options.loss)
 
     return 0
