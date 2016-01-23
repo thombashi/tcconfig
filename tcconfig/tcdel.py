@@ -32,8 +32,8 @@ def main():
 
     thutils.common.verify_install_command(["tc"])
 
-    sys_wrapper = thutils.syswrapper.SystemWrapper()
-    tcconfig.delete_tc(sys_wrapper, options.device)
+    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
+    tcconfig.delete_tc(subproc_wrapper, options.device)
 
     return 0
 

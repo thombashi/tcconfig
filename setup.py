@@ -31,6 +31,8 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
     install_requires=requirements,
+    setup_requires=["pytest-runner"],
+    tests_require=["pytest"],
     classifiers=[
         "Development Status :: 3 - Alpha",
         "Environment :: Console",
