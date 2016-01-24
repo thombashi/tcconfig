@@ -1,12 +1,12 @@
 tcconfig
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
-    :target: https://travis-ci.org/thombashi/tcconfig
+   :target: https://travis-ci.org/thombashi/tcconfig
 
 About
 =====
 
-tcconfig is a simple tc (traffic control) command wrapper.
+Simple tc (traffic control) command wrapper.
 
 Installation
 ============
@@ -21,14 +21,14 @@ Usage
 Set traffic control
 -------------------
 
-Help
-~~~~
+tcset help
+~~~~~~~~~~
 
 .. code:: console
 
-    usage: tcset [-h] [--version] [--time-measure] [--logging] [--stacktrace]
-                 [--debug | --quiet] --device DEVICE [--rate RATE] [--delay DELAY]
-                 [--loss LOSS] [--overwrite]
+    usage: tcset [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
+                 --device DEVICE [--rate RATE] [--delay DELAY] [--loss LOSS]
+                 [--overwrite]
 
     optional arguments:
       -h, --help       show this help message and exit
@@ -37,7 +37,6 @@ Help
       --quiet          suppress output of execution log message.
 
     Miscellaneous:
-      --time-measure   measuring execution time.
       --logging        suppress output of execution log files.
       --stacktrace     display stack trace when an error occurred.
 
@@ -71,6 +70,30 @@ e.g. Set 0.1% packet loss
 
 Delete traffic control
 ----------------------
+
+tcdel help
+~~~~~~~~~~
+
+.. code:: console
+
+    usage: tcdel [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
+                 --device DEVICE
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      --version        show program's version number and exit
+      --debug          for debug print.
+      --quiet          suppress output of execution log message.
+
+    Miscellaneous:
+      --logging        suppress output of execution log files.
+      --stacktrace     display stack trace when an error occurred.
+
+    Traffic Control:
+      --device DEVICE  network device name
+
+e.g.
+~~~~
 
 .. code:: console
 
