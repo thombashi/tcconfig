@@ -37,7 +37,7 @@ tcset help
       --quiet          suppress output of execution log message.
 
     Miscellaneous:
-      --logging        suppress output of execution log files.
+      --logging        output execution log to a file (tcset.log).
       --stacktrace     display stack trace when an error occurred.
 
     Traffic Control:
@@ -86,7 +86,7 @@ tcdel help
       --quiet          suppress output of execution log message.
 
     Miscellaneous:
-      --logging        suppress output of execution log files.
+      --logging        output execution log to a file (tcset.log).
       --stacktrace     display stack trace when an error occurred.
 
     Traffic Control:
@@ -98,3 +98,8 @@ e.g.
 .. code:: console
 
     # tcdel --device eth0
+
+Dependencies
+============
+
+-  `thutils <https://github.com/thombashi/thutils>`__
