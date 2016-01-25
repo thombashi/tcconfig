@@ -1,7 +1,6 @@
 from __future__ import with_statement
 import sys
 import setuptools
-from setuptools.command.test import test as TestCommand
 
 import tcconfig
 
