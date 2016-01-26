@@ -21,6 +21,9 @@ Usage
 Set traffic control
 -------------------
 
+tcset is a command to impose traffic control to a network interface
+(device).
+
 tcset help
 ~~~~~~~~~~
 
@@ -70,6 +73,9 @@ e.g. Set 0.1% packet loss
 
 Delete traffic control
 ----------------------
+
+tcdel is a command to delete traffic control from a network interface
+(device).
 
 tcdel help
 ~~~~~~~~~~
