@@ -2,7 +2,7 @@ tcconfig
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
-
+   
 About
 =====
 
@@ -109,3 +109,10 @@ Dependencies
 ============
 
 -  `thutils <https://github.com/thombashi/thutils>`__
+
+Test dependencies
+-----------------
+
+-  `pytest <https://pypi.python.org/pypi/pytest>`__
+-  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
+-  `tox <https://pypi.python.org/pypi/tox>`__
