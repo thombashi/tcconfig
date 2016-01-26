@@ -1,7 +1,6 @@
 from __future__ import with_statement
 import sys
 import setuptools
-from setuptools.command.test import test as TestCommand
 
 import tcconfig
 
@@ -41,7 +40,12 @@ setuptools.setup(
         "Operating System :: POSIX",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 2",
+        "Programming Language :: Python :: 2.5",
+        "Programming Language :: Python :: 2.6",
+        "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
+        "Programming Language :: Python :: 3.3",
+        "Programming Language :: Python :: 3.4",
         "Topic :: System :: Networking",
     ],
     entry_points={

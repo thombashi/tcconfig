@@ -53,8 +53,8 @@ class Test_tcconfig:
     ])
     def test_smoke(self, subproc_wrapper, rate, delay, loss, overwrite):
         option_list = [rate, delay, loss, overwrite]
-        command = "tcset --device eth0 " + " ".join(option_list)
+        command = "tcset --device %s " % (DEVICE) + " ".join(option_list)
         assert subproc_wrapper.run(command) == 0
 
-        command = "tcdel --device eth0"
+        command = "tcdel --device %s" % (DEVICE)
         assert subproc_wrapper.run(command) == 0

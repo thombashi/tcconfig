@@ -2,7 +2,7 @@ tcconfig
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
-
+   
 About
 =====
 
@@ -21,6 +21,9 @@ Usage
 Set traffic control
 -------------------
 
+tcset is a command to impose traffic control to a network interface
+(device).
+
 tcset help
 ~~~~~~~~~~
 
@@ -37,7 +40,7 @@ tcset help
       --quiet          suppress output of execution log message.
 
     Miscellaneous:
-      --logging        suppress output of execution log files.
+      --logging        output execution log to a file (tcset.log).
       --stacktrace     display stack trace when an error occurred.
 
     Traffic Control:
@@ -71,6 +74,9 @@ e.g. Set 0.1% packet loss
 Delete traffic control
 ----------------------
 
+tcdel is a command to delete traffic control from a network interface
+(device).
+
 tcdel help
 ~~~~~~~~~~
 
@@ -86,7 +92,7 @@ tcdel help
       --quiet          suppress output of execution log message.
 
     Miscellaneous:
-      --logging        suppress output of execution log files.
+      --logging        output execution log to a file (tcset.log).
       --stacktrace     display stack trace when an error occurred.
 
     Traffic Control:
@@ -98,3 +104,15 @@ e.g.
 .. code:: console
 
     # tcdel --device eth0
+
+Dependencies
+============
+
+-  `thutils <https://github.com/thombashi/thutils>`__
+
+Test dependencies
+-----------------
+
+-  `pytest <https://pypi.python.org/pypi/pytest>`__
+-  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
+-  `tox <https://pypi.python.org/pypi/tox>`__
