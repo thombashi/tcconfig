@@ -2,7 +2,7 @@ tcconfig
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
-   
+
 About
 =====
 
@@ -70,6 +70,13 @@ e.g. Set 0.1% packet loss
 .. code:: console
 
     # tcset --device eth0 --loss 0.1
+
+e.g. All of the above at onece
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: console
+
+    # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
 
 Delete traffic control
 ----------------------
