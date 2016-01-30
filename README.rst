@@ -1,7 +1,11 @@
-tcconfig
+**tcconfig**
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
+
+.. contents:: Table of contents
+   :backlinks: top
+   :local:
 
 About
 =====
