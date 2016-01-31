@@ -12,7 +12,6 @@ with open("requirements.txt", "r") as fp:
     requirements = fp.read().splitlines()
 
 major, minor = sys.version_info[:2]
-
 if major == 2 and minor <= 5:
     requirements.extend([
         "argparse",
@@ -26,7 +25,7 @@ setuptools.setup(
     url="https://github.com/thombashi/tcconfig",
     description="Simple tc (traffic control) command wrapper",
     long_description=long_description,
-    license="GNU General Public License v3 (LGPLv3)",
+    license="MIT License",
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
     install_requires=requirements,
@@ -36,7 +35,7 @@ setuptools.setup(
         "Development Status :: 4 - Beta",
         "Environment :: Console",
         "Intended Audience :: System Administrators",
-        "License :: OSI Approved :: GNU General Public License v3 (GPLv3)",
+        "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 2",
