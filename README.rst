@@ -12,6 +12,15 @@ About
 
 Simple tc (traffic control) command wrapper.
 
+Feature
+=======
+
+Easy to set up network traffic control to a specific network interface.
+
+-  Network bandwidth
+-  Network latency
+-  Packet loss rate
+
 Installation
 ============
 

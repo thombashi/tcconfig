@@ -1,7 +1,7 @@
 import thutils
 
 
-VERSION = "0.1.1"
+VERSION = "0.1.2"
 
 _MIN_LOSS_RATE = 0
 _MAX_LOSS_RATE = 90
