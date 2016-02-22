@@ -1,10 +1,11 @@
+import dataproperty
 import thutils
 
 
-VERSION = "0.1.1"
+VERSION = "0.1.3"
 
 _MIN_LOSS_RATE = 0
-_MAX_LOSS_RATE = 90
+_MAX_LOSS_RATE = 99
 
 _MIN_DELAY_MS = 0
 _MAX_DELAY_MS = 10000
@@ -54,7 +55,7 @@ def _set_delay_and_loss(subproc_wrapper, device, delay_ms, loss_percent):
 
 
 def _set_rate(subproc_wrapper, device, rate):
-    if thutils.common.is_empty_string(rate):
+    if dataproperty.is_empty_string(rate):
         return 0
 
     rate_kbps = thutils.common.humanreadable_to_byte(

@@ -23,7 +23,10 @@ setuptools.setup(
     author="Tsuyoshi Hombashi",
     author_email="gogogo.vm@gmail.com",
     url="https://github.com/thombashi/tcconfig",
-    description="Simple tc (traffic control) command wrapper",
+    description="""
+    Simple tc (traffic control) command wrapper.
+    Easy to set up network bandwidth/latency/packet-loss to a network interface.
+    """,
     long_description=long_description,
     license="MIT License",
     include_package_data=True,
