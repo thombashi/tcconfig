@@ -15,7 +15,8 @@ Simple tc (traffic control) command wrapper.
 Feature
 =======
 
-Easy to set up network traffic control to a specific network interface.
+Easy to set up network traffic control. The following parameters can be
+set for network interface.
 
 -  Network bandwidth
 -  Network latency
@@ -31,8 +32,8 @@ Installation
 Usage
 =====
 
-Set traffic control
--------------------
+Set traffic control (tcset)
+---------------------------
 
 tcset is a command to impose traffic control to a network interface
 (device).
@@ -91,8 +92,8 @@ e.g. All of the above at onece
 
     # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
 
-Delete traffic control
-----------------------
+Delete traffic control (tcdel)
+------------------------------
 
 tcdel is a command to delete traffic control from a network interface
 (device).
@@ -128,6 +129,7 @@ e.g.
 Dependencies
 ============
 
+-  `DataPropery <https://github.com/thombashi/DataProperty>`__
 -  `thutils <https://github.com/thombashi/thutils>`__
 
 Test dependencies
