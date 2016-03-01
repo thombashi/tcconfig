@@ -1,19 +1,26 @@
 from __future__ import with_statement
-import sys
+import os.path
 import setuptools
+import sys
 
 import tcconfig
 
 
+MISC_DIR = "misc"
+REQUIREMENT_DIR = "requirements"
+
 with open("README.rst") as fp:
     long_description = fp.read()
 
-with open("requirements.txt", "r") as fp:
-    requirements = fp.read().splitlines()
+with open(os.path.join(MISC_DIR, "summary.txt")) as f:
+    summary = f.read()
+
+with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
+    install_requires = [line.strip() for line in f if line.strip()]
 
 major, minor = sys.version_info[:2]
 if major == 2 and minor <= 5:
-    requirements.extend([
+    install_requires.extend([
         "argparse",
     ])
 
@@ -23,15 +30,13 @@ setuptools.setup(
     author="Tsuyoshi Hombashi",
     author_email="gogogo.vm@gmail.com",
     url="https://github.com/thombashi/tcconfig",
-    description="""
-    Simple tc (traffic control) command wrapper.
-    Easy to set up network bandwidth/latency/packet-loss to a network interface.
-    """,
+    description=summary,
+    keywords=["traffic control", "bandwidth", "latency", "packet loss"],
     long_description=long_description,
     license="MIT License",
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
-    install_requires=requirements,
+    install_requires=install_requires,
     setup_requires=["pytest-runner"],
     tests_require=["pytest"],
     classifiers=[
@@ -48,6 +53,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
+        "Programming Language :: Python :: 3.5",
         "Topic :: System :: Networking",
     ],
     entry_points={
