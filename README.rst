@@ -1,5 +1,7 @@
 **tcconfig**
 
+.. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
+   :target: https://pypi.python.org/pypi/tcconfig
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
 
@@ -7,27 +9,34 @@
    :backlinks: top
    :local:
 
-About
-=====
-
-Simple tc (traffic control) command wrapper.
-
-Feature
+Summary
 =======
+Simple tc command wrapper.
+Easy to set up traffic control of
+network bandwidth/latency/packet-loss to a network interface.
 
-Easy to set up network traffic control. The following parameters can be
-set for network interface.
+Traffic control
+===============
 
--  Network bandwidth
--  Network latency
--  Packet loss rate
+The following parameters can be set of network interfaces.
+
+-  Network bandwidth [G/M/K bps]
+-  Network latency [milliseconds]
+-  Packet loss rate [%]
 
 Installation
 ============
 
+Install via pip
+---------------
+
+tcconfig canbe installed via
+`pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package
+manager).
+
 .. code:: console
 
-    pip install tcconfig
+    sudo pip install tcconfig
 
 Usage
 =====
