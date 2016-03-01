@@ -2,7 +2,7 @@ import dataproperty
 import thutils
 
 
-VERSION = "0.1.3"
+VERSION = "0.1.4"
 
 _MIN_LOSS_RATE = 0
 _MAX_LOSS_RATE = 99
