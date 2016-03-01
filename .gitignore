@@ -55,7 +55,7 @@ docs/_build/
 
 # PyBuilder
 target/
-/.idea
-convert_readme.sh
 desktop.ini
-README.md
+misc/README.md
+misc/README_HEADER.rst
+misc/readme_converter.py
