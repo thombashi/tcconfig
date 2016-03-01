@@ -138,11 +138,19 @@ e.g.
 Dependencies
 ============
 
+Linux package
+-------------
+
+-  iproute2 (reqrequired for tc commandured)
+
+Python packagge
+---------------
+
 -  `DataPropery <https://github.com/thombashi/DataProperty>`__
 -  `thutils <https://github.com/thombashi/thutils>`__
 
-Test dependencies
------------------
+Python packagge: test dependencies
+----------------------------------
 
 -  `pytest <https://pypi.python.org/pypi/pytest>`__
 -  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
