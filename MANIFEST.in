@@ -2,8 +2,9 @@ include LICENSE
 include README.rst
 include setup.cfg
 include tox.ini
-include requirements.txt
 recursive-include test *
+recursive-include requirements *
+recursive-include misc *
 
 global-exclude __pycache__/*
 global-exclude *.pyc
