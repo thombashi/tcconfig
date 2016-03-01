@@ -1,0 +1,3 @@
+Simple tc command wrapper.
+Easy to set up traffic control of
+network bandwidth/latency/packet-loss to a network interface.
