@@ -5,6 +5,7 @@
 '''
 
 import itertools
+
 import pytest
 import thutils
 import tcconfig
@@ -52,7 +53,6 @@ class NormalTestValue:
     ]
 
 
-#"""
 class Test_tcconfig:
 
     @pytest.mark.parametrize(["rate", "delay", "loss", "overwrite"], [
@@ -70,7 +70,6 @@ class Test_tcconfig:
 
         command = "tcdel --device %s" % (DEVICE)
         assert subproc_wrapper.run(command) == 0
-#"""
 
 
 @pytest.fixture
