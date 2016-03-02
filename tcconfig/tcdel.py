@@ -14,7 +14,7 @@ import tcconfig
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
-    parser.make(version=tcconfig.VERSION)
+    parser.make(version="0.2.0")
 
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
@@ -33,9 +33,9 @@ def main():
     thutils.common.verify_install_command(["tc"])
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    tcconfig.delete_tc(subproc_wrapper, options.device)
+    tc = tcconfig.TrafficControl(subproc_wrapper, options.device)
 
-    return 0
+    return tc.delete_tc()
 
 
 if __name__ == '__main__':
