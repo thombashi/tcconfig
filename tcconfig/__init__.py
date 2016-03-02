@@ -1,10 +1,16 @@
-import ipaddress
+# encoding: utf-8
+
+'''
+@author: Tsuyoshi Hombashi
+'''
+
 import dataproperty
-import thutils
+import ipaddress
 import six
+import thutils
 
 
-VERSION = "0.1.4"
+VERSION = "0.2.0"
 
 
 class TrafficControl(object):
