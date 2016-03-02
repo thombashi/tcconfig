@@ -10,9 +10,6 @@ import six
 import thutils
 
 
-VERSION = "0.2.0"
-
-
 class TrafficControl(object):
     __MIN_LOSS_RATE = 0  # [%]
     __MAX_LOSS_RATE = 99  # [%]

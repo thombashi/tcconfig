@@ -3,8 +3,6 @@ import os.path
 import setuptools
 import sys
 
-import tcconfig
-
 
 MISC_DIR = "misc"
 REQUIREMENT_DIR = "requirements"
@@ -29,7 +27,7 @@ if major == 2 and minor <= 5:
 
 setuptools.setup(
     name="tcconfig",
-    version=tcconfig.VERSION,
+    version="0.2.0",
     author="Tsuyoshi Hombashi",
     author_email="gogogo.vm@gmail.com",
     url="https://github.com/thombashi/tcconfig",
