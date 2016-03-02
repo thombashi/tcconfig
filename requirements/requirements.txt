@@ -1,2 +1,4 @@
+ipaddress
 DataProperty
+six<=1.8.0
 thutils
