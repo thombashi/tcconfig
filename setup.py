@@ -18,6 +18,9 @@ with open(os.path.join(MISC_DIR, "summary.txt")) as f:
 with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
     install_requires = [line.strip() for line in f if line.strip()]
 
+with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
+    tests_require = [line.strip() for line in f if line.strip()]
+
 major, minor = sys.version_info[:2]
 if major == 2 and minor <= 5:
     install_requires.extend([
@@ -38,7 +41,7 @@ setuptools.setup(
     packages=setuptools.find_packages(exclude=['test*']),
     install_requires=install_requires,
     setup_requires=["pytest-runner"],
-    tests_require=["pytest"],
+    tests_require=tests_require,
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
