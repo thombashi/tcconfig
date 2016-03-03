@@ -163,7 +163,7 @@ class TrafficControl(object):
         if dataproperty.is_not_empty_string(self.network):
             command_list.append("match ip dst " + self.network)
         if self.port is not None:
-            command_list.append("match ip dport %d" % (self.port))
+            command_list.append("match ip dport %d 0xffff" % (self.port))
 
         return self.__subproc_wrapper.run(" ".join(command_list))
 
