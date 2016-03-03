@@ -43,6 +43,7 @@ class TrafficControl(object):
 
     def set_tc(self):
         self.__make_qdisc()
+        self.__validate_rate()
         self.__set_pre_network_filter()
         self.__set_delay_and_loss()
         self.__set_network_filter()
@@ -52,6 +53,14 @@ class TrafficControl(object):
         command = "tc qdisc del dev %s root" % (self.__device)
 
         return self.__subproc_wrapper.run(command)
+
+    def __validate_rate(self):
+        if dataproperty.is_empty_string(self.rate):
+            return
+
+        rate = thutils.common.humanreadable_to_byte(self.rate)
+        if rate <= 0:
+            raise ValueError("rate must be greater than zero")
 
     def __validate_network_delay(self):
         if self.delay_ms is None:
