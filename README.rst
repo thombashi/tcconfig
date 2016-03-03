@@ -164,13 +164,16 @@ Linux package
 Python packagge
 ---------------
 
+Dependency python packages are automatically installed during AAA
+installation via pip.
+
 -  `DataPropery <https://github.com/thombashi/DataProperty>`__
 -  `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
--  `thutils <https://github.com/thombashi/thutils>`__
 -  `six <https://pypi.python.org/pypi/six/>`__
+-  `thutils <https://github.com/thombashi/thutils>`__
 
-Python packagge: test dependencies
-----------------------------------
+Test dependencies
+~~~~~~~~~~~~~~~~~
 
 -  `pytest <https://pypi.python.org/pypi/pytest>`__
 -  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
