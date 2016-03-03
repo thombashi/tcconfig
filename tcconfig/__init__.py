@@ -45,7 +45,7 @@ class TrafficControl(object):
         self.__make_qdisc()
         self.__validate_rate()
         self.__set_pre_network_filter()
-        self.__set_delay_and_loss()
+        self.__set_netem()
         self.__set_network_filter()
         self.__set_rate()
 
@@ -143,7 +143,7 @@ class TrafficControl(object):
 
         return self.__subproc_wrapper.run(" ".join(command_list))
 
-    def __set_delay_and_loss(self):
+    def __set_netem(self):
         command_list = [
             "tc qdisc add",
             "dev " + self.__device,
