@@ -55,6 +55,9 @@ class NormalTestValue:
 
 class Test_tcconfig:
 
+    # inappropriate test for Travis CI
+    #   ruun locally: python setup.py test --addopts --runxfail
+    @pytest.mark.xfail
     @pytest.mark.parametrize(["rate", "delay", "loss", "overwrite"], [
         opt_list
         for opt_list in itertools.product(
