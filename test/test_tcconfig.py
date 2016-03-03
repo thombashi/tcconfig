@@ -82,90 +82,101 @@ def tc_obj():
 
 
 @pytest.mark.parametrize(["value"], [
-    [None],
-    [0],
-    [10000],
+    ["".join(opt_list)]
+    for opt_list in itertools.product(
+        ["0.1", "1", "2147483647"],
+        [
+            "k", " k", "K", " K",
+            "m", " m", "M", " M",
+            "g", " g", "G", " G",
+        ]
+    )
 ])
-def test_TrafficControl_validate_network_delay_normal(tc_obj, value):
-    tc_obj.delay_ms = value
-    tc_obj._TrafficControl__validate_network_delay()
+def test_TrafficControl_validate_rate_normal(tc_obj, value):
+    tc_obj.rate = value
+    tc_obj._TrafficControl__validate_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    [-1, ValueError],
-    [10001, ValueError],
+    ["".join(opt_list), ValueError]
+    for opt_list in itertools.product(
+        ["0.1", "1", "2147483647"],
+        [
+            "kb", "kbps", "KB",
+            "mb", "mbps", "MB",
+            "gb", "gbps", "GB"
+        ]
+    )
 ])
-def test_TrafficControl_validate_network_delay_exception(tc_obj, value, expected):
-    tc_obj.delay_ms = value
+def test_TrafficControl_validate_rate_exception_1(tc_obj, value, expected):
+    tc_obj.rate = value
     with pytest.raises(expected):
-        tc_obj._TrafficControl__validate_network_delay()
-
-
-@pytest.mark.parametrize(["value"], [
-    [None],
-    [0],
-    [99],
-])
-def test_TrafficControl_validate_packet_loss_rate_normal(tc_obj, value):
-    tc_obj.loss_percent = value
-    tc_obj._TrafficControl__validate_packet_loss_rate()
+        tc_obj._TrafficControl__validate_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    [-0.1, ValueError],
-    [99.1, ValueError],
+    ["".join(opt_list), ValueError]
+    for opt_list in itertools.product(
+        ["-1", "0", "0.0"],
+        ["k", "K", "m", "M", "g", "G"]
+    )
 ])
-def test_TrafficControl_validate_packet_loss_rate_exception(tc_obj, value, expected):
-    tc_obj.loss_percent = value
+def test_TrafficControl_validate_rate_exception_2(tc_obj, value, expected):
+    tc_obj.rate = value
     with pytest.raises(expected):
-        tc_obj._TrafficControl__validate_packet_loss_rate()
+        tc_obj._TrafficControl__validate_rate()
 
 
-@pytest.mark.parametrize(["value"], [
-    [None],
-    [""],
+class Test_TrafficControl_validate:
 
-    ["192.168.0.1"],
-    ["192.168.0.254"],
+    @pytest.mark.parametrize(["rate", "delay", "loss", "network", "port"], [
+        opt_list
+        for opt_list in itertools.product(
+            [None, "", "100K", "0.5M", "0.1G"],
+            [None, 0, 10000],
+            [None, 0, 99],
+            [
+                None,
+                "",
+                "192.168.0.1", "192.168.0.254",
+                "192.168.0.1/32", "192.168.0.0/24"
+            ],
+            [None, 0, 65535],
+        )
+    ])
+    def test_normal(self, tc_obj, rate, delay, loss, network, port):
+        tc_obj.rate = rate
+        tc_obj.delay_ms = delay
+        tc_obj.loss_percent = loss
+        tc_obj.network = network
+        tc_obj.port = port
 
-    ["192.168.0.1/32"],
-    ["192.168.0.0/24"],
-])
-def test_TrafficControl_validate_network_normal(tc_obj, value):
-    tc_obj.network = value
-    tc_obj._TrafficControl__validate_network()
+        tc_obj.validate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["192.168.0.", ValueError],
-    ["192.168.0.256", ValueError],
+    [{"delay_ms": -1}, ValueError],
+    [{"delay_ms": 10001}, ValueError],
 
-    ["192.168.0.0/0", ValueError],
-    ["192.168.0.0/33", ValueError],
-    ["192.168.0.2/24", ValueError],
-    ["192.168.0.0000/24", ValueError],
+    [{"loss_percent": -0.1}, ValueError],
+    [{"loss_percent": 99.1}, ValueError],
+
+    [{"network": "192.168.0."}, ValueError],
+    [{"network": "192.168.0.256"}, ValueError],
+    [{"network": "192.168.0.0/0"}, ValueError],
+    [{"network": "192.168.0.0/33"}, ValueError],
+    [{"network": "192.168.0.2/24"}, ValueError],
+    [{"network": "192.168.0.0000/24"}, ValueError],
+
+    [{"port": -1}, ValueError],
+    [{"port": 65536}, ValueError],
 ])
-def test_TrafficControl_validate_network_exception(tc_obj, value, expected):
-    tc_obj.network = value
+def test_TrafficControl_validate_exception(tc_obj, value, expected):
+    tc_obj.rate = value.get("rate")
+    tc_obj.delay_ms = value.get("delay_ms")
+    tc_obj.loss_percent = value.get("loss_percent")
+    tc_obj.network = value.get("network")
+    tc_obj.port = value.get("port")
+
     with pytest.raises(expected):
-        tc_obj._TrafficControl__validate_network()
-
-
-@pytest.mark.parametrize(["value"], [
-    [None],
-    [0],
-    [65535],
-])
-def test_TrafficControl_validate_port_normal(tc_obj, value):
-    tc_obj.port = value
-    tc_obj._TrafficControl__validate_port()
-
-
-@pytest.mark.parametrize(["value", "expected"], [
-    [-1, ValueError],
-    [65536, ValueError],
-])
-def test_TrafficControl_validate_port_exception(tc_obj, value, expected):
-    tc_obj.port = value
-    with pytest.raises(expected):
-        tc_obj._TrafficControl__validate_port()
+        tc_obj.validate()
