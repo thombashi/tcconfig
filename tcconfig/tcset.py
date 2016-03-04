@@ -57,9 +57,6 @@ def main():
     tc.network = options.network
     tc.port = options.port
 
-    import logging
-    subproc_wrapper.command_log_level = logging.DEBUG
-
     tc.validate()
 
     if options.overwrite:
