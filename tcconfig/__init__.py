@@ -36,6 +36,7 @@ class TrafficControl(object):
         if dataproperty.is_empty_string(self.__device):
             raise ValueError("device name is empty")
 
+        self.__validate_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.network = self.__validate_network()
@@ -43,7 +44,6 @@ class TrafficControl(object):
 
     def set_tc(self):
         self.__make_qdisc()
-        self.__validate_rate()
         self.__set_pre_network_filter()
         self.__set_netem()
         self.__set_network_filter()
