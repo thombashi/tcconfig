@@ -153,30 +153,29 @@ class Test_TrafficControl_validate:
 
         tc_obj.validate()
 
+    @pytest.mark.parametrize(["value", "expected"], [
+        [{"delay_ms": -1}, ValueError],
+        [{"delay_ms": 10001}, ValueError],
 
-@pytest.mark.parametrize(["value", "expected"], [
-    [{"delay_ms": -1}, ValueError],
-    [{"delay_ms": 10001}, ValueError],
+        [{"loss_percent": -0.1}, ValueError],
+        [{"loss_percent": 99.1}, ValueError],
 
-    [{"loss_percent": -0.1}, ValueError],
-    [{"loss_percent": 99.1}, ValueError],
+        [{"network": "192.168.0."}, ValueError],
+        [{"network": "192.168.0.256"}, ValueError],
+        [{"network": "192.168.0.0/0"}, ValueError],
+        [{"network": "192.168.0.0/33"}, ValueError],
+        [{"network": "192.168.0.2/24"}, ValueError],
+        [{"network": "192.168.0.0000/24"}, ValueError],
 
-    [{"network": "192.168.0."}, ValueError],
-    [{"network": "192.168.0.256"}, ValueError],
-    [{"network": "192.168.0.0/0"}, ValueError],
-    [{"network": "192.168.0.0/33"}, ValueError],
-    [{"network": "192.168.0.2/24"}, ValueError],
-    [{"network": "192.168.0.0000/24"}, ValueError],
+        [{"port": -1}, ValueError],
+        [{"port": 65536}, ValueError],
+    ])
+    def test_exception(self, tc_obj, value, expected):
+        tc_obj.rate = value.get("rate")
+        tc_obj.delay_ms = value.get("delay_ms")
+        tc_obj.loss_percent = value.get("loss_percent")
+        tc_obj.network = value.get("network")
+        tc_obj.port = value.get("port")
 
-    [{"port": -1}, ValueError],
-    [{"port": 65536}, ValueError],
-])
-def test_TrafficControl_validate_exception(tc_obj, value, expected):
-    tc_obj.rate = value.get("rate")
-    tc_obj.delay_ms = value.get("delay_ms")
-    tc_obj.loss_percent = value.get("loss_percent")
-    tc_obj.network = value.get("network")
-    tc_obj.port = value.get("port")
-
-    with pytest.raises(expected):
-        tc_obj.validate()
+        with pytest.raises(expected):
+            tc_obj.validate()
