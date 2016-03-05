@@ -14,12 +14,12 @@ import tcconfig
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
-    parser.make(version="0.2.0")
+    parser.make(version="0.3.0")
 
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", required=True,
-        help="network device name")
+        help="network device name (e.g. eth0)")
 
     return parser.parse_args()
 
