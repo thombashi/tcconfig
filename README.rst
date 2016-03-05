@@ -18,13 +18,22 @@ network bandwidth/latency/packet-loss to a network interface.
 Traffic control
 ===============
 
+Network
+-------
+
+Traffic control can be specified network to apply to:
+
+-  Outgoing/Incoming packets
+-  Certain IP address/network and port
+
+Parameters
+----------
+
 The following parameters can be set of network interfaces.
 
 -  Network bandwidth [G/M/K bps]
 -  Network latency [milliseconds]
 -  Packet loss rate [%]
-
-Traffic control can specify the IP network and port to apply to.
 
 Installation
 ============
@@ -40,8 +49,10 @@ manager).
 
     sudo pip install tcconfig
 
-Usage
-=====
+Basic usage
+===========
+
+Outgoing packet traffic control settings are as follows
 
 Set traffic control (tcset)
 ---------------------------
@@ -55,27 +66,31 @@ tcset help
 .. code:: console
 
     usage: tcset [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
-                 --device DEVICE [--rate RATE] [--delay DELAY] [--loss LOSS]
-                 [--network NETWORK] [--port PORT] [--overwrite]
+                 --device DEVICE [--direction {outgoing,incoming}] [--rate RATE]
+                 [--delay DELAY] [--loss LOSS] [--network NETWORK] [--port PORT]
+                 [--overwrite]
 
     optional arguments:
-      -h, --help         show this help message and exit
-      --version          show program's version number and exit
-      --debug            for debug print.
-      --quiet            suppress output of execution log message.
+      -h, --help            show this help message and exit
+      --version             show program's version number and exit
+      --debug               for debug print.
+      --quiet               suppress output of execution log message.
 
     Miscellaneous:
-      --logging          output execution log to a file (tcset.log).
-      --stacktrace       display stack trace when an error occurred.
+      --logging             output execution log to a file (tcset.log).
+      --stacktrace          display stack trace when an error occurred.
 
     Traffic Control:
-      --device DEVICE    network device name
-      --rate RATE        network bandwidth to apply the limit [K|M|G bps]
-      --delay DELAY      round trip network delay [ms] (default=0)
-      --loss LOSS        round trip packet loss rate [%] (default=0)
-      --network NETWORK  destination network of traffic control
-      --port PORT        destination port of traffic control
-      --overwrite        overwrite existing setting
+      --device DEVICE       network device name (e.g. eth0)
+      --direction {outgoing,incoming}
+                            direction of network communication that impose traffic
+                            control. default=outgoing
+      --rate RATE           network bandwidth [K|M|G bps]
+      --delay DELAY         round trip network delay [ms] (default=0)
+      --loss LOSS           round trip packet loss rate [%] (default=0)
+      --network NETWORK     destination network of traffic control
+      --port PORT           destination port of traffic control
+      --overwrite           overwrite existing settings
 
 e.g. Set a limit on bandwidth up to 100Kbps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -144,7 +159,7 @@ tcdel help
       --stacktrace     display stack trace when an error occurred.
 
     Traffic Control:
-      --device DEVICE  network device name
+      --device DEVICE  network device name (e.g. eth0)
 
 e.g.
 ~~~~
@@ -152,6 +167,33 @@ e.g.
 .. code:: console
 
     # tcdel --device eth0
+
+Advanced usage
+==============
+
+Traffic control of incoming packets
+-----------------------------------
+
+Execute ``tcset`` command with ``--direction incoming`` option to set
+incoming traffic control. Other options are the same as in the case of
+the basic usage.
+
+e.g. Set traffic control both incoming and outgoing network
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: console
+
+    tcset --device eth0 --direction outgoing --rate 200K --network 192.168.0.0/24
+    tcset --device eth0 --direction incoming --rate 1M --network 192.168.0.0/24
+
+Requirements
+~~~~~~~~~~~~
+
+Incoming packet traffic control requires additional ifb module, Which
+need to the following conditions:
+
+-  Equal or greater than Linux kernel version 2.6.20
+-  Equal or newer than iproute2 package version 20070313
 
 Dependencies
 ============
@@ -175,6 +217,7 @@ installation via pip.
 Test dependencies
 ~~~~~~~~~~~~~~~~~
 
+-  `pingparsing <https://github.com/thombashi/pingparsing>`__
 -  `pytest <https://pypi.python.org/pypi/pytest>`__
 -  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
 -  `tox <https://pypi.python.org/pypi/tox>`__
