@@ -14,15 +14,21 @@ import tcconfig
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
-    parser.make(version="0.2.0")
+    parser.make(version="0.3.0")
 
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", required=True,
-        help="network device name")
+        help="network device name (e.g. eth0)")
+    group.add_argument(
+        "--direction", choices=tcconfig.TrafficDirection.LIST,
+        default=tcconfig.TrafficDirection.OUTGOING,
+        help="""direction of network communication that impose traffic control.
+        default=%(default)s
+        """)
     group.add_argument(
         "--rate",
-        help="network bandwidth to apply the limit [K|M|G bps]")
+        help="network bandwidth [K|M|G bps]")
     group.add_argument(
         "--delay", type=float, default=0,
         help="round trip network delay [ms] (default=%(default)s)")
@@ -37,7 +43,7 @@ def parse_option():
         help="destination port of traffic control")
     group.add_argument(
         "--overwrite", action="store_true", default=False,
-        help="overwrite existing setting")
+        help="overwrite existing settings")
 
     return parser.parse_args()
 
@@ -51,14 +57,12 @@ def main():
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
     tc = tcconfig.TrafficControl(subproc_wrapper, options.device)
+    tc.direction = options.direction
     tc.rate = options.rate
     tc.delay_ms = options.delay
     tc.loss_percent = options.loss
     tc.network = options.network
     tc.port = options.port
-
-    import logging
-    subproc_wrapper.command_log_level = logging.DEBUG
 
     tc.validate()
 

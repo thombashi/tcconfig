@@ -27,7 +27,7 @@ if major == 2 and minor <= 5:
 
 setuptools.setup(
     name="tcconfig",
-    version="0.2.0",
+    version="0.3.0",
     author="Tsuyoshi Hombashi",
     author_email="gogogo.vm@gmail.com",
     url="https://github.com/thombashi/tcconfig",
