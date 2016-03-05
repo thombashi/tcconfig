@@ -88,7 +88,9 @@ class Test_tcconfig:
     Run locally with following command:
       python setup.py test --addopts --runxfail
 
-    These tests expected to execute on Linux(debian) w/ iputils-ping package.
+    These tests expected to execute on following environment:
+       - Linux(debian) w/ iputils-ping package
+       - English environment (for parsing ping output)
     """
 
     @pytest.mark.xfail
@@ -124,7 +126,9 @@ class Test_tcset_one_network:
     Run locally with following command:
       python setup.py test --addopts "--dst-host=<hostname or IP address>"
 
-    These tests expected to execute on Linux(debian) w/ iputils-ping package.
+    These tests expected to execute on following environment:
+       - Linux(debian) w/ iputils-ping package
+       - English environment (for parsing ping output)
     """
 
     @pytest.mark.parametrize(["delay"], [
@@ -210,7 +214,9 @@ class Test_tcset_two_network:
       python setup.py test --addopts \
         "--dst-host=<hostname or IP address> --dst-host-ex=<hostname or IP address>"
 
-    These tests expected to execute on Linux(debian) w/ iputils-ping package.
+    These tests expected to execute on following environment:
+       - Linux(debian) w/ iputils-ping package
+       - English environment (for parsing ping output)
     """
 
     def test_network(
