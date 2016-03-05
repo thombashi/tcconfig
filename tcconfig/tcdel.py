@@ -19,7 +19,7 @@ def parse_option():
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", required=True,
-        help="network device name")
+        help="network device name (e.g. eth0)")
 
     return parser.parse_args()
 

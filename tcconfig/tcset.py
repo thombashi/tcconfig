@@ -19,10 +19,11 @@ def parse_option():
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", required=True,
-        help="network device name")
+        help="network device name (e.g. eth0)")
+    group.add_argument(
     group.add_argument(
         "--rate",
-        help="network bandwidth to apply the limit [K|M|G bps]")
+        help="network bandwidth [K|M|G bps]")
     group.add_argument(
         "--delay", type=float, default=0,
         help="round trip network delay [ms] (default=%(default)s)")
@@ -37,7 +38,7 @@ def parse_option():
         help="destination port of traffic control")
     group.add_argument(
         "--overwrite", action="store_true", default=False,
-        help="overwrite existing setting")
+        help="overwrite existing settings")
 
     return parser.parse_args()
 
