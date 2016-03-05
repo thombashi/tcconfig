@@ -14,13 +14,18 @@ import tcconfig
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
-    parser.make(version="0.2.0")
+    parser.make(version="0.3.0")
 
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", required=True,
         help="network device name (e.g. eth0)")
     group.add_argument(
+        "--direction", choices=tcconfig.TrafficDirection.LIST,
+        default=tcconfig.TrafficDirection.OUTGOING,
+        help="""direction of network communication that impose traffic control.
+        default=%(default)s
+        """)
     group.add_argument(
         "--rate",
         help="network bandwidth [K|M|G bps]")
@@ -52,6 +57,7 @@ def main():
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
     tc = tcconfig.TrafficControl(subproc_wrapper, options.device)
+    tc.direction = options.direction
     tc.rate = options.rate
     tc.delay_ms = options.delay
     tc.loss_percent = options.loss
