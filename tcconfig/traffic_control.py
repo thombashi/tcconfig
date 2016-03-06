@@ -49,7 +49,7 @@ class TrafficControl(object):
         if dataproperty.is_empty_string(self.__device):
             raise ValueError("device name is empty")
 
-        self.__validate_rate()
+        self.__validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_curruption_rate()
@@ -125,7 +125,7 @@ class TrafficControl(object):
 
         return return_code
 
-    def __validate_rate(self):
+    def __validate_bandwidth_rate(self):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return
 
