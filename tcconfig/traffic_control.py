@@ -44,6 +44,7 @@ class TrafficControl(object):
         self.direction = None
         self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
         self.latency_ms = None  # [milliseconds]
+        self.latency_distro_ms = None  # [milliseconds]
         self.packet_loss_rate = None  # [%]
         self.curruption_rate = None  # [%]
         self.network = None
@@ -157,6 +158,11 @@ class TrafficControl(object):
             self.latency_ms,
             self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
 
+        self.__validate_within_min_max(
+            thutils.common.get_var_name(self.latency_distro_ms, locals()),
+            self.latency_distro_ms,
+            self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
+
     def __validate_packet_loss_rate(self):
         self.__validate_within_min_max(
             thutils.common.get_var_name(self.packet_loss_rate, locals()),
@@ -267,6 +273,11 @@ class TrafficControl(object):
             command_list.append("loss %s%%" % (self.packet_loss_rate))
         if self.latency_ms > 0:
             command_list.append("delay %dms" % (self.latency_ms))
+
+            if self.latency_distro_ms > 0:
+                command_list.append(
+                    "%dms distribution normal" % (self.latency_distro_ms))
+
         if self.corruption_rate > 0:
             command_list.append("corrupt %s%%" % (self.corruption_rate))
 

@@ -41,6 +41,14 @@ def parse_option():
         "--delay", dest="network_latency", type=float, default=0,
         help="round trip network delay [ms] (default=%(default)s)")
     group.add_argument(
+        "--delay-distro", dest="latency_distro_ms", type=float, default=0,
+        help="""
+        distribution of network latency becomes X +- Y [ms]
+        (normal distribution), with this option.
+        (X: value of --delay option, Y: value of --delay-dist opion)
+        network latency distribution will uniform without this option.
+        """)
+    group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
         help="round trip packet loss rate [%%] (default=%(default)s)")
     group.add_argument(
@@ -73,6 +81,7 @@ def main():
     tc.direction = options.direction
     tc.bandwidth_rate = options.bandwidth_rate
     tc.latency_ms = options.network_latency
+    tc.latency_distro_ms = options.latency_distro_ms
     tc.packet_loss_rate = options.packet_loss_rate
     tc.corruption_rate = options.corruption_rate
     tc.network = options.network

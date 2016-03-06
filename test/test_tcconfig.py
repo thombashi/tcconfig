@@ -5,6 +5,7 @@
 '''
 
 import itertools
+import platform
 
 import dataproperty
 import pingparsing
@@ -56,6 +57,10 @@ class NormalTestValue:
         "",
         "--delay 100",
     ]
+    DELAY_DISTRO_LIST = [
+        "",
+        "--delay-distro 20",
+    ]
     PACKET_LOSS_RATE_LIST = [
         "",
         "--loss 0.1",
@@ -98,7 +103,7 @@ class Test_tcconfig:
     @pytest.mark.xfail
     @pytest.mark.parametrize(
         [
-            "rate", "delay", "loss", "corrupt",
+            "rate", "delay", "delay_distro", "loss", "corrupt",
             "direction", "network", "port", "overwrite",
         ],
         [
@@ -106,6 +111,7 @@ class Test_tcconfig:
             for opt_list in itertools.product(
                 NormalTestValue.RATE_LIST,
                 NormalTestValue.DELAY_LIST,
+                NormalTestValue.DELAY_DISTRO_LIST,
                 NormalTestValue.PACKET_LOSS_RATE_LIST,
                 NormalTestValue.CORRUPTION_RATE_LIST,
                 NormalTestValue.DIRECTION_LIST,
@@ -114,12 +120,13 @@ class Test_tcconfig:
                 NormalTestValue.OVERWRITE_LIST)
         ])
     def test_smoke(
-            self, subproc_wrapper, rate, delay, loss, corrupt,
+            self, subproc_wrapper, rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite):
         command = " ".join([
             "tcset",
             "--device " + DEVICE,
-            rate, delay, loss, direction, network, port, overwrite,
+            rate, delay, delay_distro, loss,
+            direction, network, port, overwrite,
         ])
         assert subproc_wrapper.run(command) == 0
 
@@ -141,7 +148,8 @@ class Test_tcset_one_network:
         [100],
     ])
     def test_const_latency(
-            self, dst_host_option, subproc_wrapper, transmitter, pingparser, delay):
+            self, dst_host_option, subproc_wrapper,
+            transmitter, pingparser, delay):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
@@ -169,6 +177,50 @@ class Test_tcset_one_network:
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
         assert rtt_diff > (delay / 2.0)
+
+        # finalize ---
+        subproc_wrapper.run("tcdel --device " + DEVICE)
+
+    @pytest.mark.skipif("platform.system() == 'Windows'")
+    @pytest.mark.parametrize(["delay", "delay_distro"], [
+        [100, 50],
+    ])
+    def test_const_latency_distro(
+            self, dst_host_option, subproc_wrapper,
+            transmitter, pingparser, delay, delay_distro):
+        if dataproperty.is_empty_string(dst_host_option):
+            # alternative to pytest.mark.skipif
+            return
+
+        subproc_wrapper.run("tcdel --device " + DEVICE)
+        transmitter.destination_host = dst_host_option
+
+        # w/o latency tc ---
+        result = transmitter.ping()
+        pingparser.parse(result)
+        without_tc_rtt_avg = pingparser.rtt_avg
+        without_tc_rtt_mdev = pingparser.rtt_mdev
+
+        # w/ latency tc ---
+        command_list = [
+            "tcset",
+            "--device " + DEVICE,
+            "--delay %d" % (delay),
+            "--delay-distro %d" % (delay_distro),
+        ]
+        assert subproc_wrapper.run(" ".join(command_list)) == 0
+
+        result = transmitter.ping()
+        pingparser.parse(result)
+        with_tc_rtt_avg = pingparser.rtt_avg
+        with_tc_rtt_mdev = pingparser.rtt_mdev
+
+        # assertion ---
+        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
+        assert rtt_diff > (delay / 2.0)
+
+        rtt_diff = with_tc_rtt_mdev - without_tc_rtt_mdev
+        assert rtt_diff > (delay_distro / 2.0)
 
         # finalize ---
         subproc_wrapper.run("tcdel --device " + DEVICE)
