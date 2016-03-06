@@ -15,8 +15,8 @@ Simple tc command wrapper.
 Easy to setup traffic control of
 network bandwidth/latency/packet-loss to a network interface.
 
-Traffic control
-===============
+Traffic control features
+========================
 
 Network
 -------
@@ -31,9 +31,10 @@ Parameters
 
 The following parameters can be set of network interfaces.
 
--  Network bandwidth [G/M/K bps]
+-  Network bandwidth rate [G/M/K bps]
 -  Network latency [milliseconds]
 -  Packet loss rate [%]
+-  Packet corruption rate [%]
 
 Installation
 ============
@@ -66,9 +67,10 @@ tcset help
 .. code:: console
 
     usage: tcset [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
-                 --device DEVICE [--direction {outgoing,incoming}] [--rate RATE]
-                 [--delay DELAY] [--loss LOSS] [--network NETWORK] [--port PORT]
-                 [--overwrite]
+                 --device DEVICE [--overwrite] [--direction {outgoing,incoming}]
+                 [--rate BANDWIDTH_RATE] [--delay NETWORK_LATENCY]
+                 [--delay-distro LATENCY_DISTRO_MS] [--loss PACKET_LOSS_RATE]
+                 [--corrupt CORRUPTION_RATE] [--network NETWORK] [--port PORT]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -80,17 +82,33 @@ tcset help
       --logging             output execution log to a file (tcset.log).
       --stacktrace          display stack trace when an error occurred.
 
-    Traffic Control:
+    Network Interface:
       --device DEVICE       network device name (e.g. eth0)
+      --overwrite           overwrite existing settings
+
+    Traffic Control:
       --direction {outgoing,incoming}
                             direction of network communication that impose traffic
-                            control. default=outgoing
-      --rate RATE           network bandwidth [K|M|G bps]
-      --delay DELAY         round trip network delay [ms] (default=0)
-      --loss LOSS           round trip packet loss rate [%] (default=0)
-      --network NETWORK     destination network of traffic control
-      --port PORT           destination port of traffic control
-      --overwrite           overwrite existing settings
+                            control. "incoming" requires linux kernel version
+                            2.6.20 or later. (default=outgoing)
+      --rate BANDWIDTH_RATE
+                            network bandwidth rate [K|M|G bps]
+      --delay NETWORK_LATENCY
+                            round trip network delay [ms] (default=0)
+      --delay-distro LATENCY_DISTRO_MS
+                            distribution of network latency becomes X +- Y [ms]
+                            (normal distribution), with this option. (X: value of
+                            --delay option, Y: value of --delay-dist opion)
+                            network latency distribution will uniform without this
+                            option.
+      --loss PACKET_LOSS_RATE
+                            round trip packet loss rate [%] (default=0)
+      --corrupt CORRUPTION_RATE
+                            packet corruption rate [%]. corruption means single
+                            bit error at a random offset in the packet.
+                            (default=0)
+      --network NETWORK     IP address/network of traffic control
+      --port PORT           port number of traffic control
 
 e.g. Set a limit on bandwidth up to 100Kbps
 ~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
@@ -99,8 +117,8 @@ e.g. Set a limit on bandwidth up to 100Kbps
 
     # tcset --device eth0 --rate 100k
 
-e.g. Set 100ms network delay
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+e.g. Set 100ms network latency
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: console
 
@@ -192,8 +210,15 @@ Requirements
 Incoming packet traffic control requires additional ifb module, Which
 need to the following conditions:
 
--  Equal or greater than Linux kernel version 2.6.20
--  Equal or newer than iproute2 package version 20070313
+-  Equal or later than Linux kernel version 2.6.20
+-  Equal or later than iproute2 package version 20070313
+
+e.g. Set 100ms +- 20ms network latency with normal distribution
+---------------------------------------------------------------
+
+.. code:: console
+
+    # tcset --device eth0 --delay 100 --delay-distro 20
 
 Dependencies
 ============
