@@ -16,17 +16,23 @@ import tcconfig.traffic_control
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
-    parser.make(version="0.3.0")
+    parser.make(version=tcconfig.VERSION)
 
-    group = parser.add_argument_group("Traffic Control")
+    group = parser.add_argument_group("Network Interface")
     group.add_argument(
         "--device", required=True,
         help="network device name (e.g. eth0)")
     group.add_argument(
+        "--overwrite", action="store_true", default=False,
+        help="overwrite existing settings")
+
+    group = parser.add_argument_group("Traffic Control")
+    group.add_argument(
         "--direction", choices=tcconfig.traffic_control.TrafficDirection.LIST,
         default=tcconfig.traffic_control.TrafficDirection.OUTGOING,
         help="""direction of network communication that impose traffic control.
-        default=%(default)s
+        "incoming" requires linux kernel version 2.6.20 or later.
+        (default=%(default)s)
         """)
     group.add_argument(
         "--rate",
@@ -39,13 +45,10 @@ def parse_option():
         help="round trip packet loss rate [%%] (default=%(default)s)")
     group.add_argument(
         "--network",
-        help="destination network of traffic control")
+        help="IP address/network of traffic control")
     group.add_argument(
         "--port", type=int,
-        help="destination port of traffic control")
-    group.add_argument(
-        "--overwrite", action="store_true", default=False,
-        help="overwrite existing settings")
+        help="port number of traffic control")
 
     return parser.parse_args()
 
