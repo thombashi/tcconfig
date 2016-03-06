@@ -39,9 +39,9 @@ class TrafficControl(object):
 
         self.ifb_device = "ifb0"
         self.direction = None
-        self.rate = None
-        self.delay_ms = None
-        self.loss_percent = None
+        self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
+        self.latency_ms = None  # [milliseconds]
+        self.packet_loss_rate = None  # [%]
         self.network = None
         self.port = None
 
@@ -52,6 +52,7 @@ class TrafficControl(object):
         self.__validate_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
+        self.__validate_curruption_rate()
         self.network = self.__validate_network()
         self.__validate_port()
 
@@ -125,40 +126,44 @@ class TrafficControl(object):
         return return_code
 
     def __validate_rate(self):
-        if dataproperty.is_empty_string(self.rate):
+        if dataproperty.is_empty_string(self.bandwidth_rate):
             return
 
-        rate = thutils.common.humanreadable_to_byte(self.rate)
+        rate = thutils.common.humanreadable_to_byte(self.bandwidth_rate)
         if rate <= 0:
             raise ValueError("rate must be greater than zero")
 
     def __validate_network_delay(self):
-        if self.delay_ms is None:
+        if self.latency_ms is None:
             return
 
-        if self.delay_ms > self.__MAX_DELAY_MS:
+        if self.latency_ms > self.__MAX_DELAY_MS:
             raise ValueError(
                 "network delay is too high: expected<=%d[ms], value=%d[ms]" % (
-                    self.__MAX_DELAY_MS, self.delay_ms))
+                    self.__MAX_DELAY_MS, self.latency_ms))
 
-        if self.delay_ms < self.__MIN_DELAY_MS:
+        if self.latency_ms < self.__MIN_DELAY_MS:
             raise ValueError(
                 "delay time is too low: expected>=%d[ms], value=%d[ms]" % (
-                    self.__MIN_DELAY_MS, self.delay_ms))
+                    self.__MIN_DELAY_MS, self.latency_ms))
 
     def __validate_packet_loss_rate(self):
-        if self.loss_percent is None:
+        if self.packet_loss_rate is None:
             return
 
-        if self.loss_percent > self.__MAX_LOSS_RATE:
+        if self.packet_loss_rate > self.__MAX_LOSS_RATE:
             raise ValueError(
                 "packet loss rate is too high: expected<=%d[%%], value=%d[%%]" % (
-                    self.__MAX_LOSS_RATE, self.loss_percent))
+                    self.__MAX_LOSS_RATE, self.packet_loss_rate))
 
-        if self.loss_percent < self.__MIN_LOSS_RATE:
+        if self.packet_loss_rate < self.__MIN_LOSS_RATE:
             raise ValueError(
                 "packet loss rate is too low: expected>=%d[%%], value=%d[%%]" % (
-                    self.__MIN_LOSS_RATE, self.loss_percent))
+                    self.__MIN_LOSS_RATE, self.packet_loss_rate))
+
+    def __validate_curruption_rate(self):
+        if self.packet_loss_rate is None:
+            return
 
     def __validate_network(self):
         if dataproperty.is_empty_string(self.network):
@@ -263,10 +268,10 @@ class TrafficControl(object):
             "handle %d:" % (self.__get_netem_qdisc_major_id(qdisc_major_id)),
             "netem",
         ]
-        if self.loss_percent > 0:
-            command_list.append("loss %s%%" % (self.loss_percent))
-        if self.delay_ms > 0:
-            command_list.append("delay %dms" % (self.delay_ms))
+        if self.packet_loss_rate > 0:
+            command_list.append("loss %s%%" % (self.packet_loss_rate))
+        if self.latency_ms > 0:
+            command_list.append("delay %dms" % (self.latency_ms))
 
         return self.__subproc_wrapper.run(" ".join(command_list))
 
@@ -294,11 +299,11 @@ class TrafficControl(object):
         return self.__subproc_wrapper.run(" ".join(command_list))
 
     def __set_rate(self, qdisc_major_id):
-        if dataproperty.is_empty_string(self.rate):
+        if dataproperty.is_empty_string(self.bandwidth_rate):
             return 0
 
         rate_kbps = thutils.common.humanreadable_to_byte(
-            self.rate, kilo_size=1000) / 1000.0
+            self.bandwidth_rate, kilo_size=1000) / 1000.0
         if rate_kbps <= 0:
             raise ValueError("rate must be greater than zero")
 

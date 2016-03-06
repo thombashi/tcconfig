@@ -35,13 +35,13 @@ def parse_option():
         (default=%(default)s)
         """)
     group.add_argument(
-        "--rate",
-        help="network bandwidth [K|M|G bps]")
+        "--rate", dest="bandwidth_rate",
+        help="network bandwidth rate [K|M|G bps]")
     group.add_argument(
-        "--delay", type=float, default=0,
+        "--delay", dest="network_latency", type=float, default=0,
         help="round trip network delay [ms] (default=%(default)s)")
     group.add_argument(
-        "--loss", type=float, default=0,
+        "--loss", dest="packet_loss_rate", type=float, default=0,
         help="round trip packet loss rate [%%] (default=%(default)s)")
     group.add_argument(
         "--network",
@@ -64,9 +64,9 @@ def main():
     tc = tcconfig.traffic_control.TrafficControl(
         subproc_wrapper, options.device)
     tc.direction = options.direction
-    tc.rate = options.rate
-    tc.delay_ms = options.delay
-    tc.loss_percent = options.loss
+    tc.bandwidth_rate = options.bandwidth_rate
+    tc.latency_ms = options.network_latency
+    tc.packet_loss_rate = options.packet_loss_rate
     tc.network = options.network
     tc.port = options.port
 

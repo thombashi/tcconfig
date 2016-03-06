@@ -34,7 +34,7 @@ def tc_obj():
     )
 ])
 def test_TrafficControl_validate_rate_normal(tc_obj, value):
-    tc_obj.rate = value
+    tc_obj.bandwidth_rate = value
     tc_obj._TrafficControl__validate_rate()
 
 
@@ -50,7 +50,7 @@ def test_TrafficControl_validate_rate_normal(tc_obj, value):
     )
 ])
 def test_TrafficControl_validate_rate_exception_1(tc_obj, value, expected):
-    tc_obj.rate = value
+    tc_obj.bandwidth_rate = value
     with pytest.raises(expected):
         tc_obj._TrafficControl__validate_rate()
 
@@ -63,7 +63,7 @@ def test_TrafficControl_validate_rate_exception_1(tc_obj, value, expected):
     )
 ])
 def test_TrafficControl_validate_rate_exception_2(tc_obj, value, expected):
-    tc_obj.rate = value
+    tc_obj.bandwidth_rate = value
     with pytest.raises(expected):
         tc_obj._TrafficControl__validate_rate()
 
@@ -86,20 +86,20 @@ class Test_TrafficControl_validate:
         )
     ])
     def test_normal(self, tc_obj, rate, delay, loss, network, port):
-        tc_obj.rate = rate
-        tc_obj.delay_ms = delay
-        tc_obj.loss_percent = loss
+        tc_obj.bandwidth_rate = rate
+        tc_obj.latency_ms = delay
+        tc_obj.packet_loss_rate = loss
         tc_obj.network = network
         tc_obj.port = port
 
         tc_obj.validate()
 
     @pytest.mark.parametrize(["value", "expected"], [
-        [{"delay_ms": -1}, ValueError],
-        [{"delay_ms": 10001}, ValueError],
+        [{"latency_ms": -1}, ValueError],
+        [{"latency_ms": 10001}, ValueError],
 
-        [{"loss_percent": -0.1}, ValueError],
-        [{"loss_percent": 99.1}, ValueError],
+        [{"packet_loss_rate": -0.1}, ValueError],
+        [{"packet_loss_rate": 99.1}, ValueError],
 
         [{"network": "192.168.0."}, ValueError],
         [{"network": "192.168.0.256"}, ValueError],
@@ -112,9 +112,9 @@ class Test_TrafficControl_validate:
         [{"port": 65536}, ValueError],
     ])
     def test_exception(self, tc_obj, value, expected):
-        tc_obj.rate = value.get("rate")
-        tc_obj.delay_ms = value.get("delay_ms")
-        tc_obj.loss_percent = value.get("loss_percent")
+        tc_obj.bandwidth_rate = value.get("bandwidth_rate")
+        tc_obj.latency_ms = value.get("latency_ms")
+        tc_obj.packet_loss_rate = value.get("packet_loss_rate")
         tc_obj.network = value.get("network")
         tc_obj.port = value.get("port")
 
