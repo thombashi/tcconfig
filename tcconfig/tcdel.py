@@ -16,7 +16,7 @@ import tcconfig.traffic_control
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
-    parser.make(version="0.3.0")
+    parser.make(version=tcconfig.VERSION)
 
     group = parser.add_argument_group("Traffic Control")
     group.add_argument(
