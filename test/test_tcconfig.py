@@ -54,13 +54,15 @@ class NormalTestValue:
     ]
     DELAY_LIST = [
         "",
-        "--delay 1",
         "--delay 100",
     ]
-    LOSS_LIST = [
+    PACKET_LOSS_RATE_LIST = [
         "",
         "--loss 0.1",
-        "--loss 99",
+    ]
+    CORRUPTION_RATE_LIST = [
+        "",
+        "--corrupt 0.1",
     ]
     DIRECTION_LIST = [
         "",
@@ -95,20 +97,24 @@ class Test_tcconfig:
 
     @pytest.mark.xfail
     @pytest.mark.parametrize(
-        ["rate", "delay", "loss", "direction", "network", "port", "overwrite"],
+        [
+            "rate", "delay", "loss", "corrupt",
+            "direction", "network", "port", "overwrite",
+        ],
         [
             opt_list
             for opt_list in itertools.product(
                 NormalTestValue.RATE_LIST,
                 NormalTestValue.DELAY_LIST,
-                NormalTestValue.LOSS_LIST,
+                NormalTestValue.PACKET_LOSS_RATE_LIST,
+                NormalTestValue.CORRUPTION_RATE_LIST,
                 NormalTestValue.DIRECTION_LIST,
                 NormalTestValue.NETWORK_LIST,
                 NormalTestValue.PORT_LIST,
                 NormalTestValue.OVERWRITE_LIST)
         ])
     def test_smoke(
-            self, subproc_wrapper, rate, delay, loss,
+            self, subproc_wrapper, rate, delay, loss, corrupt,
             direction, network, port, overwrite):
         command = " ".join([
             "tcset",
@@ -167,12 +173,13 @@ class Test_tcset_one_network:
         # finalize ---
         subproc_wrapper.run("tcdel --device " + DEVICE)
 
-    @pytest.mark.parametrize(["packet_loss"], [
-        [10],
+    @pytest.mark.parametrize(["option", "value"], [
+        ["--loss", 10],
+        ["--corrupt", 10],
     ])
     def test_const_packet_loss(
             self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, packet_loss):
+            transmitter, pingparser, option, value):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
@@ -190,7 +197,7 @@ class Test_tcset_one_network:
         command_list = [
             "tcset",
             "--device " + DEVICE,
-            "--loss %f" % (packet_loss),
+            "%s %f" % (option, value),
         ]
         assert subproc_wrapper.run(" ".join(command_list)) == 0
 
@@ -201,7 +208,7 @@ class Test_tcset_one_network:
 
         # assertion ---
         loss_diff = without_tc_loss - with_tc_loss
-        assert loss_diff > (packet_loss / 2.0)
+        assert loss_diff > (value / 2.0)
 
         # finalize ---
         subproc_wrapper.run("tcdel --device " + DEVICE)

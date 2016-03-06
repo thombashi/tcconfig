@@ -44,6 +44,13 @@ def parse_option():
         "--loss", dest="packet_loss_rate", type=float, default=0,
         help="round trip packet loss rate [%%] (default=%(default)s)")
     group.add_argument(
+        "--corrupt", dest="corruption_rate", type=float, default=0,
+        help="""
+        packet corruption rate [%%].
+        corruption means single bit error at a random offset in the packet.
+        (default=%(default)s)
+        """)
+    group.add_argument(
         "--network",
         help="IP address/network of traffic control")
     group.add_argument(
@@ -67,6 +74,7 @@ def main():
     tc.bandwidth_rate = options.bandwidth_rate
     tc.latency_ms = options.network_latency
     tc.packet_loss_rate = options.packet_loss_rate
+    tc.corruption_rate = options.corruption_rate
     tc.network = options.network
     tc.port = options.port
 

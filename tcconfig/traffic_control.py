@@ -28,6 +28,9 @@ class TrafficControl(object):
     __MIN_DELAY_MS = 0  # [millisecond]
     __MAX_DELAY_MS = 10000  # [millisecond]
 
+    __MIN_CORRUPTION_RATE = 0  # [%]
+    __MAX_CORRUPTION_RATE = 99  # [%]
+
     __MIN_BUFFER_BYTE = 1600
 
     __MIN_PORT = 0
@@ -42,6 +45,7 @@ class TrafficControl(object):
         self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
         self.latency_ms = None  # [milliseconds]
         self.packet_loss_rate = None  # [%]
+        self.curruption_rate = None  # [%]
         self.network = None
         self.port = None
 
@@ -161,9 +165,25 @@ class TrafficControl(object):
                 "packet loss rate is too low: expected>=%d[%%], value=%d[%%]" % (
                     self.__MIN_LOSS_RATE, self.packet_loss_rate))
 
-    def __validate_curruption_rate(self):
-        if self.packet_loss_rate is None:
+    def __validate_within_min_max(self, param_name, value, min_value, max_value):
+        if value is None:
             return
+
+        if value > max_value:
+            raise ValueError(
+                "%s is too high: expected<=%d[%%], value=%d[%%]" % (
+                    param_name, max_value, value))
+
+        if value < min_value:
+            raise ValueError(
+                "%s is too low: expected>=%d[%%], value=%d[%%]" % (
+                    param_name, min_value, value))
+
+    def __validate_curruption_rate(self):
+        self.__validate_within_min_max(
+            thutils.common.get_var_name(self.curruption_rate, locals()),
+            self.curruption_rate,
+            self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
     def __validate_network(self):
         if dataproperty.is_empty_string(self.network):
@@ -272,6 +292,8 @@ class TrafficControl(object):
             command_list.append("loss %s%%" % (self.packet_loss_rate))
         if self.latency_ms > 0:
             command_list.append("delay %dms" % (self.latency_ms))
+        if self.corruption_rate > 0:
+            command_list.append("corrupt %s%%" % (self.corruption_rate))
 
         return self.__subproc_wrapper.run(" ".join(command_list))
 
