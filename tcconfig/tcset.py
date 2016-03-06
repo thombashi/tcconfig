@@ -5,11 +5,13 @@
 @author: Tsuyoshi Hombashi
 '''
 
+from __future__ import absolute_import
 from __future__ import with_statement
 import sys
 
 import thutils
 import tcconfig
+import tcconfig.traffic_control
 
 
 def parse_option():
@@ -21,8 +23,8 @@ def parse_option():
         "--device", required=True,
         help="network device name (e.g. eth0)")
     group.add_argument(
-        "--direction", choices=tcconfig.TrafficDirection.LIST,
-        default=tcconfig.TrafficDirection.OUTGOING,
+        "--direction", choices=tcconfig.traffic_control.TrafficDirection.LIST,
+        default=tcconfig.traffic_control.TrafficDirection.OUTGOING,
         help="""direction of network communication that impose traffic control.
         default=%(default)s
         """)
@@ -56,7 +58,8 @@ def main():
     thutils.common.verify_install_command(["tc"])
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    tc = tcconfig.TrafficControl(subproc_wrapper, options.device)
+    tc = tcconfig.traffic_control.TrafficControl(
+        subproc_wrapper, options.device)
     tc.direction = options.direction
     tc.rate = options.rate
     tc.delay_ms = options.delay
@@ -70,7 +73,6 @@ def main():
         tc.delete_tc()
 
     tc.set_tc()
-    #tc.set_tc(options.rate, options.delay, options.loss, options.network)
 
     return 0
 

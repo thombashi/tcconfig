@@ -4,11 +4,13 @@
 @author: Tsuyoshi Hombashi
 '''
 
+from __future__ import absolute_import
 import itertools
 
 import pytest
 import thutils
 import tcconfig
+import tcconfig.traffic_control
 
 
 MIN_PACKET_LOSS = 0.0000000232  # [%]
@@ -17,7 +19,7 @@ MIN_PACKET_LOSS = 0.0000000232  # [%]
 @pytest.fixture
 def tc_obj():
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    return tcconfig.TrafficControl(subproc_wrapper, "eth0")
+    return tcconfig.traffic_control.TrafficControl(subproc_wrapper, "eth0")
 
 
 @pytest.mark.parametrize(["value"], [

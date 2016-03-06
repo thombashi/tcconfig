@@ -5,11 +5,13 @@
 @author: Tsuyoshi Hombashi
 '''
 
+from __future__ import absolute_import
 from __future__ import with_statement
 import sys
 
 import thutils
 import tcconfig
+import tcconfig.traffic_control
 
 
 def parse_option():
@@ -33,7 +35,8 @@ def main():
     thutils.common.verify_install_command(["tc"])
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    tc = tcconfig.TrafficControl(subproc_wrapper, options.device)
+    tc = tcconfig.traffic_control.TrafficControl(
+        subproc_wrapper, options.device)
 
     return tc.delete_tc()
 
