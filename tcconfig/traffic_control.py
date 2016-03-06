@@ -22,11 +22,11 @@ class TrafficControl(object):
     __IN_DEVICE_QDISC_MAJOR_ID = 1
     __IN_DEVICE_QDISC_MINOR_ID = 3
 
-    __MIN_LOSS_RATE = 0  # [%]
-    __MAX_LOSS_RATE = 99  # [%]
+    __MIN_PACKET_LOSS_RATE = 0  # [%]
+    __MAX_PACKET_LOSS_RATE = 99  # [%]
 
-    __MIN_DELAY_MS = 0  # [millisecond]
-    __MAX_DELAY_MS = 10000  # [millisecond]
+    __MIN_LATENCY_MS = 0  # [millisecond]
+    __MAX_LATENCY_MS = 10000  # [millisecond]
 
     __MIN_CORRUPTION_RATE = 0  # [%]
     __MAX_CORRUPTION_RATE = 99  # [%]
@@ -155,13 +155,13 @@ class TrafficControl(object):
         self.__validate_within_min_max(
             thutils.common.get_var_name(self.latency_ms, locals()),
             self.latency_ms,
-            self.__MIN_DELAY_MS, self.__MAX_DELAY_MS)
+            self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
 
     def __validate_packet_loss_rate(self):
         self.__validate_within_min_max(
             thutils.common.get_var_name(self.packet_loss_rate, locals()),
             self.packet_loss_rate,
-            self.__MIN_LOSS_RATE, self.__MAX_LOSS_RATE)
+            self.__MIN_PACKET_LOSS_RATE, self.__MAX_PACKET_LOSS_RATE)
 
     def __validate_curruption_rate(self):
         self.__validate_within_min_max(
