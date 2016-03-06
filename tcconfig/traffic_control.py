@@ -129,6 +129,20 @@ class TrafficControl(object):
 
         return return_code
 
+    def __validate_within_min_max(self, param_name, value, min_value, max_value):
+        if value is None:
+            return
+
+        if value > max_value:
+            raise ValueError(
+                "%s is too high: expected<=%f[%%], value=%f[%%]" % (
+                    param_name, max_value, value))
+
+        if value < min_value:
+            raise ValueError(
+                "%s is too low: expected>=%f[%%], value=%f[%%]" % (
+                    param_name, min_value, value))
+
     def __validate_bandwidth_rate(self):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return
@@ -138,46 +152,16 @@ class TrafficControl(object):
             raise ValueError("rate must be greater than zero")
 
     def __validate_network_delay(self):
-        if self.latency_ms is None:
-            return
-
-        if self.latency_ms > self.__MAX_DELAY_MS:
-            raise ValueError(
-                "network delay is too high: expected<=%d[ms], value=%d[ms]" % (
-                    self.__MAX_DELAY_MS, self.latency_ms))
-
-        if self.latency_ms < self.__MIN_DELAY_MS:
-            raise ValueError(
-                "delay time is too low: expected>=%d[ms], value=%d[ms]" % (
-                    self.__MIN_DELAY_MS, self.latency_ms))
+        self.__validate_within_min_max(
+            thutils.common.get_var_name(self.latency_ms, locals()),
+            self.latency_ms,
+            self.__MIN_DELAY_MS, self.__MAX_DELAY_MS)
 
     def __validate_packet_loss_rate(self):
-        if self.packet_loss_rate is None:
-            return
-
-        if self.packet_loss_rate > self.__MAX_LOSS_RATE:
-            raise ValueError(
-                "packet loss rate is too high: expected<=%d[%%], value=%d[%%]" % (
-                    self.__MAX_LOSS_RATE, self.packet_loss_rate))
-
-        if self.packet_loss_rate < self.__MIN_LOSS_RATE:
-            raise ValueError(
-                "packet loss rate is too low: expected>=%d[%%], value=%d[%%]" % (
-                    self.__MIN_LOSS_RATE, self.packet_loss_rate))
-
-    def __validate_within_min_max(self, param_name, value, min_value, max_value):
-        if value is None:
-            return
-
-        if value > max_value:
-            raise ValueError(
-                "%s is too high: expected<=%d[%%], value=%d[%%]" % (
-                    param_name, max_value, value))
-
-        if value < min_value:
-            raise ValueError(
-                "%s is too low: expected>=%d[%%], value=%d[%%]" % (
-                    param_name, min_value, value))
+        self.__validate_within_min_max(
+            thutils.common.get_var_name(self.packet_loss_rate, locals()),
+            self.packet_loss_rate,
+            self.__MIN_LOSS_RATE, self.__MAX_LOSS_RATE)
 
     def __validate_curruption_rate(self):
         self.__validate_within_min_max(
@@ -201,18 +185,9 @@ class TrafficControl(object):
         raise ValueError("unrecognizable network: " + self.network)
 
     def __validate_port(self):
-        if self.port is None:
-            return
-
-        if self.port > self.__MAX_PORT:
-            raise ValueError(
-                "port number is too high: expected<=%d[%%], value=%d[%%]" % (
-                    self.__MAX_PORT, self.port))
-
-        if self.port < self.__MIN_PORT:
-            raise ValueError(
-                "port number is too low: expected>=%d[%%], value=%d[%%]" % (
-                    self.__MIN_PORT, self.port))
+        self.__validate_within_min_max(
+            thutils.common.get_var_name(self.port, locals()),
+            self.port, self.__MIN_PORT, self.__MAX_PORT)
 
     def __make_qdisc(self, qdisc_major_id):
         command_list = [
