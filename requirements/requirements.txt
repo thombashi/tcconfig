@@ -1,4 +1,4 @@
 ipaddress
-DataProperty
-six<=1.8.0
+DataProperty>=0.2.1
+six
 thutils
