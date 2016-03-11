@@ -244,7 +244,10 @@ class TrafficControl(object):
         raise ValueError("unknown direction: " + self.direction)
 
     def __set_pre_network_filter(self, qdisc_major_id):
-        if dataproperty.is_empty_string(self.network):
+        if all([
+            dataproperty.is_empty_string(self.network),
+            not dataproperty.is_integer(self.port),
+        ]):
             flowid = "%d:%d" % (qdisc_major_id, self.__get_qdisc_minor_id())
         else:
             flowid = "%d:2" % (qdisc_major_id)
