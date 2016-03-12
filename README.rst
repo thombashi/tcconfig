@@ -26,10 +26,10 @@ Traffic control can be specified network to apply to:
 -  Outgoing/Incoming packets
 -  Certain IP address/network and port
 
-Parameters
-----------
+Available parameters
+--------------------
 
-The following parameters can be set of network interfaces.
+The following parameters can be set to network interfaces.
 
 -  Network bandwidth rate [G/M/K bps]
 -  Network latency [milliseconds]
@@ -42,7 +42,7 @@ Installation
 Install via pip
 ---------------
 
-tcconfig canbe installed via
+``tcconfig`` can be installed via
 `pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package
 manager).
 
@@ -50,15 +50,13 @@ manager).
 
     sudo pip install tcconfig
 
-Basic usage
-===========
-
-Outgoing packet traffic control settings are as follows
+Usage
+=====
 
 Set traffic control (tcset)
 ---------------------------
 
-tcset is a command to impose traffic control to a network interface
+``tcset`` is a command to impose traffic control to a network interface
 (device).
 
 tcset help
@@ -104,59 +102,98 @@ tcset help
       --loss PACKET_LOSS_RATE
                             round trip packet loss rate [%] (default=0)
       --corrupt CORRUPTION_RATE
-                            packet corruption rate [%]. corruption means single
-                            bit error at a random offset in the packet.
+                            packet corruption rate [%]. packet corruption means
+                            single bit error at a random offset in the packet.
                             (default=0)
       --network NETWORK     IP address/network of traffic control
       --port PORT           port number of traffic control
 
+Basic usage
+~~~~~~~~~~~
+
+Outgoing packet traffic control settings are as follows
+
 e.g. Set a limit on bandwidth up to 100Kbps
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
     # tcset --device eth0 --rate 100k
 
 e.g. Set 100ms network latency
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
     # tcset --device eth0 --delay 100
 
 e.g. Set 0.1% packet loss
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
     # tcset --device eth0 --loss 0.1
 
 e.g. All of the above at onece
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
     # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
 
 e.g. Specify the IP address of traffic control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.10
 
 e.g. Specify the IP network and port of traffic control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 .. code:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.0/24 --port 80
 
+Advanced usage
+~~~~~~~~~~~~~~
+
+Traffic control of incoming packets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Execute ``tcset`` command with ``--direction incoming`` option to set
+incoming traffic control. Other options are the same as in the case of
+the basic usage.
+
+e.g. Set traffic control both incoming and outgoing network
+'''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+
+.. code:: console
+
+    tcset --device eth0 --direction outgoing --rate 200K --network 192.168.0.0/24
+    tcset --device eth0 --direction incoming --rate 1M --network 192.168.0.0/24
+
+Requirements
+''''''''''''
+
+Incoming packet traffic control requires additional ifb module, Which
+need to the following conditions:
+
+-  Equal or later than Linux kernel version 2.6.20
+-  Equal or later than iproute2 package version 20070313
+
+e.g. Set 100ms +- 20ms network latency with normal distribution
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code:: console
+
+    # tcset --device eth0 --delay 100 --delay-distro 20
+
 Delete traffic control (tcdel)
 ------------------------------
 
-tcdel is a command to delete traffic control from a network interface
-(device).
+``tcdel`` is a command to delete traffic control from a network
+interface (device).
 
 tcdel help
 ~~~~~~~~~~
@@ -179,46 +216,72 @@ tcdel help
     Traffic Control:
       --device DEVICE  network device name (e.g. eth0)
 
-e.g.
-~~~~
+e.g. Delete traffic control of eth0
+~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
 
 .. code:: console
 
     # tcdel --device eth0
 
-Advanced usage
-==============
+Display traffic control configurations (tcshow)
+-----------------------------------------------
 
-Traffic control of incoming packets
------------------------------------
+``tcshow`` is a command to display traffic control to network
+interface(s).
 
-Execute ``tcset`` command with ``--direction incoming`` option to set
-incoming traffic control. Other options are the same as in the case of
-the basic usage.
+Note: scope of ``tcshow`` command is limited to parameters that can be
+set with tcset (``tcshow`` is not a general purpose tool to display all
+of the parameters of the tc command).
 
-e.g. Set traffic control both incoming and outgoing network
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-.. code:: console
-
-    tcset --device eth0 --direction outgoing --rate 200K --network 192.168.0.0/24
-    tcset --device eth0 --direction incoming --rate 1M --network 192.168.0.0/24
-
-Requirements
-~~~~~~~~~~~~
-
-Incoming packet traffic control requires additional ifb module, Which
-need to the following conditions:
-
--  Equal or later than Linux kernel version 2.6.20
--  Equal or later than iproute2 package version 20070313
-
-e.g. Set 100ms +- 20ms network latency with normal distribution
----------------------------------------------------------------
+tcshow help
+~~~~~~~~~~~
 
 .. code:: console
 
-    # tcset --device eth0 --delay 100 --delay-distro 20
+    usage: tcshow [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
+                  --device DEVICE
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      --version        show program's version number and exit
+      --debug          for debug print.
+      --quiet          suppress output of execution log message.
+
+    Miscellaneous:
+      --logging        output execution log to a file (tcshow.log).
+      --stacktrace     display stack trace when an error occurred.
+
+    Traffic Control:
+      --device DEVICE  network device name (e.g. eth0)
+
+Example
+~~~~~~~
+
+.. code:: console
+
+    # tcset --device eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
+    # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
+    # tcshow --device eth0
+    {
+        "eth0": {
+            "outgoing": {
+                "network=192.168.0.10/32, port=8080": {
+                    "delay": "10.0",
+                    "loss": "0.01",
+                    "rate": "250K",
+                    "delay-distro": "2.0"
+                },
+                "network=0.0.0.0/0": {}
+            },
+            "incoming": {
+                "network=0.0.0.0/0": {
+                    "delay": "1.0",
+                    "loss": "0.02",
+                    "rate": "500K"
+                }
+            }
+        }
+    }
 
 Dependencies
 ============
@@ -231,11 +294,12 @@ Linux package
 Python packagge
 ---------------
 
-Dependency python packages are automatically installed during AAA
-installation via pip.
+Dependency python packages are automatically installed during
+``tcconfig`` installation via pip.
 
 -  `DataPropery <https://github.com/thombashi/DataProperty>`__
 -  `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
+-  `pyparsing <https://pyparsing.wikispaces.com/>`__
 -  `six <https://pypi.python.org/pypi/six/>`__
 -  `thutils <https://github.com/thombashi/thutils>`__
 

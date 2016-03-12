@@ -63,6 +63,7 @@ setuptools.setup(
         "console_scripts": [
             "tcset=tcconfig.tcset:main",
             "tcdel=tcconfig.tcdel:main",
+            "tcshow=tcconfig.tcshow:main",
         ],
     }
 )

@@ -4,10 +4,14 @@
 @author: Tsuyoshi Hombashi
 '''
 
+from __future__ import absolute_import
+
 import dataproperty
 import ipaddress
 import six
 import thutils
+
+import tcconfig.parser
 
 
 class TrafficDirection:
@@ -51,9 +55,7 @@ class TrafficControl(object):
         self.port = None
 
     def validate(self):
-        if dataproperty.is_empty_string(self.__device):
-            raise ValueError("device name is empty")
-
+        tcconfig.verify_network_interface(self.__device)
         self.__validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
@@ -99,6 +101,15 @@ class TrafficControl(object):
         return_code_list.append(proc.returncode != 0)
 
         return -1 if all(return_code_list) else 0
+
+    def get_tc_parameter(self):
+        return {
+            self.__device: {
+                "outgoing": self.__get_filter(self.__device),
+                "incoming": self.__get_filter(
+                    self.__get_ifb_from_device(self.__device)),
+            },
+        }
 
     def __setup_ifb(self):
         if self.direction != TrafficDirection.INCOMING:
@@ -215,6 +226,14 @@ class TrafficControl(object):
 
         raise ValueError("unknown direction: " + self.direction)
 
+    def __get_ifb_from_device(self, device):
+        filter_parser = tcconfig.parser.TcFilterParser()
+        command = "tc filter show dev %s root" % (device)
+        proc = self.__subproc_wrapper.popen_command(command)
+        filter_stdout, _stderr = proc.communicate()
+
+        return filter_parser.parse_incoming_device(filter_stdout)
+
     def __get_network_direction_str(self):
         if self.direction == TrafficDirection.OUTGOING:
             return "dst"
@@ -243,8 +262,46 @@ class TrafficControl(object):
 
         raise ValueError("unknown direction: " + self.direction)
 
+    def __get_filter(self, device):
+        qdisc_parser = tcconfig.parser.TcQdiscParser()
+        filter_parser = tcconfig.parser.TcFilterParser()
+
+        # parse qdisc ---
+        command = "tc qdisc show dev %s" % (device)
+        proc = self.__subproc_wrapper.popen_command(command)
+        qdisc_stdout, _stderr = proc.communicate()
+        qdisc_param = qdisc_parser.parse(qdisc_stdout)
+
+        # parse filter ---
+        command = "tc filter show dev %s" % (device)
+        proc = self.__subproc_wrapper.popen_command(command)
+        filter_stdout, _stderr = proc.communicate()
+
+        filter_table = {}
+
+        for filter_param in filter_parser.parse_filter(filter_stdout):
+            key_item_list = []
+
+            if dataproperty.is_not_empty_string(filter_param.get("network")):
+                key_item_list.append("network=" + filter_param.get("network"))
+
+            if dataproperty.is_integer(filter_param.get("port")):
+                key_item_list.append("port=%d" % (filter_param.get("port")))
+
+            filter_key = ", ".join(key_item_list)
+            filter_table[filter_key] = {}
+            if filter_param.get("flowid") == qdisc_param.get("parent"):
+                work_qdisc_param = dict(qdisc_param)
+                del work_qdisc_param["parent"]
+                filter_table[filter_key] = work_qdisc_param
+
+        return filter_table
+
     def __set_pre_network_filter(self, qdisc_major_id):
-        if dataproperty.is_empty_string(self.network):
+        if all([
+            dataproperty.is_empty_string(self.network),
+            not dataproperty.is_integer(self.port),
+        ]):
             flowid = "%d:%d" % (qdisc_major_id, self.__get_qdisc_minor_id())
         else:
             flowid = "%d:2" % (qdisc_major_id)

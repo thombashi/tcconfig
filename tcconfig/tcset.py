@@ -55,7 +55,7 @@ def parse_option():
         "--corrupt", dest="corruption_rate", type=float, default=0,
         help="""
         packet corruption rate [%%].
-        corruption means single bit error at a random offset in the packet.
+        packet corruption means single bit error at a random offset in the packet.
         (default=%(default)s)
         """)
     group.add_argument(

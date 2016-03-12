@@ -1,4 +1,6 @@
 ipaddress
-DataProperty
-six<=1.8.0
-thutils
+DataProperty>=0.2.1
+netifaces
+pyparsing
+six
+thutils>=0.1.19
