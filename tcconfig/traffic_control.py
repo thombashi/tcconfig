@@ -333,11 +333,11 @@ class TrafficControl(object):
         if self.packet_loss_rate > 0:
             command_list.append("loss %s%%" % (self.packet_loss_rate))
         if self.latency_ms > 0:
-            command_list.append("delay %dms" % (self.latency_ms))
+            command_list.append("delay %fms" % (self.latency_ms))
 
             if self.latency_distro_ms > 0:
                 command_list.append(
-                    "%dms distribution normal" % (self.latency_distro_ms))
+                    "%fms distribution normal" % (self.latency_distro_ms))
 
         if self.corruption_rate > 0:
             command_list.append("corrupt %s%%" % (self.corruption_rate))
