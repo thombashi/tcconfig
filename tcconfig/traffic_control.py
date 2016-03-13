@@ -21,9 +21,7 @@ class TrafficDirection:
 
 
 class TrafficControl(object):
-    __OUT_DEVICE_QDISC_MAJOR_ID = 1
     __OUT_DEVICE_QDISC_MINOR_ID = 1
-    __IN_DEVICE_QDISC_MAJOR_ID = 1
     __IN_DEVICE_QDISC_MINOR_ID = 3
 
     __MIN_PACKET_LOSS_RATE = 0  # [%]
@@ -40,11 +38,14 @@ class TrafficControl(object):
     __MIN_PORT = 0
     __MAX_PORT = 65535
 
+    @property
+    def ifb_device(self):
+        return "ifb%d" % (self.__get_device_qdisc_major_id())
+
     def __init__(self, subproc_wrapper, device):
         self.__subproc_wrapper = subproc_wrapper
         self.__device = device
 
-        self.ifb_device = "ifb0"
         self.direction = None
         self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
         self.latency_ms = None  # [milliseconds]
@@ -66,15 +67,10 @@ class TrafficControl(object):
     def __get_device_qdisc_major_id(self):
         import hashlib
 
-        base_hash = hashlib.md5(self.__device).hexdigest()[:3]
+        base_device_hash = hashlib.md5(self.__device).hexdigest()[:3]
+        device_hash_prefix = "1"
 
-        if self.direction == TrafficDirection.OUTGOING:
-            return int(base_hash + str(self.__OUT_DEVICE_QDISC_MAJOR_ID), 16)
-
-        if self.direction == TrafficDirection.INCOMING:
-            return int(base_hash + str(self.__IN_DEVICE_QDISC_MAJOR_ID), 16)
-
-        raise ValueError("unknown traffic direction: " + self.direction)
+        return int(device_hash_prefix + base_device_hash, 16)
 
     def set_tc(self):
         self.__setup_ifb()
@@ -88,21 +84,18 @@ class TrafficControl(object):
 
     def delete_tc(self):
         return_code_list = []
+        command_list = [
+            "tc qdisc del dev %s root" % (self.__device),
+            "tc qdisc del dev %s ingress" % (self.__device),
+            "tc qdisc del dev %s root" % (self.ifb_device),
+            "ip link set dev %s down" % (self.ifb_device),
+            "ip link delete %s type ifb" % (self.ifb_device),
+        ]
 
-        command = "tc qdisc del dev %s root" % (self.__device)
-        proc = self.__subproc_wrapper.popen_command(command)
-        _stdout, _stderr = proc.communicate()
-        return_code_list.append(proc.returncode != 0)
-
-        command = "tc qdisc del dev %s ingress" % (self.__device)
-        proc = self.__subproc_wrapper.popen_command(command)
-        _stdout, _stderr = proc.communicate()
-        return_code_list.append(proc.returncode != 0)
-
-        command = "tc qdisc del dev %s root" % (self.ifb_device)
-        proc = self.__subproc_wrapper.popen_command(command)
-        _stdout, _stderr = proc.communicate()
-        return_code_list.append(proc.returncode != 0)
+        for command in command_list:
+            proc = self.__subproc_wrapper.popen_command(command)
+            _stdout, _stderr = proc.communicate()
+            return_code_list.append(proc.returncode != 0)
 
         return -1 if all(return_code_list) else 0
 
@@ -127,6 +120,9 @@ class TrafficControl(object):
         command = "modprobe ifb"
         return_code |= self.__subproc_wrapper.run(command)
 
+        command = "ip link add %s type ifb" % (self.ifb_device)
+        return_code |= self.__subproc_wrapper.run(command)
+
         command = "ip link set dev %s up" % (self.ifb_device)
         return_code |= self.__subproc_wrapper.run(command)
 
@@ -137,7 +133,7 @@ class TrafficControl(object):
             "tc filter add",
             "dev " + self.__device,
             "parent ffff: protocol ip u32 match u32 0 0",
-            "flowid %d:" % (self.__IN_DEVICE_QDISC_MAJOR_ID),
+            "flowid %x:" % (self.__get_device_qdisc_major_id()),
             "action mirred egress redirect",
             "dev " + self.ifb_device,
         ]
