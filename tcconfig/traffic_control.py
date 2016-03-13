@@ -64,11 +64,15 @@ class TrafficControl(object):
         self.__validate_port()
 
     def __get_device_qdisc_major_id(self):
+        import hashlib
+
+        base_hash = hashlib.md5(self.__device).hexdigest()[:3]
+
         if self.direction == TrafficDirection.OUTGOING:
-            return self.__OUT_DEVICE_QDISC_MAJOR_ID
+            return int(base_hash + str(self.__OUT_DEVICE_QDISC_MAJOR_ID), 16)
 
         if self.direction == TrafficDirection.INCOMING:
-            return self.__IN_DEVICE_QDISC_MAJOR_ID
+            return int(base_hash + str(self.__IN_DEVICE_QDISC_MAJOR_ID), 16)
 
         raise ValueError("unknown traffic direction: " + self.direction)
 
@@ -211,7 +215,7 @@ class TrafficControl(object):
             "tc qdisc add",
             "dev " + self.__get_tc_device(),
             "root",
-            "handle %d:" % (qdisc_major_id),
+            "handle %x:" % (qdisc_major_id),
             "prio",
         ]
 
@@ -302,15 +306,15 @@ class TrafficControl(object):
             dataproperty.is_empty_string(self.network),
             not dataproperty.is_integer(self.port),
         ]):
-            flowid = "%d:%d" % (qdisc_major_id, self.__get_qdisc_minor_id())
+            flowid = "%x:%d" % (qdisc_major_id, self.__get_qdisc_minor_id())
         else:
-            flowid = "%d:2" % (qdisc_major_id)
+            flowid = "%x:2" % (qdisc_major_id)
 
         command_list = [
             "tc filter add",
             "dev " + self.__get_tc_device(),
             "protocol ip",
-            "parent %d:" % (qdisc_major_id),
+            "parent %x:" % (qdisc_major_id),
             "prio 2 u32 match ip %s 0.0.0.0/0" % (
                 self.__get_network_direction_str()),
             "flowid " + flowid
@@ -322,8 +326,8 @@ class TrafficControl(object):
         command_list = [
             "tc qdisc add",
             "dev " + self.__get_tc_device(),
-            "parent %d:%d" % (qdisc_major_id, self.__get_qdisc_minor_id()),
-            "handle %d:" % (self.__get_netem_qdisc_major_id(qdisc_major_id)),
+            "parent %x:%d" % (qdisc_major_id, self.__get_qdisc_minor_id()),
+            "handle %x:" % (self.__get_netem_qdisc_major_id(qdisc_major_id)),
             "netem",
         ]
         if self.packet_loss_rate > 0:
@@ -351,9 +355,9 @@ class TrafficControl(object):
             "tc filter add",
             "dev " + self.__get_tc_device(),
             "protocol ip",
-            "parent %d:" % (qdisc_major_id),
+            "parent %x:" % (qdisc_major_id),
             "prio 1 u32",
-            "flowid %d:%d" % (qdisc_major_id, self.__get_qdisc_minor_id()),
+            "flowid %x:%d" % (qdisc_major_id, self.__get_qdisc_minor_id()),
         ]
         if dataproperty.is_not_empty_string(self.network):
             command_list.append("match ip %s %s" % (
@@ -375,7 +379,7 @@ class TrafficControl(object):
         command_list = [
             "tc qdisc add",
             "dev " + self.__get_tc_device(),
-            "parent %d:%d" % (
+            "parent %x:%d" % (
                 self.__get_netem_qdisc_major_id(qdisc_major_id),
                 self.__get_qdisc_minor_id()),
             "handle 20:",

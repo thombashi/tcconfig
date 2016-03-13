@@ -20,7 +20,7 @@ class TcFilterParser(object):
     __FILTER_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("flowid", include=True) +
-        pp.Word(pp.nums + ":")
+        pp.Word(pp.alphanums + ":")
     )
     __FILTER_MATCH_PATTERN = (
         pp.Literal("match") +
@@ -167,7 +167,7 @@ class TcQdiscParser(object):
     def __parse_netem_param(self, line, parse_param_name):
         pattern = (
             pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.nums + "." + ":"))
+            pp.Word(pp.alphanums + "." + ":"))
 
         try:
             result = pattern.parseString(line)[-1]
