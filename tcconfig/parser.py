@@ -140,12 +140,12 @@ class TcQdiscParser(object):
                 continue
 
             if re.search("qdisc netem", line) is not None:
-                self.__parse_netem_param(line, "parent")
+                self.__parse_netem_param(line, "parent", pp.alphanums + ":")
 
-            self.__parse_netem_param(line, "delay")
+            self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
-            self.__parse_netem_param(line, "loss")
-            self.__parse_netem_param(line, "corrupt")
+            self.__parse_netem_param(line, "loss", pp.nums + ".")
+            self.__parse_netem_param(line, "corrupt", pp.nums + ".")
             self.__parse_tbf_rate(line)
 
         return self.__parsed_param
@@ -164,10 +164,10 @@ class TcQdiscParser(object):
         except pp.ParseException:
             pass
 
-    def __parse_netem_param(self, line, parse_param_name):
+    def __parse_netem_param(self, line, parse_param_name, word_pattern):
         pattern = (
             pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.alphanums + "." + ":"))
+            pp.Word(word_pattern))
 
         try:
             result = pattern.parseString(line)[-1]
