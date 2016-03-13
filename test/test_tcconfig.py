@@ -132,6 +132,45 @@ class Test_tcconfig:
 
         assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
 
+    @pytest.mark.xfail
+    @pytest.mark.parametrize(["overwrite", "expected"], [
+        ["", 0],
+        ["--overwrite", 255],
+    ])
+    def test_config_file(self, tmpdir, subproc_wrapper, overwrite, expected):
+        p = tmpdir.join("tcconfig.json")
+        config = """{
+    "eth0": {
+        "outgoing": {
+            "network=192.168.0.10/32, port=8080": {
+                "delay": "10.0", 
+                "loss": "0.01", 
+                "rate": "250K", 
+                "delay-distro": "2.0"
+            }, 
+            "network=0.0.0.0/0": {}
+        }, 
+        "incoming": {
+            "network=192.168.10.0/24": {
+                "corrupt": "0.02", 
+                "rate": "1500K"
+            }, 
+            "network=0.0.0.0/0": {}
+        }
+    }
+}
+"""
+        p.write(config)
+
+        command = " ".join(["tcset -f ", str(p), overwrite])
+        assert subproc_wrapper.run(command) == expected
+
+        proc = subproc_wrapper.popen_command("tcshow --device " + DEVICE)
+        tcshow_stdout, _stderr = proc.communicate()
+        assert tcshow_stdout == config
+
+        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+
 
 class Test_tcset_one_network:
     """
@@ -179,7 +218,7 @@ class Test_tcset_one_network:
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
 
     @pytest.mark.skipif("platform.system() == 'Windows'")
     @pytest.mark.parametrize(["delay", "delay_distro"], [

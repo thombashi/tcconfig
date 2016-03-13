@@ -53,35 +53,39 @@ manager).
 Usage
 =====
 
-Set traffic control (tcset)
----------------------------
+Set traffic control (``tcset`` command)
+---------------------------------------
 
 ``tcset`` is a command to impose traffic control to a network interface
 (device).
 
-tcset help
-~~~~~~~~~~
+``tcset`` help
+~~~~~~~~~~~~~~
 
 .. code:: console
 
     usage: tcset [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
-                 --device DEVICE [--overwrite] [--direction {outgoing,incoming}]
-                 [--rate BANDWIDTH_RATE] [--delay NETWORK_LATENCY]
-                 [--delay-distro LATENCY_DISTRO_MS] [--loss PACKET_LOSS_RATE]
-                 [--corrupt CORRUPTION_RATE] [--network NETWORK] [--port PORT]
+                 (--device DEVICE | -f CONFIG_FILE) [--overwrite]
+                 [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
+                 [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
+                 [--loss PACKET_LOSS_RATE] [--corrupt CORRUPTION_RATE]
+                 [--network NETWORK] [--port PORT]
 
     optional arguments:
       -h, --help            show this help message and exit
       --version             show program's version number and exit
       --debug               for debug print.
       --quiet               suppress output of execution log message.
+      --device DEVICE       network device name (e.g. eth0)
+      -f CONFIG_FILE, --config-file CONFIG_FILE
+                            setting traffic controls from configuration file.
+                            output file of the tcshow.
 
     Miscellaneous:
       --logging             output execution log to a file (tcset.log).
       --stacktrace          display stack trace when an error occurred.
 
     Network Interface:
-      --device DEVICE       network device name (e.g. eth0)
       --overwrite           overwrite existing settings
 
     Traffic Control:
@@ -189,14 +193,14 @@ e.g. Set 100ms +- 20ms network latency with normal distribution
 
     # tcset --device eth0 --delay 100 --delay-distro 20
 
-Delete traffic control (tcdel)
-------------------------------
+Delete traffic control (``tcdel`` command)
+------------------------------------------
 
 ``tcdel`` is a command to delete traffic control from a network
 interface (device).
 
-tcdel help
-~~~~~~~~~~
+``tcdel`` help
+~~~~~~~~~~~~~~
 
 .. code:: console
 
@@ -223,8 +227,8 @@ e.g. Delete traffic control of eth0
 
     # tcdel --device eth0
 
-Display traffic control configurations (tcshow)
------------------------------------------------
+Display traffic control configurations (``tcshow`` command)
+-----------------------------------------------------------
 
 ``tcshow`` is a command to display traffic control to network
 interface(s).
@@ -233,8 +237,8 @@ Note: scope of ``tcshow`` command is limited to parameters that can be
 set with tcset (``tcshow`` is not a general purpose tool to display all
 of the parameters of the tc command).
 
-tcshow help
-~~~~~~~~~~~
+``tcshow`` help
+~~~~~~~~~~~~~~~
 
 .. code:: console
 
@@ -263,6 +267,92 @@ Example
     # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
     # tcshow --device eth0
     {
+        "eth0": {
+            "outgoing": {
+                "network=192.168.0.10/32, port=8080": {
+                    "delay": "10.0",
+                    "loss": "0.01",
+                    "rate": "250K",
+                    "delay-distro": "2.0"
+                },
+                "network=0.0.0.0/0": {}
+            },
+            "incoming": {
+                "network=0.0.0.0/0": {
+                    "delay": "1.0",
+                    "loss": "0.02",
+                    "rate": "500K"
+                }
+            }
+        }
+    }
+
+Backup and restore traffic control configurations
+-------------------------------------------------
+
+Backup configurations
+~~~~~~~~~~~~~~~~~~~~~
+
+.. code:: console
+
+    # tcset --device eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
+    # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
+    # tcset --device eth1 --delay 2.5 --delay-distro 1.2 --loss 0.01 --rate 0.25M --port 80
+    # tcset --device eth1 --corrupt 0.02 --rate 1.5M --direction incoming --network 192.168.10.0/24
+
+.. code:: console
+
+    # tcshow --device eth0 --device eth1 > tcconfig.json
+
+Restore configurations
+~~~~~~~~~~~~~~~~~~~~~~
+
+Before restore
+
+.. code:: console
+
+    # tcshow --device eth0 --device eth1
+    {
+        "eth1": {
+            "outgoing": {},
+            "incoming": {}
+        },
+        "eth0": {
+            "outgoing": {},
+            "incoming": {}
+        }
+    }
+
+Restore from a configuration file.
+
+.. code:: console
+
+    # tcset -f tcconfig.json
+
+After restore
+
+.. code:: console
+
+    # tcshow --device eth0 --device eth1
+    {
+        "eth1": {
+            "outgoing": {
+                "port=80": {
+                    "delay": "2.5",
+                    "loss": "0.01",
+                    "rate": "250K",
+                    "delay-distro": "1.2"
+                },
+                "network=0.0.0.0/0": {}
+            },
+            "incoming": {
+                "network=192.168.10.0/24": {
+                    "corrupt": "0.02",
+                    "rate": "1500K"
+                },
+                "network=0.0.0.0/0": {}
+            }
+        },
         "eth0": {
             "outgoing": {
                 "network=192.168.0.10/32, port=8080": {

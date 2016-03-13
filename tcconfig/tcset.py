@@ -9,7 +9,11 @@ from __future__ import absolute_import
 from __future__ import with_statement
 import sys
 
+import dataproperty
+import pyparsing as pp
+import six
 import thutils
+
 import tcconfig
 import tcconfig.traffic_control
 
@@ -18,10 +22,16 @@ def parse_option():
     parser = thutils.option.ArgumentParserObject()
     parser.make(version=tcconfig.VERSION)
 
-    group = parser.add_argument_group("Network Interface")
+    group = parser.parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "--device", required=True,
+        "--device",
         help="network device name (e.g. eth0)")
+    group.add_argument(
+        "-f", "--config-file",
+        help="""setting traffic controls from configuration file.
+        output file of the tcshow.""")
+
+    group = parser.add_argument_group("Network Interface")
     group.add_argument(
         "--overwrite", action="store_true", default=False,
         help="overwrite existing settings")
@@ -68,6 +78,77 @@ def parse_option():
     return parser.parse_args()
 
 
+def _parse_tc_filter_network(text):
+    network_pattern = (
+        pp.SkipTo("network=", include=True) +
+        pp.Word(pp.alphanums + "." + "/"))
+
+    return network_pattern.parseString(text)[-1]
+
+
+def _parse_tc_filter_port(text):
+    port_pattern = (
+        pp.SkipTo("port=", include=True) +
+        pp.Word(pp.nums))
+
+    return port_pattern.parseString(text)[-1]
+
+
+def load_tcconfig(config_file):
+    from voluptuous import Schema, Required, Any, ALLOW_EXTRA
+
+    schema = Schema({
+        Required(six.text_type): {
+            Any("outgoing", "incoming"): {
+                six.text_type: {
+                    six.text_type: six.text_type,
+                },
+            }
+        },
+    }, extra=ALLOW_EXTRA)
+
+    return thutils.loader.JsonLoader.load(
+        config_file, schema)
+
+
+def get_tcconfig_command_list(config_table, is_overwrite):
+    command_list = []
+
+    for device, device_table in six.iteritems(config_table):
+        if is_overwrite:
+            command_list.append("tcdel --device " + device)
+
+        for direction, direction_table in six.iteritems(device_table):
+            for tc_filter, filter_table in six.iteritems(direction_table):
+                if filter_table == {}:
+                    continue
+
+                option_list = [
+                    "--device=" + device,
+                    "--direction=" + direction,
+                ] + [
+                    "--%s=%s" % (k, v)
+                    for k, v in six.iteritems(filter_table)
+                ]
+
+                try:
+                    network = _parse_tc_filter_network(tc_filter)
+                    if network != "0.0.0.0/0":
+                        option_list.append("--network=" + network)
+                except pp.ParseException:
+                    pass
+
+                try:
+                    port = _parse_tc_filter_port(tc_filter)
+                    option_list.append("--port=" + port)
+                except pp.ParseException:
+                    pass
+
+                command_list.append(" ".join(["tcset"] + option_list))
+
+    return command_list
+
+
 @thutils.main.Main
 def main():
     options = parse_option()
@@ -76,6 +157,17 @@ def main():
     thutils.common.verify_install_command(["tc"])
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
+
+    if dataproperty.is_not_empty_string(options.config_file):
+        return_code = 0
+
+        for tcconfig_command in get_tcconfig_command_list(
+                load_tcconfig(options.config_file), options.overwrite):
+            # print tcconfig_command
+            return_code |= subproc_wrapper.run(tcconfig_command)
+
+        return return_code
+
     tc = tcconfig.traffic_control.TrafficControl(
         subproc_wrapper, options.device)
     tc.direction = options.direction
