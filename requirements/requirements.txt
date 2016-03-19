@@ -3,4 +3,4 @@ DataProperty>=0.2.1
 netifaces
 pyparsing
 six
-thutils>=0.1.19
+thutils>=0.1.20
