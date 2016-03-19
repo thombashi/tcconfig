@@ -7,6 +7,8 @@
 from __future__ import absolute_import
 
 import pytest
+import six
+
 import tcconfig.parser
 
 
@@ -26,7 +28,7 @@ class Test_TcFilterParser_parse_filter:
         [None, []],
         ["", []],
         [
-            """
+            six.b("""
             filter parent 1: protocol ip pref 1 u32
             filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
             filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
@@ -35,14 +37,14 @@ class Test_TcFilterParser_parse_filter:
             filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
             filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
               match 00000000/00000000 at 16
-            """,
+            """),
             [
                 {'flowid': '1:1', 'network': '192.168.0.10/32', 'port': None},
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
             ],
         ],
         [
-            """
+            six.b("""
             filter parent 1: protocol ip pref 1 u32
             filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
             filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
@@ -52,14 +54,14 @@ class Test_TcFilterParser_parse_filter:
             filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
             filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
               match 00000000/00000000 at 16
-            """,
+            """),
             [
                 {'flowid': '1:1', 'network': '192.168.0.0/24', 'port': 80},
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
             ],
         ],
         [
-            """
+            six.b("""
             filter parent 1: protocol ip pref 1 u32
             filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
             filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:3
@@ -69,7 +71,7 @@ class Test_TcFilterParser_parse_filter:
             filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
             filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
               match 00000000/00000000 at 12
-            """,
+            """),
             [
                 {'flowid': '1:3', 'network': '192.168.0.10/32', 'port': 8080},
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
@@ -86,12 +88,12 @@ class Test_TcFilterParser_parse_incoming_device:
         ["", None],
         [None, None],
         [
-            """filter parent ffff: protocol ip pref 49152 u32
+            six.b("""filter parent ffff: protocol ip pref 49152 u32
 filter parent ffff: protocol ip pref 49152 u32 fh 800: ht divisor 1
 filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:
   match 00000000/00000000 at 0
         action order 1: mirred (Egress Redirect to device ifb0) stolen
-        index 3795 ref 1 bind 1""",
+        index 3795 ref 1 bind 1"""),
             "ifb0",
         ],
     ])
@@ -113,9 +115,9 @@ class Test_TcQdiscParser_parse:
     @pytest.mark.parametrize(["value", "expected"], [
         ["", {}],
         [
-            """qdisc prio 1: root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
+            six.b("""qdisc prio 1: root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
 qdisc netem 11: parent 1:1 limit 1000 delay 10.0ms loss 0.1% corrupt 0.1%
-qdisc tbf 20: parent 11:1 rate 100Mbit burst 100000b limit 10000b""",
+qdisc tbf 20: parent 11:1 rate 100Mbit burst 100000b limit 10000b"""),
             {
                 'parent': '1:1',
                 'corrupt': "0.1",
@@ -125,10 +127,10 @@ qdisc tbf 20: parent 11:1 rate 100Mbit burst 100000b limit 10000b""",
             },
         ],
         [
-            """qdisc prio 1: dev eth0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
+            six.b("""qdisc prio 1: dev eth0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
 qdisc netem 11: dev eth0 parent 1:1 limit 1000 delay 10.0ms  2.0ms loss 0.1% corrupt 0.1%
 qdisc tbf 20: dev eth0 parent 11:1 rate 100Mbit burst 100000b limit 10000b
-qdisc pfifo_fast 0: dev ifb0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1""",
+qdisc pfifo_fast 0: dev ifb0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1"""),
             {
                 'parent': '1:1',
                 'corrupt': "0.1",
@@ -139,9 +141,9 @@ qdisc pfifo_fast 0: dev ifb0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 
             },
         ],
         [
-            """qdisc prio 1: root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
+            six.b("""qdisc prio 1: root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
 qdisc netem 11: parent 1:1 limit 1000 delay 1.0ms loss 0.01%
-qdisc tbf 20: parent 11:1 rate 250Kbit burst 1600b lat 268.8ms""",
+qdisc tbf 20: parent 11:1 rate 250Kbit burst 1600b lat 268.8ms"""),
             {
                 'parent': '1:1',
                 'delay': '1.0',

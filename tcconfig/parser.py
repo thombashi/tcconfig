@@ -8,6 +8,14 @@ import re
 
 import dataproperty
 import pyparsing as pp
+import six
+
+
+def _to_unicode(text):
+    try:
+        return text.decode("ascii")
+    except AttributeError:
+        return text
 
 
 class TcFilterParser(object):
@@ -20,7 +28,7 @@ class TcFilterParser(object):
     __FILTER_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("flowid", include=True) +
-        pp.Word(pp.alphanums + ":")
+        pp.Word(pp.hexnums + ":")
     )
     __FILTER_MATCH_PATTERN = (
         pp.Literal("match") +
@@ -83,7 +91,7 @@ class TcFilterParser(object):
             return None
 
         match = re.search(
-            "Egress Redirect to device ifb[\d]+", text, re.MULTILINE)
+            "Egress Redirect to device ifb[\d]+", _to_unicode(text), re.MULTILINE)
         if match is None:
             return None
 
@@ -102,11 +110,13 @@ class TcFilterParser(object):
         }
 
     def __parse_flow_id(self, line):
-        parsed_list = self.__FILTER_PATTERN.parseString(line.lstrip())
+        parsed_list = self.__FILTER_PATTERN.parseString(
+            _to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
 
     def __parse_filter(self, line):
-        parsed_list = self.__FILTER_MATCH_PATTERN.parseString(line)
+        parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
+            _to_unicode(line))
         value_hex, mask_hex = parsed_list[1].split("/")
         match_id = int(parsed_list[3])
 
@@ -132,15 +142,16 @@ class TcQdiscParser(object):
 
     def parse(self, text):
         for line in text.splitlines():
-            line = line.lstrip()
             if dataproperty.is_empty_string(line):
                 continue
+
+            line = _to_unicode(line.lstrip())
 
             if re.search("qdisc netem|qdisc tbf", line) is None:
                 continue
 
             if re.search("qdisc netem", line) is not None:
-                self.__parse_netem_param(line, "parent", pp.alphanums + ":")
+                self.__parse_netem_param(line, "parent", pp.hexnums + ":")
 
             self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
@@ -170,7 +181,7 @@ class TcQdiscParser(object):
             pp.Word(word_pattern))
 
         try:
-            result = pattern.parseString(line)[-1]
+            result = pattern.parseString(_to_unicode(line))[-1]
             if dataproperty.is_not_empty_string(result):
                 self.__parsed_param[parse_param_name] = result
         except pp.ParseException:

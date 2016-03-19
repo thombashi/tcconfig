@@ -67,7 +67,7 @@ class TrafficControl(object):
     def __get_device_qdisc_major_id(self):
         import hashlib
 
-        base_device_hash = hashlib.md5(self.__device).hexdigest()[:3]
+        base_device_hash = hashlib.md5(six.b(self.__device)).hexdigest()[:3]
         device_hash_prefix = "1"
 
         return int(device_hash_prefix + base_device_hash, 16)

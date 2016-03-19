@@ -4,7 +4,7 @@
 @author: Tsuyoshi Hombashi
 '''
 
-VERSION = "0.6.0"
+VERSION = "0.6.1"
 
 
 def verify_network_interface(device):

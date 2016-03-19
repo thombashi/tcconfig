@@ -10,6 +10,7 @@ import platform
 import dataproperty
 import pingparsing
 import pytest
+import six
 import thutils
 import tcconfig
 
@@ -91,11 +92,11 @@ class NormalTestValue:
 
 class Test_tcconfig:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts --runxfail
 
-    These tests expected to execute on following environment:
+    These tests are expected to execute on following environment:
        - Linux(debian) w/ iputils-ping package
        - English environment (for parsing ping output)
     """
@@ -162,23 +163,25 @@ class Test_tcconfig:
 """
         p.write(config)
 
+        subproc_wrapper.run("tcdel --device " + DEVICE)
         command = " ".join(["tcset -f ", str(p), overwrite])
         assert subproc_wrapper.run(command) == expected
 
         proc = subproc_wrapper.popen_command("tcshow --device " + DEVICE)
         tcshow_stdout, _stderr = proc.communicate()
-        assert tcshow_stdout == config
+        assert thutils.loader.JsonLoader.loads(
+            tcshow_stdout) == thutils.loader.JsonLoader.loads(config)
 
         assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
 
 
 class Test_tcset_one_network:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts "--dst-host=<hostname or IP address>"
 
-    These tests expected to execute on following environment:
+    These tests are expected to execute on following environment:
        - Linux(debian) w/ iputils-ping package
        - English environment (for parsing ping output)
     """
@@ -307,12 +310,12 @@ class Test_tcset_one_network:
 
 class Test_tcset_two_network:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts \
         "--dst-host=<hostname or IP address> --dst-host-ex=<hostname or IP address>"
 
-    These tests expected to execute on following environment:
+    These tests are expected to execute on following environment:
        - Linux(debian) w/ iputils-ping package
        - English environment (for parsing ping output)
     """

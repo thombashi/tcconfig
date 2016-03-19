@@ -163,7 +163,6 @@ def main():
 
         for tcconfig_command in get_tcconfig_command_list(
                 load_tcconfig(options.config_file), options.overwrite):
-            # print tcconfig_command
             return_code |= subproc_wrapper.run(tcconfig_command)
 
         return return_code
