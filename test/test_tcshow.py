@@ -53,7 +53,7 @@ class Test_tcshow:
         ])
         proc = subproc_wrapper.popen_command(command)
         stdout, _stderr = proc.communicate()
-        assert stdout == """{
+        assert thutils.loader.JsonLoader.loads(stdout) == thutils.loader.JsonLoader.loads("""{
     "eth0": {
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
@@ -73,6 +73,6 @@ class Test_tcshow:
         }
     }
 }
-"""
+""")
 
         assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0

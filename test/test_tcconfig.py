@@ -10,6 +10,7 @@ import platform
 import dataproperty
 import pingparsing
 import pytest
+import six
 import thutils
 import tcconfig
 
@@ -162,12 +163,14 @@ class Test_tcconfig:
 """
         p.write(config)
 
+        subproc_wrapper.run("tcdel --device " + DEVICE)
         command = " ".join(["tcset -f ", str(p), overwrite])
         assert subproc_wrapper.run(command) == expected
 
         proc = subproc_wrapper.popen_command("tcshow --device " + DEVICE)
         tcshow_stdout, _stderr = proc.communicate()
-        assert tcshow_stdout == config
+        assert thutils.loader.JsonLoader.loads(
+            tcshow_stdout) == thutils.loader.JsonLoader.loads(config)
 
         assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
 
