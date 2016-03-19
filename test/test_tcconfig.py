@@ -91,11 +91,11 @@ class NormalTestValue:
 
 class Test_tcconfig:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts --runxfail
 
-    These tests expected to execute on following environment:
+    These tests are expected to execute on following environment:
        - Linux(debian) w/ iputils-ping package
        - English environment (for parsing ping output)
     """
@@ -174,11 +174,11 @@ class Test_tcconfig:
 
 class Test_tcset_one_network:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts "--dst-host=<hostname or IP address>"
 
-    These tests expected to execute on following environment:
+    These tests are expected to execute on following environment:
        - Linux(debian) w/ iputils-ping package
        - English environment (for parsing ping output)
     """
@@ -307,12 +307,12 @@ class Test_tcset_one_network:
 
 class Test_tcset_two_network:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts \
         "--dst-host=<hostname or IP address> --dst-host-ex=<hostname or IP address>"
 
-    These tests expected to execute on following environment:
+    These tests are expected to execute on following environment:
        - Linux(debian) w/ iputils-ping package
        - English environment (for parsing ping output)
     """

@@ -18,8 +18,8 @@ def subproc_wrapper():
 
 class Test_tcshow:
     """
-    Inappropriate tests to Travis CI.
-    Run locally with following command:
+    Tests of in this class are inappropriate for Travis CI.
+    Execute following command at the local environment  when running tests:
       python setup.py test --addopts --runxfail
     """
 
