@@ -20,7 +20,7 @@ class TcFilterParser(object):
     __FILTER_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("flowid", include=True) +
-        pp.Word(pp.alphanums + ":")
+        pp.Word(pp.hexnums + ":")
     )
     __FILTER_MATCH_PATTERN = (
         pp.Literal("match") +
@@ -140,7 +140,7 @@ class TcQdiscParser(object):
                 continue
 
             if re.search("qdisc netem", line) is not None:
-                self.__parse_netem_param(line, "parent", pp.alphanums + ":")
+                self.__parse_netem_param(line, "parent", pp.hexnums + ":")
 
             self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
