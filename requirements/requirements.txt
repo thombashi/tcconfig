@@ -1,6 +1,7 @@
-ipaddress
 DataProperty>=0.2.1
+ipaddress
 netifaces
 pyparsing
 six
-thutils>=0.1.20
+thutils>=0.1.21
+voluptuous
