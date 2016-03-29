@@ -28,7 +28,7 @@ def parse_option():
         help="network device name (e.g. eth0)")
     group.add_argument(
         "-f", "--config-file",
-        help="""setting traffic controls from configuration file.
+        help="""setting traffic controls from a configuration file.
         output file of the tcshow.""")
 
     group = parser.add_argument_group("Network Interface")
@@ -40,9 +40,9 @@ def parse_option():
     group.add_argument(
         "--direction", choices=tcconfig.traffic_control.TrafficDirection.LIST,
         default=tcconfig.traffic_control.TrafficDirection.OUTGOING,
-        help="""direction of network communication that impose traffic control.
-        "incoming" requires linux kernel version 2.6.20 or later.
-        (default=%(default)s)
+        help="""the direction of network communication that impose traffic control.
+        ``incoming`` requires linux kernel version 2.6.20 or later.
+        (default = ``%(default)s``)
         """)
     group.add_argument(
         "--rate", dest="bandwidth_rate",
@@ -55,8 +55,8 @@ def parse_option():
         help="""
         distribution of network latency becomes X +- Y [ms]
         (normal distribution), with this option.
-        (X: value of --delay option, Y: value of --delay-dist opion)
-        network latency distribution will uniform without this option.
+        (X: value of --delay option, Y: value of --delay-dist option)
+        network latency distribution will be uniform without this option.
         """)
     group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
