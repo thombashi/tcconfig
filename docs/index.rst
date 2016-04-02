@@ -6,12 +6,6 @@
 Welcome to tcconfig's documentation!
 ====================================
 
-GitHub repository
-=================
-
-https://github.com/thombashi/tcconfig
-
-
 .. toctree::
    :caption: Table of Contents
    :maxdepth: 3
@@ -21,6 +15,7 @@ https://github.com/thombashi/tcconfig
    pages/installation
    pages/usage/index
    pages/genindex
+   pages/links
 
 
 Indices and tables
