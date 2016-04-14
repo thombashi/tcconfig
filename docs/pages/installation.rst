@@ -15,12 +15,12 @@ Install via pip
 Dependencies
 ============
 
-Linux package
--------------
+Linux packages
+--------------
 
--  iproute2 (reqrequired for tc commandured)
+-  iproute2 (required for tc command)
 
-Python packagge
+Python packages
 ---------------
 
 Dependency python packages are automatically installed during
