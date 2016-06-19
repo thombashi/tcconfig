@@ -1,0 +1,20 @@
+Traffic control features
+------------------------
+
+Network
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+Traffic control can be specified network to apply to:
+
+-  Outgoing/Incoming packets
+-  Certain IP address/network and port
+
+Available parameters
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+The following parameters can be set to network interfaces.
+
+-  Network bandwidth rate [G/M/K bps]
+-  Network latency [milliseconds]
+-  Packet loss rate [%]
+-  Packet corruption rate [%]

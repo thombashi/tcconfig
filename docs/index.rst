@@ -11,7 +11,7 @@ Welcome to tcconfig's documentation!
    :maxdepth: 3
    :numbered:
 
-   pages/introduction
+   pages/introduction/index
    pages/installation
    pages/usage/index
    pages/genindex
