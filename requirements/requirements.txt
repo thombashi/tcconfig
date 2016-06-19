@@ -3,5 +3,5 @@ ipaddress
 netifaces
 pyparsing
 six
-thutils>=0.1.21
+thutils>=0.1.24
 voluptuous
