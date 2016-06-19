@@ -9,6 +9,10 @@ import tcconfig
 MISC_DIR = "misc"
 REQUIREMENT_DIR = "requirements"
 
+needs_pytest = set(['pytest', 'test', 'ptr']).intersection(sys.argv)
+pytest_runner = ['pytest-runner'] if needs_pytest else []
+
+
 with open("README.rst") as fp:
     long_description = fp.read()
 
@@ -40,7 +44,7 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
     install_requires=install_requires,
-    setup_requires=["pytest-runner"],
+    setup_requires=pytest_runner,
     tests_require=tests_require,
     classifiers=[
         "Development Status :: 4 - Beta",
