@@ -1,4 +1,4 @@
-DataProperty>=0.2.1
+DataProperty>=0.3.1
 ipaddress
 netifaces
 pyparsing
