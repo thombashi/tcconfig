@@ -6,19 +6,17 @@ tcconfig
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
 
-
 Summary
 -------
 
 ``tcconfig`` is a Simple tc command wrapper.
 Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.
 
-
 Traffic control features
 ------------------------
 
 Network
-~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Traffic control can be specified network to apply to:
 
@@ -26,7 +24,7 @@ Traffic control can be specified network to apply to:
 -  Certain IP address/network and port
 
 Available parameters
-~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 The following parameters can be set to network interfaces.
 
@@ -46,44 +44,44 @@ Set traffic control (``tcset`` command)
 ``tcset`` is a command to impose traffic control to a network interface (device).
 
 e.g. Set a limit on bandwidth up to 100Kbps
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --rate 100k
 
 e.g. Set 100ms network latency
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --delay 100
 
 e.g. Set 0.1% packet loss
-~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --loss 0.1
 
 e.g. All of the above at once
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
 
 e.g. Specify the IP address of traffic control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.10
 
 e.g. Specify the IP network and port of traffic control
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.0/24 --port 80
 
@@ -94,9 +92,9 @@ Delete traffic control (``tcdel`` command)
 interface (device).
 
 e.g. Delete traffic control of eth0
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcdel --device eth0
 
@@ -107,9 +105,9 @@ Display traffic control configurations (``tcshow`` command)
 ``tcshow`` is a command to display traffic control to network interface(s).
 
 Example
-~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code-block:: console
+.. code:: console
 
     # tcset --device eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
     # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
@@ -137,9 +135,9 @@ Example
 
 For more information
 --------------------
+
 More examples are available at 
 http://tcconfig.readthedocs.org/en/latest/pages/usage/index.html
-
 
 Installation
 ============
@@ -176,7 +174,7 @@ Dependency python packages are automatically installed during
 -  `thutils <https://github.com/thombashi/thutils>`__
 
 Test dependencies
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  `pingparsing <https://github.com/thombashi/pingparsing>`__
 -  `pytest <http://pytest.org/latest/>`__
