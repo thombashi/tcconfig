@@ -1,86 +1,70 @@
 #!/usr/bin/env python
 # encoding: utf-8
 
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
 
-import os
+import os.path
 import sys
 
+import readmemaker
 
-VERSION = "0.4.0"
+
+PROJECT_NAME = "tcconfig"
 OUTPUT_DIR = ".."
-README_WORK_DIR = "."
-DOC_PAGE_DIR = os.path.join(README_WORK_DIR, "pages")
 
 
-def get_usage_file_path(filename):
-    return os.path.join(DOC_PAGE_DIR, "usage", filename)
+def write_examples(maker):
+    maker.set_indent_level(0)
+    maker.write_chapter("Usage")
 
+    maker.inc_indent_level()
+    maker.write_chapter("Set traffic control (``tcset`` command)")
+    maker.write_example_file(os.path.join("tcset", "description.txt"))
+    maker.write_example_file(os.path.join("tcset", "basic_usage.rst"))
 
-def write_line_list(f, line_list):
-    f.write("\n".join(line_list))
-    f.write("\n" * 2)
+    maker.write_example_file(os.path.join("tcdel", "header.rst"))
+    maker.write_example_file(os.path.join("tcdel", "usage.rst"))
 
+    maker.write_example_file(os.path.join("tcshow", "header.rst"))
+    maker.write_example_file(os.path.join("tcshow", "usage.rst"))
 
-def write_usage_file(f, filename):
-    write_line_list(f, [
-        line.rstrip()
-        for line in
-        open(get_usage_file_path(filename)).readlines()
-    ])
-
-
-def write_examples(f):
-    write_line_list(f, [
-        "Usage",
-        "=====",
-    ])
-
-    write_usage_file(f, os.path.join("tcset", "header.rst"))
-    write_line_list(f, [
-        line.rstrip().replace("^", "~")
-        for line in
-        open(get_usage_file_path(
-            os.path.join("tcset", "basic_usage.rst"))).readlines()
-    ])
-
-    write_usage_file(f, os.path.join("tcdel", "header.rst"))
-    write_usage_file(f, os.path.join("tcdel", "usage.rst"))
-
-    write_usage_file(f, os.path.join("tcshow", "header.rst"))
-    write_usage_file(f, os.path.join("tcshow", "usage.rst"))
-
-    write_line_list(f, [
-        "For more information",
-        "--------------------",
+    maker.write_chapter("For more information")
+    maker.write_line_list([
         "More examples are available at ",
-        "http://tcconfig.readthedocs.org/en/latest/pages/usage/index.html",
-        "",
+        "http://%s.readthedocs.org/en/latest/pages/usage/index.html" % (
+            PROJECT_NAME),
     ])
 
 
 def main():
-    with open(os.path.join(OUTPUT_DIR, "README.rst"), "w") as f:
-        write_line_list(f, [
-            line.rstrip() for line in
-            open(os.path.join(DOC_PAGE_DIR, "introduction.rst")).readlines()
-        ])
-        write_line_list(f, [
-            ".. image:: docs/gif/tcset_example.gif",
-        ])
+    maker = readmemaker.ReadmeMaker(PROJECT_NAME, OUTPUT_DIR)
+    maker.examples_dir_name = u"usage"
 
-        write_examples(f)
+    maker.write_introduction_file("badges.txt")
 
-        write_line_list(f, [
-            line.rstrip() for line in
-            open(os.path.join(DOC_PAGE_DIR, "installation.rst")).readlines()
-        ])
+    maker.inc_indent_level()
+    maker.write_chapter("Summary")
+    maker.write_introduction_file("summary.txt")
+    maker.write_introduction_file("feature.txt")
+    maker.write_line_list([
+        ".. image:: docs/gif/tcset_example.gif",
+    ])
 
-        write_line_list(f, [
-            "Documentation",
-            "=============",
-            "",
-            "http://tcconfig.readthedocs.org/en/latest/"
-        ])
+    write_examples(maker)
+
+    maker.write_file(
+        maker.doc_page_root_dir_path.joinpath("installation.rst"))
+
+    maker.set_indent_level(0)
+    maker.write_chapter("Documentation")
+    maker.write_line_list([
+        "http://%s.readthedocs.org/en/latest/" % (PROJECT_NAME),
+    ])
+
+    return 0
+
 
 if __name__ == '__main__':
     sys.exit(main())

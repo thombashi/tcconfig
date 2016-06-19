@@ -33,7 +33,7 @@ Dependency python packages are automatically installed during
 -  `thutils <https://github.com/thombashi/thutils>`__
 
 Test dependencies
-~~~~~~~~~~~~~~~~~
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 -  `pingparsing <https://github.com/thombashi/pingparsing>`__
 -  `pytest <http://pytest.org/latest/>`__

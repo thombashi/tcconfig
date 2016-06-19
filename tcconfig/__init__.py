@@ -1,10 +1,10 @@
 # encoding: utf-8
 
-'''
-@author: Tsuyoshi Hombashi
-'''
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
 
-VERSION = "0.6.1"
+VERSION = "0.6.2"
 
 
 def verify_network_interface(device):

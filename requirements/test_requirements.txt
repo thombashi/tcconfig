@@ -1,2 +1,2 @@
 pytest
-pingparsing>=0.2.6
+pingparsing>=0.2.7
