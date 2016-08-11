@@ -16,7 +16,22 @@ import tcconfig.parser
 from ._common import verify_network_interface
 
 
-class TrafficDirection:
+def _validate_within_min_max(param_name, value, min_value, max_value):
+    if value is None:
+        return
+
+    if value > max_value:
+        raise ValueError(
+            "%s is too high: expected<=%f[%%], value=%f[%%]" % (
+                param_name, max_value, value))
+
+    if value < min_value:
+        raise ValueError(
+            "%s is too low: expected>=%f[%%], value=%f[%%]" % (
+                param_name, min_value, value))
+
+
+class TrafficDirection(object):
     OUTGOING = "outgoing"
     INCOMING = "incoming"
     LIST = [OUTGOING, INCOMING]
@@ -143,20 +158,6 @@ class TrafficControl(object):
 
         return return_code
 
-    def __validate_within_min_max(self, param_name, value, min_value, max_value):
-        if value is None:
-            return
-
-        if value > max_value:
-            raise ValueError(
-                "%s is too high: expected<=%f[%%], value=%f[%%]" % (
-                    param_name, max_value, value))
-
-        if value < min_value:
-            raise ValueError(
-                "%s is too low: expected>=%f[%%], value=%f[%%]" % (
-                    param_name, min_value, value))
-
     def __validate_bandwidth_rate(self):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return
@@ -166,24 +167,24 @@ class TrafficControl(object):
             raise ValueError("rate must be greater than zero")
 
     def __validate_network_delay(self):
-        self.__validate_within_min_max(
+        _validate_within_min_max(
             thutils.common.get_var_name(self.latency_ms, locals()),
             self.latency_ms,
             self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
 
-        self.__validate_within_min_max(
+        _validate_within_min_max(
             thutils.common.get_var_name(self.latency_distro_ms, locals()),
             self.latency_distro_ms,
             self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
 
     def __validate_packet_loss_rate(self):
-        self.__validate_within_min_max(
+        _validate_within_min_max(
             thutils.common.get_var_name(self.packet_loss_rate, locals()),
             self.packet_loss_rate,
             self.__MIN_PACKET_LOSS_RATE, self.__MAX_PACKET_LOSS_RATE)
 
     def __validate_curruption_rate(self):
-        self.__validate_within_min_max(
+        _validate_within_min_max(
             thutils.common.get_var_name(self.curruption_rate, locals()),
             self.curruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
@@ -204,7 +205,7 @@ class TrafficControl(object):
         raise ValueError("unrecognizable network: " + self.network)
 
     def __validate_port(self):
-        self.__validate_within_min_max(
+        _validate_within_min_max(
             thutils.common.get_var_name(self.port, locals()),
             self.port, self.__MIN_PORT, self.__MAX_PORT)
 
