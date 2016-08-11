@@ -4,8 +4,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
-from __future__ import absolute_import
-
 import pytest
 import six
 
