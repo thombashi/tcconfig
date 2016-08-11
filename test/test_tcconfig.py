@@ -4,6 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import division
 import itertools
 import platform
 
@@ -283,7 +284,7 @@ class Test_tcset_one_network:
         result = transmitter.ping()
         pingparser.parse(result)
         without_tc_loss = (
-            pingparser.packet_receive / float(pingparser.packet_transmit)) * 100.0
+            pingparser.packet_receive / pingparser.packet_transmit) * 100
 
         # w/ packet loss tc ---
         command_list = [
@@ -296,7 +297,7 @@ class Test_tcset_one_network:
         result = transmitter.ping()
         pingparser.parse(result)
         with_tc_loss = (
-            pingparser.packet_receive / float(pingparser.packet_transmit)) * 100.0
+            pingparser.packet_receive / pingparser.packet_transmit) * 100
 
         # assertion ---
         loss_diff = without_tc_loss - with_tc_loss
