@@ -25,12 +25,6 @@ with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
 with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
     tests_require = [line.strip() for line in f if line.strip()]
 
-major, minor = sys.version_info[:2]
-if major == 2 and minor <= 5:
-    install_requires.extend([
-        "argparse",
-    ])
-
 setuptools.setup(
     name="tcconfig",
     version=tcconfig.VERSION,
@@ -54,7 +48,6 @@ setuptools.setup(
         "Operating System :: POSIX",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",
