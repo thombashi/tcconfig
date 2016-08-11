@@ -7,13 +7,8 @@
 
 from __future__ import absolute_import
 from __future__ import with_statement
+import json
 import sys
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 import six
 import thutils
 
