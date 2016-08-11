@@ -12,9 +12,10 @@ import ipaddress
 import six
 import thutils
 
-import tcconfig.parser
-
+from .parser import TcFilterParser
+from .parser import TcQdiscParser
 from ._common import verify_network_interface
+from ._error import TcCommandExecutionError
 
 
 def _validate_within_min_max(param_name, value, min_value, max_value):
@@ -231,7 +232,7 @@ class TrafficControl(object):
         raise ValueError("unknown direction: " + self.direction)
 
     def __get_ifb_from_device(self, device):
-        filter_parser = tcconfig.parser.TcFilterParser()
+        filter_parser = TcFilterParser()
         command = "tc filter show dev %s root" % (device)
         proc = self.__subproc_wrapper.popen_command(command)
         filter_stdout, _stderr = proc.communicate()
@@ -267,8 +268,8 @@ class TrafficControl(object):
         raise ValueError("unknown direction: " + self.direction)
 
     def __get_filter(self, device):
-        qdisc_parser = tcconfig.parser.TcQdiscParser()
-        filter_parser = tcconfig.parser.TcFilterParser()
+        qdisc_parser = TcQdiscParser()
+        filter_parser = TcFilterParser()
 
         # parse qdisc ---
         command = "tc qdisc show dev %s" % (device)
