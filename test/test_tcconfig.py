@@ -10,9 +10,7 @@ import platform
 import dataproperty
 import pingparsing
 import pytest
-import six
 import thutils
-import tcconfig
 
 
 DEVICE = "eth0"

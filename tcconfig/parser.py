@@ -8,7 +8,6 @@ import re
 
 import dataproperty
 import pyparsing as pp
-import six
 
 
 def _to_unicode(text):
