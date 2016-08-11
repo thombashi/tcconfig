@@ -1,8 +1,8 @@
 # encoding: utf-8
 
-'''
-@author: Tsuyoshi Hombashi
-'''
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
 
 from __future__ import absolute_import
 
