@@ -19,7 +19,7 @@ def _to_unicode(text):
 
 class TcFilterParser(object):
 
-    class FilterMatchId:
+    class FilterMatchId(object):
         INCOMING_NETWORK = 12
         OUTGOING_NETWORK = 16
         PORT = 20
