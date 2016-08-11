@@ -90,7 +90,8 @@ class TcFilterParser(object):
             return None
 
         match = re.search(
-            "Egress Redirect to device ifb[\d]+", _to_unicode(text), re.MULTILINE)
+            "Egress Redirect to device ifb[\d]+",
+            _to_unicode(text), re.MULTILINE)
         if match is None:
             return None
 
