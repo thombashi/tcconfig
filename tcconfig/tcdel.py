@@ -13,6 +13,8 @@ import thutils
 import tcconfig
 import tcconfig.traffic_control
 
+from ._common import verify_network_interface
+
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
@@ -33,7 +35,7 @@ def main():
     thutils.initialize_library(__file__, options)
 
     thutils.common.verify_install_command(["tc"])
-    tcconfig.verify_network_interface(options.device)
+    verify_network_interface(options.device)
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
     tc = tcconfig.traffic_control.TrafficControl(

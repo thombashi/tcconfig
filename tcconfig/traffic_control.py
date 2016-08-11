@@ -13,6 +13,8 @@ import thutils
 
 import tcconfig.parser
 
+from ._common import verify_network_interface
+
 
 class TrafficDirection:
     OUTGOING = "outgoing"
@@ -56,7 +58,7 @@ class TrafficControl(object):
         self.port = None
 
     def validate(self):
-        tcconfig.verify_network_interface(self.__device)
+        verify_network_interface(self.__device)
         self.__validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()

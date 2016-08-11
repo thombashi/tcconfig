@@ -20,6 +20,8 @@ import thutils
 import tcconfig
 import tcconfig.traffic_control
 
+from ._common import verify_network_interface
+
 
 def parse_option():
     parser = thutils.option.ArgumentParserObject()
@@ -44,7 +46,7 @@ def main():
     tc_param = {}
 
     for device in options.device:
-        tcconfig.verify_network_interface(device)
+        verify_network_interface(device)
 
         tc = tcconfig.traffic_control.TrafficControl(
             subproc_wrapper, device)
