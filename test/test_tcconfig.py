@@ -139,9 +139,10 @@ class Test_tcconfig(object):
         command = " ".join(["tcset -f ", str(p), overwrite])
         assert SubprocessRunner(command).run() == expected
 
-        proc = SubprocessRunner("tcshow --device " + device_option).popen()
-        tcshow_stdout, _stderr = proc.communicate()
+        runner = SubprocessRunner("tcshow --device " + device_option)
+        runner.run()
+
         assert thutils.loader.JsonLoader.loads(
-            tcshow_stdout) == thutils.loader.JsonLoader.loads(config)
+            runner.stdout) == thutils.loader.JsonLoader.loads(config)
 
         assert SubprocessRunner("tcdel --device " + device_option).run() == 0

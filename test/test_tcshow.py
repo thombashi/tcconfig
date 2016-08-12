@@ -51,9 +51,8 @@ class Test_tcshow(object):
             "tcshow",
             "--device", device_option,
         ])
-        proc = SubprocessRunner(command).popen()
-        stdout, _stderr = proc.communicate()
-        assert json.loads(stdout) == json.loads(
+        runner = SubprocessRunner(command)
+        assert json.loads(runner.stdout) == json.loads(
             "{" + device_option + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {

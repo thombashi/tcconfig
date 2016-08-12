@@ -112,9 +112,7 @@ class TrafficControl(object):
         ]
 
         for command in command_list:
-            proc = SubprocessRunner(command).popen()
-            _stdout, _stderr = proc.communicate()
-            return_code_list.append(proc.returncode != 0)
+            return_code_list.append(SubprocessRunner(command).run() != 0)
 
         return -1 if all(return_code_list) else 0
 
@@ -234,10 +232,10 @@ class TrafficControl(object):
     def __get_ifb_from_device(self, device):
         filter_parser = TcFilterParser()
         command = "tc filter show dev {:s} root".format(device)
-        proc = SubprocessRunner(command).popen()
-        filter_stdout, _stderr = proc.communicate()
+        filter_runner = SubprocessRunner(command)
+        filter_runner.run()
 
-        return filter_parser.parse_incoming_device(filter_stdout)
+        return filter_parser.parse_incoming_device(filter_runner.stdout)
 
     def __get_network_direction_str(self):
         if self.direction == TrafficDirection.OUTGOING:
@@ -268,25 +266,27 @@ class TrafficControl(object):
         raise ValueError("unknown direction: " + self.direction)
 
     def __get_filter(self, device):
+        if dataproperty.is_empty_string(device):
+            return {}
+
         qdisc_parser = TcQdiscParser()
         filter_parser = TcFilterParser()
 
         # parse qdisc ---
         command = "tc qdisc show dev {:s}".format(device)
-        proc = SubprocessRunner(command).popen()
-        qdisc_stdout, _stderr = proc.communicate()
-        if proc.returncode != 0:
-            raise TcCommandExecutionError(_stderr)
-        qdisc_param = qdisc_parser.parse(qdisc_stdout)
+        qdisk_show_runner = SubprocessRunner(command)
+        if qdisk_show_runner.returncode != 0:
+            raise TcCommandExecutionError(qdisk_show_runner.stderr)
+        qdisc_param = qdisc_parser.parse(qdisk_show_runner.stdout)
 
         # parse filter ---
         command = "tc filter show dev {:s}".format(device)
-        proc = SubprocessRunner(command).popen()
-        filter_stdout, _stderr = proc.communicate()
+        filter_show_runner = SubprocessRunner(command)
+        filter_show_runner.run()
 
         filter_table = {}
 
-        for filter_param in filter_parser.parse_filter(filter_stdout):
+        for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
             key_item_list = []
 
             if dataproperty.is_not_empty_string(filter_param.get("network")):
