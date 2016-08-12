@@ -155,7 +155,7 @@ def main():
     options = parse_option()
 
     thutils.initialize_library(__file__, options)
-    thutils.common.verify_install_command(["tc"])
+    subprocrunner.Which("tc").verify()
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
 
