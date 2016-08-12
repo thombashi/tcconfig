@@ -8,7 +8,6 @@ import json
 
 import pytest
 from subprocrunner import SubprocessRunner
-import thutils
 
 
 @pytest.fixture
