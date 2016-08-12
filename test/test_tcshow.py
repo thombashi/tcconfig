@@ -5,15 +5,11 @@
 """
 
 import pytest
+from subprocrunner import SubprocessRunner
 import thutils
 
 
 DEVICE = "eth0"
-
-
-@pytest.fixture
-def subproc_wrapper():
-    return thutils.subprocwrapper.SubprocessWrapper()
 
 
 class Test_tcshow(object):
@@ -24,7 +20,7 @@ class Test_tcshow(object):
     """
 
     @pytest.mark.xfail
-    def test_normal(self, subproc_wrapper):
+    def test_normal(self):
         command = " ".join([
             "tcset",
             "--device", DEVICE,
@@ -35,7 +31,7 @@ class Test_tcshow(object):
             "--network", "192.168.0.10",
             "--port", "8080",
         ])
-        assert subproc_wrapper.run(command) == 0
+        assert SubprocessRunner(command).run() == 0
 
         command = " ".join([
             "tcset",
@@ -45,13 +41,13 @@ class Test_tcshow(object):
             "--rate", "500K",
             "--direction", "incoming",
         ])
-        assert subproc_wrapper.run(command) == 0
+        assert SubprocessRunner(command).run() == 0
 
         command = " ".join([
             "tcshow",
             "--device", DEVICE,
         ])
-        proc = subproc_wrapper.popen_command(command)
+        proc = SubprocessRunner(command).popen()
         stdout, _stderr = proc.communicate()
         assert thutils.loader.JsonLoader.loads(stdout) == thutils.loader.JsonLoader.loads("""{
     "eth0": {
@@ -75,4 +71,4 @@ class Test_tcshow(object):
 }
 """)
 
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
