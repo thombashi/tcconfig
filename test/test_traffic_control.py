@@ -69,7 +69,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_2(
         tc_obj._TrafficControl__validate_bandwidth_rate()
 
 
-class Test_TrafficControl_validate:
+class Test_TrafficControl_validate(object):
 
     @pytest.mark.parametrize(
         [

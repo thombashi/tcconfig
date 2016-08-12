@@ -20,7 +20,7 @@ def qdisc_parser():
     return tcconfig.parser.TcQdiscParser()
 
 
-class Test_TcFilterParser_parse_filter:
+class Test_TcFilterParser_parse_filter(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         [None, []],
@@ -80,7 +80,7 @@ class Test_TcFilterParser_parse_filter:
         assert filter_parser.parse_filter(value) == expected
 
 
-class Test_TcFilterParser_parse_incoming_device:
+class Test_TcFilterParser_parse_incoming_device(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         ["", None],
@@ -108,7 +108,7 @@ filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800
     """
 
 
-class Test_TcQdiscParser_parse:
+class Test_TcQdiscParser_parse(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         ["", {}],

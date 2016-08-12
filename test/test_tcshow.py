@@ -16,7 +16,7 @@ def subproc_wrapper():
     return thutils.subprocwrapper.SubprocessWrapper()
 
 
-class Test_tcshow:
+class Test_tcshow(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:

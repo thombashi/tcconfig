@@ -43,7 +43,7 @@ def transmitter():
     return transmitter
 
 
-class NormalTestValue:
+class NormalTestValue(object):
     RATE_LIST = [
         "",
         "--rate 100K",
@@ -85,7 +85,7 @@ class NormalTestValue:
     ]
 
 
-class Test_tcconfig:
+class Test_tcconfig(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
@@ -170,7 +170,7 @@ class Test_tcconfig:
         assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
 
 
-class Test_tcset_one_network:
+class Test_tcset_one_network(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
@@ -301,7 +301,7 @@ class Test_tcset_one_network:
         SubprocessRunner("tcdel --device " + DEVICE).run()
 
 
-class Test_tcset_two_network:
+class Test_tcset_two_network(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
