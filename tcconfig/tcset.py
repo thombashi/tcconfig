@@ -16,7 +16,7 @@ import subprocrunner
 import thutils
 
 import tcconfig
-import tcconfig.traffic_control
+from traffic_control import TrafficControl
 
 
 def parse_option():
@@ -167,7 +167,7 @@ def main():
 
         return return_code
 
-    tc = tcconfig.traffic_control.TrafficControl(
+    tc = TrafficControl(
         subproc_wrapper, options.device)
     tc.direction = options.direction
     tc.bandwidth_rate = options.bandwidth_rate

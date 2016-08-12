@@ -14,7 +14,7 @@ import subprocrunner
 import thutils
 
 import tcconfig
-import tcconfig.traffic_control
+from traffic_control import TrafficControl
 
 from ._common import verify_network_interface
 
@@ -43,7 +43,7 @@ def main():
     for device in options.device:
         verify_network_interface(device)
 
-        tc = tcconfig.traffic_control.TrafficControl(
+        tc = TrafficControl(
             subproc_wrapper, device)
         tc_param.update(tc.get_tc_parameter())
 

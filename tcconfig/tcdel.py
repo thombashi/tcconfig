@@ -11,8 +11,9 @@ import sys
 
 import subprocrunner
 import thutils
+
 import tcconfig
-import tcconfig.traffic_control
+from traffic_control import TrafficControl
 
 from ._common import verify_network_interface
 
@@ -37,7 +38,7 @@ def main():
     verify_network_interface(options.device)
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    tc = tcconfig.traffic_control.TrafficControl(
+    tc = TrafficControl(
         subproc_wrapper, options.device)
 
     return tc.delete_tc()
