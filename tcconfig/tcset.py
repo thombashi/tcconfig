@@ -9,6 +9,7 @@ from __future__ import absolute_import
 import sys
 
 import dataproperty
+import logbook
 import pyparsing as pp
 import six
 import subprocrunner
@@ -17,6 +18,10 @@ import thutils
 import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
+
+
+handler = logbook.StderrHandler()
+handler.push_application()
 
 
 def parse_option():
@@ -151,6 +156,13 @@ def get_tcconfig_command_list(config_table, is_overwrite):
 
 def main():
     options = parse_option()
+    logger = logbook.Logger("tcset")
+
+    subprocrunner.logger.level = options.log_level
+    if options.quiet:
+        subprocrunner.logger.disable()
+    else:
+        subprocrunner.logger.enable()
 
     subprocrunner.Which("tc").verify()
 

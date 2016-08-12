@@ -11,10 +11,15 @@ import sys
 import six
 import subprocrunner
 
+import logbook
 import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
+
+
+handler = logbook.StderrHandler()
+handler.push_application()
 
 
 def parse_option():
@@ -30,6 +35,12 @@ def parse_option():
 
 def main():
     options = parse_option()
+
+    subprocrunner.logger.level = options.log_level
+    if options.quiet:
+        subprocrunner.logger.disable()
+    else:
+        subprocrunner.logger.enable()
 
     subprocrunner.Which("tc").verify()
 

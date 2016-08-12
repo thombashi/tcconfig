@@ -17,6 +17,10 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
 
 
+handler = logbook.StderrHandler()
+handler.push_application()
+
+
 def parse_option():
     parser = ArgparseWrapper(tcconfig.VERSION)
 
@@ -30,6 +34,12 @@ def parse_option():
 
 def main():
     options = parse_option()
+
+    subprocrunner.logger.level = options.log_level
+    if options.quiet:
+        subprocrunner.logger.disable()
+    else:
+        subprocrunner.logger.enable()
 
     subprocrunner.Which("tc").verify()
     verify_network_interface(options.device)
