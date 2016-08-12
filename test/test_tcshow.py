@@ -9,7 +9,9 @@ from subprocrunner import SubprocessRunner
 import thutils
 
 
-DEVICE = "eth0"
+@pytest.fixture
+def device_option(request):
+    return request.config.getoption("--device")
 
 
 class Test_tcshow(object):
@@ -20,10 +22,10 @@ class Test_tcshow(object):
     """
 
     @pytest.mark.xfail
-    def test_normal(self):
+    def test_normal(self, device_option):
         command = " ".join([
             "tcset",
-            "--device", DEVICE,
+            "--device", device_option,
             "--delay", "10",
             "--delay-distro", "2",
             "--loss", "0.01",
@@ -35,7 +37,7 @@ class Test_tcshow(object):
 
         command = " ".join([
             "tcset",
-            "--device", DEVICE,
+            "--device", device_option,
             "--delay", "1",
             "--loss", "0.02",
             "--rate", "500K",
@@ -45,7 +47,7 @@ class Test_tcshow(object):
 
         command = " ".join([
             "tcshow",
-            "--device", DEVICE,
+            "--device", device_option,
         ])
         proc = SubprocessRunner(command).popen()
         stdout, _stderr = proc.communicate()
@@ -71,4 +73,4 @@ class Test_tcshow(object):
 }
 """)
 
-        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0

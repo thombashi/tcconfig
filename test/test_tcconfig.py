@@ -15,8 +15,12 @@ from subprocrunner import SubprocessRunner
 import thutils
 
 
-DEVICE = "eth0"
 WAIT_TIME = 5  # [sec]
+
+
+@pytest.fixture
+def device_option(request):
+    return request.config.getoption("--device")
 
 
 @pytest.fixture
@@ -116,24 +120,24 @@ class Test_tcconfig(object):
                 NormalTestValue.OVERWRITE_LIST)
         ])
     def test_smoke(
-            self, rate, delay, delay_distro, loss, corrupt,
+            self, device_option, rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite):
         command = " ".join([
             "tcset",
-            "--device " + DEVICE,
+            "--device " + device_option,
             rate, delay, delay_distro, loss,
             direction, network, port, overwrite,
         ])
         assert SubprocessRunner(command).run() == 0
 
-        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
 
     @pytest.mark.xfail
     @pytest.mark.parametrize(["overwrite", "expected"], [
         ["", 0],
         ["--overwrite", 255],
     ])
-    def test_config_file(self, tmpdir, overwrite, expected):
+    def test_config_file(self, tmpdir, device_option, overwrite, expected):
         p = tmpdir.join("tcconfig.json")
         config = """{
     "eth0": {
@@ -158,16 +162,16 @@ class Test_tcconfig(object):
 """
         p.write(config)
 
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
         command = " ".join(["tcset -f ", str(p), overwrite])
         assert SubprocessRunner(command).run() == expected
 
-        proc = SubprocessRunner("tcshow --device " + DEVICE).popen()
+        proc = SubprocessRunner("tcshow --device " + device_option).popen()
         tcshow_stdout, _stderr = proc.communicate()
         assert thutils.loader.JsonLoader.loads(
             tcshow_stdout) == thutils.loader.JsonLoader.loads(config)
 
-        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
 
 
 class Test_tcset_one_network(object):
@@ -185,12 +189,13 @@ class Test_tcset_one_network(object):
         [100],
     ])
     def test_const_latency(
-            self, dst_host_option, transmitter, pingparser, delay):
+            self, device_option, dst_host_option, transmitter, pingparser,
+            delay):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
@@ -201,7 +206,7 @@ class Test_tcset_one_network(object):
         # w/ latency tc ---
         command_list = [
             "tcset",
-            "--device " + DEVICE,
+            "--device " + device_option,
             "--delay {:d}".format(delay),
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
@@ -215,20 +220,20 @@ class Test_tcset_one_network(object):
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
 
     @pytest.mark.skipif("platform.system() == 'Windows'")
     @pytest.mark.parametrize(["delay", "delay_distro"], [
         [100, 50],
     ])
     def test_const_latency_distro(
-            self, dst_host_option, transmitter, pingparser, delay,
+            self, device_option, dst_host_option, transmitter, pingparser, delay,
             delay_distro):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
@@ -240,7 +245,7 @@ class Test_tcset_one_network(object):
         # w/ latency tc ---
         command_list = [
             "tcset",
-            "--device " + DEVICE,
+            "--device " + device_option,
             "--delay {:d}".format(delay),
             "--delay-distro {:d}".format(delay_distro),
         ]
@@ -259,19 +264,19 @@ class Test_tcset_one_network(object):
         assert rtt_diff > (delay_distro / 2.0)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
 
     @pytest.mark.parametrize(["option", "value"], [
         ["--loss", 10],
         ["--corrupt", 10],
     ])
     def test_const_packet_loss(
-            self, dst_host_option, transmitter, pingparser, option, value):
+            self, device_option, dst_host_option, transmitter, pingparser, option, value):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
         transmitter.destination_host = dst_host_option
 
         # w/o packet loss tc ---
@@ -283,7 +288,7 @@ class Test_tcset_one_network(object):
         # w/ packet loss tc ---
         command_list = [
             "tcset",
-            "--device " + DEVICE,
+            "--device " + device_option,
             "{:s} {:f}".format(option, value),
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
@@ -298,7 +303,7 @@ class Test_tcset_one_network(object):
         assert loss_diff > (value / 2.0)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
 
 
 class Test_tcset_two_network(object):
@@ -314,7 +319,8 @@ class Test_tcset_two_network(object):
     """
 
     def test_network(
-            self, dst_host_option, dst_host_ex_option, transmitter, pingparser):
+            self, device_option, dst_host_option, dst_host_ex_option, transmitter,
+            pingparser):
         if any([
             dataproperty.is_empty_string(dst_host_option),
             dataproperty.is_empty_string(dst_host_ex_option),
@@ -322,13 +328,13 @@ class Test_tcset_two_network(object):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
         delay = 100
 
         # tc to specific network ---
         command_list = [
             "tcset",
-            "--device " + DEVICE,
+            "--device " + device_option,
             "--delay {:d}".format(delay),
             "--network " + dst_host_ex_option,
         ]
@@ -351,4 +357,4 @@ class Test_tcset_two_network(object):
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + DEVICE).run()
+        SubprocessRunner("tcdel --device " + device_option).run()
