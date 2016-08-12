@@ -30,7 +30,6 @@ def parse_option():
     return parser.parse_args()
 
 
-@thutils.main.Main
 def main():
     options = parse_option()
 

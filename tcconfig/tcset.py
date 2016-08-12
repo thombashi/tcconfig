@@ -149,7 +149,6 @@ def get_tcconfig_command_list(config_table, is_overwrite):
     return command_list
 
 
-@thutils.main.Main
 def main():
     options = parse_option()
 
