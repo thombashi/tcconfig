@@ -343,8 +343,8 @@ class TrafficControl(object):
             command_list.append("delay {:f}ms".format(self.latency_ms))
 
             if self.latency_distro_ms > 0:
-                command_list.append(
-                    "{:f}ms distribution normal".format(self.latency_distro_ms))
+                command_list.append("{:f}ms distribution normal".format(
+                    self.latency_distro_ms))
 
         if self.corruption_rate > 0:
             command_list.append("corrupt {:f}%".format(self.corruption_rate))
