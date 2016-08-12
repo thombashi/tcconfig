@@ -131,7 +131,7 @@ class TcFilterParser(object):
             ])
             netmask = bin(int(mask_hex, 16)).count("1")
 
-            self.__filter_network = "%s/%d" % (ipaddr, netmask)
+            self.__filter_network = "{:s}/{:d}".format(ipaddr, netmask)
         elif match_id == self.FilterMatchId.PORT:
             self.__filter_port = int(value_hex, 16)
 

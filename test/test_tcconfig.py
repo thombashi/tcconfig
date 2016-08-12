@@ -207,7 +207,7 @@ class Test_tcset_one_network:
         command_list = [
             "tcset",
             "--device " + DEVICE,
-            "--delay %d" % (delay),
+            "--delay {:d}".format(delay),
         ]
         assert subproc_wrapper.run(" ".join(command_list)) == 0
 
@@ -246,8 +246,8 @@ class Test_tcset_one_network:
         command_list = [
             "tcset",
             "--device " + DEVICE,
-            "--delay %d" % (delay),
-            "--delay-distro %d" % (delay_distro),
+            "--delay {:d}".format(delay),
+            "--delay-distro {:d}".format(delay_distro),
         ]
         assert subproc_wrapper.run(" ".join(command_list)) == 0
 
@@ -290,7 +290,7 @@ class Test_tcset_one_network:
         command_list = [
             "tcset",
             "--device " + DEVICE,
-            "%s %f" % (option, value),
+            "{:s} {:f}".format(option, value),
         ]
         assert subproc_wrapper.run(" ".join(command_list)) == 0
 
@@ -336,7 +336,7 @@ class Test_tcset_two_network:
         command_list = [
             "tcset",
             "--device " + DEVICE,
-            "--delay %d" % (delay),
+            "--delay {:d}".format(delay),
             "--network " + dst_host_ex_option,
         ]
         assert subproc_wrapper.run(" ".join(command_list)) == 0

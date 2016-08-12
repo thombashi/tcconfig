@@ -127,7 +127,7 @@ def get_tcconfig_command_list(config_table, is_overwrite):
                     "--device=" + device,
                     "--direction=" + direction,
                 ] + [
-                    "--%s=%s" % (k, v)
+                    "--{:s}={:s}".format(k, v)
                     for k, v in six.iteritems(filter_table)
                 ]
 
