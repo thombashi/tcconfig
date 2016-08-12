@@ -11,6 +11,7 @@ import platform
 import dataproperty
 import pingparsing
 import pytest
+from subprocrunner import SubprocessRunner
 import thutils
 
 
@@ -26,11 +27,6 @@ def dst_host_option(request):
 @pytest.fixture
 def dst_host_ex_option(request):
     return request.config.getoption("--dst-host-ex")
-
-
-@pytest.fixture
-def subproc_wrapper():
-    return thutils.subprocwrapper.SubprocessWrapper()
 
 
 @pytest.fixture
@@ -120,7 +116,7 @@ class Test_tcconfig:
                 NormalTestValue.OVERWRITE_LIST)
         ])
     def test_smoke(
-            self, subproc_wrapper, rate, delay, delay_distro, loss, corrupt,
+            self, rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite):
         command = " ".join([
             "tcset",
@@ -128,16 +124,16 @@ class Test_tcconfig:
             rate, delay, delay_distro, loss,
             direction, network, port, overwrite,
         ])
-        assert subproc_wrapper.run(command) == 0
+        assert SubprocessRunner(command).run() == 0
 
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
 
     @pytest.mark.xfail
     @pytest.mark.parametrize(["overwrite", "expected"], [
         ["", 0],
         ["--overwrite", 255],
     ])
-    def test_config_file(self, tmpdir, subproc_wrapper, overwrite, expected):
+    def test_config_file(self, tmpdir, overwrite, expected):
         p = tmpdir.join("tcconfig.json")
         config = """{
     "eth0": {
@@ -162,16 +158,16 @@ class Test_tcconfig:
 """
         p.write(config)
 
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
         command = " ".join(["tcset -f ", str(p), overwrite])
-        assert subproc_wrapper.run(command) == expected
+        assert SubprocessRunner(command).run() == expected
 
-        proc = subproc_wrapper.popen_command("tcshow --device " + DEVICE)
+        proc = SubprocessRunner("tcshow --device " + DEVICE).popen()
         tcshow_stdout, _stderr = proc.communicate()
         assert thutils.loader.JsonLoader.loads(
             tcshow_stdout) == thutils.loader.JsonLoader.loads(config)
 
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
 
 
 class Test_tcset_one_network:
@@ -189,13 +185,12 @@ class Test_tcset_one_network:
         [100],
     ])
     def test_const_latency(
-            self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, delay):
+            self, dst_host_option, transmitter, pingparser, delay):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
@@ -209,7 +204,7 @@ class Test_tcset_one_network:
             "--device " + DEVICE,
             "--delay {:d}".format(delay),
         ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
+        assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         result = transmitter.ping()
         pingparser.parse(result)
@@ -220,20 +215,20 @@ class Test_tcset_one_network:
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+        assert SubprocessRunner("tcdel --device " + DEVICE).run() == 0
 
     @pytest.mark.skipif("platform.system() == 'Windows'")
     @pytest.mark.parametrize(["delay", "delay_distro"], [
         [100, 50],
     ])
     def test_const_latency_distro(
-            self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, delay, delay_distro):
+            self, dst_host_option, transmitter, pingparser, delay,
+            delay_distro):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
@@ -249,7 +244,7 @@ class Test_tcset_one_network:
             "--delay {:d}".format(delay),
             "--delay-distro {:d}".format(delay_distro),
         ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
+        assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         result = transmitter.ping()
         pingparser.parse(result)
@@ -264,20 +259,19 @@ class Test_tcset_one_network:
         assert rtt_diff > (delay_distro / 2.0)
 
         # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
 
     @pytest.mark.parametrize(["option", "value"], [
         ["--loss", 10],
         ["--corrupt", 10],
     ])
     def test_const_packet_loss(
-            self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, option, value):
+            self, dst_host_option, transmitter, pingparser, option, value):
         if dataproperty.is_empty_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
         transmitter.destination_host = dst_host_option
 
         # w/o packet loss tc ---
@@ -292,7 +286,7 @@ class Test_tcset_one_network:
             "--device " + DEVICE,
             "{:s} {:f}".format(option, value),
         ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
+        assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         result = transmitter.ping()
         pingparser.parse(result)
@@ -304,7 +298,7 @@ class Test_tcset_one_network:
         assert loss_diff > (value / 2.0)
 
         # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
 
 
 class Test_tcset_two_network:
@@ -320,8 +314,7 @@ class Test_tcset_two_network:
     """
 
     def test_network(
-            self, dst_host_option, dst_host_ex_option, subproc_wrapper,
-            transmitter, pingparser):
+            self, dst_host_option, dst_host_ex_option, transmitter, pingparser):
         if any([
             dataproperty.is_empty_string(dst_host_option),
             dataproperty.is_empty_string(dst_host_ex_option),
@@ -329,7 +322,7 @@ class Test_tcset_two_network:
             # alternative to pytest.mark.skipif
             return
 
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()
         delay = 100
 
         # tc to specific network ---
@@ -339,7 +332,7 @@ class Test_tcset_two_network:
             "--delay {:d}".format(delay),
             "--network " + dst_host_ex_option,
         ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
+        assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         # w/o tc network ---
         transmitter.destination_host = dst_host_option
@@ -358,4 +351,4 @@ class Test_tcset_two_network:
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + DEVICE).run()

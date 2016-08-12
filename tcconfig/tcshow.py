@@ -36,14 +36,12 @@ def main():
 
     subprocrunner.Which("tc").verify()
 
-    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
     tc_param = {}
 
     for device in options.device:
         verify_network_interface(device)
 
-        tc = TrafficControl(
-            subproc_wrapper, device)
+        tc = TrafficControl(device)
         tc_param.update(tc.get_tc_parameter())
 
     six.print_(json.dumps(tc_param, indent=4))

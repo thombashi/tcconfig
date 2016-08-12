@@ -36,9 +36,7 @@ def main():
     subprocrunner.Which("tc").verify()
     verify_network_interface(options.device)
 
-    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    tc = TrafficControl(
-        subproc_wrapper, options.device)
+    tc = TrafficControl(options.device)
 
     return tc.delete_tc()
 

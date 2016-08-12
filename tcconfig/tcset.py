@@ -155,19 +155,16 @@ def main():
 
     subprocrunner.Which("tc").verify()
 
-    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-
     if dataproperty.is_not_empty_string(options.config_file):
         return_code = 0
 
         for tcconfig_command in get_tcconfig_command_list(
                 load_tcconfig(options.config_file), options.overwrite):
-            return_code |= subproc_wrapper.run(tcconfig_command)
+            return_code |= subprocrunner.SubprocessRunner.run(tcconfig_command)
 
         return return_code
 
-    tc = TrafficControl(
-        subproc_wrapper, options.device)
+    tc = TrafficControl(options.device)
     tc.direction = options.direction
     tc.bandwidth_rate = options.bandwidth_rate
     tc.latency_ms = options.network_latency

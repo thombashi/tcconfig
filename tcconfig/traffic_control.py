@@ -10,6 +10,7 @@ from __future__ import division
 import dataproperty
 import ipaddress
 import six
+from subprocrunner import SubprocessRunner
 import thutils
 
 from .parser import TcFilterParser
@@ -61,8 +62,7 @@ class TrafficControl(object):
     def ifb_device(self):
         return "ifb{:d}".format(self.__get_device_qdisc_major_id())
 
-    def __init__(self, subproc_wrapper, device):
-        self.__subproc_wrapper = subproc_wrapper
+    def __init__(self, device):
         self.__device = device
 
         self.direction = None
@@ -112,7 +112,7 @@ class TrafficControl(object):
         ]
 
         for command in command_list:
-            proc = self.__subproc_wrapper.popen_command(command)
+            proc = SubprocessRunner(command).popen()
             _stdout, _stderr = proc.communicate()
             return_code_list.append(proc.returncode != 0)
 
@@ -137,16 +137,16 @@ class TrafficControl(object):
         return_code = 0
 
         command = "modprobe ifb"
-        return_code |= self.__subproc_wrapper.run(command)
+        return_code |= SubprocessRunner(command).run()
 
         command = "ip link add {:s} type ifb".format(self.ifb_device)
-        return_code |= self.__subproc_wrapper.run(command)
+        return_code |= SubprocessRunner(command).run()
 
         command = "ip link set dev {:s} up".format(self.ifb_device)
-        return_code |= self.__subproc_wrapper.run(command)
+        return_code |= SubprocessRunner(command).run()
 
         command = "tc qdisc add dev {:s} ingress".format(self.__device)
-        return_code |= self.__subproc_wrapper.run(command)
+        return_code |= SubprocessRunner(command).run()
 
         command_list = [
             "tc filter add",
@@ -156,7 +156,7 @@ class TrafficControl(object):
             "action mirred egress redirect",
             "dev " + self.ifb_device,
         ]
-        return_code |= self.__subproc_wrapper.run(" ".join(command_list))
+        return_code |= SubprocessRunner(" ".join(command_list)).run()
 
         return return_code
 
@@ -220,7 +220,7 @@ class TrafficControl(object):
             "prio",
         ]
 
-        return self.__subproc_wrapper.run(" ".join(command_list))
+        return SubprocessRunner(" ".join(command_list)).run()
 
     def __get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:
@@ -234,7 +234,7 @@ class TrafficControl(object):
     def __get_ifb_from_device(self, device):
         filter_parser = TcFilterParser()
         command = "tc filter show dev {:s} root".format(device)
-        proc = self.__subproc_wrapper.popen_command(command)
+        proc = SubprocessRunner(command).popen()
         filter_stdout, _stderr = proc.communicate()
 
         return filter_parser.parse_incoming_device(filter_stdout)
@@ -273,13 +273,15 @@ class TrafficControl(object):
 
         # parse qdisc ---
         command = "tc qdisc show dev {:s}".format(device)
-        proc = self.__subproc_wrapper.popen_command(command)
+        proc = SubprocessRunner(command).popen()
         qdisc_stdout, _stderr = proc.communicate()
+        if proc.returncode != 0:
+            raise TcCommandExecutionError(_stderr)
         qdisc_param = qdisc_parser.parse(qdisc_stdout)
 
         # parse filter ---
         command = "tc filter show dev {:s}".format(device)
-        proc = self.__subproc_wrapper.popen_command(command)
+        proc = SubprocessRunner(command).popen()
         filter_stdout, _stderr = proc.communicate()
 
         filter_table = {}
@@ -323,7 +325,7 @@ class TrafficControl(object):
             "flowid " + flowid
         ]
 
-        return self.__subproc_wrapper.run(" ".join(command_list))
+        return SubprocessRunner(" ".join(command_list)).run()
 
     def __set_netem(self, qdisc_major_id):
         command_list = [
@@ -347,7 +349,7 @@ class TrafficControl(object):
         if self.corruption_rate > 0:
             command_list.append("corrupt {:s}%".format(self.corruption_rate))
 
-        return self.__subproc_wrapper.run(" ".join(command_list))
+        return SubprocessRunner(" ".join(command_list)).run()
 
     def __set_network_filter(self, qdisc_major_id):
         if all([
@@ -371,7 +373,7 @@ class TrafficControl(object):
         if self.port is not None:
             command_list.append("match ip dport {:d} 0xffff".format(self.port))
 
-        return self.__subproc_wrapper.run(" ".join(command_list))
+        return SubprocessRunner(" ".join(command_list)).run()
 
     def __set_rate(self, qdisc_major_id):
         if dataproperty.is_empty_string(self.bandwidth_rate):
@@ -396,4 +398,4 @@ class TrafficControl(object):
             "limit 10000",
         ]
 
-        return self.__subproc_wrapper.run(" ".join(command_list))
+        return SubprocessRunner(" ".join(command_list)).run()
