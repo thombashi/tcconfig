@@ -7,8 +7,6 @@
 import itertools
 
 import pytest
-import thutils
-import tcconfig
 from tcconfig.traffic_control import TrafficControl
 
 
