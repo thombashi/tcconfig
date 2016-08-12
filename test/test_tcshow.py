@@ -4,6 +4,8 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+import json
+
 import pytest
 from subprocrunner import SubprocessRunner
 import thutils
@@ -51,8 +53,8 @@ class Test_tcshow(object):
         ])
         proc = SubprocessRunner(command).popen()
         stdout, _stderr = proc.communicate()
-        assert thutils.loader.JsonLoader.loads(stdout) == thutils.loader.JsonLoader.loads("""{
-    "eth0": {
+        assert json.loads(stdout) == json.loads(
+            "{" + device_option + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
                 "delay": "10.0", 
@@ -70,7 +72,6 @@ class Test_tcshow(object):
             }
         }
     }
-}
-""")
+}""")
 
         assert SubprocessRunner("tcdel --device " + device_option).run() == 0
