@@ -9,10 +9,11 @@ from __future__ import absolute_import
 import json
 import sys
 import six
-import subprocrunner
 
 import logbook
 import tcconfig
+import subprocrunner
+
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
@@ -45,7 +46,6 @@ def main():
     subprocrunner.Which("tc").verify()
 
     tc_param = {}
-
     for device in options.device:
         verify_network_interface(device)
 
