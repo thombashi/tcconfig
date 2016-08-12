@@ -338,7 +338,7 @@ class TrafficControl(object):
             "netem",
         ]
         if self.packet_loss_rate > 0:
-            command_list.append("loss {:s}%".format(self.packet_loss_rate))
+            command_list.append("loss {:f}%".format(self.packet_loss_rate))
         if self.latency_ms > 0:
             command_list.append("delay {:f}ms".format(self.latency_ms))
 
@@ -347,7 +347,7 @@ class TrafficControl(object):
                     "{:f}ms distribution normal".format(self.latency_distro_ms))
 
         if self.corruption_rate > 0:
-            command_list.append("corrupt {:s}%".format(self.corruption_rate))
+            command_list.append("corrupt {:f}%".format(self.corruption_rate))
 
         return SubprocessRunner(" ".join(command_list)).run()
 
@@ -392,7 +392,7 @@ class TrafficControl(object):
                 self.__get_qdisc_minor_id()),
             "handle 20:",
             "tbf",
-            "rate {:d}kbit".format(rate_kbps),
+            "rate {:f}kbit".format(rate_kbps),
             "buffer {:d}".format(
                 max(rate_kbps, self.__MIN_BUFFER_BYTE)),  # [byte]
             "limit 10000",
