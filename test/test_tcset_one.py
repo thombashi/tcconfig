@@ -43,10 +43,11 @@ class Test_tcset_one_network(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
-      python setup.py test --addopts "--dst-host=<hostname or IP address>"
+      python setup.py test --addopts \
+          "--device <test device> --dst-host=<hostname/IP-addr>"
 
     These tests are expected to execute on following environment:
-       - Linux(debian) w/ iputils-ping package
+       - Linux w/ iputils-ping package
        - English environment (for parsing ping output)
     """
 
