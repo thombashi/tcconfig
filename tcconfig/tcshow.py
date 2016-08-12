@@ -10,6 +10,7 @@ from __future__ import with_statement
 import json
 import sys
 import six
+import subprocrunner
 import thutils
 
 import tcconfig
@@ -35,7 +36,7 @@ def main():
     options = parse_option()
 
     thutils.initialize_library(__file__, options)
-    thutils.common.verify_install_command(["tc"])
+    subprocrunner.Which("tc").verify()
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
     tc_param = {}

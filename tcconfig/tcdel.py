@@ -9,6 +9,7 @@ from __future__ import absolute_import
 from __future__ import with_statement
 import sys
 
+import subprocrunner
 import thutils
 import tcconfig
 import tcconfig.traffic_control
@@ -34,7 +35,7 @@ def main():
 
     thutils.initialize_library(__file__, options)
 
-    thutils.common.verify_install_command(["tc"])
+    subprocrunner.Which("tc").verify()
     verify_network_interface(options.device)
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
