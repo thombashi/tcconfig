@@ -11,9 +11,9 @@ import sys
 import six
 
 import logbook
-import tcconfig
 import subprocrunner
 
+import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
