@@ -16,11 +16,11 @@ import thutils
 
 import tcconfig
 from .traffic_control import TrafficControl
+from ._argparse_wrapper import ArgparseWrapper
 
 
 def parse_option():
-    parser = thutils.option.ArgumentParserObject()
-    parser.make(version=tcconfig.VERSION)
+    parser = ArgparseWrapper(tcconfig.VERSION)
 
     group = parser.parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
@@ -31,12 +31,12 @@ def parse_option():
         help="""setting traffic controls from a configuration file.
         output file of the tcshow.""")
 
-    group = parser.add_argument_group("Network Interface")
+    group = parser.parser.add_argument_group("Network Interface")
     group.add_argument(
         "--overwrite", action="store_true", default=False,
         help="overwrite existing settings")
 
-    group = parser.add_argument_group("Traffic Control")
+    group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--direction", choices=tcconfig.traffic_control.TrafficDirection.LIST,
         default=tcconfig.traffic_control.TrafficDirection.OUTGOING,
@@ -75,7 +75,7 @@ def parse_option():
         "--port", type=int,
         help="port number of traffic control")
 
-    return parser.parse_args()
+    return parser.parser.parse_args()
 
 
 def _parse_tc_filter_network(text):

@@ -10,24 +10,22 @@ import json
 import sys
 import six
 import subprocrunner
-import thutils
 
 import tcconfig
 from .traffic_control import TrafficControl
-
+from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
 
 
 def parse_option():
-    parser = thutils.option.ArgumentParserObject()
-    parser.make(version=tcconfig.VERSION)
+    parser = ArgparseWrapper(tcconfig.VERSION)
 
-    group = parser.add_argument_group("Traffic Control")
+    group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", action="append", required=True,
         help="network device name (e.g. eth0)")
 
-    return parser.parse_args()
+    return parser.parser.parse_args()
 
 
 def main():
