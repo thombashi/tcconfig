@@ -15,7 +15,7 @@ import subprocrunner
 import thutils
 
 import tcconfig
-from traffic_control import TrafficControl
+from .traffic_control import TrafficControl
 
 
 def parse_option():

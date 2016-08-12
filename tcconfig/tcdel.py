@@ -12,7 +12,7 @@ import subprocrunner
 import thutils
 
 import tcconfig
-from traffic_control import TrafficControl
+from .traffic_control import TrafficControl
 
 from ._common import verify_network_interface
 
