@@ -5,6 +5,7 @@
 """
 
 from __future__ import division
+import platform
 
 import dataproperty
 import pingparsing
