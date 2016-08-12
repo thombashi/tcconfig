@@ -52,25 +52,28 @@ class Test_tcshow(object):
             "--device", device_option,
         ])
         runner = SubprocessRunner(command)
-        assert json.loads(runner.stdout) == json.loads(
-            "{" + device_option + ": {" + """
+        runner.run()
+
+        expected = "{" + '"{:s}"'.format(device_option) + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
-                "delay": "10.0", 
-                "loss": "0.01", 
-                "rate": "250K", 
+                "delay": "10.0",
+                "loss": "0.01",
+                "rate": "250K",
                 "delay-distro": "2.0"
-            }, 
+            },
             "network=0.0.0.0/0": {}
-        }, 
+        },
         "incoming": {
             "network=0.0.0.0/0": {
-                "delay": "1.0", 
-                "loss": "0.02", 
+                "delay": "1.0",
+                "loss": "0.02",
                 "rate": "500K"
             }
         }
     }
-}""")
+}"""
+
+        assert json.loads(runner.stdout) == json.loads(expected)
 
         assert SubprocessRunner("tcdel --device " + device_option).run() == 0
