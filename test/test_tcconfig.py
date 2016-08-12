@@ -6,13 +6,13 @@
 
 from __future__ import division
 import itertools
+import json
 import platform
 
 import dataproperty
 import pingparsing
 import pytest
 from subprocrunner import SubprocessRunner
-import thutils
 
 
 @pytest.fixture
@@ -142,7 +142,6 @@ class Test_tcconfig(object):
         runner = SubprocessRunner("tcshow --device " + device_option)
         runner.run()
 
-        assert thutils.loader.JsonLoader.loads(
-            runner.stdout) == thutils.loader.JsonLoader.loads(config)
+        assert json.loads(runner.stdout) == json.loads(config)
 
         assert SubprocessRunner("tcdel --device " + device_option).run() == 0
