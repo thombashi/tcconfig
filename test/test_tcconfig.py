@@ -66,10 +66,10 @@ class Test_tcconfig(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
-      python setup.py test --addopts --runxfail
+      python setup.py test --addopts "--runxfail --device <test device>"
 
     These tests are expected to execute on following environment:
-       - Linux(debian) w/ iputils-ping package
+       - Linux w/ iputils-ping package
        - English environment (for parsing ping output)
     """
 
