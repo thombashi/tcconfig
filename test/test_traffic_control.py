@@ -17,8 +17,7 @@ MIN_PACKET_LOSS = 0.0000000232  # [%]
 
 @pytest.fixture
 def tc_obj():
-    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
-    return TrafficControl(subproc_wrapper, "eth0")
+    return TrafficControl("eth0")
 
 
 @pytest.mark.parametrize(["value"], [
