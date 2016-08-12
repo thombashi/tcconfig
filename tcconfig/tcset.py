@@ -154,7 +154,6 @@ def get_tcconfig_command_list(config_table, is_overwrite):
 def main():
     options = parse_option()
 
-    thutils.initialize_library(__file__, options)
     subprocrunner.Which("tc").verify()
 
     subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()

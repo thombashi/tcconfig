@@ -33,8 +33,6 @@ def parse_option():
 def main():
     options = parse_option()
 
-    thutils.initialize_library(__file__, options)
-
     subprocrunner.Which("tc").verify()
     verify_network_interface(options.device)
 
