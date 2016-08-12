@@ -18,6 +18,7 @@ import thutils
 import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
+from ._error import ModuleNotFoundError
 
 
 handler = logbook.StderrHandler()
@@ -116,6 +117,13 @@ def load_tcconfig(config_file):
         config_file, schema)
 
 
+def verify_netem_module():
+    runner = subprocrunner.SubprocessRunner("lsmod | grep sch_netem")
+
+    if runner.run() != 0:
+        raise ModuleNotFoundError("sch_netem module not found")
+
+
 def get_tcconfig_command_list(config_table, is_overwrite):
     command_list = []
 
@@ -165,6 +173,10 @@ def main():
         subprocrunner.logger.enable()
 
     subprocrunner.Which("tc").verify()
+    try:
+        verify_netem_module()
+    except (subprocrunner.CommandNotFoundError, ModuleNotFoundError) as e:
+        logger.error(str(e))
 
     if dataproperty.is_not_empty_string(options.config_file):
         return_code = 0
