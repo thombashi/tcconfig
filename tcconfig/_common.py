@@ -8,7 +8,10 @@ from __future__ import absolute_import
 
 
 def verify_network_interface(device):
-    import netifaces
+    try:
+        import netifaces
+    except ImportError:
+        return
 
     if device not in netifaces.interfaces():
         raise ValueError("invalid network interface: " + device)

@@ -1,6 +1,5 @@
 DataProperty>=0.8.1
 ipaddress
-netifaces
 pyparsing
 six
 subprocrunner>=0.2.0
