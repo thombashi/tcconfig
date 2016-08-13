@@ -112,8 +112,7 @@ class Test_tcconfig(object):
     ])
     def test_config_file(self, tmpdir, device_option, overwrite, expected):
         p = tmpdir.join("tcconfig.json")
-        config = """{
-    "eth0": {
+        config = "{" + '"{:s}"'.format(device_option) + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
                 "delay": "10.0", 
@@ -141,7 +140,6 @@ class Test_tcconfig(object):
 
         runner = SubprocessRunner("tcshow --device " + device_option)
         runner.run()
-
         assert json.loads(runner.stdout) == json.loads(config)
 
         assert SubprocessRunner("tcdel --device " + device_option).run() == 0
