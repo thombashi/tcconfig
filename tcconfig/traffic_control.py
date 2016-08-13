@@ -275,8 +275,6 @@ class TrafficControl(object):
         # parse qdisc ---
         command = "tc qdisc show dev {:s}".format(device)
         qdisk_show_runner = SubprocessRunner(command)
-        if qdisk_show_runner.returncode != 0:
-            raise TcCommandExecutionError(qdisk_show_runner.stderr)
         qdisk_show_runner.run()
         qdisc_param = qdisc_parser.parse(qdisk_show_runner.stdout)
 
@@ -286,7 +284,6 @@ class TrafficControl(object):
         filter_show_runner.run()
 
         filter_table = {}
-
         for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
             key_item_list = []
 
