@@ -1,7 +1,6 @@
-DataProperty>=0.3.1
+DataProperty>=0.8.1
 ipaddress
-netifaces
 pyparsing
 six
-thutils>=0.1.24
+subprocrunner>=0.2.0
 voluptuous

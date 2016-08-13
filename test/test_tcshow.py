@@ -1,33 +1,34 @@
 # encoding: utf-8
 
-'''
-@author: Tsuyoshi Hombashi
-'''
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
+
+import json
 
 import pytest
-import thutils
-
-
-DEVICE = "eth0"
+from subprocrunner import SubprocessRunner
 
 
 @pytest.fixture
-def subproc_wrapper():
-    return thutils.subprocwrapper.SubprocessWrapper()
+def device_option(request):
+    return request.config.getoption("--device")
 
 
-class Test_tcshow:
+class Test_tcshow(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
-      python setup.py test --addopts --runxfail
+      python setup.py test --addopts "--runxfail --device <test device>"
     """
 
     @pytest.mark.xfail
-    def test_normal(self, subproc_wrapper):
+    def test_normal(self, device_option):
+        SubprocessRunner("tcdel --device " + device_option).run()
+
         command = " ".join([
             "tcset",
-            "--device", DEVICE,
+            "--device", device_option,
             "--delay", "10",
             "--delay-distro", "2",
             "--loss", "0.01",
@@ -35,44 +36,45 @@ class Test_tcshow:
             "--network", "192.168.0.10",
             "--port", "8080",
         ])
-        assert subproc_wrapper.run(command) == 0
+        assert SubprocessRunner(command).run() == 0
 
         command = " ".join([
             "tcset",
-            "--device", DEVICE,
+            "--device", device_option,
             "--delay", "1",
             "--loss", "0.02",
             "--rate", "500K",
             "--direction", "incoming",
         ])
-        assert subproc_wrapper.run(command) == 0
+        assert SubprocessRunner(command).run() == 0
 
         command = " ".join([
             "tcshow",
-            "--device", DEVICE,
+            "--device", device_option,
         ])
-        proc = subproc_wrapper.popen_command(command)
-        stdout, _stderr = proc.communicate()
-        assert thutils.loader.JsonLoader.loads(stdout) == thutils.loader.JsonLoader.loads("""{
-    "eth0": {
+        runner = SubprocessRunner(command)
+        runner.run()
+
+        expected = "{" + '"{:s}"'.format(device_option) + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
-                "delay": "10.0", 
-                "loss": "0.01", 
-                "rate": "250K", 
+                "delay": "10.0",
+                "loss": "0.01",
+                "rate": "250K",
                 "delay-distro": "2.0"
-            }, 
+            },
             "network=0.0.0.0/0": {}
-        }, 
+        },
         "incoming": {
             "network=0.0.0.0/0": {
-                "delay": "1.0", 
-                "loss": "0.02", 
+                "delay": "1.0",
+                "loss": "0.02",
                 "rate": "500K"
             }
         }
     }
-}
-""")
+}"""
 
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+        assert json.loads(runner.stdout) == json.loads(expected)
+
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0

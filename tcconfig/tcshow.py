@@ -6,48 +6,50 @@
 """
 
 from __future__ import absolute_import
-from __future__ import with_statement
+import json
 import sys
-
-try:
-    import json
-except ImportError:
-    import simplejson as json
-
 import six
-import thutils
+
+import logbook
+import subprocrunner
 
 import tcconfig
-import tcconfig.traffic_control
+from .traffic_control import TrafficControl
+from ._argparse_wrapper import ArgparseWrapper
+from ._common import verify_network_interface
+
+
+handler = logbook.StderrHandler()
+handler.push_application()
 
 
 def parse_option():
-    parser = thutils.option.ArgumentParserObject()
-    parser.make(version=tcconfig.VERSION)
+    parser = ArgparseWrapper(tcconfig.VERSION)
 
-    group = parser.add_argument_group("Traffic Control")
+    group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--device", action="append", required=True,
         help="network device name (e.g. eth0)")
 
-    return parser.parse_args()
+    return parser.parser.parse_args()
 
 
-@thutils.main.Main
 def main():
     options = parse_option()
 
-    thutils.initialize_library(__file__, options)
-    thutils.common.verify_install_command(["tc"])
+    subprocrunner.logger.level = options.log_level
+    if options.quiet:
+        subprocrunner.logger.disable()
+    else:
+        subprocrunner.logger.enable()
 
-    subproc_wrapper = thutils.subprocwrapper.SubprocessWrapper()
+    subprocrunner.Which("tc").verify()
+
     tc_param = {}
-
     for device in options.device:
-        tcconfig.verify_network_interface(device)
+        verify_network_interface(device)
 
-        tc = tcconfig.traffic_control.TrafficControl(
-            subproc_wrapper, device)
+        tc = TrafficControl(device)
         tc_param.update(tc.get_tc_parameter())
 
     six.print_(json.dumps(tc_param, indent=4))

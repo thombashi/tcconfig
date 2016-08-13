@@ -1,4 +1,3 @@
-from __future__ import with_statement
 import os.path
 import setuptools
 import sys
@@ -6,17 +5,16 @@ import sys
 import tcconfig
 
 
-MISC_DIR = "misc"
 REQUIREMENT_DIR = "requirements"
 
-needs_pytest = set(['pytest', 'test', 'ptr']).intersection(sys.argv)
-pytest_runner = ['pytest-runner'] if needs_pytest else []
+needs_pytest = set(["pytest", "test", "ptr"]).intersection(sys.argv)
+pytest_runner = ["pytest-runner"] if needs_pytest else []
 
 
 with open("README.rst") as fp:
     long_description = fp.read()
 
-with open(os.path.join(MISC_DIR, "summary.txt")) as f:
+with open(os.path.join("docs", "pages", "introduction", "summary.txt")) as f:
     summary = f.read()
 
 with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
@@ -24,12 +22,6 @@ with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
 
 with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
     tests_require = [line.strip() for line in f if line.strip()]
-
-major, minor = sys.version_info[:2]
-if major == 2 and minor <= 5:
-    install_requires.extend([
-        "argparse",
-    ])
 
 setuptools.setup(
     name="tcconfig",
@@ -54,7 +46,6 @@ setuptools.setup(
         "Operating System :: POSIX",
         "Operating System :: POSIX :: Linux",
         "Programming Language :: Python :: 2",
-        "Programming Language :: Python :: 2.6",
         "Programming Language :: Python :: 2.7",
         "Programming Language :: Python :: 3",
         "Programming Language :: Python :: 3.3",

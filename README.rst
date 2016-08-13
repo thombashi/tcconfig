@@ -159,7 +159,8 @@ Dependencies
 Linux packages
 --------------
 
--  iproute2 (required for tc command)
+- iproute2 (required for tc command)
+- scm_
 
 Python packages
 ---------------
@@ -167,22 +168,61 @@ Python packages
 Dependency python packages are automatically installed during
 ``tcconfig`` installation via pip.
 
--  `DataPropery <https://github.com/thombashi/DataProperty>`__
--  `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
--  `pyparsing <https://pyparsing.wikispaces.com/>`__
--  `six <https://pypi.python.org/pypi/six/>`__
--  `thutils <https://github.com/thombashi/thutils>`__
+- `DataPropery <https://github.com/thombashi/DataProperty>`__
+- `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
+- `pyparsing <https://pyparsing.wikispaces.com/>`__
+- `six <https://pypi.python.org/pypi/six/>`__
+- `subprocrunner <https://github.com/thombashi/subprocrunner>`__
+- `voluptuous <https://github.com/alecthomas/voluptuous>`__
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  `pingparsing <https://github.com/thombashi/pingparsing>`__
--  `pytest <http://pytest.org/latest/>`__
--  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
--  `tox <https://testrun.org/tox/latest/>`__
+- `pingparsing <https://github.com/thombashi/pingparsing>`__
+- `pytest <http://pytest.org/latest/>`__
+- `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
+- `tox <https://testrun.org/tox/latest/>`__
 
 Documentation
 =============
 
 http://tcconfig.readthedocs.org/en/latest/
+
+Troubleshooting
+========================
+
+Phenomenon
+------------------------
+`tcset` command failed with an error message `RTNETLINK answers: No such file or directory`.
+
+
+Cause and counter measures
+------------------------
+The cause of this error is `sch_netem` kernel module is not loaded in your system.
+Execute the following command to solve this problem:
+
+.. code:: console
+
+    # modprobe sch_netem
+
+The command is loading the `sch_netem` module.
+If the command failed with below message, you need to install additional kernel module.
+
+.. code:: console
+
+    # modprobe: FATAL: Module sch_netem not found in directory /lib/modules/xxxxxx
+
+Execute the following command to install kernel modules (includes the `sch_netem` module).
+
+.. code:: console
+
+    # dnf install kernel-modules-extra
+
+(in the case of `RHEL`/`CentOS`/`Fedora`).
+After that, re-execute `modprobe sch_netem` command.
+
+.. code:: console
+
+    # modprobe sch_netem
+    #
 

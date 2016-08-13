@@ -4,11 +4,11 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import absolute_import
 import re
 
 import dataproperty
 import pyparsing as pp
-import six
 
 
 def _to_unicode(text):
@@ -20,7 +20,7 @@ def _to_unicode(text):
 
 class TcFilterParser(object):
 
-    class FilterMatchId:
+    class FilterMatchId(object):
         INCOMING_NETWORK = 12
         OUTGOING_NETWORK = 16
         PORT = 20
@@ -91,7 +91,8 @@ class TcFilterParser(object):
             return None
 
         match = re.search(
-            "Egress Redirect to device ifb[\d]+", _to_unicode(text), re.MULTILINE)
+            "Egress Redirect to device ifb[\d]+",
+            _to_unicode(text), re.MULTILINE)
         if match is None:
             return None
 
@@ -130,7 +131,7 @@ class TcFilterParser(object):
             ])
             netmask = bin(int(mask_hex, 16)).count("1")
 
-            self.__filter_network = "%s/%d" % (ipaddr, netmask)
+            self.__filter_network = "{:s}/{:d}".format(ipaddr, netmask)
         elif match_id == self.FilterMatchId.PORT:
             self.__filter_port = int(value_hex, 16)
 

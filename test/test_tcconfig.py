@@ -1,54 +1,26 @@
 # encoding: utf-8
 
-'''
-@author: Tsuyoshi Hombashi
-'''
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
 
+from __future__ import division
 import itertools
+import json
 import platform
 
 import dataproperty
 import pingparsing
 import pytest
-import six
-import thutils
-import tcconfig
-
-
-DEVICE = "eth0"
-WAIT_TIME = 5  # [sec]
+from subprocrunner import SubprocessRunner
 
 
 @pytest.fixture
-def dst_host_option(request):
-    return request.config.getoption("--dst-host")
+def device_option(request):
+    return request.config.getoption("--device")
 
 
-@pytest.fixture
-def dst_host_ex_option(request):
-    return request.config.getoption("--dst-host-ex")
-
-
-@pytest.fixture
-def subproc_wrapper():
-    return thutils.subprocwrapper.SubprocessWrapper()
-
-
-@pytest.fixture
-def pingparser():
-    return pingparsing.PingParsing()
-
-
-@pytest.fixture
-def transmitter():
-    transmitter = pingparsing.PingTransmitter()
-    transmitter.ping_option = "-f -q"
-    transmitter.waittime = WAIT_TIME
-
-    return transmitter
-
-
-class NormalTestValue:
+class NormalTestValue(object):
     RATE_LIST = [
         "",
         "--rate 100K",
@@ -90,14 +62,14 @@ class NormalTestValue:
     ]
 
 
-class Test_tcconfig:
+class Test_tcconfig(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
-      python setup.py test --addopts --runxfail
+      python setup.py test --addopts "--runxfail --device <test device>"
 
     These tests are expected to execute on following environment:
-       - Linux(debian) w/ iputils-ping package
+       - Linux w/ iputils-ping package
        - English environment (for parsing ping output)
     """
 
@@ -121,27 +93,26 @@ class Test_tcconfig:
                 NormalTestValue.OVERWRITE_LIST)
         ])
     def test_smoke(
-            self, subproc_wrapper, rate, delay, delay_distro, loss, corrupt,
+            self, device_option, rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite):
         command = " ".join([
             "tcset",
-            "--device " + DEVICE,
+            "--device " + device_option,
             rate, delay, delay_distro, loss,
             direction, network, port, overwrite,
         ])
-        assert subproc_wrapper.run(command) == 0
+        assert SubprocessRunner(command).run() == 0
 
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
 
     @pytest.mark.xfail
     @pytest.mark.parametrize(["overwrite", "expected"], [
         ["", 0],
         ["--overwrite", 255],
     ])
-    def test_config_file(self, tmpdir, subproc_wrapper, overwrite, expected):
+    def test_config_file(self, tmpdir, device_option, overwrite, expected):
         p = tmpdir.join("tcconfig.json")
-        config = """{
-    "eth0": {
+        config = "{" + '"{:s}"'.format(device_option) + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
                 "delay": "10.0", 
@@ -163,200 +134,12 @@ class Test_tcconfig:
 """
         p.write(config)
 
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        SubprocessRunner("tcdel --device " + device_option).run()
         command = " ".join(["tcset -f ", str(p), overwrite])
-        assert subproc_wrapper.run(command) == expected
+        assert SubprocessRunner(command).run() == expected
 
-        proc = subproc_wrapper.popen_command("tcshow --device " + DEVICE)
-        tcshow_stdout, _stderr = proc.communicate()
-        assert thutils.loader.JsonLoader.loads(
-            tcshow_stdout) == thutils.loader.JsonLoader.loads(config)
+        runner = SubprocessRunner("tcshow --device " + device_option)
+        runner.run()
+        assert json.loads(runner.stdout) == json.loads(config)
 
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
-
-
-class Test_tcset_one_network:
-    """
-    Tests of in this class are inappropriate for Travis CI.
-    Execute following command at the local environment  when running tests:
-      python setup.py test --addopts "--dst-host=<hostname or IP address>"
-
-    These tests are expected to execute on following environment:
-       - Linux(debian) w/ iputils-ping package
-       - English environment (for parsing ping output)
-    """
-
-    @pytest.mark.parametrize(["delay"], [
-        [100],
-    ])
-    def test_const_latency(
-            self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, delay):
-        if dataproperty.is_empty_string(dst_host_option):
-            # alternative to pytest.mark.skipif
-            return
-
-        subproc_wrapper.run("tcdel --device " + DEVICE)
-        transmitter.destination_host = dst_host_option
-
-        # w/o latency tc ---
-        result = transmitter.ping()
-        pingparser.parse(result)
-        without_tc_rtt_avg = pingparser.rtt_avg
-
-        # w/ latency tc ---
-        command_list = [
-            "tcset",
-            "--device " + DEVICE,
-            "--delay %d" % (delay),
-        ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
-
-        result = transmitter.ping()
-        pingparser.parse(result)
-        with_tc_rtt_avg = pingparser.rtt_avg
-
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay / 2.0)
-
-        # finalize ---
-        assert subproc_wrapper.run("tcdel --device " + DEVICE) == 0
-
-    @pytest.mark.skipif("platform.system() == 'Windows'")
-    @pytest.mark.parametrize(["delay", "delay_distro"], [
-        [100, 50],
-    ])
-    def test_const_latency_distro(
-            self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, delay, delay_distro):
-        if dataproperty.is_empty_string(dst_host_option):
-            # alternative to pytest.mark.skipif
-            return
-
-        subproc_wrapper.run("tcdel --device " + DEVICE)
-        transmitter.destination_host = dst_host_option
-
-        # w/o latency tc ---
-        result = transmitter.ping()
-        pingparser.parse(result)
-        without_tc_rtt_avg = pingparser.rtt_avg
-        without_tc_rtt_mdev = pingparser.rtt_mdev
-
-        # w/ latency tc ---
-        command_list = [
-            "tcset",
-            "--device " + DEVICE,
-            "--delay %d" % (delay),
-            "--delay-distro %d" % (delay_distro),
-        ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
-
-        result = transmitter.ping()
-        pingparser.parse(result)
-        with_tc_rtt_avg = pingparser.rtt_avg
-        with_tc_rtt_mdev = pingparser.rtt_mdev
-
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay / 2.0)
-
-        rtt_diff = with_tc_rtt_mdev - without_tc_rtt_mdev
-        assert rtt_diff > (delay_distro / 2.0)
-
-        # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
-
-    @pytest.mark.parametrize(["option", "value"], [
-        ["--loss", 10],
-        ["--corrupt", 10],
-    ])
-    def test_const_packet_loss(
-            self, dst_host_option, subproc_wrapper,
-            transmitter, pingparser, option, value):
-        if dataproperty.is_empty_string(dst_host_option):
-            # alternative to pytest.mark.skipif
-            return
-
-        subproc_wrapper.run("tcdel --device " + DEVICE)
-        transmitter.destination_host = dst_host_option
-
-        # w/o packet loss tc ---
-        result = transmitter.ping()
-        pingparser.parse(result)
-        without_tc_loss = (
-            pingparser.packet_receive / float(pingparser.packet_transmit)) * 100.0
-
-        # w/ packet loss tc ---
-        command_list = [
-            "tcset",
-            "--device " + DEVICE,
-            "%s %f" % (option, value),
-        ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
-
-        result = transmitter.ping()
-        pingparser.parse(result)
-        with_tc_loss = (
-            pingparser.packet_receive / float(pingparser.packet_transmit)) * 100.0
-
-        # assertion ---
-        loss_diff = without_tc_loss - with_tc_loss
-        assert loss_diff > (value / 2.0)
-
-        # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
-
-
-class Test_tcset_two_network:
-    """
-    Tests of in this class are inappropriate for Travis CI.
-    Execute following command at the local environment  when running tests:
-      python setup.py test --addopts \
-        "--dst-host=<hostname or IP address> --dst-host-ex=<hostname or IP address>"
-
-    These tests are expected to execute on following environment:
-       - Linux(debian) w/ iputils-ping package
-       - English environment (for parsing ping output)
-    """
-
-    def test_network(
-            self, dst_host_option, dst_host_ex_option, subproc_wrapper,
-            transmitter, pingparser):
-        if any([
-            dataproperty.is_empty_string(dst_host_option),
-            dataproperty.is_empty_string(dst_host_ex_option),
-        ]):
-            # alternative to pytest.mark.skipif
-            return
-
-        subproc_wrapper.run("tcdel --device " + DEVICE)
-        delay = 100
-
-        # tc to specific network ---
-        command_list = [
-            "tcset",
-            "--device " + DEVICE,
-            "--delay %d" % (delay),
-            "--network " + dst_host_ex_option,
-        ]
-        assert subproc_wrapper.run(" ".join(command_list)) == 0
-
-        # w/o tc network ---
-        transmitter.destination_host = dst_host_option
-        result = transmitter.ping()
-        pingparser.parse(result)
-        without_tc_rtt_avg = pingparser.rtt_avg
-
-        # w/ tc network ---
-        transmitter.destination_host = dst_host_ex_option
-        result = transmitter.ping()
-        pingparser.parse(result)
-        with_tc_rtt_avg = pingparser.rtt_avg
-
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay / 2.0)
-
-        # finalize ---
-        subproc_wrapper.run("tcdel --device " + DEVICE)
+        assert SubprocessRunner("tcdel --device " + device_option).run() == 0

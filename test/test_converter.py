@@ -1,0 +1,73 @@
+# encoding: utf-8
+
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
+
+import pytest
+
+from tcconfig._converter import Humanreadable
+
+
+class Test_humanreadable_to_byte:
+
+    @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
+        ["2b", 1024, 2],
+        ["2 b", 1024, 2],
+        ["2 B", 1024, 2],
+        ["2k", 1024, 2 * 1024 ** 1],
+        ["2 k", 1024, 2 * 1024 ** 1],
+        ["2 K", 1024, 2 * 1024 ** 1],
+        ["2m", 1024, 2 * 1024 ** 2],
+        ["2 m", 1024, 2 * 1024 ** 2],
+        ["2 M", 1024, 2 * 1024 ** 2],
+        ["2g", 1024, 2 * 1024 ** 3],
+        ["2 g", 1024, 2 * 1024 ** 3],
+        ["2 G", 1024, 2 * 1024 ** 3],
+        ["2t", 1024, 2 * 1024 ** 4],
+        ["2 t", 1024, 2 * 1024 ** 4],
+        ["2 T", 1024, 2 * 1024 ** 4],
+        ["2p", 1024, 2 * 1024 ** 5],
+        ["2 p", 1024, 2 * 1024 ** 5],
+        ["2 P", 1024, 2 * 1024 ** 5],
+        ["2.5 M", 1024, int(2.5 * 1024 ** 2)],
+        ["2.5 m", 1024, int(2.5 * 1024 ** 2)],
+        ["2b", 1000, 2],
+        ["2 b", 1000, 2],
+        ["2 B", 1000, 2],
+        ["2k", 1000, 2 * 1000 ** 1],
+        ["2 k", 1000, 2 * 1000 ** 1],
+        ["2 K", 1000, 2 * 1000 ** 1],
+        ["2m", 1000, 2 * 1000 ** 2],
+        ["2 m", 1000, 2 * 1000 ** 2],
+        ["2 M", 1000, 2 * 1000 ** 2],
+        ["2g", 1000, 2 * 1000 ** 3],
+        ["2 g", 1000, 2 * 1000 ** 3],
+        ["2 G", 1000, 2 * 1000 ** 3],
+        ["2t", 1000, 2 * 1000 ** 4],
+        ["2 t", 1000, 2 * 1000 ** 4],
+        ["2 T", 1000, 2 * 1000 ** 4],
+        ["2p", 1000, 2 * 1000 ** 5],
+        ["2 p", 1000, 2 * 1000 ** 5],
+        ["2 P", 1000, 2 * 1000 ** 5],
+        ["2.5 M", 1000, int(2.5 * 1000 ** 2)],
+        ["2.5 m", 1000, int(2.5 * 1000 ** 2)],
+    ])
+    def test_normal(self, value, kilo_size, expected):
+        assert Humanreadable(kilo_size).humanreadable_to_byte(
+            value) == expected
+
+    @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
+        [None, 1000, TypeError],
+        [True, 1000, TypeError],
+        [float("nan"), 1000, TypeError],
+        ["a", 1000, ValueError],
+        ["1k0 ", 1000, ValueError],
+        ["10kb", 1000, ValueError],
+        ["-2m", 1000, ValueError],
+        ["2m", None, ValueError],
+        ["2m", 1001, ValueError],
+    ])
+    def test_exception(self, value, kilo_size, exception):
+        with pytest.raises(exception):
+            Humanreadable(kilo_size).humanreadable_to_byte(value)
