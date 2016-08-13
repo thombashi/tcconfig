@@ -16,6 +16,7 @@ import thutils
 from .parser import TcFilterParser
 from .parser import TcQdiscParser
 from ._common import verify_network_interface
+from ._converter import Humanreadable
 from ._error import TcCommandExecutionError
 
 
@@ -162,7 +163,7 @@ class TrafficControl(object):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return
 
-        rate = thutils.common.humanreadable_to_byte(self.bandwidth_rate)
+        rate = Humanreadable().humanreadable_to_byte(self.bandwidth_rate)
         if rate <= 0:
             raise ValueError("rate must be greater than zero")
 
@@ -376,8 +377,8 @@ class TrafficControl(object):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return 0
 
-        rate_kbps = thutils.common.humanreadable_to_byte(
-            self.bandwidth_rate, kilo_size=1000) / 1000.0
+        rate_kbps = Humanreadable(kilo_size=1000).humanreadable_to_byte(
+            self.bandwidth_rate) / 1000.0
         if rate_kbps <= 0:
             raise ValueError("rate must be greater than zero")
 
