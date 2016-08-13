@@ -19,11 +19,13 @@ class Test_tcshow(object):
     """
     Tests of in this class are inappropriate for Travis CI.
     Execute following command at the local environment  when running tests:
-      python setup.py test --addopts --runxfail
+      python setup.py test --addopts "--runxfail --device <test device>"
     """
 
     @pytest.mark.xfail
     def test_normal(self, device_option):
+        SubprocessRunner("tcdel --device " + device_option).run()
+
         command = " ".join([
             "tcset",
             "--device", device_option,
