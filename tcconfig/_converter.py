@@ -43,7 +43,7 @@ class Humanreadable(object):
 
     def __unit_to_byte(self, unit):
         if self.kilo_size not in [1000, 1024]:
-            raise ValueError("invalid kilo size: {:d}".format(self.kilo_size))
+            raise ValueError("invalid kilo size: {}".format(self.kilo_size))
 
         for re_exp_pair in self.__RE_EXP_PAIR_LIST:
             re_pattern, exp = re_exp_pair
@@ -51,4 +51,4 @@ class Humanreadable(object):
             if re_pattern.search(unit):
                 return self.kilo_size ** exp
 
-        raise ValueError("unknown unit: {:s}".format(unit))
+        raise ValueError("unknown unit: {}".format(unit))
