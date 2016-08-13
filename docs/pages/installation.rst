@@ -34,6 +34,11 @@ Dependency python packages are automatically installed during
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
 - `voluptuous <https://github.com/alecthomas/voluptuous>`__
 
+Optional
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- `netifaces <https://bitbucket.org/al45tair/netifaces>`__
+
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
