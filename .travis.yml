@@ -16,7 +16,6 @@ os:
 
 install:
   - pip install tox
-  - pip install thutils
 
 script: 
   - tox
