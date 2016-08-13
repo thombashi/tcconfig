@@ -13,7 +13,6 @@ import logbook
 import pyparsing as pp
 import six
 import subprocrunner
-import thutils
 
 import tcconfig
 from .traffic_control import TrafficControl

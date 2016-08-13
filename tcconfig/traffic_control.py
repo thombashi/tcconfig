@@ -11,7 +11,6 @@ import dataproperty
 import ipaddress
 import six
 from subprocrunner import SubprocessRunner
-import thutils
 
 from .parser import TcFilterParser
 from .parser import TcQdiscParser

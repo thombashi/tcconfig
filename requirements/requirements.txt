@@ -4,5 +4,4 @@ netifaces
 pyparsing
 six
 subprocrunner
-thutils>=0.1.24
 voluptuous
