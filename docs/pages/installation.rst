@@ -18,7 +18,8 @@ Dependencies
 Linux packages
 --------------
 
--  iproute2 (required for tc command)
+- iproute2 (required for tc command)
+- sch_netem
 
 Python packages
 ---------------
@@ -26,16 +27,17 @@ Python packages
 Dependency python packages are automatically installed during
 ``tcconfig`` installation via pip.
 
--  `DataPropery <https://github.com/thombashi/DataProperty>`__
--  `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
--  `pyparsing <https://pyparsing.wikispaces.com/>`__
--  `six <https://pypi.python.org/pypi/six/>`__
--  `thutils <https://github.com/thombashi/thutils>`__
+- `DataPropery <https://github.com/thombashi/DataProperty>`__
+- `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
+- `pyparsing <https://pyparsing.wikispaces.com/>`__
+- `six <https://pypi.python.org/pypi/six/>`__
+- `subprocrunner <https://github.com/thombashi/subprocrunner>`__
+- `voluptuous <https://github.com/alecthomas/voluptuous>`__
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
--  `pingparsing <https://github.com/thombashi/pingparsing>`__
--  `pytest <http://pytest.org/latest/>`__
--  `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
--  `tox <https://testrun.org/tox/latest/>`__
+- `pingparsing <https://github.com/thombashi/pingparsing>`__
+- `pytest <http://pytest.org/latest/>`__
+- `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
+- `tox <https://testrun.org/tox/latest/>`__
