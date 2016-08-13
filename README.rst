@@ -9,7 +9,7 @@ tcconfig
 Summary
 -------
 
-``tcconfig`` is a Simple tc command wrapper.
+``tcconfig`` is a Simple ``tc`` command wrapper.
 Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.
 
 Traffic control features
@@ -160,7 +160,7 @@ Linux packages
 --------------
 
 - iproute2 (required for tc command)
-- scm_
+- sch_netem
 
 Python packages
 ---------------
@@ -174,6 +174,11 @@ Dependency python packages are automatically installed during
 - `six <https://pypi.python.org/pypi/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
 - `voluptuous <https://github.com/alecthomas/voluptuous>`__
+
+Optional
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+- `netifaces <https://bitbucket.org/al45tair/netifaces>`__
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
