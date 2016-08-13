@@ -168,24 +168,24 @@ class TrafficControl(object):
 
     def __validate_network_delay(self):
         _validate_within_min_max(
-            thutils.common.get_var_name(self.latency_ms, locals()),
+            "latency_ms",
             self.latency_ms,
             self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
 
         _validate_within_min_max(
-            thutils.common.get_var_name(self.latency_distro_ms, locals()),
+            "latency_distro_ms",
             self.latency_distro_ms,
             self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
-            thutils.common.get_var_name(self.packet_loss_rate, locals()),
+            "packet_loss_rate",
             self.packet_loss_rate,
             self.__MIN_PACKET_LOSS_RATE, self.__MAX_PACKET_LOSS_RATE)
 
     def __validate_curruption_rate(self):
         _validate_within_min_max(
-            thutils.common.get_var_name(self.curruption_rate, locals()),
+            "curruption_rate",
             self.curruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
@@ -206,8 +206,7 @@ class TrafficControl(object):
 
     def __validate_port(self):
         _validate_within_min_max(
-            thutils.common.get_var_name(self.port, locals()),
-            self.port, self.__MIN_PORT, self.__MAX_PORT)
+            "port", self.port, self.__MIN_PORT, self.__MAX_PORT)
 
     def __make_qdisc(self, qdisc_major_id):
         command_list = [
