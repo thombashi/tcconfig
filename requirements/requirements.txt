@@ -3,5 +3,5 @@ ipaddress
 netifaces
 pyparsing
 six
-subprocrunner
+subprocrunner>=0.2.0
 voluptuous
