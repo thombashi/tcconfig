@@ -277,6 +277,7 @@ class TrafficControl(object):
         qdisk_show_runner = SubprocessRunner(command)
         if qdisk_show_runner.returncode != 0:
             raise TcCommandExecutionError(qdisk_show_runner.stderr)
+        qdisk_show_runner.run()
         qdisc_param = qdisc_parser.parse(qdisk_show_runner.stdout)
 
         # parse filter ---
