@@ -80,7 +80,7 @@ class TrafficControl(object):
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_curruption_rate()
-        self.network = self.__sanitize_network()
+        self.network = self.__sanitize_network(self.network)
         self.__validate_port()
 
     def __get_device_qdisc_major_id(self):
@@ -189,25 +189,26 @@ class TrafficControl(object):
             self.curruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
-    def __sanitize_network(self):
+    @staticmethod
+    def __sanitize_network(network):
         """
         :return: Network string
         :rtype: str
         :raises ValueError: if the network string is invalid.
         """
 
-        if dataproperty.is_empty_string(self.network):
+        if dataproperty.is_empty_string(network):
             return ""
 
         try:
-            ipaddress.IPv4Address(six.u(self.network))
-            return self.network + "/32"
+            ipaddress.IPv4Address(six.u(network))
+            return network + "/32"
         except ipaddress.AddressValueError:
             pass
 
-        ipaddress.IPv4Network(six.u(self.network))  # validate network str
+        ipaddress.IPv4Network(six.u(network))  # validate network str
 
-        return self.network
+        return network
 
     def __validate_port(self):
         _validate_within_min_max(
