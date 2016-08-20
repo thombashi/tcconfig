@@ -80,7 +80,7 @@ class TrafficControl(object):
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_curruption_rate()
-        self.network = self.__validate_network()
+        self.network = self.__sanitize_network()
         self.__validate_port()
 
     def __get_device_qdisc_major_id(self):
@@ -189,7 +189,7 @@ class TrafficControl(object):
             self.curruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
-    def __validate_network(self):
+    def __sanitize_network(self):
         """
         :return: Network string
         :rtype: str
