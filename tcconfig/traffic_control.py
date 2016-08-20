@@ -202,8 +202,6 @@ class TrafficControl(object):
         ipaddress.IPv4Network(six.u(self.network))
         return self.network
 
-        raise ValueError("unrecognizable network: " + self.network)
-
     def __validate_port(self):
         _validate_within_min_max(
             "port", self.port, self.__MIN_PORT, self.__MAX_PORT)
