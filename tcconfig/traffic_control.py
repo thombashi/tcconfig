@@ -199,7 +199,8 @@ class TrafficControl(object):
         except ipaddress.AddressValueError:
             pass
 
-        ipaddress.IPv4Network(six.u(self.network))
+        ipaddress.IPv4Network(six.u(self.network))  # validate network str
+
         return self.network
 
     def __validate_port(self):
