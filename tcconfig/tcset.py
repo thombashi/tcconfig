@@ -179,7 +179,9 @@ def main():
     subprocrunner.Which("tc").verify()
     try:
         verify_netem_module()
-    except (subprocrunner.CommandNotFoundError, ModuleNotFoundError) as e:
+    except ModuleNotFoundError as e:
+        logger.warning(str(e))
+    except subprocrunner.CommandNotFoundError as e:
         logger.error(str(e))
 
     if dataproperty.is_not_empty_string(options.config_file):
