@@ -190,6 +190,12 @@ class TrafficControl(object):
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
     def __validate_network(self):
+        """
+        :return: Network string
+        :rtype: str
+        :raises ValueError: if the network string is invalid.
+        """
+
         if dataproperty.is_empty_string(self.network):
             return ""
 
