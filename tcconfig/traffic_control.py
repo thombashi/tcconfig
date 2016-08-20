@@ -119,8 +119,8 @@ class TrafficControl(object):
     def get_tc_parameter(self):
         return {
             self.__device: {
-                "outgoing": self.__get_filter(self.__device),
-                "incoming": self.__get_filter(
+                TrafficDirection.OUTGOING: self.__get_filter(self.__device),
+                TrafficDirection.INCOMING: self.__get_filter(
                     self.__get_ifb_from_device(self.__device)),
             },
         }

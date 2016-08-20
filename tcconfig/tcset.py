@@ -16,6 +16,7 @@ import subprocrunner
 
 import tcconfig
 from .traffic_control import TrafficControl
+from .traffic_control import TrafficDirection
 from ._argparse_wrapper import ArgparseWrapper
 from ._error import ModuleNotFoundError
 
@@ -101,7 +102,7 @@ class TcConfigLoader(object):
 
         schema = Schema({
             Required(six.text_type): {
-                Any("outgoing", "incoming"): {
+                Any(*TrafficDirection.LIST): {
                     six.text_type: {
                         six.text_type: six.text_type,
                     },
