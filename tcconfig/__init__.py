@@ -4,4 +4,4 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
-VERSION = "0.6.4"
+VERSION = "0.6.5"

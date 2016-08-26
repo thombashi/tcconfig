@@ -3,5 +3,5 @@ ipaddress
 logbook
 pyparsing
 six
-subprocrunner>=0.2.0
+subprocrunner>=0.3.0
 voluptuous
