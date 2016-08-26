@@ -74,8 +74,6 @@ class TrafficControl(object):
         self.network = None
         self.port = None
 
-        self.src_network = None
-
     def validate(self):
         verify_network_interface(self.__device)
         self.__validate_bandwidth_rate()
@@ -83,7 +81,6 @@ class TrafficControl(object):
         self.__validate_packet_loss_rate()
         self.__validate_curruption_rate()
         self.network = self.__sanitize_network(self.network)
-        self.src_network = self.__sanitize_network(self.src_network)
         self.__validate_port()
 
     def __get_device_qdisc_major_id(self):
@@ -328,14 +325,8 @@ class TrafficControl(object):
             "parent {:x}:".format(qdisc_major_id),
             "prio 2 u32 match ip {:s} 0.0.0.0/0".format(
                 self.__get_network_direction_str()),
-            "flowid " + flowid,
+            "flowid " + flowid
         ]
-
-        if all([
-            self.direction == TrafficDirection.OUTGOING,
-            dataproperty.is_not_empty_string(self.src_network),
-        ]):
-            command_list.append("match ip src {:s}".format(self.src_network))
 
         return SubprocessRunner(" ".join(command_list)).run()
 

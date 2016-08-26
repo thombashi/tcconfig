@@ -80,11 +80,6 @@ def parse_option():
         "--port", type=int,
         help="port number of traffic control")
 
-    group = parser.parser.add_argument_group("Prototype")
-    group.add_argument(
-        "--src-network",
-        help="")
-
     return parser.parser.parse_args()
 
 
@@ -212,8 +207,6 @@ def main():
     tc.corruption_rate = options.corruption_rate
     tc.network = options.network
     tc.port = options.port
-
-    tc.src_network = options.src_network
 
     tc.validate()
 
