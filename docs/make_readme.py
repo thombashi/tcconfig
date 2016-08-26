@@ -5,6 +5,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import unicode_literals
 import os.path
 import sys
 
@@ -40,7 +41,7 @@ def write_examples(maker):
 
 def main():
     maker = readmemaker.ReadmeMaker(PROJECT_NAME, OUTPUT_DIR)
-    maker.examples_dir_name = u"usage"
+    maker.examples_dir_name = "usage"
 
     maker.write_introduction_file("badges.txt")
 
