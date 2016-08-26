@@ -181,7 +181,7 @@ def main():
     try:
         verify_netem_module()
     except ModuleNotFoundError as e:
-        logger.warning(str(e))
+        logger.debug(str(e))
     except subprocrunner.CommandNotFoundError as e:
         logger.error(str(e))
 
