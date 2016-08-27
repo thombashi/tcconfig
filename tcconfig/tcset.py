@@ -173,6 +173,20 @@ class TcConfigLoader(object):
         return port_pattern.parseString(text)[-1]
 
 
+def set_tc_from_file(config_file_path, is_overwrite):
+    return_code = 0
+
+    loader = TcConfigLoader()
+    loader.is_overwrite = is_overwrite
+    loader.load_tcconfig(config_file_path)
+
+    for tcconfig_command in loader.get_tcconfig_command_list():
+        return_code |= subprocrunner.SubprocessRunner(
+            tcconfig_command).run()
+
+    return return_code
+
+
 def main():
     options = parse_option()
     logger = logbook.Logger("tcset")
@@ -193,17 +207,7 @@ def main():
         logger.error(str(e))
 
     if dataproperty.is_not_empty_string(options.config_file):
-        return_code = 0
-
-        loader = TcConfigLoader()
-        loader.is_overwrite = options.overwrite
-        loader.load_tcconfig(options.config_file)
-
-        for tcconfig_command in loader.get_tcconfig_command_list():
-            return_code |= subprocrunner.SubprocessRunner(
-                tcconfig_command).run()
-
-        return return_code
+        return set_tc_from_file(options.config_file, options.overwrite)
 
     tc = TrafficControl(options.device)
     tc.direction = options.direction
