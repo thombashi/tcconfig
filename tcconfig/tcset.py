@@ -45,8 +45,8 @@ def parse_option():
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
-        "--direction", choices=tcconfig.traffic_control.TrafficDirection.LIST,
-        default=tcconfig.traffic_control.TrafficDirection.OUTGOING,
+        "--direction", choices=TrafficDirection.LIST,
+        default=TrafficDirection.OUTGOING,
         help="""the direction of network communication that impose traffic control.
         ``incoming`` requires linux kernel version 2.6.20 or later.
         (default = ``%(default)s``)
