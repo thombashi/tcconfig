@@ -113,6 +113,8 @@ class TrafficControl(object):
             re.compile("RTNETLINK answers: Invalid argument"),
             "skip del qdisc: no qdisc for incomming packets")
 
+        returncode |= self.__delete_ifb_device()
+
         return returncode
 
     def get_tc_parameter(self):
