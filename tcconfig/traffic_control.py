@@ -282,10 +282,10 @@ class TrafficControl(object):
 
     def __setup_ifb(self):
         if self.direction != TrafficDirection.INCOMING:
-            return
+            return 0
 
         if dataproperty.is_empty_string(self.ifb_device):
-            return
+            return -1
 
         return_code = 0
 
