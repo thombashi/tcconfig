@@ -98,15 +98,6 @@ filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800
     def test_normal(self, filter_parser, value, expected):
         assert filter_parser.parse_incoming_device(value) == expected
 
-    """
-    @pytest.mark.parametrize(["value", "expected"], [
-        [None, AttributeError],
-    ])
-    def test_exception(self, filter_parser, value, expected):
-        with pytest.raises(expected):
-            filter_parser.parse_incoming_device(value)
-    """
-
 
 class Test_TcQdiscParser_parse(object):
 
