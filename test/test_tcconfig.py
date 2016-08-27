@@ -115,18 +115,18 @@ class Test_tcconfig(object):
         config = "{" + '"{:s}"'.format(device_option) + ": {" + """
         "outgoing": {
             "network=192.168.0.10/32, port=8080": {
-                "delay": "10.0", 
-                "loss": "0.01", 
-                "rate": "250K", 
+                "delay": "10.0",
+                "loss": "0.01",
+                "rate": "250K",
                 "delay-distro": "2.0"
-            }, 
+            },
             "network=0.0.0.0/0": {}
-        }, 
+        },
         "incoming": {
             "network=192.168.10.0/24": {
-                "corrupt": "0.02", 
+                "corrupt": "0.02",
                 "rate": "1500K"
-            }, 
+            },
             "network=0.0.0.0/0": {}
         }
     }
