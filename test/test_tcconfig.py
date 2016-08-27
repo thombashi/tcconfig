@@ -6,11 +6,7 @@
 
 from __future__ import division
 import itertools
-import json
-import platform
 
-import dataproperty
-import pingparsing
 import pytest
 from subprocrunner import SubprocessRunner
 
