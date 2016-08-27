@@ -19,6 +19,7 @@ from .traffic_control import TrafficControl
 from .traffic_control import TrafficDirection
 from ._argparse_wrapper import ArgparseWrapper
 from ._error import ModuleNotFoundError
+from ._error import NetworkInterfaceNotFoundError
 
 
 handler = logbook.StderrHandler()
@@ -216,7 +217,11 @@ def main():
 
     tc.src_network = options.src_network
 
-    tc.validate()
+    try:
+        tc.validate()
+    except (NetworkInterfaceNotFoundError, ValueError) as e:
+        logger.error(str(e))
+        return 1
 
     if options.overwrite:
         tc.delete_tc()

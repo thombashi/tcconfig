@@ -17,6 +17,7 @@ import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
+from ._error import NetworkInterfaceNotFoundError
 
 
 handler = logbook.StderrHandler()
@@ -49,7 +50,11 @@ def main():
 
     tc_param = {}
     for device in options.device:
-        verify_network_interface(device)
+        try:
+            verify_network_interface(device)
+        except NetworkInterfaceNotFoundError as e:
+            logger.debug(str(e))
+            continue
 
         tc = TrafficControl(device)
         tc_param.update(tc.get_tc_parameter())

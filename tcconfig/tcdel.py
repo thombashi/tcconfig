@@ -15,6 +15,7 @@ import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
+from ._error import NetworkInterfaceNotFoundError
 
 
 handler = logbook.StderrHandler()
@@ -44,7 +45,12 @@ def main():
         subprocrunner.logger.enable()
 
     subprocrunner.Which("tc").verify()
-    verify_network_interface(options.device)
+
+    try:
+        verify_network_interface(options.device)
+    except NetworkInterfaceNotFoundError as e:
+        logger.error(e)
+        return 1
 
     tc = TrafficControl(options.device)
 
