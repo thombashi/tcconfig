@@ -113,12 +113,13 @@ class TrafficControl(object):
             "ip link delete {:s} type ifb".format(self.ifb_device),
         ]
 
-        return_code_list = [
+        if all([
             SubprocessRunner(command).run() != 0
             for command in command_list
-        ]
+        ]):
+            return -1
 
-        return -1 if all(return_code_list) else 0
+        return 0
 
     def get_tc_parameter(self):
         return {
