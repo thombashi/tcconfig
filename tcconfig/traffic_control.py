@@ -105,7 +105,6 @@ class TrafficControl(object):
         self.__set_rate(qdisc_major_id)
 
     def delete_tc(self):
-        return_code_list = []
         command_list = [
             "tc qdisc del dev {:s} root".format(self.__device),
             "tc qdisc del dev {:s} ingress".format(self.__device),
@@ -114,8 +113,10 @@ class TrafficControl(object):
             "ip link delete {:s} type ifb".format(self.ifb_device),
         ]
 
-        for command in command_list:
-            return_code_list.append(SubprocessRunner(command).run() != 0)
+        return_code_list = [
+            SubprocessRunner(command).run() != 0
+            for command in command_list
+        ]
 
         return -1 if all(return_code_list) else 0
 
