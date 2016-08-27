@@ -54,7 +54,13 @@ def main():
 
     tc = TrafficControl(options.device)
 
-    return tc.delete_tc()
+    try:
+        return tc.delete_tc()
+    except NetworkInterfaceNotFoundError as e:
+        logger.debug(e)
+        return 0
+
+    return 1
 
 
 if __name__ == '__main__':
