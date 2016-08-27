@@ -86,14 +86,6 @@ class TrafficControl(object):
         self.src_network = self.__sanitize_network(self.src_network)
         self.__validate_port()
 
-    def __get_device_qdisc_major_id(self):
-        import hashlib
-
-        base_device_hash = hashlib.md5(six.b(self.__device)).hexdigest()[:3]
-        device_hash_prefix = "1"
-
-        return int(device_hash_prefix + base_device_hash, 16)
-
     def set_tc(self):
         self.__setup_ifb()
 
@@ -129,39 +121,6 @@ class TrafficControl(object):
                     self.__get_ifb_from_device(self.__device)),
             },
         }
-
-    def __setup_ifb(self):
-        if self.direction != TrafficDirection.INCOMING:
-            return
-
-        if dataproperty.is_empty_string(self.ifb_device):
-            return
-
-        return_code = 0
-
-        command = "modprobe ifb"
-        return_code |= SubprocessRunner(command).run()
-
-        command = "ip link add {:s} type ifb".format(self.ifb_device)
-        return_code |= SubprocessRunner(command).run()
-
-        command = "ip link set dev {:s} up".format(self.ifb_device)
-        return_code |= SubprocessRunner(command).run()
-
-        command = "tc qdisc add dev {:s} ingress".format(self.__device)
-        return_code |= SubprocessRunner(command).run()
-
-        command_list = [
-            "tc filter add",
-            "dev " + self.__device,
-            "parent ffff: protocol ip u32 match u32 0 0",
-            "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
-            "action mirred egress redirect",
-            "dev " + self.ifb_device,
-        ]
-        return_code |= SubprocessRunner(" ".join(command_list)).run()
-
-        return return_code
 
     def __validate_bandwidth_rate(self):
         if dataproperty.is_empty_string(self.bandwidth_rate):
@@ -256,6 +215,14 @@ class TrafficControl(object):
 
         raise ValueError("unknown direction: " + self.direction)
 
+    def __get_device_qdisc_major_id(self):
+        import hashlib
+
+        base_device_hash = hashlib.md5(six.b(self.__device)).hexdigest()[:3]
+        device_hash_prefix = "1"
+
+        return int(device_hash_prefix + base_device_hash, 16)
+
     def __get_netem_qdisc_major_id(self, base_qdisc_major_id):
         base_offset = 10
 
@@ -312,6 +279,39 @@ class TrafficControl(object):
                 filter_table[filter_key] = work_qdisc_param
 
         return filter_table
+
+    def __setup_ifb(self):
+        if self.direction != TrafficDirection.INCOMING:
+            return
+
+        if dataproperty.is_empty_string(self.ifb_device):
+            return
+
+        return_code = 0
+
+        command = "modprobe ifb"
+        return_code |= SubprocessRunner(command).run()
+
+        command = "ip link add {:s} type ifb".format(self.ifb_device)
+        return_code |= SubprocessRunner(command).run()
+
+        command = "ip link set dev {:s} up".format(self.ifb_device)
+        return_code |= SubprocessRunner(command).run()
+
+        command = "tc qdisc add dev {:s} ingress".format(self.__device)
+        return_code |= SubprocessRunner(command).run()
+
+        command_list = [
+            "tc filter add",
+            "dev " + self.__device,
+            "parent ffff: protocol ip u32 match u32 0 0",
+            "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
+            "action mirred egress redirect",
+            "dev " + self.ifb_device,
+        ]
+        return_code |= SubprocessRunner(" ".join(command_list)).run()
+
+        return return_code
 
     def __set_pre_network_filter(self, qdisc_major_id):
         if all([
