@@ -17,4 +17,4 @@ def verify_network_interface(device):
 
     if device not in netifaces.interfaces():
         raise NetworkInterfaceNotFoundError(
-            "invalid network interface: " + device)
+            "network interface not found: " + device)
