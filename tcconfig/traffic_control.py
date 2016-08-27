@@ -60,6 +60,8 @@ class TrafficControl(object):
     __MIN_PORT = 0
     __MAX_PORT = 65535
 
+    __REGEXP_FILE_EXISTS = re.compile("RTNETLINK answers: File exists")
+
     @property
     def ifb_device(self):
         return "ifb{:d}".format(self.__get_device_qdisc_major_id())
@@ -99,19 +101,17 @@ class TrafficControl(object):
         self.__set_rate(qdisc_major_id)
 
     def delete_tc(self):
-        command_list = [
-            "tc qdisc del dev {:s} root".format(self.__device),
-            "tc qdisc del dev {:s} ingress".format(self.__device),
-        ]
         returncode = 0
 
-        if all([
-            SubprocessRunner(command).run() != 0
-            for command in command_list
-        ]):
-            returncode |= 1
+        returncode |= self.__run(
+            "tc qdisc del dev {:s} root".format(self.__device),
+            re.compile("RTNETLINK answers: No such file or directory"),
+            "skip del qdisc: no qdisc for outgoing packets")
 
-        returncode |= self.__delete_ifb_device()
+        returncode |= self.__run(
+            "tc qdisc del dev {:s} ingress".format(self.__device),
+            re.compile("RTNETLINK answers: Invalid argument"),
+            "skip del qdisc: no qdisc for incomming packets")
 
         return returncode
 
@@ -189,7 +189,9 @@ class TrafficControl(object):
             "prio",
         ]
 
-        return SubprocessRunner(" ".join(command_list)).run()
+        return self.__run(
+            " ".join(command_list), self.__REGEXP_FILE_EXISTS,
+            "skip add qdisc: prio qdisc already exists")
 
     def __get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:
@@ -365,7 +367,11 @@ class TrafficControl(object):
         if self.corruption_rate > 0:
             command_list.append("corrupt {:f}%".format(self.corruption_rate))
 
-        return SubprocessRunner(" ".join(command_list)).run()
+        return self.__run(
+            " ".join(command_list), self.__REGEXP_FILE_EXISTS,
+            "skip add qdisc: netem qdisc already exists. "
+            "execute with --overwrite option if you want to overwrite "
+            "the existing settings.")
 
     def __set_network_filter(self, qdisc_major_id):
         if all([
