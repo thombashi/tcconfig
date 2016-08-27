@@ -115,7 +115,10 @@ class TrafficControl(object):
 
         returncode |= self.__run(
             "tc qdisc del dev {:s} ingress".format(self.__device),
-            re.compile("RTNETLINK answers: Invalid argument"),
+            re.compile("|".join([
+                "RTNETLINK answers: Invalid argument",
+                "RTNETLINK answers: No such file or directory",
+            ])),
             "failed to delete qdisc: no qdisc for incomming packets")
 
         returncode |= self.__delete_ifb_device()
