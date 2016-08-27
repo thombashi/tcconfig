@@ -100,18 +100,18 @@ class TrafficControl(object):
         command_list = [
             "tc qdisc del dev {:s} root".format(self.__device),
             "tc qdisc del dev {:s} ingress".format(self.__device),
-            "tc qdisc del dev {:s} root".format(self.ifb_device),
-            "ip link set dev {:s} down".format(self.ifb_device),
-            "ip link delete {:s} type ifb".format(self.ifb_device),
         ]
+        returncode = 0
 
         if all([
             SubprocessRunner(command).run() != 0
             for command in command_list
         ]):
-            return -1
+            returncode |= 1
 
-        return 0
+        returncode |= self.__delete_ifb_device()
+
+        return returncode
 
     def get_tc_parameter(self):
         return {
@@ -413,3 +413,20 @@ class TrafficControl(object):
         ]
 
         return SubprocessRunner(" ".join(command_list)).run()
+
+    def __delete_ifb_device(self):
+        verify_network_interface(self.ifb_device)
+
+        command_list = [
+            "tc qdisc del dev {:s} root".format(self.ifb_device),
+            "ip link set dev {:s} down".format(self.ifb_device),
+            "ip link delete {:s} type ifb".format(self.ifb_device),
+        ]
+
+        if all([
+            SubprocessRunner(command).run() != 0
+            for command in command_list
+        ]):
+            return 2
+
+        return 0
