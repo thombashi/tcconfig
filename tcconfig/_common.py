@@ -6,6 +6,8 @@
 
 from __future__ import absolute_import
 
+from ._error import NetworkInterfaceNotFoundError
+
 
 def verify_network_interface(device):
     try:
@@ -14,4 +16,5 @@ def verify_network_interface(device):
         return
 
     if device not in netifaces.interfaces():
-        raise ValueError("invalid network interface: " + device)
+        raise NetworkInterfaceNotFoundError(
+            "invalid network interface: " + device)
