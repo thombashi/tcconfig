@@ -7,6 +7,12 @@
 from __future__ import absolute_import
 
 
+class NetworkInterfaceNotFoundError(Exception):
+    """
+    Raised when network interface not found.
+    """
+
+
 class ModuleNotFoundError(Exception):
     """
     Raised when mandatory kernel module not found.
