@@ -34,6 +34,8 @@ def parse_option():
 
 def main():
     options = parse_option()
+    logger = logbook.Logger("tcdel")
+    logger.level = options.log_level
 
     subprocrunner.logger.level = options.log_level
     if options.quiet:
