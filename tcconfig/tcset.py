@@ -98,7 +98,8 @@ def verify_netem_module():
 
 class TcConfigLoader(object):
 
-    def __init__(self):
+    def __init__(self, logger):
+        self.__logger = logger
         self.__config_table = None
         self.is_overwrite = False
 
@@ -120,6 +121,8 @@ class TcConfigLoader(object):
             self.__config_table = json.load(fp)
 
         schema(self.__config_table)
+        self.__logger.debug("tc config file: {:s}".format(
+            json.dumps(self.__config_table, indent=4)))
 
     def get_tcconfig_command_list(self):
         command_list = []
@@ -175,10 +178,10 @@ class TcConfigLoader(object):
         return port_pattern.parseString(text)[-1]
 
 
-def set_tc_from_file(config_file_path, is_overwrite):
+def set_tc_from_file(logger, config_file_path, is_overwrite):
     return_code = 0
 
-    loader = TcConfigLoader()
+    loader = TcConfigLoader(logger)
     loader.is_overwrite = is_overwrite
     loader.load_tcconfig(config_file_path)
 
@@ -209,7 +212,7 @@ def main():
         logger.error(str(e))
 
     if dataproperty.is_not_empty_string(options.config_file):
-        return set_tc_from_file(options.config_file, options.overwrite)
+        return set_tc_from_file(logger, options.config_file, options.overwrite)
 
     tc = TrafficControl(options.device)
     tc.direction = options.direction
