@@ -6,10 +6,12 @@
 
 from __future__ import absolute_import
 from __future__ import division
+import re
 
 import dataproperty
 import ipaddress
 import six
+from subprocrunner import logger
 from subprocrunner import SubprocessRunner
 
 from .parser import TcFilterParser
