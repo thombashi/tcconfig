@@ -15,5 +15,5 @@ class ModuleNotFoundError(Exception):
 
 class TcCommandExecutionError(Exception):
     """
-    Raised when a tc command failed.
+    Raised when failed to execute a ``tc`` command.
     """
