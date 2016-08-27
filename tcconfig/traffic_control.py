@@ -430,3 +430,17 @@ class TrafficControl(object):
             return 2
 
         return 0
+
+    @staticmethod
+    def __run(command, regexp, message):
+        proc = SubprocessRunner(command, regexp)
+        if proc.run() == 0:
+            return 0
+
+        match = regexp.search(proc.stderr)
+        if match is None:
+            return proc.returncode
+
+        logger.notice(message)
+
+        return proc.returncode
