@@ -304,14 +304,20 @@ class TrafficControl(object):
         command = "modprobe ifb"
         return_code |= SubprocessRunner(command).run()
 
-        command = "ip link add {:s} type ifb".format(self.ifb_device)
-        return_code |= SubprocessRunner(command).run()
+        return_code |= self.__run(
+            "ip link add {:s} type ifb".format(self.ifb_device),
+            self.__REGEXP_FILE_EXISTS,
+            self.__EXISTS_MSG_TEMPLATE.format(
+                "failed to add ip link: ip link already exists."))
 
         command = "ip link set dev {:s} up".format(self.ifb_device)
         return_code |= SubprocessRunner(command).run()
 
-        command = "tc qdisc add dev {:s} ingress".format(self.__device)
-        return_code |= SubprocessRunner(command).run()
+        return_code |= self.__run(
+            "tc qdisc add dev {:s} ingress".format(self.__device),
+            self.__REGEXP_FILE_EXISTS,
+            self.__EXISTS_MSG_TEMPLATE.format(
+                "failed to add qdisc: ingress qdisc already exists."))
 
         command_list = [
             "tc filter add",
