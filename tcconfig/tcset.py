@@ -233,7 +233,10 @@ def main():
         return 1
 
     if options.overwrite:
-        tc.delete_tc()
+        try:
+            tc.delete_tc()
+        except NetworkInterfaceNotFoundError:
+            pass
 
     tc.set_tc()
 
