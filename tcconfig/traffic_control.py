@@ -19,6 +19,7 @@ from .parser import TcQdiscParser
 from ._common import verify_network_interface
 from ._converter import Humanreadable
 from ._error import TcCommandExecutionError
+from ._iptables import IptablesMangleController
 
 
 def _validate_within_min_max(param_name, value, min_value, max_value):
@@ -73,6 +74,7 @@ class TrafficControl(object):
 
     def __init__(self, device):
         self.__device = device
+        self.__iptables_conntroller = IptablesManglingController()
 
         self.direction = None
         self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
@@ -122,6 +124,8 @@ class TrafficControl(object):
             "failed to delete qdisc: no qdisc for incomming packets")
 
         returncode |= self.__delete_ifb_device()
+
+        self.__iptables_conntroller.clear()
 
         return returncode
 
