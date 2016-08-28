@@ -110,7 +110,9 @@ class TcConfigLoader(object):
             },
         }, extra=ALLOW_EXTRA)
 
-        self.__config_table = json.loads(config_file_path)
+        with open(config_file_path) as fp:
+            self.__config_table = json.load(fp)
+
         schema(self.__config_table)
 
     def get_tcconfig_command_list(self):
