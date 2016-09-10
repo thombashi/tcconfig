@@ -7,6 +7,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import dataproperty
+
 from ._error import NetworkInterfaceNotFoundError
 
 
@@ -19,3 +21,26 @@ def verify_network_interface(device):
     if device not in netifaces.interfaces():
         raise NetworkInterfaceNotFoundError(
             "network interface not found: " + device)
+
+
+def sanitize_network(network):
+    """
+    :return: Network string
+    :rtype: str
+    :raises ValueError: if the network string is invalid.
+    """
+
+    import ipaddress
+
+    if dataproperty.is_empty_string(network):
+        return ""
+
+    try:
+        ipaddress.IPv4Address(network)
+        return network + "/32"
+    except ipaddress.AddressValueError:
+        pass
+
+    ipaddress.IPv4Network(network)  # validate network str
+
+    return network

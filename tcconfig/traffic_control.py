@@ -9,13 +9,13 @@ from __future__ import division
 import re
 
 import dataproperty
-import ipaddress
 import six
 from subprocrunner import logger
 from subprocrunner import SubprocessRunner
 
 from .parser import TcFilterParser
 from .parser import TcQdiscParser
+from ._common import sanitize_network
 from ._common import verify_network_interface
 from ._converter import Humanreadable
 from ._error import TcCommandExecutionError
@@ -93,8 +93,8 @@ class TrafficControl(object):
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_curruption_rate()
-        self.network = self.__sanitize_network(self.network)
-        self.src_network = self.__sanitize_network(self.src_network)
+        self.network = sanitize_network(self.network)
+        self.src_network = sanitize_network(self.src_network)
         self.__validate_port()
 
     def set_tc(self):
@@ -168,27 +168,6 @@ class TrafficControl(object):
             "curruption_rate",
             self.curruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
-
-    @staticmethod
-    def __sanitize_network(network):
-        """
-        :return: Network string
-        :rtype: str
-        :raises ValueError: if the network string is invalid.
-        """
-
-        if dataproperty.is_empty_string(network):
-            return ""
-
-        try:
-            ipaddress.IPv4Address(six.u(network))
-            return network + "/32"
-        except ipaddress.AddressValueError:
-            pass
-
-        ipaddress.IPv4Network(six.u(network))  # validate network str
-
-        return network
 
     def __validate_port(self):
         _validate_within_min_max(
