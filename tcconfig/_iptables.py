@@ -82,6 +82,11 @@ class IptablesMangleMark(object):
 
         return " ".join(command_item_list)
 
+    def to_delete_command(self):
+        IntegerTypeChecker(self.line_number).validate()
+
+        return "iptables -t mangle -D PREROUTING {}".format(self.line_number)
+
     @staticmethod
     def __is_valid_srcdst(srcdst):
         return all([
@@ -97,9 +102,7 @@ class IptablesMangleController(object):
     @classmethod
     def clear(cls):
         for mangle in cls.parse():
-            proc = SubprocessRunner(
-                "iptables -t mangle -D PREROUTING {:d}".format(
-                    mangle.line_number))
+            proc = SubprocessRunner(mangle.to_delete_command())
             if proc.run() != 0:
                 raise RuntimeError(str(proc.stderr))
 
