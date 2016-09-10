@@ -5,9 +5,9 @@
 """
 
 from __future__ import absolute_import
-from __future__ import unicode_literals
 
 import dataproperty
+import six
 
 from ._error import NetworkInterfaceNotFoundError
 
@@ -36,11 +36,11 @@ def sanitize_network(network):
         return ""
 
     try:
-        ipaddress.IPv4Address(network)
+        ipaddress.IPv4Address(six.u(network))
         return network + "/32"
     except ipaddress.AddressValueError:
         pass
 
-    ipaddress.IPv4Network(network)  # validate network str
+    ipaddress.IPv4Network(six.u(network))  # validate network str
 
     return network
