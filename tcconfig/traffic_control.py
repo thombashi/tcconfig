@@ -88,10 +88,7 @@ class TrafficControl(object):
 
     def validate(self):
         verify_network_interface(self.__device)
-        self.__validate_bandwidth_rate()
-        self.__validate_network_delay()
-        self.__validate_packet_loss_rate()
-        self.__validate_curruption_rate()
+        self.__validate_netem_parameter()
         self.network = sanitize_network(self.network)
         self.src_network = sanitize_network(self.src_network)
         self.__validate_port()
@@ -169,6 +166,27 @@ class TrafficControl(object):
             "curruption_rate",
             self.curruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
+
+    def __validate_netem_parameter(self):
+        from dataproperty.type import FloatTypeChecker
+
+        self.__validate_bandwidth_rate()
+        self.__validate_network_delay()
+        self.__validate_packet_loss_rate()
+        self.__validate_curruption_rate()
+
+        param_list = [
+            self.bandwidth_rate,
+            self.latency_ms,
+            self.packet_loss_rate,
+            self.curruption_rate,
+        ]
+
+        if all([
+            not FloatTypeChecker(value).is_type() or value == 0
+            for value in param_list
+        ]):
+            raise ValueError("there is no valid net emulation parameter")
 
     def __validate_port(self):
         _validate_within_min_max(
