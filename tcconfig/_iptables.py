@@ -96,12 +96,16 @@ class IptablesMangleController(object):
                 raise RuntimeError(str(proc.stderr))
 
     @classmethod
-    def parse(cls):
+    def get_iptables(cls):
         proc = SubprocessRunner("iptables -t mangle --line-numbers -L")
         if proc.run() != 0:
             raise RuntimeError(str(proc.stderr))
 
-        for block in split_line_list(proc.stdout.splitlines()):
+        return proc.stdout
+
+    @classmethod
+    def parse(cls):
+        for block in split_line_list(cls.get_iptables().splitlines()):
             if len(block) <= 1:
                 # skip if no entry exists
                 continue
