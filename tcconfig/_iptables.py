@@ -12,6 +12,7 @@ import dataproperty
 from dataproperty.type import IntegerTypeChecker
 from subprocrunner import SubprocessRunner
 
+from ._common import sanitize_network
 from ._split_line_list import split_line_list
 
 
@@ -68,9 +69,11 @@ class IptablesMangleMark(object):
         ]):
             command_item_list.append("-p {}".format(self.protocol))
         if self.__is_valid_srcdst(self.source):
-            command_item_list.append("-s {:s}".format(self.source))
+            command_item_list.append(
+                "-s {:s}".format(sanitize_network(self.source)))
         if self.__is_valid_srcdst(self.destination):
-            command_item_list.append("-d {:s}".format(self.destination))
+            command_item_list.append(
+                "-d {:s}".format(sanitize_network(self.destination)))
 
         return " ".join(command_item_list)
 
