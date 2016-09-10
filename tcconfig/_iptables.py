@@ -128,7 +128,7 @@ class IptablesMangleController(object):
                     number, mark, source, destination, protocol)
 
     def add(self, mangling_mark):
-        SubprocessRunner(mangling_mark.to_append_command()).run()
+        return SubprocessRunner(mangling_mark.to_append_command()).run()
 
 
 if __name__ == '__main__':
