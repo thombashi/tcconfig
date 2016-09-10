@@ -39,7 +39,8 @@ class IptablesMangleMark(object):
         return self.__mark_id
 
     def __init__(
-            self, line_number, mark_id, source, destination, protocol="all"):
+            self, mark_id, source, destination, protocol="all",
+            line_number=None):
         self.__chain = "PREROUTING"
         self.__line_number = line_number
         self.__mark_id = mark_id
@@ -140,7 +141,7 @@ class IptablesMangleController(object):
                     continue
 
                 yield IptablesMangleMark(
-                    line_number, mark, source, destination, protocol)
+                    mark, source, destination, protocol, line_number)
 
     @classmethod
     def add(cls, mangling_mark):
