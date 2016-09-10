@@ -88,10 +88,9 @@ class IptablesMangleMark(object):
 
     @staticmethod
     def __is_valid_srcdst(srcdst):
-        return all([
-            dataproperty.is_not_empty_string(srcdst),
-            srcdst.lower() != "anywhere",
-        ])
+        return (
+            dataproperty.is_not_empty_string(srcdst) and
+            srcdst.lower() != "anywhere")
 
 
 class IptablesMangleController(object):
