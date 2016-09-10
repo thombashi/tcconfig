@@ -20,6 +20,7 @@ from ._common import verify_network_interface
 from ._converter import Humanreadable
 from ._error import TcCommandExecutionError
 from ._iptables import IptablesMangleController
+from ._iptables import IptablesMangleMark
 
 
 def _validate_within_min_max(param_name, value, min_value, max_value):
@@ -414,6 +415,18 @@ class TrafficControl(object):
             command_list.append("match ip dport {:d} 0xffff".format(self.port))
 
         return SubprocessRunner(" ".join(command_list)).run()
+
+    def __set_mangle_mark(self, mark_id):
+        dst_network = None
+        src_network = None
+
+        if self.direction == TrafficDirection.OUTGOING:
+            dst_network = self.network
+        elif self.direction == TrafficDirection.INCOMING:
+            src_network = self.network
+
+        IptablesMangleController.add(
+            IptablesMangleMark(mark_id, src_network, dst_network))
 
     def __set_rate(self, qdisc_major_id):
         if dataproperty.is_empty_string(self.bandwidth_rate):
