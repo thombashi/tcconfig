@@ -60,14 +60,11 @@ class IptablesMangleMark(object):
         return ", ".join(str_list)
 
     def to_append_command(self):
-        if not IntegerTypeChecker(self.mark_id).is_type():
-            raise ValueError(
-                "mark attribute must be an integer: actual={}".format(
-                    self.mark_id))
+        IntegerTypeChecker(self.mark_id).validate()
 
         command_item_list = [
             "iptables -A PREROUTING -t mangle -j MARK",
-            "--set-mark {:d}".format(self.mark_id),
+            "--set-mark {}".format(self.mark_id),
         ]
 
         if any([
