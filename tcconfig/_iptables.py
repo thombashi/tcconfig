@@ -18,7 +18,7 @@ from ._split_line_list import split_line_list
 class IptablesMangleMark(object):
 
     @property
-    def number(self):
+    def line_number(self):
         return self.__number
 
     @property
@@ -34,31 +34,31 @@ class IptablesMangleMark(object):
         return self.__destination
 
     @property
-    def mark(self):
-        return self.__mark
+    def mark_id(self):
+        return self.__mark_id
 
-    def __init__(self, number, mark, source, destination, protocol="all"):
+    def __init__(self, number, mark_id, source, destination, protocol="all"):
         self.__chain = "PREROUTING"
         self.__number = number
-        self.__mark = mark
+        self.__mark_id = mark_id
         self.__source = source
         self.__destination = destination
         self.__protocol = protocol
 
     def __repr__(self, *args, **kwargs):
-        return "num={:d}, protocol={:s}, src={:s}, dst={:s}, mark={:d}".format(
-            self.number, self.protocol, self.source, self.destination,
+        return "line-num={:d}, protocol={:s}, src={:s}, dst={:s}, mark-id={:d}".format(
+            self.line_number, self.protocol, self.source, self.destination,
             self.mark)
 
     def to_append_command(self):
-        if not IntegerTypeChecker(self.mark).is_type():
+        if not IntegerTypeChecker(self.mark_id).is_type():
             raise ValueError(
                 "mark attribute must be an integer: actual={}".format(
-                    self.mark))
+                    self.mark_id))
 
         command_item_list = [
             "iptables -A PREROUTING -t mangle -j MARK",
-            "--set-mark {:d}".format(self.mark),
+            "--set-mark {:d}".format(self.mark_id),
         ]
 
         if any([
@@ -88,7 +88,8 @@ class IptablesMangleController(object):
     def clear(self):
         for mangle in self.parse():
             proc = SubprocessRunner(
-                "iptables -t mangle -D PREROUTING {:d}".format(mangle.number))
+                "iptables -t mangle -D PREROUTING {:d}".format(
+                    mangle.line_number))
             if proc.run():
                 raise RuntimeError(str(proc.stderr))
 
