@@ -107,26 +107,28 @@ class TrafficControl(object):
         self.__set_rate(qdisc_major_id)
 
     def delete_tc(self):
-        returncode = 0
+        result_list = []
 
-        returncode |= self.__run(
+        returncode = self.__run(
             "tc qdisc del dev {:s} root".format(self.__device),
             re.compile("RTNETLINK answers: No such file or directory"),
             "failed to delete qdisc: no qdisc for outgoing packets")
+        result_list.append(returncode == 0)
 
-        returncode |= self.__run(
+        returncode = self.__run(
             "tc qdisc del dev {:s} ingress".format(self.__device),
             re.compile("|".join([
                 "RTNETLINK answers: Invalid argument",
                 "RTNETLINK answers: No such file or directory",
             ])),
             "failed to delete qdisc: no qdisc for incomming packets")
+        result_list.append(returncode == 0)
 
-        returncode |= self.__delete_ifb_device()
+        result_list.append(self.__delete_ifb_device() == 0)
 
         IptablesMangleController.clear()
 
-        return returncode
+        return any(result_list)
 
     def get_tc_parameter(self):
         return {
