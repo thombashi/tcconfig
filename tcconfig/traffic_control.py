@@ -74,7 +74,6 @@ class TrafficControl(object):
 
     def __init__(self, device):
         self.__device = device
-        self.__iptables_conntroller = IptablesManglingController()
 
         self.direction = None
         self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
