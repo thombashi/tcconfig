@@ -48,9 +48,16 @@ class IptablesMangleMark(object):
         self.__protocol = protocol
 
     def __repr__(self, *args, **kwargs):
-        return "line-num={:d}, protocol={:s}, src={:s}, dst={:s}, mark-id={:d}".format(
-            self.line_number, self.protocol, self.source, self.destination,
-            self.mark_id)
+        str_list = []
+
+        if IntegerTypeChecker(self.line_number).is_type():
+            str_list.append("line-num={}".format(self.line_number))
+
+        str_list.append(
+            "protocol={:s}, src={:s}, dst={:s}, mark-id={:d}".format(
+                self.protocol, self.source, self.destination, self.mark_id))
+
+        return ", ".join(str_list)
 
     def to_append_command(self):
         if not IntegerTypeChecker(self.mark_id).is_type():
