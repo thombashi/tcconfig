@@ -85,15 +85,17 @@ class IptablesMangleController(object):
 
     __RE_CHAIN_NAME_PREROUTING = re.compile("Chain PREROUTING")
 
-    def clear(self):
-        for mangle in self.parse():
+    @classmethod
+    def clear(cls):
+        for mangle in cls.parse():
             proc = SubprocessRunner(
                 "iptables -t mangle -D PREROUTING {:d}".format(
                     mangle.line_number))
-            if proc.run():
+            if proc.run() != 0:
                 raise RuntimeError(str(proc.stderr))
 
-    def parse(self):
+    @classmethod
+    def parse(cls):
         proc = SubprocessRunner("iptables -t mangle --line-numbers -L")
         if proc.run() != 0:
             raise RuntimeError(str(proc.stderr))
@@ -103,7 +105,7 @@ class IptablesMangleController(object):
                 # skip if no entry exists
                 continue
 
-            if self.__RE_CHAIN_NAME_PREROUTING.search(block[0]) is None:
+            if cls.__RE_CHAIN_NAME_PREROUTING.search(block[0]) is None:
                 continue
 
             for line in reversed(block[2:]):
@@ -128,7 +130,8 @@ class IptablesMangleController(object):
                 yield IptablesMangleMark(
                     number, mark, source, destination, protocol)
 
-    def add(self, mangling_mark):
+    @classmethod
+    def add(cls, mangling_mark):
         return SubprocessRunner(mangling_mark.to_append_command()).run()
 
 
