@@ -125,7 +125,7 @@ class TrafficControl(object):
 
         returncode |= self.__delete_ifb_device()
 
-        self.__iptables_conntroller.clear()
+        IptablesMangleController.clear()
 
         return returncode
 
