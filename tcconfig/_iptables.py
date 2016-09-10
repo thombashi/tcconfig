@@ -98,6 +98,7 @@ class IptablesMangleMark(object):
 class IptablesMangleController(object):
 
     __RE_CHAIN_NAME_PREROUTING = re.compile("Chain PREROUTING")
+    __MAX_MARK_ID = 0xffffffff
 
     @classmethod
     def clear(cls):
@@ -113,6 +114,18 @@ class IptablesMangleController(object):
             raise RuntimeError(str(proc.stderr))
 
         return proc.stdout
+
+    @classmethod
+    def get_unique_mark_id(cls):
+        mark_id_list = [mangle.mark_id for mangle in cls.parse()]
+        unique_mark_id = 1
+        while unique_mark_id < cls.__MAX_MARK_ID:
+            if unique_mark_id not in mark_id_list:
+                return unique_mark_id
+
+            unique_mark_id += 1
+
+        raise RuntimeError("usable mark id not found")
 
     @classmethod
     def parse(cls):
