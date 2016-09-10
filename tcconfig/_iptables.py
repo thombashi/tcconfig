@@ -49,7 +49,7 @@ class IptablesMangleMark(object):
     def __repr__(self, *args, **kwargs):
         return "line-num={:d}, protocol={:s}, src={:s}, dst={:s}, mark-id={:d}".format(
             self.line_number, self.protocol, self.source, self.destination,
-            self.mark)
+            self.mark_id)
 
     def to_append_command(self):
         if not IntegerTypeChecker(self.mark_id).is_type():
