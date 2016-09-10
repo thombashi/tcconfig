@@ -121,7 +121,7 @@ class IptablesMangleController(object):
                 if len(item_list) < 6:
                     continue
 
-                number = int(item_list[0])
+                line_number = int(item_list[0])
                 target = item_list[1]
                 protocol = item_list[2]
                 source = item_list[4]
@@ -136,7 +136,7 @@ class IptablesMangleController(object):
                     continue
 
                 yield IptablesMangleMark(
-                    number, mark, source, destination, protocol)
+                    line_number, mark, source, destination, protocol)
 
     @classmethod
     def add(cls, mangling_mark):
