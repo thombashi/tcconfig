@@ -37,7 +37,8 @@ class IptablesMangleMark(object):
     def mark_id(self):
         return self.__mark_id
 
-    def __init__(self, line_number, mark_id, source, destination, protocol="all"):
+    def __init__(
+            self, line_number, mark_id, source, destination, protocol="all"):
         self.__chain = "PREROUTING"
         self.__line_number = line_number
         self.__mark_id = mark_id
