@@ -11,6 +11,7 @@ import dataproperty
 from dataproperty.type import IntegerTypeChecker
 from subprocrunner import SubprocessRunner
 
+from ._common import ANYWHERE_NETWORK
 from ._common import sanitize_network
 from ._split_line_list import split_line_list
 
@@ -94,7 +95,8 @@ class IptablesMangleMark(object):
     def __is_valid_srcdst(srcdst):
         return (
             dataproperty.is_not_empty_string(srcdst) and
-            srcdst.lower() != "anywhere")
+            srcdst != ANYWHERE_NETWORK
+        )
 
 
 class IptablesMangleController(object):

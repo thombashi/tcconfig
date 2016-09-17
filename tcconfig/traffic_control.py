@@ -395,8 +395,9 @@ class TrafficControl(object):
             "dev " + self.__get_tc_device(),
             "protocol ip",
             "parent {:x}:".format(qdisc_major_id),
-            "prio 2 u32 match ip {:s} 0.0.0.0/0".format(
-                self.__get_network_direction_str()),
+            "prio 2 u32 match ip {:s} {:s}".format(
+                self.__get_network_direction_str(),
+                ANYWHERE_NETWORK),
             "flowid " + flowid,
         ]
 

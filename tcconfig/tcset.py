@@ -17,6 +17,7 @@ import subprocrunner
 import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
+from ._common import ANYWHERE_NETWORK
 from ._error import ModuleNotFoundError
 from ._error import NetworkInterfaceNotFoundError
 from ._traffic_direction import TrafficDirection
@@ -151,7 +152,7 @@ class TcConfigLoader(object):
 
                     try:
                         network = self.__parse_tc_filter_network(tc_filter)
-                        if network != "0.0.0.0/0":
+                        if network != ANYWHERE_NETWORK:
                             option_list.append("--network=" + network)
                     except pp.ParseException:
                         pass
