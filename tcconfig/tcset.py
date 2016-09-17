@@ -86,6 +86,11 @@ def parse_option():
         "--src-network",
         help="")
 
+    group = parser.parser.add_argument_group("Miscellaneous")
+    group.add_argument(
+        "--without-iptables", action="store_true", default=False,
+        help="")
+
     return parser.parser.parse_args()
 
 
@@ -223,7 +228,8 @@ def main():
         packet_loss_rate=options.packet_loss_rate,
         corruption_rate=options.corruption_rate,
         network=options.network,
-        port=options.port
+        port=options.port,
+        is_use_iptables=not options.without_iptables
     )
 
     tc.src_network = options.src_network
