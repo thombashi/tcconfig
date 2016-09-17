@@ -68,17 +68,54 @@ class TrafficControl(object):
     def ifb_device(self):
         return "ifb{:d}".format(self.__get_device_qdisc_major_id())
 
-    def __init__(self, device):
+    @property
+    def direction(self):
+        return self.__direction
+
+    @property
+    def bandwidth_rate(self):
+        return self.__bandwidth_rate
+
+    @property
+    def latency_ms(self):
+        return self.__latency_ms
+
+    @property
+    def latency_distro_ms(self):
+        return self.__latency_distro_ms
+
+    @property
+    def packet_loss_rate(self):
+        return self.__packet_loss_rate
+
+    @property
+    def corruption_rate(self):
+        return self.__corruption_rate
+
+    @property
+    def network(self):
+        return self.__network
+
+    @property
+    def port(self):
+        return self.__port
+
+    def __init__(
+            self, device,
+            direction=None, bandwidth_rate=None,
+            latency_ms=None, latency_distro_ms=None,
+            packet_loss_rate=None, corruption_rate=None,
+            network=None, port=None):
         self.__device = device
 
-        self.direction = None
-        self.bandwidth_rate = None  # bandwidth string [G/M/K bps]
-        self.latency_ms = None  # [milliseconds]
-        self.latency_distro_ms = None  # [milliseconds]
-        self.packet_loss_rate = None  # [%]
-        self.curruption_rate = None  # [%]
-        self.network = None
-        self.port = None
+        self.__direction = direction
+        self.__bandwidth_rate = bandwidth_rate  # bandwidth string [G/M/K bps]
+        self.__latency_ms = latency_ms  # [milliseconds]
+        self.__latency_distro_ms = latency_distro_ms  # [milliseconds]
+        self.__packet_loss_rate = packet_loss_rate  # [%]
+        self.__corruption_rate = corruption_rate  # [%]
+        self.__network = network
+        self.__port = port
 
         self.src_network = None
 

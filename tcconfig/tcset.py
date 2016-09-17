@@ -214,15 +214,17 @@ def main():
     if dataproperty.is_not_empty_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
 
-    tc = TrafficControl(options.device)
-    tc.direction = options.direction
-    tc.bandwidth_rate = options.bandwidth_rate
-    tc.latency_ms = options.network_latency
-    tc.latency_distro_ms = options.latency_distro_ms
-    tc.packet_loss_rate = options.packet_loss_rate
-    tc.corruption_rate = options.corruption_rate
-    tc.network = options.network
-    tc.port = options.port
+    tc = TrafficControl(
+        options.device,
+        direction=options.direction,
+        bandwidth_rate=options.bandwidth_rate,
+        latency_ms=options.network_latency,
+        latency_distro_ms=options.latency_distro_ms,
+        packet_loss_rate=options.packet_loss_rate,
+        corruption_rate=options.corruption_rate,
+        network=options.network,
+        port=options.port
+    )
 
     tc.src_network = options.src_network
 
