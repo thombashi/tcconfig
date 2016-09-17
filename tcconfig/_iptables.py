@@ -16,6 +16,9 @@ from ._common import sanitize_network
 from ._split_line_list import split_line_list
 
 
+VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
+
+
 class IptablesMangleMark(object):
 
     @property
@@ -43,7 +46,7 @@ class IptablesMangleMark(object):
         return self.__chain
 
     def __init__(
-            self, mark_id, source, destination, protocol="all",
+            self, mark_id, source, destination, chain, protocol="all",
             line_number=None):
         self.__line_number = line_number
         self.__mark_id = mark_id
@@ -51,14 +54,10 @@ class IptablesMangleMark(object):
         self.__destination = sanitize_network(destination)
         self.__protocol = protocol
 
-        is_valid_src = self.__is_valid_srcdst(self.source)
-        is_valid_dst = self.__is_valid_srcdst(self.destination)
+        if chain not in VALID_CHAIN_LIST:
+            raise ValueError("invalid chain: {}".format(chain))
 
-        self.__chain = "OUTPUT"
-        if is_valid_src and is_valid_dst:
-            self.__chain = "PREROUTING"
-        elif is_valid_src:
-            self.__chain = "INPUT"
+        self.__chain = chain
 
     def __repr__(self, *args, **kwargs):
         str_list = []
@@ -80,7 +79,7 @@ class IptablesMangleMark(object):
         IntegerTypeChecker(self.mark_id).validate()
 
         command_item_list = [
-            "iptables -A PREROUTING -t mangle -j MARK",
+            "iptables -A {:s} -t mangle -j MARK".format(self.chain),
             "--set-mark {}".format(self.mark_id),
         ]
 
@@ -101,7 +100,8 @@ class IptablesMangleMark(object):
     def to_delete_command(self):
         IntegerTypeChecker(self.line_number).validate()
 
-        return "iptables -t mangle -D PREROUTING {}".format(self.line_number)
+        return "iptables -t mangle -D {:s} {}".format(
+            self.chain, self.line_number)
 
     @staticmethod
     def __is_valid_srcdst(srcdst):
