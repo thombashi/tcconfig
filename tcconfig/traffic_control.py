@@ -196,8 +196,8 @@ class TrafficControl(object):
 
     def __validate_curruption_rate(self):
         _validate_within_min_max(
-            "curruption_rate",
-            self.curruption_rate,
+            "corruption_rate",
+            self.corruption_rate,
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
     def __validate_netem_parameter(self):
@@ -212,7 +212,7 @@ class TrafficControl(object):
             self.bandwidth_rate,
             self.latency_ms,
             self.packet_loss_rate,
-            self.curruption_rate,
+            self.corruption_rate,
         ]
 
         if all([
