@@ -12,6 +12,9 @@ import six
 from ._error import NetworkInterfaceNotFoundError
 
 
+ANYWHERE_NETWORK = "0.0.0.0/0"
+
+
 def verify_network_interface(device):
     try:
         import netifaces
@@ -36,7 +39,7 @@ def sanitize_network(network):
         return ""
 
     if network.lower() == "anywhere":
-        return "0.0.0.0/0"
+        return ANYWHERE_NETWORK
 
     try:
         ipaddress.IPv4Address(six.u(network))
