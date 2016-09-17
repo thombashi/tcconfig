@@ -122,7 +122,10 @@ class IptablesMangleMark(object):
 
 class IptablesMangleController(object):
 
-    __RE_CHAIN_NAME_PREROUTING = re.compile("Chain PREROUTING")
+    __RE_CHAIN = re.compile(
+        "Chain {:s} |Chain {:s} |Chain {:s} ".format(*VALID_CHAIN_LIST))
+    __RE_CHAIN_NAME = re.compile(
+        "{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))
     __MAX_MARK_ID = 0xffffffff
 
     enable = True
@@ -164,8 +167,11 @@ class IptablesMangleController(object):
                 # skip if no entry exists
                 continue
 
-            if cls.__RE_CHAIN_NAME_PREROUTING.search(block[0]) is None:
+            match = cls.__RE_CHAIN.search(block[0])
+            if match is None:
                 continue
+
+            chain = cls.__RE_CHAIN_NAME.search(match.group()).group()
 
             for line in reversed(block[2:]):
                 item_list = line.split()
@@ -187,7 +193,8 @@ class IptablesMangleController(object):
                     continue
 
                 yield IptablesMangleMark(
-                    mark, source, destination, protocol, line_number)
+                    mark_id=mark, source=source, destination=destination,
+                    chain=chain, protocol=protocol, line_number=line_number)
 
     @classmethod
     def add(cls, mangling_mark):
