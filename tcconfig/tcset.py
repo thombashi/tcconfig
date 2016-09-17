@@ -16,10 +16,10 @@ import subprocrunner
 
 import tcconfig
 from .traffic_control import TrafficControl
-from .traffic_control import TrafficDirection
 from ._argparse_wrapper import ArgparseWrapper
 from ._error import ModuleNotFoundError
 from ._error import NetworkInterfaceNotFoundError
+from ._traffic_direction import TrafficDirection
 
 
 handler = logbook.StderrHandler()

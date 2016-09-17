@@ -21,6 +21,7 @@ from ._converter import Humanreadable
 from ._error import TcCommandExecutionError
 from ._iptables import IptablesMangleController
 from ._iptables import IptablesMangleMark
+from ._traffic_direction import TrafficDirection
 
 
 def _validate_within_min_max(param_name, value, min_value, max_value):
@@ -36,12 +37,6 @@ def _validate_within_min_max(param_name, value, min_value, max_value):
         raise ValueError(
             "{:s} is too low: expected>={:f}[%], value={:f}[%]".format(
                 param_name, min_value, value))
-
-
-class TrafficDirection(object):
-    OUTGOING = "outgoing"
-    INCOMING = "incoming"
-    LIST = [OUTGOING, INCOMING]
 
 
 class TrafficControl(object):
