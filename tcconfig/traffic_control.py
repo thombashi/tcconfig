@@ -183,6 +183,12 @@ class TrafficControl(object):
             },
         }
 
+    def __is_use_iptables(self):
+        return all([
+            self.is_enable_iptables,
+            self.direction == TrafficDirection.OUTGOING,
+        ])
+
     def __validate_bandwidth_rate(self):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return
