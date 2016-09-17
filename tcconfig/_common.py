@@ -35,6 +35,9 @@ def sanitize_network(network):
     if dataproperty.is_empty_string(network):
         return ""
 
+    if network == "anywhere":
+        return "0.0.0.0/0"
+
     try:
         ipaddress.IPv4Address(six.u(network))
         return network + "/32"
