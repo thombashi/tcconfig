@@ -122,7 +122,7 @@ class TrafficControl(object):
     def validate(self):
         verify_network_interface(self.__device)
         self.__validate_netem_parameter()
-        self.network = sanitize_network(self.network)
+        self.__network = sanitize_network(self.network)
         self.src_network = sanitize_network(self.src_network)
         self.__validate_port()
 
