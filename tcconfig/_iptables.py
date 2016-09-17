@@ -59,6 +59,15 @@ class IptablesMangleMark(object):
 
         self.__chain = chain
 
+    def __eq__(self, other):
+        return all([
+            self.chain == other.chain,
+            self.mark_id == other.mark_id,
+            self.protocol == other.protocol,
+            self.source == other.source,
+            self.destination == other.destination,
+        ])
+
     def __repr__(self, *args, **kwargs):
         str_list = []
 
