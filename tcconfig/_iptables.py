@@ -53,9 +53,13 @@ class IptablesMangleMark(object):
         if IntegerTypeChecker(self.line_number).is_type():
             str_list.append("line-num={}".format(self.line_number))
 
-        str_list.append(
-            "protocol={:s}, src={:s}, dst={:s}, mark-id={:d}".format(
-                self.protocol, self.source, self.destination, self.mark_id))
+        str_list.extend([
+            "protocol={:s}".format(self.protocol),
+            "src={:s}".format(self.source),
+            "dst={:s}".format(self.destination),
+            "mark-id={:d}".format(self.mark_id),
+            "charin={:s}".format(self.chain),
+        ])
 
         return ", ".join(str_list)
 
