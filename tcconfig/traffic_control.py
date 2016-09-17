@@ -99,6 +99,10 @@ class TrafficControl(object):
         return self.__network
 
     @property
+    def src_network(self):
+        return self.__src_network
+
+    @property
     def port(self):
         return self.__port
 
@@ -112,7 +116,9 @@ class TrafficControl(object):
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, corruption_rate=None,
             network=None, port=None,
-            is_enable_iptables=True):
+            src_network=None,
+            is_enable_iptables=True,
+    ):
         self.__device = device
 
         self.__direction = direction
@@ -122,10 +128,9 @@ class TrafficControl(object):
         self.__packet_loss_rate = packet_loss_rate  # [%]
         self.__corruption_rate = corruption_rate  # [%]
         self.__network = network
+        self.__src_network = src_network
         self.__port = port
         self.__is_enable_iptables = is_enable_iptables
-
-        self.src_network = None
 
         IptablesMangleController.enable = is_enable_iptables
 
@@ -133,7 +138,7 @@ class TrafficControl(object):
         verify_network_interface(self.__device)
         self.__validate_netem_parameter()
         self.__network = sanitize_network(self.network)
-        self.src_network = sanitize_network(self.src_network)
+        self.__src_network = sanitize_network(self.src_network)
         self.__validate_port()
 
     def set_tc(self):

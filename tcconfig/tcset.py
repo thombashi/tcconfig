@@ -229,11 +229,10 @@ def main():
         packet_loss_rate=options.packet_loss_rate,
         corruption_rate=options.corruption_rate,
         network=options.network,
+        src_network=options.src_network,
         port=options.port,
         is_enable_iptables=not options.without_iptables
     )
-
-    tc.src_network = options.src_network
 
     try:
         tc.validate()
