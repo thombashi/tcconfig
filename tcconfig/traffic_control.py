@@ -19,6 +19,7 @@ from ._common import sanitize_network
 from ._common import verify_network_interface
 from ._converter import Humanreadable
 from ._error import TcCommandExecutionError
+from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController
 from ._iptables import IptablesMangleMark
 from ._traffic_direction import TrafficDirection
@@ -160,7 +161,11 @@ class TrafficControl(object):
             "failed to delete qdisc: no qdisc for incomming packets")
         result_list.append(returncode == 0)
 
-        result_list.append(self.__delete_ifb_device() == 0)
+        try:
+            result_list.append(self.__delete_ifb_device() == 0)
+        except NetworkInterfaceNotFoundError as e:
+            logger.debug(e)
+            result_list.append(False)
 
         IptablesMangleController.clear()
 
