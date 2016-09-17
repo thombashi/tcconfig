@@ -15,6 +15,7 @@ from subprocrunner import SubprocessRunner
 
 from .parser import TcFilterParser
 from .parser import TcQdiscParser
+from ._common import ANYWHERE_NETWORK
 from ._common import sanitize_network
 from ._common import verify_network_interface
 from ._converter import Humanreadable
