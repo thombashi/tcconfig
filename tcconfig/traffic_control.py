@@ -13,8 +13,6 @@ import six
 from subprocrunner import logger
 from subprocrunner import SubprocessRunner
 
-from .parser import TcFilterParser
-from .parser import TcQdiscParser
 from ._common import ANYWHERE_NETWORK
 from ._common import sanitize_network
 from ._common import verify_network_interface
@@ -179,15 +177,6 @@ class TrafficControl(object):
 
         return any(result_list)
 
-    def get_tc_parameter(self):
-        return {
-            self.__device: {
-                TrafficDirection.OUTGOING: self.__get_filter(self.__device),
-                TrafficDirection.INCOMING: self.__get_filter(
-                    self.__get_ifb_from_device(self.__device)),
-            },
-        }
-
     def __is_use_iptables(self):
         return all([
             self.is_enable_iptables,
@@ -273,14 +262,6 @@ class TrafficControl(object):
 
         raise ValueError("unknown direction: " + self.direction)
 
-    def __get_ifb_from_device(self, device):
-        filter_parser = TcFilterParser()
-        command = "tc filter show dev {:s} root".format(device)
-        filter_runner = SubprocessRunner(command)
-        filter_runner.run()
-
-        return filter_parser.parse_incoming_device(filter_runner.stdout)
-
     def __get_network_direction_str(self):
         if self.direction == TrafficDirection.OUTGOING:
             return "dst"
@@ -316,44 +297,6 @@ class TrafficControl(object):
             return self.__IN_DEVICE_QDISC_MINOR_ID
 
         raise ValueError("unknown direction: " + self.direction)
-
-    def __get_filter(self, device):
-        if dataproperty.is_empty_string(device):
-            return {}
-
-        qdisc_parser = TcQdiscParser()
-        filter_parser = TcFilterParser()
-
-        # parse qdisc ---
-        command = "tc qdisc show dev {:s}".format(device)
-        qdisk_show_runner = SubprocessRunner(command)
-        qdisk_show_runner.run()
-        qdisc_param = qdisc_parser.parse(qdisk_show_runner.stdout)
-
-        # parse filter ---
-        command = "tc filter show dev {:s}".format(device)
-        filter_show_runner = SubprocessRunner(command)
-        filter_show_runner.run()
-
-        filter_table = {}
-        for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
-            key_item_list = []
-
-            if dataproperty.is_not_empty_string(filter_param.get("network")):
-                key_item_list.append("network=" + filter_param.get("network"))
-
-            if dataproperty.is_integer(filter_param.get("port")):
-                key_item_list.append(
-                    "port={:d}".format(filter_param.get("port")))
-
-            filter_key = ", ".join(key_item_list)
-            filter_table[filter_key] = {}
-            if filter_param.get("flowid") == qdisc_param.get("parent"):
-                work_qdisc_param = dict(qdisc_param)
-                del work_qdisc_param["parent"]
-                filter_table[filter_key] = work_qdisc_param
-
-        return filter_table
 
     def __setup_ifb(self):
         if self.direction != TrafficDirection.INCOMING:
