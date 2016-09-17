@@ -35,7 +35,7 @@ def sanitize_network(network):
     if dataproperty.is_empty_string(network):
         return ""
 
-    if network == "anywhere":
+    if network.lower() == "anywhere":
         return "0.0.0.0/0"
 
     try:
