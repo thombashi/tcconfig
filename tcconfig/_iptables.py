@@ -125,8 +125,13 @@ class IptablesMangleController(object):
     __RE_CHAIN_NAME_PREROUTING = re.compile("Chain PREROUTING")
     __MAX_MARK_ID = 0xffffffff
 
+    enable = True
+
     @classmethod
     def clear(cls):
+        if not cls.enable:
+            return
+
         for mangle in cls.parse():
             proc = SubprocessRunner(mangle.to_delete_command())
             if proc.run() != 0:
@@ -186,6 +191,9 @@ class IptablesMangleController(object):
 
     @classmethod
     def add(cls, mangling_mark):
+        if not cls.enable:
+            return 0
+
         return SubprocessRunner(mangling_mark.to_append_command()).run()
 
 
