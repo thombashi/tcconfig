@@ -230,7 +230,7 @@ def main():
         corruption_rate=options.corruption_rate,
         network=options.network,
         port=options.port,
-        is_use_iptables=not options.without_iptables
+        is_enable_iptables=not options.without_iptables
     )
 
     tc.src_network = options.src_network
