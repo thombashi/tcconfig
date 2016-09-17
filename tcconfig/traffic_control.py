@@ -448,7 +448,7 @@ class TrafficControl(object):
 
         return SubprocessRunner(" ".join(command_list)).run()
 
-    def __set_mangle_mark(self, mark_id):
+    def __add_mangle_mark(self, mark_id):
         dst_network = None
         src_network = None
 
