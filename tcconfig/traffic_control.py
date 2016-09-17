@@ -395,6 +395,9 @@ class TrafficControl(object):
         return return_code
 
     def __set_pre_network_filter(self, qdisc_major_id):
+        if self.__is_use_iptables():
+            return 0
+
         if all([
             dataproperty.is_empty_string(self.network),
             not dataproperty.is_integer(self.port),
@@ -462,15 +465,25 @@ class TrafficControl(object):
             "dev " + self.__get_tc_device(),
             "protocol ip",
             "parent {:x}:".format(qdisc_major_id),
-            "prio 1 u32",
-            "flowid {:x}:{:d}".format(
-                qdisc_major_id, self.__get_qdisc_minor_id()),
+            "prio 1",
         ]
-        if dataproperty.is_not_empty_string(self.network):
-            command_list.append("match ip {:s} {:s}".format(
-                self.__get_network_direction_str(), self.network))
-        if self.port is not None:
-            command_list.append("match ip dport {:d} 0xffff".format(self.port))
+
+        if self.__is_use_iptables():
+            mark_id = IptablesMangleController.get_unique_mark_id()
+            command_list.append("handle {:d} fw".format(mark_id))
+
+            self.__add_mangle_mark(mark_id)
+        else:
+            command_list.append("u32")
+            if dataproperty.is_not_empty_string(self.network):
+                command_list.append("match ip {:s} {:s}".format(
+                    self.__get_network_direction_str(), self.network))
+            if self.port is not None:
+                command_list.append(
+                    "match ip dport {:d} 0xffff".format(self.port))
+
+        command_list.append("flowid {:x}:{:d}".format(
+            qdisc_major_id, self.__get_qdisc_minor_id()))
 
         return SubprocessRunner(" ".join(command_list)).run()
 
@@ -480,11 +493,18 @@ class TrafficControl(object):
 
         if self.direction == TrafficDirection.OUTGOING:
             dst_network = self.network
+            if dataproperty.is_empty_string(self.src_network):
+                chain = "OUTPUT"
+            else:
+                src_network = self.src_network
+                chain = "PREROUTING"
         elif self.direction == TrafficDirection.INCOMING:
             src_network = self.network
+            chain = "INPUT"
 
-        IptablesMangleController.add(
-            IptablesMangleMark(mark_id, src_network, dst_network))
+        IptablesMangleController.add(IptablesMangleMark(
+            mark_id=mark_id, source=src_network, destination=dst_network,
+            chain=chain))
 
     def __set_rate(self, qdisc_major_id):
         if dataproperty.is_empty_string(self.bandwidth_rate):
