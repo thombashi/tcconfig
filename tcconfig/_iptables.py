@@ -43,8 +43,8 @@ class IptablesMangleMark(object):
         self.__chain = "PREROUTING"
         self.__line_number = line_number
         self.__mark_id = mark_id
-        self.__source = source
-        self.__destination = destination
+        self.__source = sanitize_network(source)
+        self.__destination = sanitize_network(destination)
         self.__protocol = protocol
 
     def __repr__(self, *args, **kwargs):
@@ -78,10 +78,10 @@ class IptablesMangleMark(object):
             command_item_list.append("-p {}".format(self.protocol))
         if self.__is_valid_srcdst(self.source):
             command_item_list.append(
-                "-s {:s}".format(sanitize_network(self.source)))
+                "-s {:s}".format(self.source))
         if self.__is_valid_srcdst(self.destination):
             command_item_list.append(
-                "-d {:s}".format(sanitize_network(self.destination)))
+                "-d {:s}".format(self.destination))
 
         return " ".join(command_item_list)
 
