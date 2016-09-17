@@ -38,15 +38,27 @@ class IptablesMangleMark(object):
     def mark_id(self):
         return self.__mark_id
 
+    @property
+    def chain(self):
+        return self.__chain
+
     def __init__(
             self, mark_id, source, destination, protocol="all",
             line_number=None):
-        self.__chain = "PREROUTING"
         self.__line_number = line_number
         self.__mark_id = mark_id
         self.__source = sanitize_network(source)
         self.__destination = sanitize_network(destination)
         self.__protocol = protocol
+
+        is_valid_src = self.__is_valid_srcdst(self.source)
+        is_valid_dst = self.__is_valid_srcdst(self.destination)
+
+        self.__chain = "OUTPUT"
+        if is_valid_src and is_valid_dst:
+            self.__chain = "PREROUTING"
+        elif is_valid_src:
+            self.__chain = "INPUT"
 
     def __repr__(self, *args, **kwargs):
         str_list = []
@@ -59,7 +71,7 @@ class IptablesMangleMark(object):
             "src={:s}".format(self.source),
             "dst={:s}".format(self.destination),
             "mark-id={:d}".format(self.mark_id),
-            "charin={:s}".format(self.chain),
+            "chain={:s}".format(self.chain),
         ])
 
         return ", ".join(str_list)
