@@ -25,7 +25,7 @@ class TcFilterParser(object):
         OUTGOING_NETWORK = 16
         PORT = 20
 
-    __FILTER_PATTERN = (
+    __FILTER_FLOWID_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("flowid", include=True) +
         pp.Word(pp.hexnums + ":")
@@ -111,7 +111,7 @@ class TcFilterParser(object):
         }
 
     def __parse_flow_id(self, line):
-        parsed_list = self.__FILTER_PATTERN.parseString(
+        parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
             _to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
 
