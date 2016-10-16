@@ -76,9 +76,9 @@ class IptablesMangleMark(object):
 
         str_list.extend([
             "protocol={:s}".format(self.protocol),
-            "src={:s}".format(self.source),
-            "dst={:s}".format(self.destination),
-            "mark-id={:d}".format(self.mark_id),
+            "source={:s}".format(self.source),
+            "destination={:s}".format(self.destination),
+            "mark_id={:d}".format(self.mark_id),
             "chain={:s}".format(self.chain),
         ])
 
