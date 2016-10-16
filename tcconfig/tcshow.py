@@ -40,69 +40,76 @@ def parse_option():
     return parser.parser.parse_args()
 
 
-def _get_ifb_from_device(device):
-    filter_parser = TcFilterParser()
-    command = "tc filter show dev {:s} root".format(device)
-    filter_runner = SubprocessRunner(command)
-    filter_runner.run()
+class TcParamParser(object):
 
-    return filter_parser.parse_incoming_device(filter_runner.stdout)
+    @property
+    def device(self):
+        return self.__device
 
+    def __init__(self, device):
+        self.__device = device
 
-def _get_filter(device):
-    if dataproperty.is_empty_string(device):
-        return {}
+    def get_tc_parameter(self):
+        return {
+            self.device: {
+                TrafficDirection.OUTGOING: self.__get_filter(self.device),
+                TrafficDirection.INCOMING: self.__get_filter(
+                    self.__get_ifb_from_device()),
+            },
+        }
 
-    qdisc_param = _parse_qdisc(device)
+    def __get_ifb_from_device(self):
+        filter_parser = TcFilterParser()
+        command = "tc filter show dev {:s} root".format(self.device)
+        filter_runner = SubprocessRunner(command)
+        filter_runner.run()
 
-    # parse filter ---
-    filter_parser = TcFilterParser()
-    command = "tc filter show dev {:s}".format(device)
-    filter_show_runner = SubprocessRunner(command)
-    filter_show_runner.run()
+        return filter_parser.parse_incoming_device(filter_runner.stdout)
 
-    network_format = "network={:s}"
-    port_format = "port={:d}"
+    def __get_filter(self, device):
+        if dataproperty.is_empty_string(device):
+            return {}
 
-    filter_table = {}
-    for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
-        key_item_list = []
+        qdisc_param = self.__parse_qdisc(device)
 
-        if dataproperty.is_not_empty_string(filter_param.get("network")):
-            key_item_list.append(
-                network_format.format(filter_param.get("network")))
+        # parse filter ---
+        filter_parser = TcFilterParser()
+        command = "tc filter show dev {:s}".format(device)
+        filter_show_runner = SubprocessRunner(command)
+        filter_show_runner.run()
 
-        if dataproperty.is_integer(filter_param.get("port")):
-            key_item_list.append(
-                port_format.format(filter_param.get("port")))
+        network_format = "network={:s}"
+        port_format = "port={:d}"
 
-        filter_key = ", ".join(key_item_list)
-        filter_table[filter_key] = {}
-        if filter_param.get("flowid") == qdisc_param.get("parent"):
-            work_qdisc_param = dict(qdisc_param)
-            del work_qdisc_param["parent"]
-            filter_table[filter_key] = work_qdisc_param
+        filter_table = {}
+        for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
+            key_item_list = []
 
-    return filter_table
+            if dataproperty.is_not_empty_string(filter_param.get("network")):
+                key_item_list.append(
+                    network_format.format(filter_param.get("network")))
 
+            if dataproperty.is_integer(filter_param.get("port")):
+                key_item_list.append(
+                    port_format.format(filter_param.get("port")))
 
-def _parse_qdisc(device):
-    qdisc_parser = TcQdiscParser()
-    command = "tc qdisc show dev {:s}".format(device)
-    qdisk_show_runner = SubprocessRunner(command)
-    qdisk_show_runner.run()
+            filter_key = ", ".join(key_item_list)
+            filter_table[filter_key] = {}
+            if filter_param.get("flowid") == qdisc_param.get("parent"):
+                work_qdisc_param = dict(qdisc_param)
+                del work_qdisc_param["parent"]
+                filter_table[filter_key] = work_qdisc_param
 
-    return qdisc_parser.parse(qdisk_show_runner.stdout)
+        return filter_table
 
+    @staticmethod
+    def __parse_qdisc(device):
+        qdisc_parser = TcQdiscParser()
+        command = "tc qdisc show dev {:s}".format(device)
+        qdisk_show_runner = SubprocessRunner(command)
+        qdisk_show_runner.run()
 
-def get_tc_parameter(device):
-    return {
-        device: {
-            TrafficDirection.OUTGOING: _get_filter(device),
-            TrafficDirection.INCOMING: _get_filter(
-                _get_ifb_from_device(device)),
-        },
-    }
+        return qdisc_parser.parse(qdisk_show_runner.stdout)
 
 
 def main():
@@ -126,7 +133,7 @@ def main():
             logger.debug(str(e))
             continue
 
-        tc_param.update(get_tc_parameter(device))
+        tc_param.update(TcParamParser(device).get_tc_parameter())
 
     six.print_(json.dumps(tc_param, indent=4))
 
