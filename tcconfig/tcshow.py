@@ -66,6 +66,21 @@ class TcParamParser(object):
 
         return filter_parser.parse_incoming_device(filter_runner.stdout)
 
+    def __get_filter_key(self, filter_param):
+        network_format = "network={:s}"
+        port_format = "port={:d}"
+        key_item_list = []
+
+        if dataproperty.is_not_empty_string(filter_param.get("network")):
+            key_item_list.append(
+                network_format.format(filter_param.get("network")))
+
+        if dataproperty.is_integer(filter_param.get("port")):
+            key_item_list.append(
+                port_format.format(filter_param.get("port")))
+
+        return ", ".join(key_item_list)
+
     def __get_filter(self, device):
         if dataproperty.is_empty_string(device):
             return {}
@@ -78,22 +93,9 @@ class TcParamParser(object):
         filter_show_runner = SubprocessRunner(command)
         filter_show_runner.run()
 
-        network_format = "network={:s}"
-        port_format = "port={:d}"
-
         filter_table = {}
         for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
-            key_item_list = []
-
-            if dataproperty.is_not_empty_string(filter_param.get("network")):
-                key_item_list.append(
-                    network_format.format(filter_param.get("network")))
-
-            if dataproperty.is_integer(filter_param.get("port")):
-                key_item_list.append(
-                    port_format.format(filter_param.get("port")))
-
-            filter_key = ", ".join(key_item_list)
+            filter_key = self.__get_filter_key(filter_param)
             filter_table[filter_key] = {}
             if filter_param.get("flowid") == qdisc_param.get("parent"):
                 work_qdisc_param = dict(qdisc_param)
