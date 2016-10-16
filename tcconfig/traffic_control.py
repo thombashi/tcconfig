@@ -40,6 +40,8 @@ def _validate_within_min_max(param_name, value, min_value, max_value):
 
 
 class TrafficControl(object):
+    __NETEM_QDISC_MAJOR_ID_OFFSET = 10
+
     __OUT_DEVICE_QDISC_MINOR_ID = 1
     __IN_DEVICE_QDISC_MINOR_ID = 3
 
@@ -280,14 +282,15 @@ class TrafficControl(object):
         return int(device_hash_prefix + base_device_hash, 16)
 
     def __get_netem_qdisc_major_id(self, base_qdisc_major_id):
-        base_offset = 10
-
         if self.direction == TrafficDirection.OUTGOING:
             direction_offset = 0
         elif self.direction == TrafficDirection.INCOMING:
             direction_offset = 1
 
-        return base_qdisc_major_id + base_offset + direction_offset
+        return (
+            base_qdisc_major_id +
+            self.__NETEM_QDISC_MAJOR_ID_OFFSET +
+            direction_offset)
 
     def __get_qdisc_minor_id(self):
         if self.direction == TrafficDirection.OUTGOING:
