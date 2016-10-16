@@ -11,6 +11,7 @@ import sys
 import six
 
 import dataproperty
+from dataproperty.type import IntegerTypeChecker
 import logbook
 import subprocrunner
 from subprocrunner import SubprocessRunner
@@ -46,8 +47,9 @@ class TcParamParser(object):
     def device(self):
         return self.__device
 
-    def __init__(self, device):
+    def __init__(self, device, logger):
         self.__device = device
+        self.__logger = logger
         self.__qdisc_param = self.__parse_qdisc(device)
 
     def get_tc_parameter(self):
@@ -72,13 +74,33 @@ class TcParamParser(object):
         port_format = "port={:d}"
         key_item_list = []
 
-        if dataproperty.is_not_empty_string(filter_param.get("network")):
-            key_item_list.append(
-                network_format.format(filter_param.get("network")))
+        if "handle" in filter_param:
+            handle = filter_param.get("handle")
+            type_checker = IntegerTypeChecker(handle)
 
-        if dataproperty.is_integer(filter_param.get("port")):
-            key_item_list.append(
-                port_format.format(filter_param.get("port")))
+            type_checker.validate()
+
+            handle = int(handle)
+            for mangle in IptablesMangleController.parse():
+                if mangle.mark_id != handle:
+                    continue
+
+                key_item_list.append(network_format.format(mangle.destination))
+                if dataproperty.is_not_empty_string(mangle.source):
+                    key_item_list.append("source={:s}".format(mangle.source))
+                key_item_list.append("protocol={}".format(mangle.protocol))
+
+                break
+            else:
+                raise ValueError("mangle mark not found: {}".format(mangle))
+        else:
+            if dataproperty.is_not_empty_string(filter_param.get("network")):
+                key_item_list.append(
+                    network_format.format(filter_param.get("network")))
+
+            if dataproperty.is_integer(filter_param.get("port")):
+                key_item_list.append(
+                    port_format.format(filter_param.get("port")))
 
         return ", ".join(key_item_list)
 
@@ -96,7 +118,8 @@ class TcParamParser(object):
         for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
             filter_key = self.__get_filter_key(filter_param)
             filter_table[filter_key] = {}
-            if filter_param.get("flowid") == self.__qdisc_param.get("parent"):
+            if self.__qdisc_param.get("parent") in (
+                    filter_param.get("flowid"), filter_param.get("classid")):
                 work_qdisc_param = dict(self.__qdisc_param)
                 del work_qdisc_param["parent"]
                 filter_table[filter_key] = work_qdisc_param
@@ -134,7 +157,7 @@ def main():
             logger.debug(str(e))
             continue
 
-        tc_param.update(TcParamParser(device).get_tc_parameter())
+        tc_param.update(TcParamParser(device, logger).get_tc_parameter())
 
     six.print_(json.dumps(tc_param, indent=4))
 
