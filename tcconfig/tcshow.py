@@ -48,6 +48,7 @@ class TcParamParser(object):
 
     def __init__(self, device):
         self.__device = device
+        self.__qdisc_param = self.__parse_qdisc(device)
 
     def get_tc_parameter(self):
         return {
@@ -85,8 +86,6 @@ class TcParamParser(object):
         if dataproperty.is_empty_string(device):
             return {}
 
-        qdisc_param = self.__parse_qdisc(device)
-
         # parse filter ---
         filter_parser = TcFilterParser()
         command = "tc filter show dev {:s}".format(device)
@@ -97,8 +96,8 @@ class TcParamParser(object):
         for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
             filter_key = self.__get_filter_key(filter_param)
             filter_table[filter_key] = {}
-            if filter_param.get("flowid") == qdisc_param.get("parent"):
-                work_qdisc_param = dict(qdisc_param)
+            if filter_param.get("flowid") == self.__qdisc_param.get("parent"):
+                work_qdisc_param = dict(self.__qdisc_param)
                 del work_qdisc_param["parent"]
                 filter_table[filter_key] = work_qdisc_param
 
