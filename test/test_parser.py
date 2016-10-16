@@ -69,6 +69,13 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
             ],
         ],
+        [
+            six.b("""filter parent 1f1c: protocol ip pref 1 fw
+filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""),
+            [
+                {'classid': u'1f1c:1', 'handle': 101},
+            ],
+        ],
     ])
     def test_normal(self, filter_parser, value, expected):
         assert filter_parser.parse_filter(value) == expected

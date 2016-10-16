@@ -36,6 +36,13 @@ class TcFilterParser(object):
         pp.Literal("at") +
         pp.Word(pp.nums)
     )
+    __FILTER_MANGLE_MARK_PATTERN = (
+        pp.Literal("filter parent") +
+        pp.SkipTo("handle", include=True) +
+        pp.Word(pp.hexnums) +
+        pp.SkipTo("classid", include=True) +
+        pp.Word(pp.hexnums + ":")
+    )
 
     @property
     def flow_id(self):
@@ -48,6 +55,14 @@ class TcFilterParser(object):
     @property
     def filter_port(self):
         return self.__filter_port
+
+    @property
+    def handle(self):
+        return self.__handle
+
+    @property
+    def classid(self):
+        return self.__classid
 
     def __init__(self):
         self.__clear()
@@ -62,6 +77,17 @@ class TcFilterParser(object):
 
         for line in text.splitlines():
             if dataproperty.is_empty_string(line):
+                continue
+
+            try:
+                self.__parse_mangle_mark(line)
+            except pp.ParseException:
+                pass
+            else:
+                filter_data_matrix.append({
+                    "classid": self.classid,
+                    "handle": self.handle,
+                })
                 continue
 
             try:
@@ -103,6 +129,9 @@ class TcFilterParser(object):
         self.__filter_network = None
         self.__filter_port = None
 
+        self.__handle = None
+        self.__classid = None
+
     def __get_filter(self):
         return {
             "flowid": self.flow_id,
@@ -114,6 +143,12 @@ class TcFilterParser(object):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
             _to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
+
+    def __parse_mangle_mark(self, line):
+        parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(
+            _to_unicode(line.lstrip()))
+        self.__classid = parsed_list[-1]
+        self.__handle = int(u"0" + parsed_list[-3], 16)
 
     def __parse_filter(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
