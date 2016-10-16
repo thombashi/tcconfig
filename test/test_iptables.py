@@ -80,10 +80,6 @@ reverse_mangle_mark_list = (
 )
 
 
-def clear_mangle_table():
-    SubprocessRunner("iptables -t mangle -F").run()
-
-
 class Test_IptablesMangleMark_repr(object):
 
     def test_smoke(self):
@@ -191,10 +187,16 @@ class Test_IptablesMangleMark_to_delete_command(object):
 
 class Test_IptablesMangleController_get_unique_mark_id(object):
 
+    @classmethod
+    def setup_class(cls):
+        IptablesMangleController.clear()
+
+    @classmethod
+    def teardown_class(cls):
+        IptablesMangleController.clear()
+
     @pytest.mark.xfail
     def test_normal(self):
-        clear_mangle_table()
-
         for i in range(5):
             mark_id = IptablesMangleController.get_unique_mark_id()
 
@@ -207,9 +209,16 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
 
 class Test_IptablesMangleController_add(object):
 
+    @classmethod
+    def setup_class(cls):
+        IptablesMangleController.clear()
+
+    @classmethod
+    def teardown_class(cls):
+        IptablesMangleController.clear()
+
     @pytest.mark.xfail
     def test_normal(self):
-        clear_mangle_table()
         initial_len = len(IptablesMangleController.get_iptables())
 
         for mangle_mark in mangle_mark_list:
@@ -220,9 +229,16 @@ class Test_IptablesMangleController_add(object):
 
 class Test_IptablesMangleController_clear(object):
 
+    @classmethod
+    def setup_class(cls):
+        IptablesMangleController.clear()
+
+    @classmethod
+    def teardown_class(cls):
+        IptablesMangleController.clear()
+
     @pytest.mark.xfail
     def test_normal(self):
-        clear_mangle_table()
         initial_len = len(IptablesMangleController.get_iptables())
 
         for mangle_mark in mangle_mark_list:
@@ -237,10 +253,16 @@ class Test_IptablesMangleController_clear(object):
 
 class Test_IptablesMangleController_parse(object):
 
+    @classmethod
+    def setup_class(cls):
+        IptablesMangleController.clear()
+
+    @classmethod
+    def teardown_class(cls):
+        IptablesMangleController.clear()
+
     @pytest.mark.xfail
     def test_normal(self):
-        clear_mangle_table()
-
         for mangle_mark in mangle_mark_list:
             assert IptablesMangleController.add(mangle_mark) == 0
 
