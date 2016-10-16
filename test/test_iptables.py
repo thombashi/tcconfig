@@ -4,7 +4,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
-from collections import namedtuple
 import random
 
 import pytest
