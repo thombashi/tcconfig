@@ -4,6 +4,8 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import division
+
 import pytest
 
 from tcconfig._converter import Humanreadable
@@ -71,3 +73,24 @@ class Test_humanreadable_to_byte:
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
             Humanreadable(kilo_size).humanreadable_to_byte(value)
+
+
+class Test_humanreadable_to_kilobyte:
+
+    @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
+        ["2b", 1024, 2 / 1024],
+        ["2k", 1024, 2 * 1024 ** 0],
+        ["2m", 1024, 2 * 1024 ** 1],
+        ["2g", 1024, 2 * 1024 ** 2],
+        ["2t", 1024, 2 * 1024 ** 3],
+        ["2p", 1024, 2 * 1024 ** 4],
+        ["2b", 1000, 2 / 1000],
+        ["2k", 1000, 2 * 1000 ** 0],
+        ["2m", 1000, 2 * 1000 ** 1],
+        ["2g", 1000, 2 * 1000 ** 2],
+        ["2t", 1000, 2 * 1000 ** 3],
+        ["2p", 1000, 2 * 1000 ** 4],
+    ])
+    def test_normal(self, value, kilo_size, expected):
+        assert Humanreadable(kilo_size).humanreadable_to_kilobyte(
+            value) == expected

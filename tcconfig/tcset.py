@@ -16,9 +16,11 @@ import subprocrunner
 
 import tcconfig
 from .traffic_control import TrafficControl
-from .traffic_control import TrafficDirection
 from ._argparse_wrapper import ArgparseWrapper
+from ._common import ANYWHERE_NETWORK
 from ._error import ModuleNotFoundError
+from ._error import NetworkInterfaceNotFoundError
+from ._traffic_direction import TrafficDirection
 
 
 handler = logbook.StderrHandler()
@@ -44,8 +46,8 @@ def parse_option():
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
-        "--direction", choices=tcconfig.traffic_control.TrafficDirection.LIST,
-        default=tcconfig.traffic_control.TrafficDirection.OUTGOING,
+        "--direction", choices=TrafficDirection.LIST,
+        default=TrafficDirection.OUTGOING,
         help="""the direction of network communication that impose traffic control.
         ``incoming`` requires linux kernel version 2.6.20 or later.
         (default = ``%(default)s``)
@@ -80,6 +82,16 @@ def parse_option():
         "--port", type=int,
         help="port number of traffic control")
 
+    group = parser.parser.add_argument_group("Prototype")
+    group.add_argument(
+        "--src-network",
+        help="")
+
+    group = parser.parser.add_argument_group("Miscellaneous")
+    group.add_argument(
+        "--without-iptables", action="store_true", default=False,
+        help="")
+
     return parser.parser.parse_args()
 
 
@@ -92,7 +104,8 @@ def verify_netem_module():
 
 class TcConfigLoader(object):
 
-    def __init__(self):
+    def __init__(self, logger):
+        self.__logger = logger
         self.__config_table = None
         self.is_overwrite = False
 
@@ -114,6 +127,8 @@ class TcConfigLoader(object):
             self.__config_table = json.load(fp)
 
         schema(self.__config_table)
+        self.__logger.debug("tc config file: {:s}".format(
+            json.dumps(self.__config_table, indent=4)))
 
     def get_tcconfig_command_list(self):
         command_list = []
@@ -137,7 +152,7 @@ class TcConfigLoader(object):
 
                     try:
                         network = self.__parse_tc_filter_network(tc_filter)
-                        if network != "0.0.0.0/0":
+                        if network != ANYWHERE_NETWORK:
                             option_list.append("--network=" + network)
                     except pp.ParseException:
                         pass
@@ -169,9 +184,24 @@ class TcConfigLoader(object):
         return port_pattern.parseString(text)[-1]
 
 
+def set_tc_from_file(logger, config_file_path, is_overwrite):
+    return_code = 0
+
+    loader = TcConfigLoader(logger)
+    loader.is_overwrite = is_overwrite
+    loader.load_tcconfig(config_file_path)
+
+    for tcconfig_command in loader.get_tcconfig_command_list():
+        return_code |= subprocrunner.SubprocessRunner(
+            tcconfig_command).run()
+
+    return return_code
+
+
 def main():
     options = parse_option()
     logger = logbook.Logger("tcset")
+    logger.level = options.log_level
 
     subprocrunner.logger.level = options.log_level
     if options.quiet:
@@ -188,32 +218,33 @@ def main():
         logger.error(str(e))
 
     if dataproperty.is_not_empty_string(options.config_file):
-        return_code = 0
+        return set_tc_from_file(logger, options.config_file, options.overwrite)
 
-        loader = TcConfigLoader()
-        loader.is_overwrite = options.overwrite
-        loader.load_tcconfig(options.config_file)
+    tc = TrafficControl(
+        options.device,
+        direction=options.direction,
+        bandwidth_rate=options.bandwidth_rate,
+        latency_ms=options.network_latency,
+        latency_distro_ms=options.latency_distro_ms,
+        packet_loss_rate=options.packet_loss_rate,
+        corruption_rate=options.corruption_rate,
+        network=options.network,
+        src_network=options.src_network,
+        port=options.port,
+        is_enable_iptables=not options.without_iptables
+    )
 
-        for tcconfig_command in loader.get_tcconfig_command_list():
-            return_code |= subprocrunner.SubprocessRunner(
-                tcconfig_command).run()
-
-        return return_code
-
-    tc = TrafficControl(options.device)
-    tc.direction = options.direction
-    tc.bandwidth_rate = options.bandwidth_rate
-    tc.latency_ms = options.network_latency
-    tc.latency_distro_ms = options.latency_distro_ms
-    tc.packet_loss_rate = options.packet_loss_rate
-    tc.corruption_rate = options.corruption_rate
-    tc.network = options.network
-    tc.port = options.port
-
-    tc.validate()
+    try:
+        tc.validate()
+    except (NetworkInterfaceNotFoundError, ValueError) as e:
+        logger.error(str(e))
+        return 1
 
     if options.overwrite:
-        tc.delete_tc()
+        try:
+            tc.delete_tc()
+        except NetworkInterfaceNotFoundError:
+            pass
 
     tc.set_tc()
 

@@ -7,7 +7,7 @@ Phenomenon
 
 
 Cause and counter measures
-------------------------
+--------------------------
 The cause of this error is `sch_netem` kernel module is not loaded in your system.
 Execute the following command to solve this problem: 
 

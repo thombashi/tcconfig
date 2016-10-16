@@ -6,11 +6,7 @@
 
 from __future__ import division
 import itertools
-import json
-import platform
 
-import dataproperty
-import pingparsing
 import pytest
 from subprocrunner import SubprocessRunner
 
@@ -64,13 +60,13 @@ class NormalTestValue(object):
 
 class Test_tcconfig(object):
     """
-    Tests of in this class are inappropriate for Travis CI.
+    Tests in this class are not executable on Travis .
     Execute following command at the local environment  when running tests:
       python setup.py test --addopts "--runxfail --device <test device>"
 
     These tests are expected to execute on following environment:
        - Linux w/ iputils-ping package
-       - English environment (for parsing ping output)
+       - English locale (for parsing ping output)
     """
 
     @pytest.mark.xfail
@@ -102,44 +98,5 @@ class Test_tcconfig(object):
             direction, network, port, overwrite,
         ])
         assert SubprocessRunner(command).run() == 0
-
-        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
-
-    @pytest.mark.xfail
-    @pytest.mark.parametrize(["overwrite", "expected"], [
-        ["", 0],
-        ["--overwrite", 255],
-    ])
-    def test_config_file(self, tmpdir, device_option, overwrite, expected):
-        p = tmpdir.join("tcconfig.json")
-        config = "{" + '"{:s}"'.format(device_option) + ": {" + """
-        "outgoing": {
-            "network=192.168.0.10/32, port=8080": {
-                "delay": "10.0", 
-                "loss": "0.01", 
-                "rate": "250K", 
-                "delay-distro": "2.0"
-            }, 
-            "network=0.0.0.0/0": {}
-        }, 
-        "incoming": {
-            "network=192.168.10.0/24": {
-                "corrupt": "0.02", 
-                "rate": "1500K"
-            }, 
-            "network=0.0.0.0/0": {}
-        }
-    }
-}
-"""
-        p.write(config)
-
-        SubprocessRunner("tcdel --device " + device_option).run()
-        command = " ".join(["tcset -f ", str(p), overwrite])
-        assert SubprocessRunner(command).run() == expected
-
-        runner = SubprocessRunner("tcshow --device " + device_option)
-        runner.run()
-        assert json.loads(runner.stdout) == json.loads(config)
 
         assert SubprocessRunner("tcdel --device " + device_option).run() == 0
