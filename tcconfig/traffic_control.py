@@ -365,12 +365,6 @@ class TrafficControl(object):
             "flowid " + flowid,
         ]
 
-        if all([
-            self.direction == TrafficDirection.OUTGOING,
-            dataproperty.is_not_empty_string(self.src_network),
-        ]):
-            command_list.append("match ip src {:s}".format(self.src_network))
-
         return SubprocessRunner(" ".join(command_list)).run()
 
     def __set_netem(self, qdisc_major_id):
