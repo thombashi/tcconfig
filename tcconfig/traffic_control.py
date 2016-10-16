@@ -41,6 +41,7 @@ def _validate_within_min_max(param_name, value, min_value, max_value):
 
 class TrafficControl(object):
     __NETEM_QDISC_MAJOR_ID_OFFSET = 10
+    __FILTER_IPTABLES_MARK_ID_OFFSET = 100
 
     __OUT_DEVICE_QDISC_MINOR_ID = 1
     __IN_DEVICE_QDISC_MINOR_ID = 3
@@ -415,7 +416,9 @@ class TrafficControl(object):
         ]
 
         if self.__is_use_iptables():
-            mark_id = IptablesMangleController.get_unique_mark_id()
+            mark_id = (
+                IptablesMangleController.get_unique_mark_id() +
+                self.__FILTER_IPTABLES_MARK_ID_OFFSET)
             command_list.append("handle {:d} fw".format(mark_id))
 
             self.__add_mangle_mark(mark_id)
