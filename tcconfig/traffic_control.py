@@ -459,8 +459,8 @@ class TrafficControl(object):
         if dataproperty.is_empty_string(self.bandwidth_rate):
             return 0
 
-        rate_kbps = Humanreadable(kilo_size=1000).humanreadable_to_byte(
-            self.bandwidth_rate) / 1000.0
+        rate_kbps = Humanreadable(kilo_size=1000).humanreadable_to_kilobyte(
+            self.bandwidth_rate)
         if rate_kbps <= 0:
             raise ValueError("rate must be greater than zero")
 
