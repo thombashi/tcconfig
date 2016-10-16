@@ -26,50 +26,44 @@ class Test_TcFilterParser_parse_filter(object):
         [None, []],
         ["", []],
         [
-            six.b("""
-            filter parent 1: protocol ip pref 1 u32
-            filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
-            filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
-              match c0a8000a/ffffffff at 16
-            filter parent 1: protocol ip pref 2 u32
-            filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
-            filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
-              match 00000000/00000000 at 16
-            """),
+            six.b("""filter parent 1: protocol ip pref 1 u32
+filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
+filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
+  match c0a8000a/ffffffff at 16
+filter parent 1: protocol ip pref 2 u32
+filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
+filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
+  match 00000000/00000000 at 16"""),
             [
                 {'flowid': '1:1', 'network': '192.168.0.10/32', 'port': None},
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
             ],
         ],
         [
-            six.b("""
-            filter parent 1: protocol ip pref 1 u32
-            filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
-            filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
-              match c0a80000/ffffff00 at 16
-              match 00000050/0000ffff at 20
-            filter parent 1: protocol ip pref 2 u32
-            filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
-            filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
-              match 00000000/00000000 at 16
-            """),
+            six.b("""filter parent 1: protocol ip pref 1 u32
+filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
+filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
+  match c0a80000/ffffff00 at 16
+  match 00000050/0000ffff at 20
+filter parent 1: protocol ip pref 2 u32
+filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
+filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
+  match 00000000/00000000 at 16"""),
             [
                 {'flowid': '1:1', 'network': '192.168.0.0/24', 'port': 80},
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
             ],
         ],
         [
-            six.b("""
-            filter parent 1: protocol ip pref 1 u32
-            filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
-            filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:3
-              match c0a8000a/ffffffff at 12
-              match 00001f90/0000ffff at 20
-            filter parent 1: protocol ip pref 2 u32
-            filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
-            filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
-              match 00000000/00000000 at 12
-            """),
+            six.b("""filter parent 1: protocol ip pref 1 u32
+filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
+filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:3
+  match c0a8000a/ffffffff at 12
+  match 00001f90/0000ffff at 20
+filter parent 1: protocol ip pref 2 u32
+filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
+filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
+  match 00000000/00000000 at 12"""),
             [
                 {'flowid': '1:3', 'network': '192.168.0.10/32', 'port': 8080},
                 {'flowid': '1:2', 'network': '0.0.0.0/0', 'port': None},
