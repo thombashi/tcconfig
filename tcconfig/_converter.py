@@ -5,6 +5,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import division
 import re
 
 
@@ -45,6 +46,14 @@ class Humanreadable(object):
         coefficient = self.__unit_to_byte(unit)
 
         return size * coefficient
+
+    def humanreadable_to_kilobyte(self, readable_size):
+        """
+        :param str readable_size: human readable size (bytes). e.g. 256 M
+        :raises ValueError:
+        """
+
+        return self.humanreadable_to_byte(readable_size) / self.kilo_size
 
     def __unit_to_byte(self, unit):
         if self.kilo_size not in [1000, 1024]:
