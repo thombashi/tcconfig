@@ -52,14 +52,9 @@ def _get_filter(device):
     if dataproperty.is_empty_string(device):
         return {}
 
-    qdisc_parser = TcQdiscParser()
     filter_parser = TcFilterParser()
 
-    # parse qdisc ---
-    command = "tc qdisc show dev {:s}".format(device)
-    qdisk_show_runner = SubprocessRunner(command)
-    qdisk_show_runner.run()
-    qdisc_param = qdisc_parser.parse(qdisk_show_runner.stdout)
+    qdisc_param = _parse_qdisc(device)
 
     # parse filter ---
     command = "tc filter show dev {:s}".format(device)
@@ -85,6 +80,15 @@ def _get_filter(device):
             filter_table[filter_key] = work_qdisc_param
 
     return filter_table
+
+
+def _parse_qdisc(device):
+    qdisc_parser = TcQdiscParser()
+    command = "tc qdisc show dev {:s}".format(device)
+    qdisk_show_runner = SubprocessRunner(command)
+    qdisk_show_runner.run()
+
+    return qdisc_parser.parse(qdisk_show_runner.stdout)
 
 
 def get_tc_parameter(device):
