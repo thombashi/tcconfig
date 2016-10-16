@@ -21,6 +21,7 @@ from .parser import TcQdiscParser
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
 from ._error import NetworkInterfaceNotFoundError
+from ._iptables import IptablesMangleController
 from ._traffic_direction import TrafficDirection
 
 
@@ -52,25 +53,28 @@ def _get_filter(device):
     if dataproperty.is_empty_string(device):
         return {}
 
-    filter_parser = TcFilterParser()
-
     qdisc_param = _parse_qdisc(device)
 
     # parse filter ---
+    filter_parser = TcFilterParser()
     command = "tc filter show dev {:s}".format(device)
     filter_show_runner = SubprocessRunner(command)
     filter_show_runner.run()
+
+    network_format = "network={:s}"
+    port_format = "port={:d}"
 
     filter_table = {}
     for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
         key_item_list = []
 
         if dataproperty.is_not_empty_string(filter_param.get("network")):
-            key_item_list.append("network=" + filter_param.get("network"))
+            key_item_list.append(
+                network_format.format(filter_param.get("network")))
 
         if dataproperty.is_integer(filter_param.get("port")):
             key_item_list.append(
-                "port={:d}".format(filter_param.get("port")))
+                port_format.format(filter_param.get("port")))
 
         filter_key = ", ".join(key_item_list)
         filter_table[filter_key] = {}
