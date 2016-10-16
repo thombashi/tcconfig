@@ -19,12 +19,17 @@ class Humanreadable(object):
     ]
 
     def __init__(self, kilo_size=1024):
+        """
+        String converter that humanreadable byte size to a number.
+
+        :param int kilo_size: size of ``kilo``. 1024 or 1000
+        """
+
         self.kilo_size = kilo_size  # [byte]
 
     def humanreadable_to_byte(self, readable_size):
         """
         :param str readable_size: human readable size (bytes). e.g. 256 M
-        :param int kilo_size: size of kilo. 1024 or 1000
         :raises ValueError:
         """
 
