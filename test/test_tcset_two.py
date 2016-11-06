@@ -46,25 +46,27 @@ def pingparser():
 
 class Test_tcset_two_network(object):
     """
-    Tests of in this class are inappropriate for Travis CI.
-    Execute following command at the local environment  when running tests:
+    Tests in this class are not executable on CI services.
+    Execute the following command at the local environment to running tests:
       python setup.py test --addopts \
-        "--device <test device> --dst-host=<hostname/IP-addr> --dst-host-ex=<hostname/IP-addr>"
+        "--device=<test device> --dst-host=<hostname/IP-addr> --dst-host-ex=<hostname/IP-addr>"
 
     These tests are expected to execute on following environment:
        - Linux w/ iputils-ping package
-       - English environment (for parsing ping output)
+       - English locale (for parsing ping output)
     """
 
     def test_network(
             self, device_option, dst_host_option, dst_host_ex_option,
             transmitter, pingparser):
+        if device_option is None:
+            pytest.skip("device option is null")
+
         if any([
             dataproperty.is_empty_string(dst_host_option),
             dataproperty.is_empty_string(dst_host_ex_option),
         ]):
-            # alternative to pytest.mark.skipif
-            return
+            pytest.skip("destination host is null")
 
         SubprocessRunner("tcdel --device " + device_option).run()
         delay = 100
@@ -81,13 +83,13 @@ class Test_tcset_two_network(object):
         # w/o tc network ---
         transmitter.destination_host = dst_host_option
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         without_tc_rtt_avg = pingparser.rtt_avg
 
         # w/ tc network ---
         transmitter.destination_host = dst_host_ex_option
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         with_tc_rtt_avg = pingparser.rtt_avg
 
         # assertion ---

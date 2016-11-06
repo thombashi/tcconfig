@@ -42,14 +42,14 @@ def pingparser():
 
 class Test_tcset_one_network(object):
     """
-    Tests of in this class are inappropriate for Travis CI.
+    Tests in this class are not executable on Travis .
     Execute following command at the local environment  when running tests:
       python setup.py test --addopts \
-          "--device <test device> --dst-host=<hostname/IP-addr>"
+          "--device=<test device> --dst-host=<hostname/IP-addr>"
 
     These tests are expected to execute on following environment:
        - Linux w/ iputils-ping package
-       - English environment (for parsing ping output)
+       - English locale (for parsing ping output)
     """
 
     @pytest.mark.parametrize(["delay"], [
@@ -58,16 +58,18 @@ class Test_tcset_one_network(object):
     def test_const_latency(
             self, device_option, dst_host_option, transmitter, pingparser,
             delay):
+        if device_option is None:
+            pytest.skip("device option is null")
+
         if dataproperty.is_empty_string(dst_host_option):
-            # alternative to pytest.mark.skipif
-            return
+            pytest.skip("destination host is null")
 
         SubprocessRunner("tcdel --device " + device_option).run()
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         without_tc_rtt_avg = pingparser.rtt_avg
 
         # w/ latency tc ---
@@ -79,7 +81,7 @@ class Test_tcset_one_network(object):
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         with_tc_rtt_avg = pingparser.rtt_avg
 
         # assertion ---
@@ -87,7 +89,7 @@ class Test_tcset_one_network(object):
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
+        SubprocessRunner("tcdel --device " + device_option).run()
 
     @pytest.mark.skipif("platform.system() == 'Windows'")
     @pytest.mark.parametrize(["delay", "delay_distro"], [
@@ -105,7 +107,7 @@ class Test_tcset_one_network(object):
 
         # w/o latency tc ---
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         without_tc_rtt_avg = pingparser.rtt_avg
         without_tc_rtt_mdev = pingparser.rtt_mdev
 
@@ -119,7 +121,7 @@ class Test_tcset_one_network(object):
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         with_tc_rtt_avg = pingparser.rtt_avg
         with_tc_rtt_mdev = pingparser.rtt_mdev
 
@@ -149,7 +151,7 @@ class Test_tcset_one_network(object):
 
         # w/o packet loss tc ---
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         without_tc_loss = (
             pingparser.packet_receive / pingparser.packet_transmit) * 100
 
@@ -162,7 +164,7 @@ class Test_tcset_one_network(object):
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         result = transmitter.ping()
-        pingparser.parse(result)
+        pingparser.parse(result.stdout)
         with_tc_loss = (
             pingparser.packet_receive / pingparser.packet_transmit) * 100
 

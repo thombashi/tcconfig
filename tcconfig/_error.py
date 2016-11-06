@@ -7,6 +7,12 @@
 from __future__ import absolute_import
 
 
+class NetworkInterfaceNotFoundError(Exception):
+    """
+    Raised when network interface not found.
+    """
+
+
 class ModuleNotFoundError(Exception):
     """
     Raised when mandatory kernel module not found.
@@ -15,5 +21,5 @@ class ModuleNotFoundError(Exception):
 
 class TcCommandExecutionError(Exception):
     """
-    Raised when a tc command failed.
+    Raised when failed to execute a ``tc`` command.
     """
