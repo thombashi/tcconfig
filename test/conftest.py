@@ -2,6 +2,6 @@
 
 
 def pytest_addoption(parser):
-    parser.addoption("--device", default="eth0")
+    parser.addoption("--device", default=None)
     parser.addoption("--dst-host", default="")
     parser.addoption("--dst-host-ex", default="")

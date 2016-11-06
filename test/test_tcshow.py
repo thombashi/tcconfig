@@ -17,13 +17,16 @@ def device_option(request):
 
 class Test_tcshow(object):
     """
-    Tests of in this class are inappropriate for Travis CI.
-    Execute following command at the local environment  when running tests:
-      python setup.py test --addopts "--runxfail --device <test device>"
+    Tests in this class are not executable on CI services.
+    Execute the following command at the local environment to running tests:
+      python setup.py test --addopts "--runxfail --device=<test device>"
     """
 
     @pytest.mark.xfail
     def test_normal(self, device_option):
+        if device_option is None:
+            pytest.skip("device option is null")
+
         SubprocessRunner("tcdel --device " + device_option).run()
 
         command = " ".join([
@@ -77,4 +80,4 @@ class Test_tcshow(object):
 
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
+        SubprocessRunner("tcdel --device " + device_option).run()

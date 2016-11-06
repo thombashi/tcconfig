@@ -15,6 +15,7 @@ import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
+from ._error import NetworkInterfaceNotFoundError
 
 
 handler = logbook.StderrHandler()
@@ -34,6 +35,8 @@ def parse_option():
 
 def main():
     options = parse_option()
+    logger = logbook.Logger("tcdel")
+    logger.level = options.log_level
 
     subprocrunner.logger.level = options.log_level
     if options.quiet:
@@ -42,11 +45,22 @@ def main():
         subprocrunner.logger.enable()
 
     subprocrunner.Which("tc").verify()
-    verify_network_interface(options.device)
+
+    try:
+        verify_network_interface(options.device)
+    except NetworkInterfaceNotFoundError as e:
+        logger.error(e)
+        return 1
 
     tc = TrafficControl(options.device)
 
-    return tc.delete_tc()
+    try:
+        return tc.delete_tc()
+    except NetworkInterfaceNotFoundError as e:
+        logger.debug(e)
+        return 0
+
+    return 1
 
 
 if __name__ == '__main__':

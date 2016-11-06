@@ -6,16 +6,19 @@
 
 import itertools
 
+from dataproperty import FloatType
 import pytest
+
 from tcconfig.traffic_control import TrafficControl
+from tcconfig._traffic_direction import TrafficDirection
 
 
 MIN_PACKET_LOSS = 0.0000000232  # [%]
 
 
 @pytest.fixture
-def tc_obj():
-    return TrafficControl("eth0")
+def device_option(request):
+    return request.config.getoption("--device")
 
 
 @pytest.mark.parametrize(["value"], [
@@ -29,8 +32,8 @@ def tc_obj():
         ]
     )
 ])
-def test_TrafficControl_validate_bandwidth_rate_normal(tc_obj, value):
-    tc_obj.bandwidth_rate = value
+def test_TrafficControl_validate_bandwidth_rate_normal(value):
+    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     tc_obj._TrafficControl__validate_bandwidth_rate()
 
 
@@ -45,9 +48,8 @@ def test_TrafficControl_validate_bandwidth_rate_normal(tc_obj, value):
         ]
     )
 ])
-def test_TrafficControl_validate_bandwidth_rate_exception_1(
-        tc_obj, value, expected):
-    tc_obj.bandwidth_rate = value
+def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
+    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
         tc_obj._TrafficControl__validate_bandwidth_rate()
 
@@ -59,9 +61,9 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(
         ["k", "K", "m", "M", "g", "G"]
     )
 ])
-def test_TrafficControl_validate_bandwidth_rate_exception_2(
-        tc_obj, value, expected):
-    tc_obj.bandwidth_rate = value
+def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
+    #tc_obj.bandwidth_rate = value
+    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
         tc_obj._TrafficControl__validate_bandwidth_rate()
 
@@ -70,13 +72,14 @@ class Test_TrafficControl_validate(object):
 
     @pytest.mark.parametrize(
         [
-            "rate", "delay", "delay_distro", "loss",
+            "rate", "direction", "delay", "delay_distro", "loss",
             "corrupt", "network", "port",
         ],
         [
             opt_list
             for opt_list in itertools.product(
                 [None, "", "100K", "0.5M", "0.1G"],  # rate
+                [TrafficDirection.OUTGOING],
                 [None, 0, 10000],  # delay
                 [None, 0, 10000],  # delay_distro
                 [None, 0, MIN_PACKET_LOSS, 99],  # loss
@@ -91,16 +94,40 @@ class Test_TrafficControl_validate(object):
             )
         ])
     def test_normal(
-            self, tc_obj, rate, delay, delay_distro, loss, corrupt, network, port):
-        tc_obj.bandwidth_rate = rate
-        tc_obj.latency_ms = delay
-        tc_obj.latency_distro_ms = delay_distro
-        tc_obj.packet_loss_rate = loss
-        tc_obj.corruption_rate = corrupt
-        tc_obj.network = network
-        tc_obj.port = port
+            self, device_option, rate, direction, delay, delay_distro, loss, corrupt,
+            network, port):
+        if device_option is None:
+            pytest.skip("device option is null")
 
-        tc_obj.validate()
+        tc_obj = TrafficControl(
+            device=device_option,
+            direction=direction,
+            bandwidth_rate=rate,
+            latency_ms=delay,
+            latency_distro_ms=delay_distro,
+            packet_loss_rate=loss,
+            corruption_rate=corrupt,
+            network=network,
+            port=port,
+            src_network=None,
+            is_enable_iptables=True,
+        )
+
+        params = [
+            rate,
+            delay,
+            loss,
+            corrupt,
+        ]
+        is_invalid = all([
+            not FloatType(param).is_type() or param == 0 for param in params
+        ])
+
+        if is_invalid:
+            with pytest.raises(ValueError):
+                tc_obj.validate()
+        else:
+            tc_obj.validate()
 
     @pytest.mark.parametrize(["value", "expected"], [
         [{"latency_ms": -1}, ValueError],
@@ -125,14 +152,20 @@ class Test_TrafficControl_validate(object):
         [{"port": -1}, ValueError],
         [{"port": 65536}, ValueError],
     ])
-    def test_exception(self, tc_obj, value, expected):
-        tc_obj.bandwidth_rate = value.get("bandwidth_rate")
-        tc_obj.latency_ms = value.get("latency_ms")
-        tc_obj.latency_distro_ms = value.get("latency_distro_ms")
-        tc_obj.packet_loss_rate = value.get("packet_loss_rate")
-        tc_obj.curruption_rate = value.get("curruption_rate")
-        tc_obj.network = value.get("network")
-        tc_obj.port = value.get("port")
+    def test_exception(self, device_option, value, expected):
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        tc_obj = TrafficControl(
+            device=device_option,
+            bandwidth_rate=value.get("bandwidth_rate"),
+            latency_ms=value.get("latency_ms"),
+            latency_distro_ms=value.get("latency_distro_ms"),
+            packet_loss_rate=value.get("packet_loss_rate"),
+            corruption_rate=value.get("curruption_rate"),
+            network=value.get("network"),
+            port=value.get("port"),
+        )
 
         with pytest.raises(expected):
             tc_obj.validate()
