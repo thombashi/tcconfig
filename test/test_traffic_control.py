@@ -62,7 +62,6 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     )
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
-    #tc_obj.bandwidth_rate = value
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
         tc_obj._TrafficControl__validate_bandwidth_rate()
