@@ -7,13 +7,32 @@
 from __future__ import division
 import itertools
 
+import dataproperty
 import pytest
 from subprocrunner import SubprocessRunner
+
+
+SKIP_TEST = False
 
 
 @pytest.fixture
 def device_option(request):
     return request.config.getoption("--device")
+
+
+def is_invalid_param(rate, delay, loss, corrupt):
+    params = [
+        rate,
+        delay,
+        loss,
+        corrupt,
+    ]
+
+    a = [
+        dataproperty.is_empty_string(param) for param in params
+    ]
+    print a
+    return all(a)
 
 
 class NormalTestValue(object):
@@ -60,16 +79,16 @@ class NormalTestValue(object):
 
 class Test_tcconfig(object):
     """
-    Tests in this class are not executable on Travis .
-    Execute following command at the local environment  when running tests:
-      python setup.py test --addopts "--runxfail --device <test device>"
+    Tests in this class are not executable on CI services.
+    Execute the following command at the local environment to running tests:
+      python setup.py test --addopts "--runxfail --device=<test device>"
 
     These tests are expected to execute on following environment:
        - Linux w/ iputils-ping package
        - English locale (for parsing ping output)
     """
 
-    @pytest.mark.xfail
+    @pytest.mark.skipif("SKIP_TEST is True")
     @pytest.mark.parametrize(
         [
             "rate", "delay", "delay_distro", "loss", "corrupt",
@@ -91,12 +110,19 @@ class Test_tcconfig(object):
     def test_smoke(
             self, device_option, rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite):
+
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        if is_invalid_param(rate, delay, loss, corrupt):
+            pytest.skip("skip null parameters")
+
         command = " ".join([
             "tcset",
             "--device " + device_option,
-            rate, delay, delay_distro, loss,
+            rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite,
         ])
         assert SubprocessRunner(command).run() == 0
 
-        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
+        SubprocessRunner("tcdel --device " + device_option).run()

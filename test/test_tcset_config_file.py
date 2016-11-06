@@ -24,6 +24,7 @@ class Test_tcconfig(object):
         ["--overwrite", 255],
     ])
     def test_config_file(self, tmpdir, device_option, overwrite, expected):
+
         p = tmpdir.join("tcconfig.json")
         config = "{" + '"{:s}"'.format(device_option) + ": {" + """
         "outgoing": {
@@ -55,4 +56,4 @@ class Test_tcconfig(object):
         runner.run()
         assert json.loads(runner.stdout) == json.loads(config)
 
-        assert SubprocessRunner("tcdel --device " + device_option).run() == 0
+        SubprocessRunner("tcdel --device " + device_option).run()
