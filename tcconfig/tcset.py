@@ -77,20 +77,19 @@ def parse_option():
         """)
     group.add_argument(
         "--network",
-        help="IP address/network of traffic control")
+        help="Target IP address/network of traffic control")
     group.add_argument(
         "--port", type=int,
         help="port number of traffic control")
 
     group = parser.parser.add_argument_group("Prototype")
     group.add_argument(
-        "--src-network",
-        help="")
-
-    group = parser.parser.add_argument_group("Miscellaneous")
+        "--iptables", dest="is_enable_iptables",
+        action="store_true", default=False,
+        help="[experimental] use iptables to filter network")
     group.add_argument(
-        "--without-iptables", action="store_true", default=False,
-        help="")
+        "--src-network",
+        help="[require iptables]")
 
     return parser.parser.parse_args()
 
@@ -231,7 +230,7 @@ def main():
         network=options.network,
         src_network=options.src_network,
         port=options.port,
-        is_enable_iptables=not options.without_iptables
+        is_enable_iptables=options.is_enable_iptables
     )
 
     try:
