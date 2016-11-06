@@ -28,11 +28,9 @@ def is_invalid_param(rate, delay, loss, corrupt):
         corrupt,
     ]
 
-    a = [
+    return all([
         dataproperty.is_empty_string(param) for param in params
-    ]
-    print a
-    return all(a)
+    ])
 
 
 class NormalTestValue(object):
