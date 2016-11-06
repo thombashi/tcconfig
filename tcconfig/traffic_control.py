@@ -17,14 +17,20 @@ import six
 from subprocrunner import logger
 from subprocrunner import SubprocessRunner
 
-from ._common import ANYWHERE_NETWORK
-from ._common import sanitize_network
-from ._common import verify_network_interface
+from ._common import (
+    ANYWHERE_NETWORK,
+    sanitize_network,
+    verify_network_interface
+)
 from ._converter import Humanreadable
-from ._error import TcCommandExecutionError
-from ._error import NetworkInterfaceNotFoundError
-from ._iptables import IptablesMangleController
-from ._iptables import IptablesMangleMark
+from ._error import (
+    TcCommandExecutionError,
+    NetworkInterfaceNotFoundError
+)
+from ._iptables import (
+    IptablesMangleController,
+    IptablesMangleMark
+)
 from ._traffic_direction import TrafficDirection
 
 
