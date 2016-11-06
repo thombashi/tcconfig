@@ -403,12 +403,6 @@ class TrafficControl(object):
                 "failed to add qdisc: netem qdisc already exists."))
 
     def __set_network_filter(self, qdisc_major_id):
-        if all([
-            dataproperty.is_empty_string(self.network),
-            self.port is None,
-        ]):
-            return 0
-
         command_list = [
             "tc filter add",
             "dev " + self.__get_tc_device(),
@@ -425,6 +419,12 @@ class TrafficControl(object):
 
             self.__add_mangle_mark(mark_id)
         else:
+            if all([
+                dataproperty.is_empty_string(self.network),
+                self.port is None,
+            ]):
+                return 0
+
             command_list.append("u32")
             if dataproperty.is_not_empty_string(self.network):
                 command_list.append("match ip {:s} {:s}".format(
