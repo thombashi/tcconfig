@@ -23,7 +23,7 @@ def verify_network_interface(device):
 
     if device not in netifaces.interfaces():
         raise NetworkInterfaceNotFoundError(
-            "network interface not found: " + device)
+            "network interface not found: {}".format(device))
 
 
 def sanitize_network(network):
