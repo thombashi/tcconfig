@@ -9,6 +9,10 @@ from __future__ import division
 import re
 
 import dataproperty
+from dataproperty import (
+    IntegerType,
+    FloatType
+)
 import six
 from subprocrunner import logger
 from subprocrunner import SubprocessRunner
@@ -218,8 +222,6 @@ class TrafficControl(object):
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
     def __validate_netem_parameter(self):
-        from dataproperty.type import FloatTypeChecker
-
         self.__validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
@@ -233,7 +235,7 @@ class TrafficControl(object):
         ]
 
         if all([
-            not FloatTypeChecker(value).is_type() or value == 0
+            not FloatType(value).is_type() or value == 0
             for value in param_list
         ]):
             raise ValueError("there is no valid net emulation parameter")
@@ -347,7 +349,7 @@ class TrafficControl(object):
 
         if all([
             dataproperty.is_empty_string(self.network),
-            not dataproperty.is_integer(self.port),
+            not IntegerType(self.port).is_type(),
         ]):
             flowid = "{:x}:{:d}".format(
                 qdisc_major_id, self.__get_qdisc_minor_id())

@@ -11,7 +11,7 @@ import sys
 import six
 
 import dataproperty
-from dataproperty.type import IntegerTypeChecker
+from dataproperty import IntegerType
 import logbook
 import subprocrunner
 from subprocrunner import SubprocessRunner
@@ -76,9 +76,8 @@ class TcParamParser(object):
 
         if "handle" in filter_param:
             handle = filter_param.get("handle")
-            type_checker = IntegerTypeChecker(handle)
 
-            type_checker.validate()
+            IntegerType(handle).validate()
 
             handle = int(handle)
             for mangle in IptablesMangleController.parse():
@@ -98,7 +97,7 @@ class TcParamParser(object):
                 key_item_list.append(
                     network_format.format(filter_param.get("network")))
 
-            if dataproperty.is_integer(filter_param.get("port")):
+            if IntegerType(filter_param.get("port")).is_type():
                 key_item_list.append(
                     port_format.format(filter_param.get("port")))
 

@@ -8,7 +8,7 @@ from __future__ import absolute_import
 import re
 
 import dataproperty
-from dataproperty.type import IntegerTypeChecker
+from dataproperty import IntegerType
 from subprocrunner import SubprocessRunner
 
 from ._common import ANYWHERE_NETWORK
@@ -71,7 +71,7 @@ class IptablesMangleMark(object):
     def __repr__(self, *args, **kwargs):
         str_list = []
 
-        if IntegerTypeChecker(self.line_number).is_type():
+        if IntegerType(self.line_number).is_type():
             str_list.append("line-num={}".format(self.line_number))
 
         str_list.extend([
@@ -85,7 +85,7 @@ class IptablesMangleMark(object):
         return ", ".join(str_list)
 
     def to_append_command(self):
-        IntegerTypeChecker(self.mark_id).validate()
+        IntegerType(self.mark_id).validate()
 
         command_item_list = [
             "iptables -A {:s} -t mangle -j MARK".format(self.chain),
@@ -94,7 +94,7 @@ class IptablesMangleMark(object):
 
         if any([
             dataproperty.is_not_empty_string(self.protocol),
-            IntegerTypeChecker(self.protocol).is_type(),
+            IntegerType(self.protocol).is_type(),
         ]):
             command_item_list.append("-p {}".format(self.protocol))
         if self.__is_valid_srcdst(self.source):
@@ -107,7 +107,7 @@ class IptablesMangleMark(object):
         return " ".join(command_item_list)
 
     def to_delete_command(self):
-        IntegerTypeChecker(self.line_number).validate()
+        IntegerType(self.line_number).validate()
 
         return "iptables -t mangle -D {:s} {}".format(
             self.chain, self.line_number)
