@@ -50,7 +50,6 @@ class TcParamParser(object):
     def __init__(self, device, logger):
         self.__device = device
         self.__logger = logger
-        self.__qdisc_param = self.__parse_qdisc(device)
 
     def get_tc_parameter(self):
         return {
@@ -113,13 +112,15 @@ class TcParamParser(object):
         filter_show_runner = SubprocessRunner(command)
         filter_show_runner.run()
 
+        qdisc_param = self.__parse_qdisc(device)
+
         filter_table = {}
         for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
             filter_key = self.__get_filter_key(filter_param)
             filter_table[filter_key] = {}
-            if self.__qdisc_param.get("parent") in (
+            if qdisc_param.get("parent") in (
                     filter_param.get("flowid"), filter_param.get("classid")):
-                work_qdisc_param = dict(self.__qdisc_param)
+                work_qdisc_param = dict(qdisc_param)
                 del work_qdisc_param["parent"]
                 filter_table[filter_key] = work_qdisc_param
 
