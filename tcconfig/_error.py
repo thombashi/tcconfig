@@ -23,3 +23,11 @@ class TcCommandExecutionError(Exception):
     """
     Raised when failed to execute a ``tc`` command.
     """
+
+
+class EmptyParameterError(ValueError):
+    pass
+
+
+class InvalidParameterError(ValueError):
+    pass
