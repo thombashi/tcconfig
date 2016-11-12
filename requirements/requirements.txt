@@ -1,4 +1,4 @@
-DataProperty>=0.11.2
+DataProperty>=0.12.0
 ipaddress
 logbook
 pyparsing
