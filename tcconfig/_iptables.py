@@ -202,16 +202,3 @@ class IptablesMangleController(object):
             return 0
 
         return SubprocessRunner(mangling_mark.to_append_command()).run()
-
-
-if __name__ == '__main__':
-    # temporal tests
-
-    iptables = IptablesMangleController()
-    for mangling_mark in iptables.parse():
-        print(mangling_mark.to_append_command())
-        print(mangling_mark)
-
-    iptables.clear()
-    for _i in range(3):
-        iptables.add(mangling_mark)
