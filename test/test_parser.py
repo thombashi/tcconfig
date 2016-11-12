@@ -89,6 +89,15 @@ class Test_TcFilterParser_parse_incoming_device(object):
         [
             six.b("""filter parent ffff: protocol ip pref 49152 u32
 filter parent ffff: protocol ip pref 49152 u32 fh 800: ht divisor 1
+filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1f87:
+  match 00000000/00000000 at 0
+        action order 1: mirred (Egress Redirect to device ifb8071) stolen
+        index 98 ref 1 bind 1"""),
+            "ifb8071",
+        ],
+        [
+            six.b("""filter parent ffff: protocol ip pref 49152 u32
+filter parent ffff: protocol ip pref 49152 u32 fh 800: ht divisor 1
 filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:
   match 00000000/00000000 at 0
         action order 1: mirred (Egress Redirect to device ifb0) stolen

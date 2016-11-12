@@ -8,6 +8,8 @@ from __future__ import absolute_import
 from __future__ import division
 import re
 
+import dataproperty
+
 
 class Humanreadable(object):
     __RE_EXP_PAIR_LIST = [
@@ -33,6 +35,9 @@ class Humanreadable(object):
         :param str readable_size: human readable size (bytes). e.g. 256 M
         :raises ValueError:
         """
+
+        if dataproperty.is_empty_string(readable_size):
+            raise ValueError("readable_size is empty")
 
         size = readable_size[:-1]
         unit = readable_size[-1]
