@@ -5,6 +5,7 @@
 """
 
 from __future__ import division
+from __future__ import print_function
 import json
 
 import pytest
@@ -57,6 +58,7 @@ class Test_tcconfig(object):
         runner = SubprocessRunner("tcshow --device {}".format(device_option))
         runner.run()
 
+        print(runner.stdout)
         assert json.loads(runner.stdout) == json.loads(config)
 
         SubprocessRunner("tcdel --device {}".format(device_option)).run()

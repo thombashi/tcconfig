@@ -11,6 +11,7 @@ import pytest
 
 from tcconfig.traffic_control import TrafficControl
 from tcconfig._traffic_direction import TrafficDirection
+from .common import is_invalid_param
 
 
 MIN_PACKET_LOSS = 0.0000000232  # [%]
@@ -34,6 +35,7 @@ def device_option(request):
 ])
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
+    print(tc_obj.bandwidth_rate)
     tc_obj._TrafficControl__validate_bandwidth_rate()
 
 
@@ -93,8 +95,8 @@ class Test_TrafficControl_validate(object):
             )
         ])
     def test_normal(
-            self, device_option, rate, direction, delay, delay_distro, loss, corrupt,
-            network, port):
+            self, device_option, rate, direction, delay, delay_distro, loss,
+            corrupt, network, port):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -112,17 +114,7 @@ class Test_TrafficControl_validate(object):
             is_enable_iptables=True,
         )
 
-        params = [
-            rate,
-            delay,
-            loss,
-            corrupt,
-        ]
-        is_invalid = all([
-            not FloatType(param).is_type() or param == 0 for param in params
-        ])
-
-        if is_invalid:
+        if is_invalid_param(rate, delay, loss, corrupt):
             with pytest.raises(ValueError):
                 tc_obj.validate()
         else:

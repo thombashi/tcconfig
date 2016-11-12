@@ -25,7 +25,9 @@ from ._common import (
 from ._converter import Humanreadable
 from ._error import (
     TcCommandExecutionError,
-    NetworkInterfaceNotFoundError
+    NetworkInterfaceNotFoundError,
+    EmptyParameterError,
+    InvalidParameterError
 )
 from ._iptables import (
     IptablesMangleController,
@@ -133,7 +135,6 @@ class TrafficControl(object):
         self.__device = device
 
         self.__direction = direction
-        self.__bandwidth_rate = bandwidth_rate  # bandwidth string [G/M/K bps]
         self.__latency_ms = latency_ms  # [milliseconds]
         self.__latency_distro_ms = latency_distro_ms  # [milliseconds]
         self.__packet_loss_rate = packet_loss_rate  # [%]
@@ -142,6 +143,13 @@ class TrafficControl(object):
         self.__src_network = src_network
         self.__port = port
         self.__is_enable_iptables = is_enable_iptables
+
+        # bandwidth string [G/M/K bps]
+        try:
+            self.__bandwidth_rate = Humanreadable(
+                kilo_size=1000).humanreadable_to_kilobyte(bandwidth_rate)
+        except ValueError:
+            self.__bandwidth_rate = None
 
         IptablesMangleController.enable = is_enable_iptables
 
@@ -197,12 +205,13 @@ class TrafficControl(object):
         ])
 
     def __validate_bandwidth_rate(self):
-        if dataproperty.is_empty_string(self.bandwidth_rate):
-            return
+        if not dataproperty.FloatType(self.bandwidth_rate).is_type():
+            raise EmptyParameterError("bandwidth_rate is empty")
 
-        rate = Humanreadable().humanreadable_to_byte(self.bandwidth_rate)
-        if rate <= 0:
-            raise ValueError("rate must be greater than zero")
+        if self.bandwidth_rate <= 0:
+            raise InvalidParameterError(
+                "rate must be greater than zero: actual={}".format(
+                    self.bandwidth_rate))
 
     def __validate_network_delay(self):
         _validate_within_min_max(
@@ -228,7 +237,11 @@ class TrafficControl(object):
             self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
 
     def __validate_netem_parameter(self):
-        self.__validate_bandwidth_rate()
+        try:
+            self.__validate_bandwidth_rate()
+        except EmptyParameterError:
+            pass
+
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_curruption_rate()
@@ -458,13 +471,10 @@ class TrafficControl(object):
             chain=chain))
 
     def __set_rate(self, qdisc_major_id):
-        if dataproperty.is_empty_string(self.bandwidth_rate):
+        try:
+            self.__validate_bandwidth_rate()
+        except EmptyParameterError:
             return 0
-
-        rate_kbps = Humanreadable(kilo_size=1000).humanreadable_to_kilobyte(
-            self.bandwidth_rate)
-        if rate_kbps <= 0:
-            raise ValueError("rate must be greater than zero")
 
         command_list = [
             "tc qdisc add",
@@ -474,9 +484,9 @@ class TrafficControl(object):
                 self.__get_qdisc_minor_id()),
             "handle 20:",
             "tbf",
-            "rate {:f}kbit".format(rate_kbps),
+            "rate {:f}kbit".format(self.bandwidth_rate),
             "buffer {:d}".format(
-                max(rate_kbps, self.__MIN_BUFFER_BYTE)),  # [byte]
+                max(int(self.bandwidth_rate), self.__MIN_BUFFER_BYTE)),  # [byte]
             "limit 10000",
         ]
 
