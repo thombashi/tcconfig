@@ -83,8 +83,8 @@ class Test_TrafficControl_validate(object):
                 [TrafficDirection.OUTGOING],
                 [None, 0, 10000],  # delay
                 [None, 0, 10000],  # delay_distro
-                [None, 0, MIN_PACKET_LOSS, 99],  # loss
-                [None, 0, 99],  # corrupt
+                [None, 0, MIN_PACKET_LOSS, 100],  # loss
+                [None, 0, 100],  # corrupt
                 [
                     None,
                     "",
@@ -128,10 +128,10 @@ class Test_TrafficControl_validate(object):
         [{"latency_distro_ms": 10001}, ValueError],
 
         [{"packet_loss_rate": -0.1}, ValueError],
-        [{"packet_loss_rate": 99.1}, ValueError],
+        [{"packet_loss_rate": 100.1}, ValueError],
 
         [{"curruption_rate": -0.1}, ValueError],
-        [{"curruption_rate": 99.1}, ValueError],
+        [{"curruption_rate": 100.1}, ValueError],
 
         [{"network": "192.168.0."}, ValueError],
         [{"network": "192.168.0.256"}, ValueError],
