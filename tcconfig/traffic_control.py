@@ -24,7 +24,6 @@ from ._common import (
 )
 from ._converter import Humanreadable
 from ._error import (
-    TcCommandExecutionError,
     NetworkInterfaceNotFoundError,
     EmptyParameterError,
     InvalidParameterError
