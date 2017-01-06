@@ -230,7 +230,7 @@ class TrafficControl(object):
             self.packet_loss_rate,
             self.__MIN_PACKET_LOSS_RATE, self.__MAX_PACKET_LOSS_RATE)
 
-    def __validate_curruption_rate(self):
+    def __validate_corruption_rate(self):
         _validate_within_min_max(
             "corruption_rate",
             self.corruption_rate,
@@ -244,7 +244,7 @@ class TrafficControl(object):
 
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
-        self.__validate_curruption_rate()
+        self.__validate_corruption_rate()
 
         param_list = [
             self.bandwidth_rate,
