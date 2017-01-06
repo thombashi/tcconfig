@@ -57,7 +57,11 @@ def parse_option():
         help="network bandwidth rate [K|M|G bps]")
     group.add_argument(
         "--delay", dest="network_latency", type=float, default=0,
-        help="round trip network delay [ms] (default=%(default)s)")
+        help="""
+        round trip network delay [ms]. the valid range is {:d} to {:d}.
+        (default=%(default)s)
+        """.format(
+            TrafficControl.MIN_LATENCY_MS, TrafficControl.MAX_LATENCY_MS))
     group.add_argument(
         "--delay-distro", dest="latency_distro_ms", type=float, default=0,
         help="""
@@ -68,13 +72,21 @@ def parse_option():
         """)
     group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
-        help="round trip packet loss rate [%%] (default=%(default)s)")
+        help="""
+        round trip packet loss rate [%%]. the valid range is {:d} to {:d}.
+        (default=%(default)s)
+        """.format(
+            TrafficControl.MIN_PACKET_LOSS_RATE,
+            TrafficControl.MAX_PACKET_LOSS_RATE))
     group.add_argument(
         "--corrupt", dest="corruption_rate", type=float, default=0,
         help="""
-        packet corruption rate [%%]. packet corruption means single bit error
-        at a random offset in the packet. (default=%(default)s)
-        """)
+        packet corruption rate [%%]. the valid range is {:d} to {:d}.
+        packet corruption means single bit error at a random offset in
+        the packet. (default=%(default)s)
+        """.format(
+            TrafficControl.MIN_CORRUPTION_RATE,
+            TrafficControl.MAX_CORRUPTION_RATE))
     group.add_argument(
         "--network",
         help="Target IP address/network of traffic control")
