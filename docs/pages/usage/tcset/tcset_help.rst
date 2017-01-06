@@ -16,15 +16,11 @@
       -h, --help            show this help message and exit
       --version             show program's version number and exit
       --debug               for debug print.
-      --quiet               suppress output of execution log message.
+      --quiet               suppress execution log messages.
       --device DEVICE       network device name (e.g. eth0)
       -f CONFIG_FILE, --config-file CONFIG_FILE
                             setting traffic controls from a configuration file.
                             output file of the tcshow.
-
-    Miscellaneous:
-      --logging             output execution log to a file (tcset.log).
-      --stacktrace          display stack trace when an error occurred.
 
     Network Interface:
       --overwrite           overwrite existing settings
@@ -37,7 +33,8 @@
       --rate BANDWIDTH_RATE
                             network bandwidth rate [K|M|G bps]
       --delay NETWORK_LATENCY
-                            round trip network delay [ms] (default=0)
+                            round trip network delay [ms]. the valid range is 0 to
+                            10000. (default=0)
       --delay-distro LATENCY_DISTRO_MS
                             distribution of network latency becomes X +- Y [ms]
                             (normal distribution), with this option. (X: value of
@@ -45,10 +42,11 @@
                             network latency distribution will be uniform without
                             this option.
       --loss PACKET_LOSS_RATE
-                            round trip packet loss rate [%] (default=0)
+                            round trip packet loss rate [%]. the valid range is 0
+                            to 100. (default=0)
       --corrupt CORRUPTION_RATE
-                            packet corruption rate [%]. packet corruption means
-                            single bit error at a random offset in the packet.
-                            (default=0)
-      --network NETWORK     IP address/network of traffic control
+                            packet corruption rate [%]. the valid range is 0 to
+                            100. packet corruption means single bit error at a
+                            random offset in the packet. (default=0)
+      --network NETWORK     Target IP address/network of traffic control
       --port PORT           port number of traffic control
