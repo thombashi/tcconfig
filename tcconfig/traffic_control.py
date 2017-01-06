@@ -59,13 +59,13 @@ class TrafficControl(object):
     __IN_DEVICE_QDISC_MINOR_ID = 3
 
     __MIN_PACKET_LOSS_RATE = 0  # [%]
-    __MAX_PACKET_LOSS_RATE = 99  # [%]
+    __MAX_PACKET_LOSS_RATE = 100  # [%]
 
     __MIN_LATENCY_MS = 0  # [millisecond]
     __MAX_LATENCY_MS = 10000  # [millisecond]
 
     __MIN_CORRUPTION_RATE = 0  # [%]
-    __MAX_CORRUPTION_RATE = 99  # [%]
+    __MAX_CORRUPTION_RATE = 100  # [%]
 
     __MIN_BUFFER_BYTE = 1600
 
