@@ -216,24 +216,24 @@ class TrafficControl(object):
         _validate_within_min_max(
             "latency_ms",
             self.latency_ms,
-            self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
 
         _validate_within_min_max(
             "latency_distro_ms",
             self.latency_distro_ms,
-            self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
             "packet_loss_rate",
             self.packet_loss_rate,
-            self.__MIN_PACKET_LOSS_RATE, self.__MAX_PACKET_LOSS_RATE)
+            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE)
 
     def __validate_curruption_rate(self):
         _validate_within_min_max(
             "corruption_rate",
             self.corruption_rate,
-            self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
+            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE)
 
     def __validate_netem_parameter(self):
         try:
