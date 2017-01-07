@@ -1,2 +1,2 @@
-``tcconfig`` is a Simple ``tc`` command wrapper.
+A Simple tc command wrapper tool.
 Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.

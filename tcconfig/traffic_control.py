@@ -24,7 +24,6 @@ from ._common import (
 )
 from ._converter import Humanreadable
 from ._error import (
-    TcCommandExecutionError,
     NetworkInterfaceNotFoundError,
     EmptyParameterError,
     InvalidParameterError
@@ -58,14 +57,14 @@ class TrafficControl(object):
     __OUT_DEVICE_QDISC_MINOR_ID = 1
     __IN_DEVICE_QDISC_MINOR_ID = 3
 
-    __MIN_PACKET_LOSS_RATE = 0  # [%]
-    __MAX_PACKET_LOSS_RATE = 100  # [%]
+    MIN_PACKET_LOSS_RATE = 0  # [%]
+    MAX_PACKET_LOSS_RATE = 100  # [%]
 
-    __MIN_LATENCY_MS = 0  # [millisecond]
-    __MAX_LATENCY_MS = 10000  # [millisecond]
+    MIN_LATENCY_MS = 0  # [millisecond]
+    MAX_LATENCY_MS = 10000  # [millisecond]
 
-    __MIN_CORRUPTION_RATE = 0  # [%]
-    __MAX_CORRUPTION_RATE = 100  # [%]
+    MIN_CORRUPTION_RATE = 0  # [%]
+    MAX_CORRUPTION_RATE = 100  # [%]
 
     __MIN_BUFFER_BYTE = 1600
 
@@ -217,24 +216,24 @@ class TrafficControl(object):
         _validate_within_min_max(
             "latency_ms",
             self.latency_ms,
-            self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
 
         _validate_within_min_max(
             "latency_distro_ms",
             self.latency_distro_ms,
-            self.__MIN_LATENCY_MS, self.__MAX_LATENCY_MS)
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
             "packet_loss_rate",
             self.packet_loss_rate,
-            self.__MIN_PACKET_LOSS_RATE, self.__MAX_PACKET_LOSS_RATE)
+            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE)
 
     def __validate_curruption_rate(self):
         _validate_within_min_max(
             "corruption_rate",
             self.corruption_rate,
-            self.__MIN_CORRUPTION_RATE, self.__MAX_CORRUPTION_RATE)
+            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE)
 
     def __validate_netem_parameter(self):
         try:
