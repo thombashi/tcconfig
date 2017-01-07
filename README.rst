@@ -9,7 +9,7 @@ tcconfig
 Summary
 -------
 
-``tcconfig`` is a Simple ``tc`` command wrapper.
+A Simple tc command wrapper tool.
 Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.
 
 Traffic control features
@@ -137,7 +137,7 @@ For more information
 --------------------
 
 More examples are available at 
-http://tcconfig.readthedocs.org/en/latest/pages/usage/index.html
+http://tcconfig.rtfd.io/en/latest/pages/usage/index.html
 
 Installation
 ============
@@ -191,7 +191,7 @@ Test dependencies
 Documentation
 =============
 
-http://tcconfig.readthedocs.org/en/latest/
+http://tcconfig.rtfd.io/
 
 Troubleshooting
 ========================
@@ -202,7 +202,7 @@ Phenomenon
 
 
 Cause and counter measures
-------------------------
+--------------------------
 The cause of this error is `sch_netem` kernel module is not loaded in your system.
 Execute the following command to solve this problem:
 
