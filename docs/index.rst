@@ -1,10 +1,8 @@
-.. tcconfig documentation master file, created by
-   sphinx-quickstart on Mon Mar 28 23:15:56 2016.
-   You can adapt this file completely to your liking, but it should at least
-   contain the root `toctree` directive.
-
 Welcome to tcconfig's documentation!
 ====================================
+
+.. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
+   :target: https://github.com/thombashi/tcconfig
 
 .. toctree::
    :caption: Table of Contents
