@@ -130,8 +130,8 @@ class Test_TrafficControl_validate(object):
         [{"packet_loss_rate": -0.1}, ValueError],
         [{"packet_loss_rate": 100.1}, ValueError],
 
-        [{"curruption_rate": -0.1}, ValueError],
-        [{"curruption_rate": 100.1}, ValueError],
+        [{"corruption_rate": -0.1}, ValueError],
+        [{"corruption_rate": 100.1}, ValueError],
 
         [{"network": "192.168.0."}, ValueError],
         [{"network": "192.168.0.256"}, ValueError],
@@ -153,7 +153,7 @@ class Test_TrafficControl_validate(object):
             latency_ms=value.get("latency_ms"),
             latency_distro_ms=value.get("latency_distro_ms"),
             packet_loss_rate=value.get("packet_loss_rate"),
-            corruption_rate=value.get("curruption_rate"),
+            corruption_rate=value.get("corruption_rate"),
             network=value.get("network"),
             port=value.get("port"),
         )
