@@ -18,7 +18,7 @@ logger = logbook.Logger("tcconfig")
 logger.disable()
 
 
-def set_logger(log_level):
+def set_log_level(log_level):
     """
     Set logging level of this module. The module using
     `logbook <http://logbook.readthedocs.io/en/stable/>`__ module for logging.

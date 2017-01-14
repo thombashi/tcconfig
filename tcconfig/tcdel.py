@@ -19,7 +19,7 @@ from ._error import NetworkInterfaceNotFoundError
 from ._logger import (
     LOG_FORMAT_STRING,
     logger,
-    set_logger,
+    set_log_level,
 )
 
 
@@ -41,7 +41,7 @@ def parse_option():
 def main():
     options = parse_option()
 
-    set_logger(options.log_level)
+    set_log_level(options.log_level)
 
     subprocrunner.Which("tc").verify()
 

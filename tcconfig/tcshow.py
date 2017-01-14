@@ -26,7 +26,7 @@ from ._iptables import IptablesMangleController
 from ._logger import (
     LOG_FORMAT_STRING,
     logger,
-    set_logger,
+    set_log_level,
 )
 from ._traffic_direction import TrafficDirection
 
@@ -144,7 +144,7 @@ class TcParamParser(object):
 def main():
     options = parse_option()
 
-    set_logger(options.log_level)
+    set_log_level(options.log_level)
 
     subprocrunner.Which("tc").verify()
 
