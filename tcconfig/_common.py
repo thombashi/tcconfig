@@ -5,15 +5,27 @@
 """
 
 from __future__ import absolute_import
+import contextlib
 
 import dataproperty
 import logbook
 import six
 
 from ._error import NetworkInterfaceNotFoundError
+from ._logger import logger
 
 
 ANYWHERE_NETWORK = "0.0.0.0/0"
+
+
+@contextlib.contextmanager
+def logging_context(name):
+    log_template = "----- {:s}: {:s} -----"
+    logger.debug(log_template.format("start", name))
+    try:
+        yield
+    finally:
+        logger.debug(log_template.format("complete", name))
 
 
 def verify_network_interface(device):
@@ -55,7 +67,6 @@ def sanitize_network(network):
 
 def run_command_helper(command, error_regexp, message):
     import subprocrunner as spr
-    from ._logger import logger
 
     if logger.level != logbook.DEBUG:
         spr.set_logger(is_enable=False)
