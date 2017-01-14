@@ -26,10 +26,7 @@ from ._error import (
     EmptyParameterError,
     InvalidParameterError
 )
-from ._iptables import (
-    IptablesMangleController,
-    IptablesMangleMark
-)
+from ._iptables import IptablesMangleController
 from ._logger import logger
 from ._traffic_direction import TrafficDirection
 from .shaper.tbf import TbfShaper
@@ -241,12 +238,6 @@ class TrafficControl(object):
 
         return any(result_list)
 
-    def is_use_iptables(self):
-        return all([
-            self.is_enable_iptables,
-            self.direction == TrafficDirection.OUTGOING,
-        ])
-
     def __validate_network_delay(self):
         _validate_within_min_max(
             "latency_ms",
@@ -296,15 +287,6 @@ class TrafficControl(object):
     def __validate_port(self):
         _validate_within_min_max(
             "port", self.port, self.__MIN_PORT, self.__MAX_PORT)
-
-    def get_network_direction_str(self):
-        if self.direction == TrafficDirection.OUTGOING:
-            return "dst"
-
-        if self.direction == TrafficDirection.INCOMING:
-            return "src"
-
-        raise ValueError("unknown direction: " + self.direction)
 
     def __get_device_qdisc_major_id(self):
         import hashlib
@@ -385,25 +367,6 @@ class TrafficControl(object):
                 "failed to add qdisc: netem qdisc already exists "
                 "(dev={:s}, parent={:s}, handle={:s})".format(
                     self.get_tc_device(), parent, handle)))
-
-    def add_mangle_mark(self, mark_id):
-        dst_network = None
-        src_network = None
-
-        if self.direction == TrafficDirection.OUTGOING:
-            dst_network = self.network
-            if dataproperty.is_empty_string(self.src_network):
-                chain = "OUTPUT"
-            else:
-                src_network = self.src_network
-                chain = "PREROUTING"
-        elif self.direction == TrafficDirection.INCOMING:
-            src_network = self.network
-            chain = "INPUT"
-
-        IptablesMangleController.add(IptablesMangleMark(
-            mark_id=mark_id, source=src_network, destination=dst_network,
-            chain=chain))
 
     def __delete_ifb_device(self):
         verify_network_interface(self.ifb_device)

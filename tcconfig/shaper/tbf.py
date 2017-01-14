@@ -14,20 +14,13 @@ from .._common import (
     ANYWHERE_NETWORK,
     run_command_helper,
 )
-from .._error import (
-    EmptyParameterError,
-)
-from .._iptables import (
-    IptablesMangleController,
-)
+from .._error import EmptyParameterError
 from ._interface import AbstractShaper
 
 
 class TbfShaper(AbstractShaper):
 
     __MIN_BUFFER_BYTE = 1600
-
-    __FILTER_IPTABLES_MARK_ID_OFFSET = 100
 
     @property
     def algorithm_name(self):
@@ -93,13 +86,9 @@ class TbfShaper(AbstractShaper):
             "prio 1",
         ]
 
-        if self._tc_obj.is_use_iptables():
-            mark_id = (
-                IptablesMangleController.get_unique_mark_id() +
-                self.__FILTER_IPTABLES_MARK_ID_OFFSET)
-            command_list.append("handle {:d} fw".format(mark_id))
-
-            self._tc_obj.add_mangle_mark(mark_id)
+        if self._is_use_iptables():
+            command_list.append(
+                "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
             if all([
                 dataproperty.is_empty_string(self._tc_obj.network),
@@ -110,7 +99,7 @@ class TbfShaper(AbstractShaper):
             command_list.append("u32")
             if dataproperty.is_not_empty_string(self._tc_obj.network):
                 command_list.append("match ip {:s} {:s}".format(
-                    self._tc_obj.get_network_direction_str(),
+                    self._get_network_direction_str(),
                     self._tc_obj.network))
             if self._tc_obj.port is not None:
                 command_list.append(
@@ -123,7 +112,7 @@ class TbfShaper(AbstractShaper):
         return SubprocessRunner(" ".join(command_list)).run()
 
     def __set_pre_network_filter(self):
-        if self._tc_obj.is_use_iptables():
+        if self._is_use_iptables():
             return 0
 
         if all([
@@ -142,7 +131,7 @@ class TbfShaper(AbstractShaper):
             "protocol ip",
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 2 u32 match ip {:s} {:s}".format(
-                self._tc_obj.get_network_direction_str(),
+                self._get_network_direction_str(),
                 ANYWHERE_NETWORK),
             "flowid {:s}".format(flowid),
         ])
