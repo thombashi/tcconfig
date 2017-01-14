@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 
 import dataproperty
+import logbook
 import six
 
 from ._error import NetworkInterfaceNotFoundError
@@ -53,15 +54,24 @@ def sanitize_network(network):
 
 
 def run_command_helper(command, error_regexp, message):
-    from subprocrunner import SubprocessRunner
+    import subprocrunner as spr
     from ._logger import logger
 
-    proc = SubprocessRunner(command)
-    if proc.run() == 0:
+    if logger.level != logbook.DEBUG:
+        spr.set_logger(is_enable=False)
+
+    proc = spr.SubprocessRunner(command)
+    proc.run()
+
+    if logger.level != logbook.DEBUG:
+        spr.set_logger(is_enable=True)
+
+    if proc.returncode == 0:
         return 0
 
     match = error_regexp.search(proc.stderr)
     if match is None:
+        logger.error(proc.stderr)
         return proc.returncode
 
     logger.notice(message)

@@ -354,17 +354,21 @@ class TrafficControl(object):
         return return_code
 
     def __set_netem(self):
+        parent = "{:s}:{:d}".format(
+            self.qdisc_major_id_str, self.get_qdisc_minor_id())
+        handle = "{:x}".format(
+            self.get_netem_qdisc_major_id(self.qdisc_major_id))
         command_list = [
             "tc qdisc add",
             "dev {:s}".format(self.get_tc_device()),
-            "parent {:s}:{:d}".format(
-                self.qdisc_major_id_str, self.get_qdisc_minor_id()),
-            "handle {:x}:".format(
-                self.get_netem_qdisc_major_id(self.qdisc_major_id)),
+            "parent {:s}".format(parent),
+            "handle {:s}:".format(handle),
             "netem",
         ]
+
         if self.packet_loss_rate > 0:
             command_list.append("loss {:f}%".format(self.packet_loss_rate))
+
         if self.latency_ms > 0:
             command_list.append("delay {:f}ms".format(self.latency_ms))
 
@@ -378,7 +382,9 @@ class TrafficControl(object):
         return run_command_helper(
             " ".join(command_list), self.REGEXP_FILE_EXISTS,
             self.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: netem qdisc already exists."))
+                "failed to add qdisc: netem qdisc already exists "
+                "(dev={:s}, parent={:s}, handle={:s})".format(
+                    self.get_tc_device(), parent, handle)))
 
     def add_mangle_mark(self, mark_id):
         dst_network = None

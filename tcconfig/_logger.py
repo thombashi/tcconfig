@@ -29,7 +29,7 @@ def set_log_level(log_level):
         Disabled logging if the ``log_level`` is ``logbook.NOTSET``.
     """
 
-    subprocrunner.set_logger(log_level)
+    subprocrunner.set_log_level(log_level)
 
     if log_level == logbook.NOTSET:
         logger.disable()

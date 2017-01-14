@@ -35,18 +35,19 @@ class TbfShaper(AbstractShaper):
 
     def make_qdisc(self):
         command = " ".join([
-            "tc qdisc add",
-            self.dev,
-            "root",
-            "handle {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio",
+            "tc qdisc add", self.dev, "root",
+            "handle {:s}:".format(self._tc_obj.qdisc_major_id_str), "prio",
         ])
 
         return run_command_helper(
             command,
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: prio qdisc already exists."))
+                "failed to add qdisc: prio qdisc already exists "
+                "({:s}, algo={:s}, handle={:s}).".format(
+                    self.dev, self.algorithm_name,
+                    self._tc_obj.qdisc_major_id_str))
+        )
 
     def add_rate(self):
         try:
@@ -54,23 +55,32 @@ class TbfShaper(AbstractShaper):
         except EmptyParameterError:
             return 0
 
-        command_list = [
+        parent = "parent {:x}:{:d}".format(
+            self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
+            self._tc_obj.get_qdisc_minor_id())
+        handle = 20
+
+        command = " ".join([
             "tc qdisc add",
             self.dev,
-            "parent {:x}:{:d}".format(
-                self._tc_obj.get_netem_qdisc_major_id(
-                    self._tc_obj.qdisc_major_id),
-                self._tc_obj.get_qdisc_minor_id()),
-            "handle 20:",
+            parent,
+            "handle {:d}:".format(handle),
             self.algorithm_name,
             "rate {:f}kbit".format(self._tc_obj.bandwidth_rate),
             "buffer {:d}".format(
                 max(int(self._tc_obj.bandwidth_rate), self.__MIN_BUFFER_BYTE)
             ),  # [byte]
             "limit 10000",
-        ]
+        ])
 
-        return SubprocessRunner(" ".join(command_list)).run()
+        return run_command_helper(
+            command,
+            self._tc_obj.REGEXP_FILE_EXISTS,
+            self._tc_obj.EXISTS_MSG_TEMPLATE.format(
+                "failed to add qdisc: qdisc already exists "
+                "({:s}, algo={:s}, parent={:s}, handle={:d}).".format(
+                    self.dev, self.algorithm_name, parent, handle))
+        )
 
     def add_filter(self):
         self.__set_pre_network_filter()
