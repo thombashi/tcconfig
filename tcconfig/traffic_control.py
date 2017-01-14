@@ -35,6 +35,20 @@ from ._logger import logger
 from ._traffic_direction import TrafficDirection
 
 
+def run_command_helper(command, error_regexp, message):
+    proc = SubprocessRunner(command)
+    if proc.run() == 0:
+        return 0
+
+    match = error_regexp.search(proc.stderr)
+    if match is None:
+        return proc.returncode
+
+    logger.notice(message)
+
+    return proc.returncode
+
+
 def _validate_within_min_max(param_name, value, min_value, max_value):
     if value is None:
         return
@@ -172,13 +186,13 @@ class TrafficControl(object):
     def delete_tc(self):
         result_list = []
 
-        returncode = self.__run(
+        returncode = run_command_helper(
             "tc qdisc del dev {:s} root".format(self.__device),
             re.compile("RTNETLINK answers: No such file or directory"),
             "failed to delete qdisc: no qdisc for outgoing packets")
         result_list.append(returncode == 0)
 
-        returncode = self.__run(
+        returncode = run_command_helper(
             "tc qdisc del dev {:s} ingress".format(self.__device),
             re.compile("|".join([
                 "RTNETLINK answers: Invalid argument",
@@ -271,9 +285,9 @@ class TrafficControl(object):
             "prio",
         ]
 
-        return self.__run(
             " ".join(command_list), self.__REGEXP_FILE_EXISTS,
             self.__EXISTS_MSG_TEMPLATE.format(
+        return run_command_helper(
                 "failed to add qdisc: prio qdisc already exists."))
 
     def __get_tc_device(self):
@@ -334,7 +348,7 @@ class TrafficControl(object):
         command = "modprobe ifb"
         return_code |= SubprocessRunner(command).run()
 
-        return_code |= self.__run(
+        return_code |= run_command_helper(
             "ip link add {:s} type ifb".format(self.ifb_device),
             self.__REGEXP_FILE_EXISTS,
             self.__EXISTS_MSG_TEMPLATE.format(
@@ -343,7 +357,7 @@ class TrafficControl(object):
         command = "ip link set dev {:s} up".format(self.ifb_device)
         return_code |= SubprocessRunner(command).run()
 
-        return_code |= self.__run(
+        return_code |= run_command_helper(
             "tc qdisc add dev {:s} ingress".format(self.__device),
             self.__REGEXP_FILE_EXISTS,
             self.__EXISTS_MSG_TEMPLATE.format(
@@ -409,9 +423,9 @@ class TrafficControl(object):
         if self.corruption_rate > 0:
             command_list.append("corrupt {:f}%".format(self.corruption_rate))
 
-        return self.__run(
             " ".join(command_list), self.__REGEXP_FILE_EXISTS,
             self.__EXISTS_MSG_TEMPLATE.format(
+        return run_command_helper(
                 "failed to add qdisc: netem qdisc already exists."))
 
     def __set_network_filter(self, qdisc_major_id):
@@ -507,17 +521,3 @@ class TrafficControl(object):
             return 2
 
         return 0
-
-    @staticmethod
-    def __run(command, regexp, message):
-        proc = SubprocessRunner(command, regexp)
-        if proc.run() == 0:
-            return 0
-
-        match = regexp.search(proc.stderr)
-        if match is None:
-            return proc.returncode
-
-        logger.notice(message)
-
-        return proc.returncode
