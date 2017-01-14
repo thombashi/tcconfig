@@ -192,11 +192,7 @@ class TrafficControl(object):
 
     def set_tc(self):
         self.__setup_ifb()
-
-        self.__shaper.make_qdisc()
-        self.__shaper.add_rate()
-        self.__shaper.set_netem()
-        self.__shaper.add_filter()
+        self.__shaper.set_shaping()
 
     def delete_tc(self):
         result_list = []

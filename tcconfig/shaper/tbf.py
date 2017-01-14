@@ -12,6 +12,7 @@ from subprocrunner import SubprocessRunner
 
 from .._common import (
     ANYWHERE_NETWORK,
+    logging_context,
     run_command_helper,
 )
 from .._error import EmptyParameterError
@@ -123,6 +124,19 @@ class TbfShaper(AbstractShaper):
             self.get_qdisc_minor_id()))
 
         return SubprocessRunner(" ".join(command_list)).run()
+
+    def set_shaping(self):
+        with logging_context("make_qdisc"):
+            self.make_qdisc()
+
+        with logging_context("set_netem"):
+            self.set_netem()
+
+        with logging_context("add_rate"):
+            self.add_rate()
+
+        with logging_context("add_filter"):
+            self.add_filter()
 
     def __set_pre_network_filter(self):
         if self._is_use_iptables():

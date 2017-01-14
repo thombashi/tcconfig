@@ -42,6 +42,10 @@ class ShaperInterface(object):
     def add_filter(self):  # pragma: no cover
         pass
 
+    @abc.abstractmethod
+    def set_shaping(self):  # pragma: no cover
+        pass
+
 
 class AbstractShaper(ShaperInterface):
 

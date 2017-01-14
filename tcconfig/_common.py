@@ -20,12 +20,11 @@ ANYWHERE_NETWORK = "0.0.0.0/0"
 
 @contextlib.contextmanager
 def logging_context(name):
-    log_template = "----- {:s}: {:s} -----"
-    logger.debug(log_template.format("start", name))
+    logger.debug("|---- {:s}: {:s} -----".format("start", name))
     try:
         yield
     finally:
-        logger.debug(log_template.format("complete", name))
+        logger.debug("----- {:s}: {:s} ----|".format("complete", name))
 
 
 def verify_network_interface(device):
