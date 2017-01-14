@@ -20,11 +20,16 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._common import ANYWHERE_NETWORK
 from ._error import ModuleNotFoundError
 from ._error import NetworkInterfaceNotFoundError
+from ._logger import (
+    LOG_FORMAT_STRING,
+    logger,
+    set_logger,
+)
 from ._traffic_direction import TrafficDirection
 
 
-handler = logbook.StderrHandler()
-handler.push_application()
+logbook.StderrHandler(
+    level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
 def parse_option():
@@ -211,14 +216,8 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
 def main():
     options = parse_option()
-    logger = logbook.Logger("tcset")
-    logger.level = options.log_level
 
-    subprocrunner.logger.level = options.log_level
-    if options.quiet:
-        subprocrunner.logger.disable()
-    else:
-        subprocrunner.logger.enable()
+    set_logger(options.log_level)
 
     subprocrunner.Which("tc").verify()
     try:
@@ -252,10 +251,14 @@ def main():
         return 1
 
     if options.overwrite:
+        set_logger(logbook.ERROR)
+
         try:
             tc.delete_tc()
         except NetworkInterfaceNotFoundError:
             pass
+
+        set_logger(options.log_level)
 
     tc.set_tc()
 

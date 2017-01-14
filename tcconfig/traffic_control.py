@@ -14,7 +14,6 @@ from dataproperty import (
     FloatType
 )
 import six
-from subprocrunner import logger
 from subprocrunner import SubprocessRunner
 
 from ._common import (
@@ -32,6 +31,7 @@ from ._iptables import (
     IptablesMangleController,
     IptablesMangleMark
 )
+from ._logger import logger
 from ._traffic_direction import TrafficDirection
 
 
