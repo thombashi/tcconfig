@@ -34,9 +34,10 @@ class TbfShaper(AbstractShaper):
         return "tbf"
 
     def make_qdisc(self):
+        handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         command = " ".join([
             "tc qdisc add", self.dev, "root",
-            "handle {:s}:".format(self._tc_obj.qdisc_major_id_str), "prio",
+            "handle {:s}".format(handle), "prio",
         ])
 
         return run_command_helper(
@@ -45,8 +46,7 @@ class TbfShaper(AbstractShaper):
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: prio qdisc already exists "
                 "({:s}, algo={:s}, handle={:s}).".format(
-                    self.dev, self.algorithm_name,
-                    self._tc_obj.qdisc_major_id_str))
+                    self.dev, self.algorithm_name, handle))
         )
 
     def add_rate(self):
@@ -58,13 +58,13 @@ class TbfShaper(AbstractShaper):
         parent = "parent {:x}:{:d}".format(
             self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
             self._tc_obj.get_qdisc_minor_id())
-        handle = 20
+        handle = "{:d}:".format(20)
 
         command = " ".join([
             "tc qdisc add",
             self.dev,
             parent,
-            "handle {:d}:".format(handle),
+            "handle {:s}".format(handle),
             self.algorithm_name,
             "rate {:f}kbit".format(self._tc_obj.bandwidth_rate),
             "buffer {:d}".format(
@@ -78,7 +78,7 @@ class TbfShaper(AbstractShaper):
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: qdisc already exists "
-                "({:s}, algo={:s}, parent={:s}, handle={:d}).".format(
+                "({:s}, algo={:s}, parent={:s}, handle={:s}).".format(
                     self.dev, self.algorithm_name, parent, handle))
         )
 
