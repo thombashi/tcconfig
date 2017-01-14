@@ -50,3 +50,20 @@ def sanitize_network(network):
     ipaddress.IPv4Network(six.u(network))  # validate network str
 
     return network
+
+
+def run_command_helper(command, error_regexp, message):
+    from subprocrunner import SubprocessRunner
+    from ._logger import logger
+
+    proc = SubprocessRunner(command)
+    if proc.run() == 0:
+        return 0
+
+    match = error_regexp.search(proc.stderr)
+    if match is None:
+        return proc.returncode
+
+    logger.notice(message)
+
+    return proc.returncode

@@ -36,7 +36,7 @@ def device_option(request):
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     print(tc_obj.bandwidth_rate)
-    tc_obj._TrafficControl__validate_bandwidth_rate()
+    tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
@@ -53,7 +53,7 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
-        tc_obj._TrafficControl__validate_bandwidth_rate()
+        tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
@@ -66,7 +66,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
-        tc_obj._TrafficControl__validate_bandwidth_rate()
+        tc_obj.validate_bandwidth_rate()
 
 
 class Test_TrafficControl_validate(object):

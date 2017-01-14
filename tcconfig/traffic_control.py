@@ -10,16 +10,15 @@ import re
 
 import dataproperty
 from dataproperty import (
-    IntegerType,
     FloatType
 )
 import six
 from subprocrunner import SubprocessRunner
 
 from ._common import (
-    ANYWHERE_NETWORK,
     sanitize_network,
-    verify_network_interface
+    verify_network_interface,
+    run_command_helper,
 )
 from ._converter import Humanreadable
 from ._error import (
@@ -33,20 +32,7 @@ from ._iptables import (
 )
 from ._logger import logger
 from ._traffic_direction import TrafficDirection
-
-
-def run_command_helper(command, error_regexp, message):
-    proc = SubprocessRunner(command)
-    if proc.run() == 0:
-        return 0
-
-    match = error_regexp.search(proc.stderr)
-    if match is None:
-        return proc.returncode
-
-    logger.notice(message)
-
-    return proc.returncode
+from .shaper.tbf import TbfShaper
 
 
 def _validate_within_min_max(param_name, value, min_value, max_value):
@@ -66,7 +52,6 @@ def _validate_within_min_max(param_name, value, min_value, max_value):
 
 class TrafficControl(object):
     __NETEM_QDISC_MAJOR_ID_OFFSET = 10
-    __FILTER_IPTABLES_MARK_ID_OFFSET = 100
 
     __OUT_DEVICE_QDISC_MINOR_ID = 1
     __IN_DEVICE_QDISC_MINOR_ID = 3
@@ -80,14 +65,12 @@ class TrafficControl(object):
     MIN_CORRUPTION_RATE = 0  # [%]
     MAX_CORRUPTION_RATE = 100  # [%]
 
-    __MIN_BUFFER_BYTE = 1600
-
     __MIN_PORT = 0
     __MAX_PORT = 65535
 
-    __REGEXP_FILE_EXISTS = re.compile("RTNETLINK answers: File exists")
+    REGEXP_FILE_EXISTS = re.compile("RTNETLINK answers: File exists")
 
-    __EXISTS_MSG_TEMPLATE = (
+    EXISTS_MSG_TEMPLATE = (
         "{:s} "
         "execute with --overwrite option if you want to overwrite "
         "the existing settings.")
@@ -157,6 +140,8 @@ class TrafficControl(object):
         self.__port = port
         self.__is_enable_iptables = is_enable_iptables
 
+        self.__shaper = TbfShaper(self)
+
         # bandwidth string [G/M/K bps]
         try:
             self.__bandwidth_rate = Humanreadable(
@@ -173,15 +158,52 @@ class TrafficControl(object):
         self.__src_network = sanitize_network(self.src_network)
         self.__validate_port()
 
+    def validate_bandwidth_rate(self):
+        if not dataproperty.FloatType(self.bandwidth_rate).is_type():
+            raise EmptyParameterError("bandwidth_rate is empty")
+
+        if self.bandwidth_rate <= 0:
+            raise InvalidParameterError(
+                "rate must be greater than zero: actual={}".format(
+                    self.bandwidth_rate))
+
+    def get_tc_device(self):
+        if self.direction == TrafficDirection.OUTGOING:
+            return self.__device
+
+        if self.direction == TrafficDirection.INCOMING:
+            return self.ifb_device
+
+        raise ValueError("unknown direction: " + self.direction)
+
+    def get_netem_qdisc_major_id(self, base_qdisc_major_id):
+        if self.direction == TrafficDirection.OUTGOING:
+            direction_offset = 0
+        elif self.direction == TrafficDirection.INCOMING:
+            direction_offset = 1
+
+        return (
+            base_qdisc_major_id +
+            self.__NETEM_QDISC_MAJOR_ID_OFFSET +
+            direction_offset)
+
+    def get_qdisc_minor_id(self):
+        if self.direction == TrafficDirection.OUTGOING:
+            return self.__OUT_DEVICE_QDISC_MINOR_ID
+
+        if self.direction == TrafficDirection.INCOMING:
+            return self.__IN_DEVICE_QDISC_MINOR_ID
+
+        raise ValueError("unknown direction: " + self.direction)
+
     def set_tc(self):
         self.__setup_ifb()
 
         qdisc_major_id = self.__get_device_qdisc_major_id()
-        self.__make_qdisc(qdisc_major_id)
-        self.__set_pre_network_filter(qdisc_major_id)
+        self.__shaper.make_qdisc(qdisc_major_id)
         self.__set_netem(qdisc_major_id)
-        self.__set_network_filter(qdisc_major_id)
-        self.__set_rate(qdisc_major_id)
+        self.__shaper.add_filter(qdisc_major_id)
+        self.__shaper.add_rate(qdisc_major_id)
 
     def delete_tc(self):
         result_list = []
@@ -211,20 +233,11 @@ class TrafficControl(object):
 
         return any(result_list)
 
-    def __is_use_iptables(self):
+    def is_use_iptables(self):
         return all([
             self.is_enable_iptables,
             self.direction == TrafficDirection.OUTGOING,
         ])
-
-    def __validate_bandwidth_rate(self):
-        if not dataproperty.FloatType(self.bandwidth_rate).is_type():
-            raise EmptyParameterError("bandwidth_rate is empty")
-
-        if self.bandwidth_rate <= 0:
-            raise InvalidParameterError(
-                "rate must be greater than zero: actual={}".format(
-                    self.bandwidth_rate))
 
     def __validate_network_delay(self):
         _validate_within_min_max(
@@ -251,7 +264,7 @@ class TrafficControl(object):
 
     def __validate_netem_parameter(self):
         try:
-            self.__validate_bandwidth_rate()
+            self.validate_bandwidth_rate()
         except EmptyParameterError:
             pass
 
@@ -276,30 +289,7 @@ class TrafficControl(object):
         _validate_within_min_max(
             "port", self.port, self.__MIN_PORT, self.__MAX_PORT)
 
-    def __make_qdisc(self, qdisc_major_id):
-        command_list = [
-            "tc qdisc add",
-            "dev " + self.__get_tc_device(),
-            "root",
-            "handle {:x}:".format(qdisc_major_id),
-            "prio",
-        ]
-
-            " ".join(command_list), self.__REGEXP_FILE_EXISTS,
-            self.__EXISTS_MSG_TEMPLATE.format(
-        return run_command_helper(
-                "failed to add qdisc: prio qdisc already exists."))
-
-    def __get_tc_device(self):
-        if self.direction == TrafficDirection.OUTGOING:
-            return self.__device
-
-        if self.direction == TrafficDirection.INCOMING:
-            return self.ifb_device
-
-        raise ValueError("unknown direction: " + self.direction)
-
-    def __get_network_direction_str(self):
+    def get_network_direction_str(self):
         if self.direction == TrafficDirection.OUTGOING:
             return "dst"
 
@@ -316,26 +306,6 @@ class TrafficControl(object):
 
         return int(device_hash_prefix + base_device_hash, 16)
 
-    def __get_netem_qdisc_major_id(self, base_qdisc_major_id):
-        if self.direction == TrafficDirection.OUTGOING:
-            direction_offset = 0
-        elif self.direction == TrafficDirection.INCOMING:
-            direction_offset = 1
-
-        return (
-            base_qdisc_major_id +
-            self.__NETEM_QDISC_MAJOR_ID_OFFSET +
-            direction_offset)
-
-    def __get_qdisc_minor_id(self):
-        if self.direction == TrafficDirection.OUTGOING:
-            return self.__OUT_DEVICE_QDISC_MINOR_ID
-
-        if self.direction == TrafficDirection.INCOMING:
-            return self.__IN_DEVICE_QDISC_MINOR_ID
-
-        raise ValueError("unknown direction: " + self.direction)
-
     def __setup_ifb(self):
         if self.direction != TrafficDirection.INCOMING:
             return 0
@@ -350,8 +320,8 @@ class TrafficControl(object):
 
         return_code |= run_command_helper(
             "ip link add {:s} type ifb".format(self.ifb_device),
-            self.__REGEXP_FILE_EXISTS,
-            self.__EXISTS_MSG_TEMPLATE.format(
+            self.REGEXP_FILE_EXISTS,
+            self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add ip link: ip link already exists."))
 
         command = "ip link set dev {:s} up".format(self.ifb_device)
@@ -359,8 +329,8 @@ class TrafficControl(object):
 
         return_code |= run_command_helper(
             "tc qdisc add dev {:s} ingress".format(self.__device),
-            self.__REGEXP_FILE_EXISTS,
-            self.__EXISTS_MSG_TEMPLATE.format(
+            self.REGEXP_FILE_EXISTS,
+            self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: ingress qdisc already exists."))
 
         command_list = [
@@ -375,40 +345,14 @@ class TrafficControl(object):
 
         return return_code
 
-    def __set_pre_network_filter(self, qdisc_major_id):
-        if self.__is_use_iptables():
-            return 0
-
-        if all([
-            dataproperty.is_empty_string(self.network),
-            not IntegerType(self.port).is_type(),
-        ]):
-            flowid = "{:x}:{:d}".format(
-                qdisc_major_id, self.__get_qdisc_minor_id())
-        else:
-            flowid = "{:x}:2".format(qdisc_major_id)
-
-        command_list = [
-            "tc filter add",
-            "dev " + self.__get_tc_device(),
-            "protocol ip",
-            "parent {:x}:".format(qdisc_major_id),
-            "prio 2 u32 match ip {:s} {:s}".format(
-                self.__get_network_direction_str(),
-                ANYWHERE_NETWORK),
-            "flowid " + flowid,
-        ]
-
-        return SubprocessRunner(" ".join(command_list)).run()
-
     def __set_netem(self, qdisc_major_id):
         command_list = [
             "tc qdisc add",
-            "dev " + self.__get_tc_device(),
+            "dev " + self.get_tc_device(),
             "parent {:x}:{:d}".format(
-                qdisc_major_id, self.__get_qdisc_minor_id()),
+                qdisc_major_id, self.get_qdisc_minor_id()),
             "handle {:x}:".format(
-                self.__get_netem_qdisc_major_id(qdisc_major_id)),
+                self.get_netem_qdisc_major_id(qdisc_major_id)),
             "netem",
         ]
         if self.packet_loss_rate > 0:
@@ -423,48 +367,12 @@ class TrafficControl(object):
         if self.corruption_rate > 0:
             command_list.append("corrupt {:f}%".format(self.corruption_rate))
 
-            " ".join(command_list), self.__REGEXP_FILE_EXISTS,
-            self.__EXISTS_MSG_TEMPLATE.format(
         return run_command_helper(
+            " ".join(command_list), self.REGEXP_FILE_EXISTS,
+            self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: netem qdisc already exists."))
 
-    def __set_network_filter(self, qdisc_major_id):
-        command_list = [
-            "tc filter add",
-            "dev " + self.__get_tc_device(),
-            "protocol ip",
-            "parent {:x}:".format(qdisc_major_id),
-            "prio 1",
-        ]
-
-        if self.__is_use_iptables():
-            mark_id = (
-                IptablesMangleController.get_unique_mark_id() +
-                self.__FILTER_IPTABLES_MARK_ID_OFFSET)
-            command_list.append("handle {:d} fw".format(mark_id))
-
-            self.__add_mangle_mark(mark_id)
-        else:
-            if all([
-                dataproperty.is_empty_string(self.network),
-                self.port is None,
-            ]):
-                return 0
-
-            command_list.append("u32")
-            if dataproperty.is_not_empty_string(self.network):
-                command_list.append("match ip {:s} {:s}".format(
-                    self.__get_network_direction_str(), self.network))
-            if self.port is not None:
-                command_list.append(
-                    "match ip dport {:d} 0xffff".format(self.port))
-
-        command_list.append("flowid {:x}:{:d}".format(
-            qdisc_major_id, self.__get_qdisc_minor_id()))
-
-        return SubprocessRunner(" ".join(command_list)).run()
-
-    def __add_mangle_mark(self, mark_id):
+    def add_mangle_mark(self, mark_id):
         dst_network = None
         src_network = None
 
@@ -482,28 +390,6 @@ class TrafficControl(object):
         IptablesMangleController.add(IptablesMangleMark(
             mark_id=mark_id, source=src_network, destination=dst_network,
             chain=chain))
-
-    def __set_rate(self, qdisc_major_id):
-        try:
-            self.__validate_bandwidth_rate()
-        except EmptyParameterError:
-            return 0
-
-        command_list = [
-            "tc qdisc add",
-            "dev " + self.__get_tc_device(),
-            "parent {:x}:{:d}".format(
-                self.__get_netem_qdisc_major_id(qdisc_major_id),
-                self.__get_qdisc_minor_id()),
-            "handle 20:",
-            "tbf",
-            "rate {:f}kbit".format(self.bandwidth_rate),
-            "buffer {:d}".format(
-                max(int(self.bandwidth_rate), self.__MIN_BUFFER_BYTE)),  # [byte]
-            "limit 10000",
-        ]
-
-        return SubprocessRunner(" ".join(command_list)).run()
 
     def __delete_ifb_device(self):
         verify_network_interface(self.ifb_device)
