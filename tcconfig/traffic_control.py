@@ -77,7 +77,7 @@ class TrafficControl(object):
 
     @property
     def ifb_device(self):
-        return "ifb{:d}".format(self.__get_device_qdisc_major_id())
+        return "ifb{:d}".format(self.__qdisc_major_id)
 
     @property
     def direction(self):
@@ -119,6 +119,14 @@ class TrafficControl(object):
     def is_enable_iptables(self):
         return self.__is_enable_iptables
 
+    @property
+    def qdisc_major_id(self):
+        return self.__qdisc_major_id
+
+    @property
+    def qdisc_major_id_str(self):
+        return "{:x}".format(self.__qdisc_major_id)
+
     def __init__(
             self, device,
             direction=None, bandwidth_rate=None,
@@ -140,6 +148,7 @@ class TrafficControl(object):
         self.__port = port
         self.__is_enable_iptables = is_enable_iptables
 
+        self.__qdisc_major_id = self.__get_device_qdisc_major_id()
         self.__shaper = TbfShaper(self)
 
         # bandwidth string [G/M/K bps]
@@ -199,11 +208,10 @@ class TrafficControl(object):
     def set_tc(self):
         self.__setup_ifb()
 
-        qdisc_major_id = self.__get_device_qdisc_major_id()
-        self.__shaper.make_qdisc(qdisc_major_id)
-        self.__set_netem(qdisc_major_id)
-        self.__shaper.add_filter(qdisc_major_id)
-        self.__shaper.add_rate(qdisc_major_id)
+        self.__shaper.make_qdisc()
+        self.__set_netem()
+        self.__shaper.add_filter()
+        self.__shaper.add_rate()
 
     def delete_tc(self):
         result_list = []
@@ -345,14 +353,14 @@ class TrafficControl(object):
 
         return return_code
 
-    def __set_netem(self, qdisc_major_id):
+    def __set_netem(self):
         command_list = [
             "tc qdisc add",
-            "dev " + self.get_tc_device(),
-            "parent {:x}:{:d}".format(
-                qdisc_major_id, self.get_qdisc_minor_id()),
+            "dev {:s}".format(self.get_tc_device()),
+            "parent {:s}:{:d}".format(
+                self.qdisc_major_id_str, self.get_qdisc_minor_id()),
             "handle {:x}:".format(
-                self.get_netem_qdisc_major_id(qdisc_major_id)),
+                self.get_netem_qdisc_major_id(self.qdisc_major_id)),
             "netem",
         ]
         if self.packet_loss_rate > 0:

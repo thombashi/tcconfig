@@ -19,19 +19,23 @@ class ShaperInterface(object):
         pass
 
     @abc.abstractmethod
-    def make_qdisc(self, qdisc_major_id):  # pragma: no cover
+    def make_qdisc(self):  # pragma: no cover
         pass
 
     @abc.abstractmethod
-    def add_rate(self, qdisc_major_id):  # pragma: no cover
+    def add_rate(self):  # pragma: no cover
         pass
 
     @abc.abstractmethod
-    def add_filter(self, qdisc_major_id):  # pragma: no cover
+    def add_filter(self):  # pragma: no cover
         pass
 
 
 class AbstractShaper(ShaperInterface):
+
+    @property
+    def dev(self):
+        return "dev {:s}".format(self._tc_obj.get_tc_device())
 
     def __init__(self, tc_obj):
         self._tc_obj = tc_obj

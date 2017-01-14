@@ -33,22 +33,22 @@ class TbfShaper(AbstractShaper):
     def algorithm_name(self):
         return "tbf"
 
-    def make_qdisc(self, qdisc_major_id):
-        command_list = [
+    def make_qdisc(self):
+        command = " ".join([
             "tc qdisc add",
-            "dev {:s}".format(self._tc_obj.get_tc_device()),
+            self.dev,
             "root",
-            "handle {:x}:".format(qdisc_major_id),
+            "handle {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio",
-        ]
+        ])
 
         return run_command_helper(
-            " ".join(command_list),
+            command,
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: prio qdisc already exists."))
 
-    def add_rate(self, qdisc_major_id):
+    def add_rate(self):
         try:
             self._tc_obj.validate_bandwidth_rate()
         except EmptyParameterError:
@@ -56,9 +56,10 @@ class TbfShaper(AbstractShaper):
 
         command_list = [
             "tc qdisc add",
-            "dev {:s}".format(self._tc_obj.get_tc_device()),
+            self.dev,
             "parent {:x}:{:d}".format(
-                self._tc_obj.get_netem_qdisc_major_id(qdisc_major_id),
+                self._tc_obj.get_netem_qdisc_major_id(
+                    self._tc_obj.qdisc_major_id),
                 self._tc_obj.get_qdisc_minor_id()),
             "handle 20:",
             self.algorithm_name,
@@ -71,14 +72,14 @@ class TbfShaper(AbstractShaper):
 
         return SubprocessRunner(" ".join(command_list)).run()
 
-    def add_filter(self, qdisc_major_id):
-        self.__set_pre_network_filter(qdisc_major_id)
+    def add_filter(self):
+        self.__set_pre_network_filter()
 
         command_list = [
             "tc filter add",
-            "dev {:s}".format(self._tc_obj.get_tc_device()),
+            self.dev,
             "protocol ip",
-            "parent {:x}:".format(qdisc_major_id),
+            "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 1",
         ]
 
@@ -105,12 +106,13 @@ class TbfShaper(AbstractShaper):
                 command_list.append(
                     "match ip dport {:d} 0xffff".format(self._tc_obj.port))
 
-        command_list.append("flowid {:x}:{:d}".format(
-            qdisc_major_id, self._tc_obj.get_qdisc_minor_id()))
+        command_list.append("flowid {:s}:{:d}".format(
+            self._tc_obj.qdisc_major_id_str,
+            self._tc_obj.get_qdisc_minor_id()))
 
         return SubprocessRunner(" ".join(command_list)).run()
 
-    def __set_pre_network_filter(self, qdisc_major_id):
+    def __set_pre_network_filter(self):
         if self._tc_obj.is_use_iptables():
             return 0
 
@@ -118,16 +120,17 @@ class TbfShaper(AbstractShaper):
             dataproperty.is_empty_string(self._tc_obj.network),
             not dataproperty.IntegerType(self._tc_obj.port).is_type(),
         ]):
-            flowid = "{:x}:{:d}".format(
-                qdisc_major_id, self._tc_obj.get_qdisc_minor_id())
+            flowid = "{:s}:{:d}".format(
+                self._tc_obj.qdisc_major_id_str,
+                self._tc_obj.get_qdisc_minor_id())
         else:
-            flowid = "{:x}:2".format(qdisc_major_id)
+            flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
         command = " ".join([
             "tc filter add",
-            "dev {:s}".format(self._tc_obj.get_tc_device()),
+            self.dev,
             "protocol ip",
-            "parent {:x}:".format(qdisc_major_id),
+            "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 2 u32 match ip {:s} {:s}".format(
                 self._tc_obj.get_network_direction_str(),
                 ANYWHERE_NETWORK),
