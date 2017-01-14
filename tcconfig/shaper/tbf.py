@@ -55,7 +55,7 @@ class TbfShaper(AbstractShaper):
         except EmptyParameterError:
             return 0
 
-        parent = "parent {:x}:{:d}".format(
+        parent = "{:x}:{:d}".format(
             self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
             self._tc_obj.get_qdisc_minor_id())
         handle = "{:d}:".format(20)
@@ -63,7 +63,7 @@ class TbfShaper(AbstractShaper):
         command = " ".join([
             "tc qdisc add",
             self.dev,
-            parent,
+            "parent {:s}".format(parent),
             "handle {:s}".format(handle),
             self.algorithm_name,
             "rate {:f}kbit".format(self._tc_obj.bandwidth_rate),
