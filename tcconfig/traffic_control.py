@@ -50,9 +50,6 @@ def _validate_within_min_max(param_name, value, min_value, max_value):
 class TrafficControl(object):
     __NETEM_QDISC_MAJOR_ID_OFFSET = 10
 
-    __OUT_DEVICE_QDISC_MINOR_ID = 1
-    __IN_DEVICE_QDISC_MINOR_ID = 3
-
     MIN_PACKET_LOSS_RATE = 0  # [%]
     MAX_PACKET_LOSS_RATE = 100  # [%]
 
@@ -182,33 +179,24 @@ class TrafficControl(object):
 
         raise ValueError("unknown direction: " + self.direction)
 
-    def get_netem_qdisc_major_id(self, base_qdisc_major_id):
+    def get_netem_qdisc_major_id(self, base_id):
         if self.direction == TrafficDirection.OUTGOING:
             direction_offset = 0
         elif self.direction == TrafficDirection.INCOMING:
             direction_offset = 1
 
         return (
-            base_qdisc_major_id +
+            base_id +
             self.__NETEM_QDISC_MAJOR_ID_OFFSET +
             direction_offset)
-
-    def get_qdisc_minor_id(self):
-        if self.direction == TrafficDirection.OUTGOING:
-            return self.__OUT_DEVICE_QDISC_MINOR_ID
-
-        if self.direction == TrafficDirection.INCOMING:
-            return self.__IN_DEVICE_QDISC_MINOR_ID
-
-        raise ValueError("unknown direction: " + self.direction)
 
     def set_tc(self):
         self.__setup_ifb()
 
         self.__shaper.make_qdisc()
-        self.__set_netem()
-        self.__shaper.add_filter()
         self.__shaper.add_rate()
+        self.__shaper.set_netem()
+        self.__shaper.add_filter()
 
     def delete_tc(self):
         result_list = []
@@ -334,39 +322,6 @@ class TrafficControl(object):
         return_code |= SubprocessRunner(" ".join(command_list)).run()
 
         return return_code
-
-    def __set_netem(self):
-        parent = "{:s}:{:d}".format(
-            self.qdisc_major_id_str, self.get_qdisc_minor_id())
-        handle = "{:x}".format(
-            self.get_netem_qdisc_major_id(self.qdisc_major_id))
-        command_list = [
-            "tc qdisc add",
-            "dev {:s}".format(self.get_tc_device()),
-            "parent {:s}".format(parent),
-            "handle {:s}:".format(handle),
-            "netem",
-        ]
-
-        if self.packet_loss_rate > 0:
-            command_list.append("loss {:f}%".format(self.packet_loss_rate))
-
-        if self.latency_ms > 0:
-            command_list.append("delay {:f}ms".format(self.latency_ms))
-
-            if self.latency_distro_ms > 0:
-                command_list.append("{:f}ms distribution normal".format(
-                    self.latency_distro_ms))
-
-        if self.corruption_rate > 0:
-            command_list.append("corrupt {:f}%".format(self.corruption_rate))
-
-        return run_command_helper(
-            " ".join(command_list), self.REGEXP_FILE_EXISTS,
-            self.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: netem qdisc already exists "
-                "(dev={:s}, parent={:s}, handle={:s})".format(
-                    self.get_tc_device(), parent, handle)))
 
     def __delete_ifb_device(self):
         verify_network_interface(self.ifb_device)

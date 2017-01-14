@@ -11,6 +11,7 @@ import abc
 import dataproperty
 import six
 
+from .._common import run_command_helper
 from .._iptables import (
     IptablesMangleController,
     IptablesMangleMark
@@ -23,6 +24,10 @@ class ShaperInterface(object):
 
     @abc.abstractproperty
     def algorithm_name(self):  # pragma: no cover
+        pass
+
+    @abc.abstractmethod
+    def get_qdisc_minor_id(self):  # pragma: no cover
         pass
 
     @abc.abstractmethod
@@ -48,6 +53,41 @@ class AbstractShaper(ShaperInterface):
 
     def __init__(self, tc_obj):
         self._tc_obj = tc_obj
+
+    def set_netem(self):
+        parent = "{:s}:{:d}".format(
+            self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
+        handle = "{:x}".format(
+            self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
+        command_list = [
+            "tc qdisc add",
+            "dev {:s}".format(self._tc_obj.get_tc_device()),
+            "parent {:s}".format(parent),
+            "handle {:s}:".format(handle),
+            "netem",
+        ]
+
+        if self._tc_obj.packet_loss_rate > 0:
+            command_list.append(
+                "loss {:f}%".format(self._tc_obj.packet_loss_rate))
+
+        if self._tc_obj.latency_ms > 0:
+            command_list.append("delay {:f}ms".format(self._tc_obj.latency_ms))
+
+            if self._tc_obj.latency_distro_ms > 0:
+                command_list.append("{:f}ms distribution normal".format(
+                    self._tc_obj.latency_distro_ms))
+
+        if self._tc_obj.corruption_rate > 0:
+            command_list.append(
+                "corrupt {:f}%".format(self._tc_obj.corruption_rate))
+
+        return run_command_helper(
+            " ".join(command_list), self._tc_obj.REGEXP_FILE_EXISTS,
+            self._tc_obj.EXISTS_MSG_TEMPLATE.format(
+                "failed to add qdisc: netem qdisc already exists "
+                "(dev={:s}, parent={:s}, handle={:s})".format(
+                    self._tc_obj.get_tc_device(), parent, handle)))
 
     def _is_use_iptables(self):
         return all([

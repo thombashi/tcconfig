@@ -15,6 +15,7 @@ from .._common import (
     run_command_helper,
 )
 from .._error import EmptyParameterError
+from .._traffic_direction import TrafficDirection
 from ._interface import AbstractShaper
 
 
@@ -22,9 +23,21 @@ class TbfShaper(AbstractShaper):
 
     __MIN_BUFFER_BYTE = 1600
 
+    __OUT_DEVICE_QDISC_MINOR_ID = 1
+    __IN_DEVICE_QDISC_MINOR_ID = 3
+
     @property
     def algorithm_name(self):
         return "tbf"
+
+    def get_qdisc_minor_id(self):
+        if self._tc_obj.direction == TrafficDirection.OUTGOING:
+            return self.__OUT_DEVICE_QDISC_MINOR_ID
+
+        if self._tc_obj.direction == TrafficDirection.INCOMING:
+            return self.__IN_DEVICE_QDISC_MINOR_ID
+
+        raise ValueError("unknown direction: {}".format(self.direction))
 
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
@@ -50,7 +63,7 @@ class TbfShaper(AbstractShaper):
 
         parent = "{:x}:{:d}".format(
             self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
-            self._tc_obj.get_qdisc_minor_id())
+            self.get_qdisc_minor_id())
         handle = "{:d}:".format(20)
 
         command = " ".join([
@@ -107,7 +120,7 @@ class TbfShaper(AbstractShaper):
 
         command_list.append("flowid {:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
-            self._tc_obj.get_qdisc_minor_id()))
+            self.get_qdisc_minor_id()))
 
         return SubprocessRunner(" ".join(command_list)).run()
 
@@ -121,7 +134,7 @@ class TbfShaper(AbstractShaper):
         ]):
             flowid = "{:s}:{:d}".format(
                 self._tc_obj.qdisc_major_id_str,
-                self._tc_obj.get_qdisc_minor_id())
+                self.get_qdisc_minor_id())
         else:
             flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
