@@ -112,9 +112,13 @@ def parse_option():
 
 
 def verify_netem_module():
-    runner = subprocrunner.SubprocessRunner("lsmod | grep sch_netem")
+    import re
 
+    runner = subprocrunner.SubprocessRunner("lsmod")
     if runner.run() != 0:
+        raise OSError("failed to execute lsmod")
+
+    if re.search(r"\bsch_netem\b", runner.stdout) is None:
         raise ModuleNotFoundError("sch_netem module not found")
 
 
