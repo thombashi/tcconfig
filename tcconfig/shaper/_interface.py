@@ -10,12 +10,14 @@ import abc
 
 import dataproperty
 import six
+from subprocrunner import SubprocessRunner
 
 from .._common import run_command_helper
 from .._iptables import (
     IptablesMangleController,
     IptablesMangleMark
 )
+from .._logger import logger
 from .._traffic_direction import TrafficDirection
 
 
@@ -92,6 +94,41 @@ class AbstractShaper(ShaperInterface):
                 "failed to add qdisc: netem qdisc already exists "
                 "(dev={:s}, parent={:s}, handle={:s})".format(
                     self._tc_obj.get_tc_device(), parent, handle)))
+
+    def add_filter(self):
+        command_list = [
+            "tc filter add",
+            self.dev,
+            "protocol ip",
+            "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
+            "prio 1",
+        ]
+
+        if self._is_use_iptables():
+            command_list.append(
+                "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
+        else:
+            if all([
+                dataproperty.is_empty_string(self._tc_obj.network),
+                self._tc_obj.port is None,
+            ]):
+                logger.debug("no filter to be added.")
+                return 0
+
+            command_list.append("u32")
+            if dataproperty.is_not_empty_string(self._tc_obj.network):
+                command_list.append("match ip {:s} {:s}".format(
+                    self._get_network_direction_str(),
+                    self._tc_obj.network))
+            if self._tc_obj.port is not None:
+                command_list.append(
+                    "match ip dport {:d} 0xffff".format(self._tc_obj.port))
+
+        command_list.append("flowid {:s}:{:d}".format(
+            self._tc_obj.qdisc_major_id_str,
+            self.get_qdisc_minor_id()))
+
+        return SubprocessRunner(" ".join(command_list)).run()
 
     def _is_use_iptables(self):
         return all([

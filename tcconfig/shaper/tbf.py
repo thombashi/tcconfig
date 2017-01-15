@@ -80,7 +80,7 @@ class TbfShaper(AbstractShaper):
             "limit 10000",
         ])
 
-        return run_command_helper(
+        run_command_helper(
             command,
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
@@ -89,41 +89,7 @@ class TbfShaper(AbstractShaper):
                     self.dev, self.algorithm_name, parent, handle))
         )
 
-    def add_filter(self):
         self.__set_pre_network_filter()
-
-        command_list = [
-            "tc filter add",
-            self.dev,
-            "protocol ip",
-            "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio 1",
-        ]
-
-        if self._is_use_iptables():
-            command_list.append(
-                "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
-        else:
-            if all([
-                dataproperty.is_empty_string(self._tc_obj.network),
-                self._tc_obj.port is None,
-            ]):
-                return 0
-
-            command_list.append("u32")
-            if dataproperty.is_not_empty_string(self._tc_obj.network):
-                command_list.append("match ip {:s} {:s}".format(
-                    self._get_network_direction_str(),
-                    self._tc_obj.network))
-            if self._tc_obj.port is not None:
-                command_list.append(
-                    "match ip dport {:d} 0xffff".format(self._tc_obj.port))
-
-        command_list.append("flowid {:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str,
-            self.get_qdisc_minor_id()))
-
-        return SubprocessRunner(" ".join(command_list)).run()
 
     def set_shaping(self):
         with logging_context("make_qdisc"):
