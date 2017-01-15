@@ -40,6 +40,17 @@ class TbfShaper(AbstractShaper):
 
         raise ValueError("unknown direction: {}".format(self.direction))
 
+    def get_netem_qdisc_major_id(self, base_id):
+        if self.direction == TrafficDirection.OUTGOING:
+            direction_offset = 0
+        elif self.direction == TrafficDirection.INCOMING:
+            direction_offset = 1
+
+        return (
+            base_id +
+            self.__NETEM_QDISC_MAJOR_ID_OFFSET +
+            direction_offset)
+
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         command = " ".join([
@@ -63,7 +74,7 @@ class TbfShaper(AbstractShaper):
             return 0
 
         parent = "{:x}:{:d}".format(
-            self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
+            self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
             self.get_qdisc_minor_id())
         handle = "{:d}:".format(20)
 

@@ -179,17 +179,6 @@ class TrafficControl(object):
 
         raise ValueError("unknown direction: " + self.direction)
 
-    def get_netem_qdisc_major_id(self, base_id):
-        if self.direction == TrafficDirection.OUTGOING:
-            direction_offset = 0
-        elif self.direction == TrafficDirection.INCOMING:
-            direction_offset = 1
-
-        return (
-            base_id +
-            self.__NETEM_QDISC_MAJOR_ID_OFFSET +
-            direction_offset)
-
     def set_tc(self):
         self.__setup_ifb()
         self.__shaper.set_shaping()

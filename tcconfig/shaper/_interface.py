@@ -33,6 +33,10 @@ class ShaperInterface(object):
         pass
 
     @abc.abstractmethod
+    def get_netem_qdisc_major_id(self, base_id):  # pragma: no cover
+        pass
+
+    @abc.abstractmethod
     def make_qdisc(self):  # pragma: no cover
         pass
 
@@ -64,7 +68,7 @@ class AbstractShaper(ShaperInterface):
         parent = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
         handle = "{:x}".format(
-            self._tc_obj.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
+            self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
         command_list = [
             "tc qdisc add",
             "dev {:s}".format(self._tc_obj.get_tc_device()),
