@@ -145,7 +145,7 @@ class TrafficControl(object):
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
         self.__shaper = TbfShaper(self)
 
-        # bandwidth string [G/M/K bps]
+        # bandwidth string [G/M/K bit per second]
         try:
             self.__bandwidth_rate = Humanreadable(
                 kilo_size=1000).humanreadable_to_kilobyte(bandwidth_rate)

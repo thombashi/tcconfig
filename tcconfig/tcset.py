@@ -59,7 +59,7 @@ def parse_option():
         """)
     group.add_argument(
         "--rate", dest="bandwidth_rate",
-        help="network bandwidth rate [K|M|G bps]")
+        help="network bandwidth rate [K|M|G bit per second]")
     group.add_argument(
         "--delay", dest="network_latency", type=float, default=0,
         help="""
