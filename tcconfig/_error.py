@@ -25,6 +25,10 @@ class TcCommandExecutionError(Exception):
     """
 
 
+class TcAlreadyExist(TcCommandExecutionError):
+    pass
+
+
 class EmptyParameterError(ValueError):
     pass
 
