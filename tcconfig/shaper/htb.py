@@ -17,11 +17,9 @@ from .._common import (
 )
 from .._converter import Humanreadable
 from .._error import (
-    TcCommandExecutionError,
     TcAlreadyExist,
     EmptyParameterError,
 )
-from .._iptables import IptablesMangleController
 from .._logger import logger
 from ._interface import AbstractShaper
 
