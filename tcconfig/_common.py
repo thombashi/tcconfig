@@ -64,7 +64,7 @@ def sanitize_network(network):
     return network
 
 
-def run_command_helper(command, error_regexp, message):
+def run_command_helper(command, error_regexp, message, exception=None):
     import subprocrunner as spr
 
     if logger.level != logbook.DEBUG:
@@ -84,6 +84,10 @@ def run_command_helper(command, error_regexp, message):
         logger.error(proc.stderr)
         return proc.returncode
 
-    logger.notice(message)
+    if dataproperty.is_not_empty_string(message):
+        logger.notice(message)
+
+    if exception is not None:
+        raise exception(command)
 
     return proc.returncode

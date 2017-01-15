@@ -110,6 +110,10 @@ def parse_option():
     group.add_argument(
         "--src-network",
         help="[require iptables]")
+    group.add_argument(
+        "--shaping-algo", dest="shaping_algorithm",
+        choices=["tbf", "htb"], default="htb",
+        help="shaping algorithm (default=%(default)s)")
 
     return parser.parser.parse_args()
 
@@ -248,8 +252,9 @@ def main():
         network=options.network,
         src_network=options.src_network,
         port=options.port,
-        is_enable_iptables=options.is_enable_iptables
         is_add_shaper=options.is_add_shaper,
+        is_enable_iptables=options.is_enable_iptables,
+        shaping_algorithm=options.shaping_algorithm
     )
 
     try:

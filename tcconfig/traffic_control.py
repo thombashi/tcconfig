@@ -29,6 +29,7 @@ from ._error import (
 from ._iptables import IptablesMangleController
 from ._logger import logger
 from ._traffic_direction import TrafficDirection
+from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
 
@@ -133,6 +134,7 @@ class TrafficControl(object):
             src_network=None,
             is_add_shaper=False,
             is_enable_iptables=True,
+            shaping_algorithm=None,
     ):
         self.__device = device
 
@@ -148,7 +150,6 @@ class TrafficControl(object):
         self.__is_enable_iptables = is_enable_iptables
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
-        self.__shaper = TbfShaper(self)
 
         # bandwidth string [G/M/K bit per second]
         try:
@@ -158,6 +159,8 @@ class TrafficControl(object):
             self.__bandwidth_rate = None
 
         IptablesMangleController.enable = is_enable_iptables
+
+        self.__init_shaper(shaping_algorithm)
 
     def validate(self):
         verify_network_interface(self.__device)
@@ -215,6 +218,22 @@ class TrafficControl(object):
         IptablesMangleController.clear()
 
         return any(result_list)
+
+    def __init_shaper(self, shaping_algorithm):
+        if shaping_algorithm is None:
+            self.__shaper = None
+            return
+
+        if shaping_algorithm == "htb":
+            self.__shaper = HtbShaper(self)
+            return
+
+        if shaping_algorithm == "tbf":
+            self.__shaper = TbfShaper(self)
+            return
+
+        raise ValueError(
+            "unknown shaping algorithm: {}".format(shaping_algorithm))
 
     def __validate_network_delay(self):
         _validate_within_min_max(
