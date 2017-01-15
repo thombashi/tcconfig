@@ -48,7 +48,6 @@ def _validate_within_min_max(param_name, value, min_value, max_value):
 
 
 class TrafficControl(object):
-    __NETEM_QDISC_MAJOR_ID_OFFSET = 10
 
     MIN_PACKET_LOSS_RATE = 0  # [%]
     MAX_PACKET_LOSS_RATE = 100  # [%]

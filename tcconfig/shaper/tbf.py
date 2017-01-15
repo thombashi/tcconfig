@@ -22,6 +22,8 @@ from ._interface import AbstractShaper
 
 class TbfShaper(AbstractShaper):
 
+    __NETEM_QDISC_MAJOR_ID_OFFSET = 10
+
     __MIN_BUFFER_BYTE = 1600
 
     __OUT_DEVICE_QDISC_MINOR_ID = 1
@@ -41,9 +43,9 @@ class TbfShaper(AbstractShaper):
         raise ValueError("unknown direction: {}".format(self.direction))
 
     def get_netem_qdisc_major_id(self, base_id):
-        if self.direction == TrafficDirection.OUTGOING:
+        if self._tc_obj.direction == TrafficDirection.OUTGOING:
             direction_offset = 0
-        elif self.direction == TrafficDirection.INCOMING:
+        elif self._tc_obj.direction == TrafficDirection.INCOMING:
             direction_offset = 1
 
         return (
