@@ -34,7 +34,8 @@ class ArgparseWrapper(object):
             const=logbook.DEBUG, default=logbook.INFO,
             help="for debug print.")
         group.add_argument(
-            "--quiet", action="store_true", default=False,
+            "--quiet", dest=dest, action="store_const",
+            const=logbook.NOTSET, default=logbook.INFO,
             help="suppress execution log messages.")
 
         return group

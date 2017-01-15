@@ -20,11 +20,16 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._common import ANYWHERE_NETWORK
 from ._error import ModuleNotFoundError
 from ._error import NetworkInterfaceNotFoundError
+from ._logger import (
+    LOG_FORMAT_STRING,
+    logger,
+    set_log_level,
+)
 from ._traffic_direction import TrafficDirection
 
 
-handler = logbook.StderrHandler()
-handler.push_application()
+logbook.StderrHandler(
+    level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
 def parse_option():
@@ -54,7 +59,7 @@ def parse_option():
         """)
     group.add_argument(
         "--rate", dest="bandwidth_rate",
-        help="network bandwidth rate [K|M|G bps]")
+        help="network bandwidth rate [K|M|G bit per second]")
     group.add_argument(
         "--delay", dest="network_latency", type=float, default=0,
         help="""
@@ -96,20 +101,31 @@ def parse_option():
 
     group = parser.parser.add_argument_group("Prototype")
     group.add_argument(
+        "--add", dest="is_add_shaper", action="store_true", default=False,
+        help="")
+    group.add_argument(
         "--iptables", dest="is_enable_iptables",
         action="store_true", default=False,
         help="[experimental] use iptables to filter network")
     group.add_argument(
         "--src-network",
         help="[require iptables]")
+    group.add_argument(
+        "--shaping-algo", dest="shaping_algorithm",
+        choices=["tbf", "htb"], default="htb",
+        help="shaping algorithm (default=%(default)s)")
 
     return parser.parser.parse_args()
 
 
 def verify_netem_module():
-    runner = subprocrunner.SubprocessRunner("lsmod | grep sch_netem")
+    import re
 
+    runner = subprocrunner.SubprocessRunner("lsmod")
     if runner.run() != 0:
+        raise OSError("failed to execute lsmod")
+
+    if re.search(r"\bsch_netem\b", runner.stdout) is None:
         raise ModuleNotFoundError("sch_netem module not found")
 
 
@@ -211,14 +227,8 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
 def main():
     options = parse_option()
-    logger = logbook.Logger("tcset")
-    logger.level = options.log_level
 
-    subprocrunner.logger.level = options.log_level
-    if options.quiet:
-        subprocrunner.logger.disable()
-    else:
-        subprocrunner.logger.enable()
+    set_log_level(options.log_level)
 
     subprocrunner.Which("tc").verify()
     try:
@@ -242,7 +252,9 @@ def main():
         network=options.network,
         src_network=options.src_network,
         port=options.port,
-        is_enable_iptables=options.is_enable_iptables
+        is_add_shaper=options.is_add_shaper,
+        is_enable_iptables=options.is_enable_iptables,
+        shaping_algorithm=options.shaping_algorithm
     )
 
     try:
@@ -252,10 +264,14 @@ def main():
         return 1
 
     if options.overwrite:
+        set_log_level(logbook.ERROR)
+
         try:
             tc.delete_tc()
         except NetworkInterfaceNotFoundError:
             pass
+
+        set_log_level(options.log_level)
 
     tc.set_tc()
 

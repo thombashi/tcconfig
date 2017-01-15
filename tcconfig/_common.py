@@ -5,14 +5,26 @@
 """
 
 from __future__ import absolute_import
+import contextlib
 
 import dataproperty
+import logbook
 import six
 
 from ._error import NetworkInterfaceNotFoundError
+from ._logger import logger
 
 
 ANYWHERE_NETWORK = "0.0.0.0/0"
+
+
+@contextlib.contextmanager
+def logging_context(name):
+    logger.debug("|---- {:s}: {:s} -----".format("start", name))
+    try:
+        yield
+    finally:
+        logger.debug("----- {:s}: {:s} ----|".format("complete", name))
 
 
 def verify_network_interface(device):
@@ -50,3 +62,32 @@ def sanitize_network(network):
     ipaddress.IPv4Network(six.u(network))  # validate network str
 
     return network
+
+
+def run_command_helper(command, error_regexp, message, exception=None):
+    import subprocrunner as spr
+
+    if logger.level != logbook.DEBUG:
+        spr.set_logger(is_enable=False)
+
+    proc = spr.SubprocessRunner(command)
+    proc.run()
+
+    if logger.level != logbook.DEBUG:
+        spr.set_logger(is_enable=True)
+
+    if proc.returncode == 0:
+        return 0
+
+    match = error_regexp.search(proc.stderr)
+    if match is None:
+        logger.error(proc.stderr)
+        return proc.returncode
+
+    if dataproperty.is_not_empty_string(message):
+        logger.notice(message)
+
+    if exception is not None:
+        raise exception(command)
+
+    return proc.returncode

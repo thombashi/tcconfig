@@ -16,10 +16,15 @@ from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
 from ._error import NetworkInterfaceNotFoundError
+from ._logger import (
+    LOG_FORMAT_STRING,
+    logger,
+    set_log_level,
+)
 
 
-handler = logbook.StderrHandler()
-handler.push_application()
+logbook.StderrHandler(
+    level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
 def parse_option():
@@ -35,14 +40,8 @@ def parse_option():
 
 def main():
     options = parse_option()
-    logger = logbook.Logger("tcdel")
-    logger.level = options.log_level
 
-    subprocrunner.logger.level = options.log_level
-    if options.quiet:
-        subprocrunner.logger.disable()
-    else:
-        subprocrunner.logger.enable()
+    set_log_level(options.log_level)
 
     subprocrunner.Which("tc").verify()
 

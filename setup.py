@@ -30,7 +30,10 @@ setuptools.setup(
     author_email="gogogo.vm@gmail.com",
     url="https://github.com/thombashi/tcconfig",
     description=summary,
-    keywords=["traffic control", "bandwidth", "latency", "packet loss"],
+    keywords=[
+        "traffic control", "tc", "traffic shaping", "bandwidth",
+        "latency", "packet loss",
+    ],
     long_description=long_description,
     license="MIT License",
     include_package_data=True,
@@ -51,6 +54,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.3",
         "Programming Language :: Python :: 3.4",
         "Programming Language :: Python :: 3.5",
+        "Programming Language :: Python :: 3.6",
         "Topic :: System :: Networking",
     ],
     entry_points={
