@@ -11,7 +11,7 @@ import pytest
 from tcconfig._converter import Humanreadable
 
 
-class Test_humanreadable_to_byte:
+class Test_to_no_prefix_value:
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2],
@@ -56,8 +56,7 @@ class Test_humanreadable_to_byte:
         ["2.5 m", 1000, int(2.5 * 1000 ** 2)],
     ])
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(kilo_size).humanreadable_to_byte(
-            value) == expected
+        assert Humanreadable(value, kilo_size).to_no_prefix_value() == expected
 
     @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
         ["", 1000, ValueError],
@@ -73,10 +72,10 @@ class Test_humanreadable_to_byte:
     ])
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
-            Humanreadable(kilo_size).humanreadable_to_byte(value)
+            Humanreadable(value, kilo_size).to_no_prefix_value()
 
 
-class Test_humanreadable_to_kilobyte:
+class Test_to_kilo_value:
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2 / 1024],
@@ -93,5 +92,4 @@ class Test_humanreadable_to_kilobyte:
         ["2p", 1000, 2 * 1000 ** 4],
     ])
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(kilo_size).humanreadable_to_kilobyte(
-            value) == expected
+        assert Humanreadable(value, kilo_size).to_kilo_value() == expected

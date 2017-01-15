@@ -148,7 +148,7 @@ class TrafficControl(object):
         # bandwidth string [G/M/K bit per second]
         try:
             self.__bandwidth_rate = Humanreadable(
-                kilo_size=1000).humanreadable_to_kilobyte(bandwidth_rate)
+                bandwidth_rate, kilo_size=1000).to_kilo_value()
         except ValueError:
             self.__bandwidth_rate = None
 

@@ -21,26 +21,27 @@ class Humanreadable(object):
         [re.compile("^p$", re.IGNORECASE), 5],
     ]
 
-    def __init__(self, kilo_size=1024):
+    def __init__(self, readable_size, kilo_size=1024):
         """
         String converter that humanreadable byte size to a number.
 
+        :param str readable_size: human readable size (bytes). e.g. 256 M
         :param int kilo_size: size of ``kilo``. 1024 or 1000
         """
 
+        self.__readable_size = readable_size
         self.kilo_size = kilo_size  # [byte]
 
-    def humanreadable_to_byte(self, readable_size):
+    def to_no_prefix_value(self):
         """
-        :param str readable_size: human readable size (bytes). e.g. 256 M
         :raises ValueError:
         """
 
-        if dataproperty.is_empty_string(readable_size):
+        if dataproperty.is_empty_string(self.__readable_size):
             raise ValueError("readable_size is empty")
 
-        size = readable_size[:-1]
-        unit = readable_size[-1]
+        size = self.__readable_size[:-1]
+        unit = self.__readable_size[-1]
 
         size = float(size)
         unit = unit.lower()
@@ -48,19 +49,19 @@ class Humanreadable(object):
         if size < 0:
             raise ValueError("minus size")
 
-        coefficient = self.__unit_to_byte(unit)
+        coefficient = self.__unit_to_no_prefix(unit)
 
         return size * coefficient
 
-    def humanreadable_to_kilobyte(self, readable_size):
+    def to_kilo_value(self):
         """
         :param str readable_size: human readable size (bytes). e.g. 256 M
         :raises ValueError:
         """
 
-        return self.humanreadable_to_byte(readable_size) / self.kilo_size
+        return self.to_no_prefix_value() / self.kilo_size
 
-    def __unit_to_byte(self, unit):
+    def __unit_to_no_prefix(self, unit):
         if self.kilo_size not in [1000, 1024]:
             raise ValueError("invalid kilo size: {}".format(self.kilo_size))
 
