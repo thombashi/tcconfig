@@ -109,6 +109,10 @@ class TrafficControl(object):
         return self.__port
 
     @property
+    def is_add_shaper(self):
+        return self.__is_add_shaper
+
+    @property
     def is_enable_iptables(self):
         return self.__is_enable_iptables
 
@@ -127,6 +131,7 @@ class TrafficControl(object):
             packet_loss_rate=None, corruption_rate=None,
             network=None, port=None,
             src_network=None,
+            is_add_shaper=False,
             is_enable_iptables=True,
     ):
         self.__device = device
@@ -139,6 +144,7 @@ class TrafficControl(object):
         self.__network = network
         self.__src_network = src_network
         self.__port = port
+        self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()

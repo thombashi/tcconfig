@@ -101,6 +101,9 @@ def parse_option():
 
     group = parser.parser.add_argument_group("Prototype")
     group.add_argument(
+        "--add", dest="is_add_shaper", action="store_true", default=False,
+        help="")
+    group.add_argument(
         "--iptables", dest="is_enable_iptables",
         action="store_true", default=False,
         help="[experimental] use iptables to filter network")
@@ -246,6 +249,7 @@ def main():
         src_network=options.src_network,
         port=options.port,
         is_enable_iptables=options.is_enable_iptables
+        is_add_shaper=options.is_add_shaper,
     )
 
     try:
