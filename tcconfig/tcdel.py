@@ -52,6 +52,8 @@ def main():
         return 1
 
     tc = TrafficControl(options.device)
+    if options.log_level == logbook.INFO:
+        subprocrunner.set_log_level(logbook.ERROR)
 
     try:
         return tc.delete_tc()

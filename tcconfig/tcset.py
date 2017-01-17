@@ -268,7 +268,8 @@ def main():
         return 1
 
     if options.overwrite:
-        set_log_level(logbook.ERROR)
+        if options.log_level == logbook.INFO:
+            set_log_level(logbook.ERROR)
 
         try:
             tc.delete_tc()
