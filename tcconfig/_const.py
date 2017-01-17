@@ -4,4 +4,4 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
-from ._const import VERSION
+VERSION = "0.7.0-alpha-3"
