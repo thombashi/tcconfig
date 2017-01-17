@@ -20,8 +20,10 @@ from ._const import (
     VERSION,
     ANYWHERE_NETWORK,
 )
-from ._error import ModuleNotFoundError
-from ._error import NetworkInterfaceNotFoundError
+from ._error import (
+    ModuleNotFoundError,
+    NetworkInterfaceNotFoundError,
+)
 from ._logger import (
     LOG_FORMAT_STRING,
     logger,

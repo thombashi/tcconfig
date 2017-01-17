@@ -16,8 +16,10 @@ import logbook
 import subprocrunner
 from subprocrunner import SubprocessRunner
 
-from .parser import TcFilterParser
-from .parser import TcQdiscParser
+from .parser import (
+    TcFilterParser,
+    TcQdiscParserm,
+)
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
 from ._const import VERSION
