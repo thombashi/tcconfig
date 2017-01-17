@@ -11,10 +11,10 @@ import sys
 import logbook
 import subprocrunner
 
-import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
+from ._const import VERSION
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import (
     LOG_FORMAT_STRING,
@@ -28,7 +28,7 @@ logbook.StderrHandler(
 
 
 def parse_option():
-    parser = ArgparseWrapper(tcconfig.VERSION)
+    parser = ArgparseWrapper(VERSION)
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(

@@ -268,7 +268,7 @@ class TrafficControl(object):
         self.__validate_packet_loss_rate()
         self.__validate_corruption_rate()
 
-        param_list = [
+        netem_param_value_list = [
             self.bandwidth_rate,
             self.latency_ms,
             self.packet_loss_rate,
@@ -276,8 +276,9 @@ class TrafficControl(object):
         ]
 
         if all([
-            not FloatType(value).is_type() or value == 0
-            for value in param_list
+            not FloatType(
+                netem_param_value).is_type() or netem_param_value == 0
+            for netem_param_value in netem_param_value_list
         ]):
             raise ValueError("there is no valid net emulation parameter")
 

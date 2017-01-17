@@ -16,11 +16,13 @@ import logbook
 import subprocrunner
 from subprocrunner import SubprocessRunner
 
-import tcconfig
-from .parser import TcFilterParser
-from .parser import TcQdiscParser
+from .parser import (
+    TcFilterParser,
+    TcQdiscParser,
+)
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
+from ._const import VERSION
 from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController
 from ._logger import (
@@ -36,7 +38,7 @@ logbook.StderrHandler(
 
 
 def parse_option():
-    parser = ArgparseWrapper(tcconfig.VERSION)
+    parser = ArgparseWrapper(VERSION)
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(

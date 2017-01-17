@@ -11,7 +11,7 @@ import dataproperty
 from dataproperty import IntegerType
 from subprocrunner import SubprocessRunner
 
-from ._common import ANYWHERE_NETWORK
+from ._const import ANYWHERE_NETWORK
 from ._common import sanitize_network
 from ._split_line_list import split_line_list
 

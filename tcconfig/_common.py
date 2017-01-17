@@ -11,11 +11,9 @@ import dataproperty
 import logbook
 import six
 
+from ._const import ANYWHERE_NETWORK
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
-
-
-ANYWHERE_NETWORK = "0.0.0.0/0"
 
 
 @contextlib.contextmanager

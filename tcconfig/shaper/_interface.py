@@ -13,6 +13,7 @@ import six
 from subprocrunner import SubprocessRunner
 
 from .._common import run_command_helper
+from .._const import ANYWHERE_NETWORK
 from .._iptables import (
     IptablesMangleController,
     IptablesMangleMark
@@ -112,18 +113,17 @@ class AbstractShaper(ShaperInterface):
             command_list.append(
                 "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
-            if all([
-                dataproperty.is_empty_string(self._tc_obj.network),
-                self._tc_obj.port is None,
-            ]):
-                logger.debug("no filter to be added.")
-                return 0
+            if dataproperty.is_empty_string(self._tc_obj.network):
+                network = ANYWHERE_NETWORK
+            else:
+                network = self._tc_obj.network
 
-            command_list.append("u32")
-            if dataproperty.is_not_empty_string(self._tc_obj.network):
-                command_list.append("match ip {:s} {:s}".format(
-                    self._get_network_direction_str(),
-                    self._tc_obj.network))
+            command_list.extend([
+                "u32",
+                "match ip {:s} {:s}".format(
+                    self._get_network_direction_str(), network),
+            ])
+
             if self._tc_obj.port is not None:
                 command_list.append(
                     "match ip dport {:d} 0xffff".format(self._tc_obj.port))

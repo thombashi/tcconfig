@@ -14,12 +14,16 @@ import pyparsing as pp
 import six
 import subprocrunner
 
-import tcconfig
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import ANYWHERE_NETWORK
-from ._error import ModuleNotFoundError
-from ._error import NetworkInterfaceNotFoundError
+from ._const import (
+    VERSION,
+    ANYWHERE_NETWORK,
+)
+from ._error import (
+    ModuleNotFoundError,
+    NetworkInterfaceNotFoundError,
+)
 from ._logger import (
     LOG_FORMAT_STRING,
     logger,
@@ -33,7 +37,7 @@ logbook.StderrHandler(
 
 
 def parse_option():
-    parser = ArgparseWrapper(tcconfig.VERSION)
+    parser = ArgparseWrapper(VERSION)
 
     group = parser.parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
