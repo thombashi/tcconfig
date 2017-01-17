@@ -1,3 +1,9 @@
+# encoding: utf-8
+
+"""
+.. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
+"""
+
 import os.path
 import setuptools
 import sys
@@ -44,7 +50,10 @@ setuptools.setup(
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
+        "Intended Audience :: Developers",
+        "Intended Audience :: Information Technology",
         "Intended Audience :: System Administrators",
+        "Intended Audience :: Telecommunications Industry",
         "License :: OSI Approved :: MIT License",
         "Operating System :: POSIX",
         "Operating System :: POSIX :: Linux",
@@ -56,6 +65,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Topic :: System :: Networking",
+        "Topic :: System :: Systems Administration",
     ],
     entry_points={
         "console_scripts": [
