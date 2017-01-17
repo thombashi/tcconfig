@@ -16,8 +16,10 @@ import subprocrunner
 
 from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import ANYWHERE_NETWORK
-from ._const import VERSION
+from ._const import (
+    VERSION,
+    ANYWHERE_NETWORK,
+)
 from ._error import ModuleNotFoundError
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import (

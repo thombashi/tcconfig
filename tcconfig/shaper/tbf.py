@@ -11,10 +11,10 @@ import dataproperty
 from subprocrunner import SubprocessRunner
 
 from .._common import (
-    ANYWHERE_NETWORK,
     logging_context,
     run_command_helper,
 )
+from .._const import ANYWHERE_NETWORK
 from .._error import EmptyParameterError
 from .._traffic_direction import TrafficDirection
 from ._interface import AbstractShaper
