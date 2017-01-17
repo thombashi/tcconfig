@@ -18,7 +18,7 @@ from subprocrunner import SubprocessRunner
 
 from .parser import (
     TcFilterParser,
-    TcQdiscParserm,
+    TcQdiscParser,
 )
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
