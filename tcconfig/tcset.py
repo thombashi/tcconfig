@@ -58,7 +58,7 @@ def parse_option():
         "--direction", choices=TrafficDirection.LIST,
         default=TrafficDirection.OUTGOING,
         help="""the direction of network communication that impose traffic control.
-        ``incoming`` requires linux kernel version 2.6.20 or later.
+        ``incoming`` requires Linux kernel version 2.6.20 or later.
         (default = ``%(default)s``)
         """)
     group.add_argument(
@@ -75,8 +75,8 @@ def parse_option():
         "--delay-distro", dest="latency_distro_ms", type=float, default=0,
         help="""
         distribution of network latency becomes X +- Y [ms]
-        (normal distribution), with this option.
-        (X: value of --delay option, Y: value of --delay-dist option)
+        (normal distribution). Here X is the value of --delay option and
+        Y is the value of --delay-dist option).
         network latency distribution will be uniform without this option.
         """)
     group.add_argument(
@@ -98,26 +98,26 @@ def parse_option():
             TrafficControl.MAX_CORRUPTION_RATE))
     group.add_argument(
         "--network",
-        help="Target IP address/network of traffic control")
+        help="target IP address/network to control traffic")
     group.add_argument(
         "--port", type=int,
-        help="port number of traffic control")
+        help="target port number to control traffic.")
 
-    group = parser.parser.add_argument_group("Prototype")
+    group = parser.parser.add_argument_group("Experimental Prototype")
     group.add_argument(
         "--add", dest="is_add_shaper", action="store_true", default=False,
-        help="")
+        help="add a traffic shaping rule in addition to existing rules.")
     group.add_argument(
         "--iptables", dest="is_enable_iptables",
         action="store_true", default=False,
-        help="[experimental] use iptables to filter network")
+        help="use iptables to traffic shaping.")
     group.add_argument(
         "--src-network",
         help="[require iptables]")
     group.add_argument(
         "--shaping-algo", dest="shaping_algorithm",
         choices=["tbf", "htb"], default="htb",
-        help="shaping algorithm (default=%(default)s)")
+        help="shaping algorithm (default=%(default)s).")
 
     return parser.parser.parse_args()
 
