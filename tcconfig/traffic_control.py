@@ -17,6 +17,7 @@ import six
 from subprocrunner import SubprocessRunner
 
 from ._common import (
+    logging_context,
     sanitize_network,
     verify_network_interface,
     run_command_helper,
@@ -202,28 +203,32 @@ class TrafficControl(object):
     def delete_tc(self):
         result_list = []
 
-        returncode = run_command_helper(
-            "tc qdisc del dev {:s} root".format(self.__device),
-            re.compile("RTNETLINK answers: No such file or directory"),
-            "failed to delete qdisc: no qdisc for outgoing packets")
-        result_list.append(returncode == 0)
+        with logging_context("delete qdisc"):
+            returncode = run_command_helper(
+                "tc qdisc del dev {:s} root".format(self.__device),
+                re.compile("RTNETLINK answers: No such file or directory"),
+                "failed to delete qdisc: no qdisc for outgoing packets")
+            result_list.append(returncode == 0)
 
-        returncode = run_command_helper(
-            "tc qdisc del dev {:s} ingress".format(self.__device),
-            re.compile("|".join([
-                "RTNETLINK answers: Invalid argument",
-                "RTNETLINK answers: No such file or directory",
-            ])),
-            "failed to delete qdisc: no qdisc for incomming packets")
-        result_list.append(returncode == 0)
+        with logging_context("delete ingress qdisc"):
+            returncode = run_command_helper(
+                "tc qdisc del dev {:s} ingress".format(self.__device),
+                re.compile("|".join([
+                    "RTNETLINK answers: Invalid argument",
+                    "RTNETLINK answers: No such file or directory",
+                ])),
+                "failed to delete qdisc: no qdisc for incomming packets")
+            result_list.append(returncode == 0)
 
-        try:
-            result_list.append(self.__delete_ifb_device() == 0)
-        except NetworkInterfaceNotFoundError as e:
-            logger.debug(e)
-            result_list.append(False)
+        with logging_context("delete ifb device"):
+            try:
+                result_list.append(self.__delete_ifb_device() == 0)
+            except NetworkInterfaceNotFoundError as e:
+                logger.debug(e)
+                result_list.append(False)
 
-        IptablesMangleController.clear()
+        with logging_context("delete iptables mangle table entries"):
+            IptablesMangleController.clear()
 
         return any(result_list)
 
