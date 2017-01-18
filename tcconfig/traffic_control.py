@@ -10,7 +10,8 @@ import re
 
 import dataproperty
 from dataproperty import (
-    FloatType
+    DataProperty,
+    FloatType,
 )
 import six
 from subprocrunner import SubprocessRunner
@@ -33,19 +34,26 @@ from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
 
-def _validate_within_min_max(param_name, value, min_value, max_value):
+def _validate_within_min_max(param_name, value, min_value, max_value, unit):
     if value is None:
         return
 
+    if unit is None:
+        unit = ""
+    else:
+        unit = "[{:s}]".format(unit)
+
     if value > max_value:
         raise ValueError(
-            "{:s} is too high: expected<={:f}[%], value={:f}[%]".format(
-                param_name, max_value, value))
+            "'{0:s}' is too high: expected<={1:s}{3:s}, actual={2:s}{3:s}".format(
+                param_name, DataProperty(max_value).to_str(),
+                DataProperty(value).to_str(), unit))
 
     if value < min_value:
         raise ValueError(
-            "{:s} is too low: expected>={:f}[%], value={:f}[%]".format(
-                param_name, min_value, value))
+            "'{0:s}' is too low: expected>={1:s}{3:s}, actual={2:s}{3:s}".format(
+                param_name, DataProperty(min_value).to_str(),
+                DataProperty(value).to_str(), unit))
 
 
 class TrafficControl(object):
@@ -237,26 +245,22 @@ class TrafficControl(object):
 
     def __validate_network_delay(self):
         _validate_within_min_max(
-            "latency_ms",
-            self.latency_ms,
-            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
+            "delay", self.latency_ms,
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS, unit="ms")
 
         _validate_within_min_max(
-            "latency_distro_ms",
-            self.latency_distro_ms,
-            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
+            "delay-distro", self.latency_distro_ms,
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS, unit="ms")
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
-            "packet_loss_rate",
-            self.packet_loss_rate,
-            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE)
+            "loss (packet loss rate)", self.packet_loss_rate,
+            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE, unit="%")
 
     def __validate_corruption_rate(self):
         _validate_within_min_max(
-            "corruption_rate",
-            self.corruption_rate,
-            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE)
+            "corruption (packet corruption rate)", self.corruption_rate,
+            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE, unit="%")
 
     def __validate_netem_parameter(self):
         try:
@@ -280,11 +284,11 @@ class TrafficControl(object):
                 netem_param_value).is_type() or netem_param_value == 0
             for netem_param_value in netem_param_value_list
         ]):
-            raise ValueError("there is no valid net emulation parameter")
+            raise ValueError("there is no valid net emulation parameter value")
 
     def __validate_port(self):
         _validate_within_min_max(
-            "port", self.port, self.__MIN_PORT, self.__MAX_PORT)
+            "port", self.port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
 
     def __get_device_qdisc_major_id(self):
         import hashlib
