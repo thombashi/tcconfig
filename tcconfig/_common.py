@@ -5,11 +5,13 @@
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 import contextlib
 
 import dataproperty
 import logbook
 import six
+import subprocrunner as spr
 
 from ._const import ANYWHERE_NETWORK
 from ._error import NetworkInterfaceNotFoundError
@@ -63,8 +65,6 @@ def sanitize_network(network):
 
 
 def run_command_helper(command, error_regexp, message, exception=None):
-    import subprocrunner as spr
-
     if logger.level != logbook.DEBUG:
         spr.set_logger(is_enable=False)
 
@@ -89,3 +89,11 @@ def run_command_helper(command, error_regexp, message, exception=None):
         raise exception(command)
 
     return proc.returncode
+
+
+def run_tc_show(subcommand, device):
+    runner = spr.SubprocessRunner(
+        "tc {:s} show dev {:s}".format(subcommand, device))
+    runner.run()
+
+    return runner.stdout

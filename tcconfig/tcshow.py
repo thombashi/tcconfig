@@ -24,7 +24,10 @@ from .parser import (
     TcClassParser,
 )
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import verify_network_interface
+from ._common import (
+    verify_network_interface,
+    run_tc_show,
+)
 from ._const import (
     VERSION,
     Tc,
@@ -169,31 +172,23 @@ class TcShapingRuleParser(object):
 
         return shaping_rule_mapping
 
-    @staticmethod
-    def __execute_tc_show(subcommand, device):
-        runner = SubprocessRunner(
-            "tc {:s} show dev {:s}".format(subcommand, device))
-        runner.run()
-
-        return runner.stdout
-
     def __parse_tc_qdisc(self, device):
         param_list = list(TcQdiscParser().parse(
-            self.__execute_tc_show(Tc.Subcommand.QDISC, device)))
+            run_tc_show(Tc.Subcommand.QDISC, device)))
         logger.debug("tc qdisc parse result: {}".format(param_list))
 
         return param_list
 
     def __parse_tc_filter(self, device):
         param_list = list(TcFilterParser().parse_filter(
-            self.__execute_tc_show(Tc.Subcommand.FILTER, device)))
+            run_tc_show(Tc.Subcommand.FILTER, device)))
         logger.debug("tc filter parse result: {}".format(param_list))
 
         return param_list
 
     def __parse_tc_class(self, device):
         param_list = list(TcClassParser().parse(
-            self.__execute_tc_show(Tc.Subcommand.CLASS, device)))
+            run_tc_show(Tc.Subcommand.CLASS, device)))
         logger.debug("tc class parse result: {}".format(param_list))
 
         return param_list
