@@ -5,10 +5,13 @@
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
 import re
 
 import dataproperty
 import pyparsing as pp
+
+from ._logger import logger
 
 
 def _to_unicode(text):
@@ -82,7 +85,7 @@ class TcFilterParser(object):
             try:
                 self.__parse_mangle_mark(line)
             except pp.ParseException:
-                pass
+                logger.debug("failed to parse mangle: {}".format(line))
             else:
                 filter_data_matrix.append({
                     "classid": self.classid,
@@ -90,20 +93,25 @@ class TcFilterParser(object):
                 })
                 continue
 
+            tc_filter = self.__get_filter()
+
             try:
                 self.__parse_flow_id(line)
+
+                logger.debug("store filter: {}".format(tc_filter))
+                filter_data_matrix.append(tc_filter)
                 continue
             except pp.ParseException:
-                pass
+                logger.debug("failed to parse flow id: {}".format(line))
 
             try:
                 self.__parse_filter(line)
                 continue
             except pp.ParseException:
-                pass
 
             if self.flow_id is not None:
                 filter_data_matrix.append(self.__get_filter())
+                logger.debug("failed to parse filter: {}".format(line))
 
             self.__clear()
 
@@ -143,12 +151,17 @@ class TcFilterParser(object):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
             _to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
+        logger.debug("succeed to parse flow id: flow-id={}, line={}".format(
+            self.flow_id, line))
 
     def __parse_mangle_mark(self, line):
         parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(
             _to_unicode(line.lstrip()))
         self.__classid = parsed_list[-1]
         self.__handle = int(u"0" + parsed_list[-3], 16)
+        logger.debug(
+            "succeed to parse mangle mark: classid={}, handle={}, line={}".format(
+                self.classid, self.handle, line))
 
     def __parse_filter(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
@@ -169,6 +182,10 @@ class TcFilterParser(object):
             self.__filter_network = "{:s}/{:d}".format(ipaddr, netmask)
         elif match_id == self.FilterMatchId.PORT:
             self.__filter_port = int(value_hex, 16)
+
+        logger.debug(
+            "succeed to parse filter: filter_network={}, filter_port={}, line={}".format(
+                self.filter_network, self.filter_port, line))
 
 
 class TcQdiscParser(object):
