@@ -144,7 +144,7 @@ class HtbShaper(AbstractShaper):
             self.add_filter()
 
     def __get_unique_qdisc_minor_id(self):
-        runner = SubprocessRunner("tc class show {:s}".format(self.dev))
+        runner = SubprocessRunner("tc class show dev {:s}".format(self.dev))
         runner.run()
         exist_class_item_list = re.findall(
             "class htb {}".format(
@@ -175,7 +175,7 @@ class HtbShaper(AbstractShaper):
         return next_minor_id
 
     def __get_unique_netem_major_id(self):
-        runner = SubprocessRunner("tc qdisc show {:s}".format(self.dev))
+        runner = SubprocessRunner("tc qdisc show dev {:s}".format(self.dev))
         runner.run()
         exist_netem_item_list = re.findall(
             "qdisc [a-z]+ [a-z0-9]+", runner.stdout, re.MULTILINE)
