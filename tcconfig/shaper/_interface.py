@@ -18,7 +18,6 @@ from .._iptables import (
     IptablesMangleController,
     IptablesMangleMark
 )
-from .._logger import logger
 from .._traffic_direction import TrafficDirection
 
 
@@ -56,11 +55,13 @@ class ShaperInterface(object):
 
 class AbstractShaper(ShaperInterface):
 
-    __FILTER_IPTABLES_MARK_ID_OFFSET = 100
+    @property
+    def tc_device(self):
+        return "{:s}".format(self._tc_obj.get_tc_device())
 
     @property
     def dev(self):
-        return "dev {:s}".format(self._tc_obj.get_tc_device())
+        return "dev {:s}".format(self.tc_device)
 
     def __init__(self, tc_obj):
         self._tc_obj = tc_obj
@@ -150,9 +151,7 @@ class AbstractShaper(ShaperInterface):
         raise ValueError("unknown direction: {}".format(self.direction))
 
     def _get_unique_mangle_mark_id(self):
-        mark_id = (
-            IptablesMangleController.get_unique_mark_id() +
-            self.__FILTER_IPTABLES_MARK_ID_OFFSET)
+        mark_id = IptablesMangleController.get_unique_mark_id()
 
         self.__add_mangle_mark(mark_id)
 

@@ -31,3 +31,12 @@ e.g. Set 100ms +- 20ms network latency with normal distribution
 .. code-block:: console
 
     # tcset --device eth0 --delay 100 --delay-distro 20
+
+
+Multiple traffic shaping rules per interface
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+
+.. code-block:: console
+
+    tcset --device eth0 --rate 500M --network 192.168.2.0/24
+    tcset --device eth0 --rate 100M --network 192.168.0.0/24 --add

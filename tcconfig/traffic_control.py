@@ -10,12 +10,14 @@ import re
 
 import dataproperty
 from dataproperty import (
-    FloatType
+    DataProperty,
+    FloatType,
 )
 import six
 from subprocrunner import SubprocessRunner
 
 from ._common import (
+    logging_context,
     sanitize_network,
     verify_network_interface,
     run_command_helper,
@@ -33,19 +35,26 @@ from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
 
-def _validate_within_min_max(param_name, value, min_value, max_value):
+def _validate_within_min_max(param_name, value, min_value, max_value, unit):
     if value is None:
         return
 
+    if unit is None:
+        unit = ""
+    else:
+        unit = "[{:s}]".format(unit)
+
     if value > max_value:
         raise ValueError(
-            "{:s} is too high: expected<={:f}[%], value={:f}[%]".format(
-                param_name, max_value, value))
+            "'{0:s}' is too high: expected<={1:s}{3:s}, actual={2:s}{3:s}".format(
+                param_name, DataProperty(max_value).to_str(),
+                DataProperty(value).to_str(), unit))
 
     if value < min_value:
         raise ValueError(
-            "{:s} is too low: expected>={:f}[%], value={:f}[%]".format(
-                param_name, min_value, value))
+            "'{0:s}' is too low: expected>={1:s}{3:s}, actual={2:s}{3:s}".format(
+                param_name, DataProperty(min_value).to_str(),
+                DataProperty(value).to_str(), unit))
 
 
 class TrafficControl(object):
@@ -54,7 +63,7 @@ class TrafficControl(object):
     MAX_PACKET_LOSS_RATE = 100  # [%]
 
     MIN_LATENCY_MS = 0  # [millisecond]
-    MAX_LATENCY_MS = 10000  # [millisecond]
+    MAX_LATENCY_MS = 3600000  # [millisecond]
 
     MIN_CORRUPTION_RATE = 0  # [%]
     MAX_CORRUPTION_RATE = 100  # [%]
@@ -67,7 +76,10 @@ class TrafficControl(object):
     EXISTS_MSG_TEMPLATE = (
         "{:s} "
         "execute with --overwrite option if you want to overwrite "
-        "the existing settings.")
+        "the existing rules."
+        "execute with --add option if you want to add a new rule in addition "
+        "to the existing rules."
+    )
 
     @property
     def ifb_device(self):
@@ -165,9 +177,19 @@ class TrafficControl(object):
     def validate(self):
         verify_network_interface(self.__device)
         self.__validate_netem_parameter()
+        self.__validate_src_network()
+
         self.__network = sanitize_network(self.network)
         self.__src_network = sanitize_network(self.src_network)
         self.__validate_port()
+
+    def __validate_src_network(self):
+        if dataproperty.is_empty_string(self.src_network):
+            return
+
+        if not self.is_enable_iptables:
+            raise InvalidParameterError(
+                "--iptables option will be required to use --src-network option")
 
     def validate_bandwidth_rate(self):
         if not dataproperty.FloatType(self.bandwidth_rate).is_type():
@@ -194,28 +216,32 @@ class TrafficControl(object):
     def delete_tc(self):
         result_list = []
 
-        returncode = run_command_helper(
-            "tc qdisc del dev {:s} root".format(self.__device),
-            re.compile("RTNETLINK answers: No such file or directory"),
-            "failed to delete qdisc: no qdisc for outgoing packets")
-        result_list.append(returncode == 0)
+        with logging_context("delete qdisc"):
+            returncode = run_command_helper(
+                "tc qdisc del dev {:s} root".format(self.__device),
+                re.compile("RTNETLINK answers: No such file or directory"),
+                "failed to delete qdisc: no qdisc for outgoing packets")
+            result_list.append(returncode == 0)
 
-        returncode = run_command_helper(
-            "tc qdisc del dev {:s} ingress".format(self.__device),
-            re.compile("|".join([
-                "RTNETLINK answers: Invalid argument",
-                "RTNETLINK answers: No such file or directory",
-            ])),
-            "failed to delete qdisc: no qdisc for incomming packets")
-        result_list.append(returncode == 0)
+        with logging_context("delete ingress qdisc"):
+            returncode = run_command_helper(
+                "tc qdisc del dev {:s} ingress".format(self.__device),
+                re.compile("|".join([
+                    "RTNETLINK answers: Invalid argument",
+                    "RTNETLINK answers: No such file or directory",
+                ])),
+                "failed to delete qdisc: no qdisc for incomming packets")
+            result_list.append(returncode == 0)
 
-        try:
-            result_list.append(self.__delete_ifb_device() == 0)
-        except NetworkInterfaceNotFoundError as e:
-            logger.debug(e)
-            result_list.append(False)
+        with logging_context("delete ifb device"):
+            try:
+                result_list.append(self.__delete_ifb_device() == 0)
+            except NetworkInterfaceNotFoundError as e:
+                logger.debug(e)
+                result_list.append(False)
 
-        IptablesMangleController.clear()
+        with logging_context("delete iptables mangle table entries"):
+            IptablesMangleController.clear()
 
         return any(result_list)
 
@@ -237,26 +263,22 @@ class TrafficControl(object):
 
     def __validate_network_delay(self):
         _validate_within_min_max(
-            "latency_ms",
-            self.latency_ms,
-            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
+            "delay", self.latency_ms,
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS, unit="ms")
 
         _validate_within_min_max(
-            "latency_distro_ms",
-            self.latency_distro_ms,
-            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS)
+            "delay-distro", self.latency_distro_ms,
+            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS, unit="ms")
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
-            "packet_loss_rate",
-            self.packet_loss_rate,
-            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE)
+            "loss (packet loss rate)", self.packet_loss_rate,
+            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE, unit="%")
 
     def __validate_corruption_rate(self):
         _validate_within_min_max(
-            "corruption_rate",
-            self.corruption_rate,
-            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE)
+            "corruption (packet corruption rate)", self.corruption_rate,
+            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE, unit="%")
 
     def __validate_netem_parameter(self):
         try:
@@ -280,11 +302,11 @@ class TrafficControl(object):
                 netem_param_value).is_type() or netem_param_value == 0
             for netem_param_value in netem_param_value_list
         ]):
-            raise ValueError("there is no valid net emulation parameter")
+            raise ValueError("there is no valid net emulation parameter value")
 
     def __validate_port(self):
         _validate_within_min_max(
-            "port", self.port, self.__MIN_PORT, self.__MAX_PORT)
+            "port", self.port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
 
     def __get_device_qdisc_major_id(self):
         import hashlib

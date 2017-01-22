@@ -48,17 +48,20 @@ def parse_option():
         help="""setting traffic controls from a configuration file.
         output file of the tcshow.""")
 
-    group = parser.parser.add_argument_group("Network Interface")
+    group = parser.parser.add_mutually_exclusive_group()
     group.add_argument(
         "--overwrite", action="store_true", default=False,
         help="overwrite existing settings")
+    group.add_argument(
+        "--add", dest="is_add_shaper", action="store_true", default=False,
+        help="add a traffic shaping rule in addition to existing rules.")
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
         "--direction", choices=TrafficDirection.LIST,
         default=TrafficDirection.OUTGOING,
         help="""the direction of network communication that impose traffic control.
-        ``incoming`` requires linux kernel version 2.6.20 or later.
+        ``incoming`` requires Linux kernel version 2.6.20 or later.
         (default = ``%(default)s``)
         """)
     group.add_argument(
@@ -75,8 +78,8 @@ def parse_option():
         "--delay-distro", dest="latency_distro_ms", type=float, default=0,
         help="""
         distribution of network latency becomes X +- Y [ms]
-        (normal distribution), with this option.
-        (X: value of --delay option, Y: value of --delay-dist option)
+        (normal distribution). Here X is the value of --delay option and
+        Y is the value of --delay-dist option).
         network latency distribution will be uniform without this option.
         """)
     group.add_argument(
@@ -98,26 +101,29 @@ def parse_option():
             TrafficControl.MAX_CORRUPTION_RATE))
     group.add_argument(
         "--network",
-        help="Target IP address/network of traffic control")
+        help="target IP address/network to control traffic")
     group.add_argument(
         "--port", type=int,
-        help="port number of traffic control")
-
-    group = parser.parser.add_argument_group("Prototype")
-    group.add_argument(
-        "--add", dest="is_add_shaper", action="store_true", default=False,
-        help="")
-    group.add_argument(
-        "--iptables", dest="is_enable_iptables",
-        action="store_true", default=False,
-        help="[experimental] use iptables to filter network")
-    group.add_argument(
-        "--src-network",
-        help="[require iptables]")
+        help="target port number to control traffic.")
     group.add_argument(
         "--shaping-algo", dest="shaping_algorithm",
         choices=["tbf", "htb"], default="htb",
-        help="shaping algorithm (default=%(default)s)")
+        help="shaping algorithm. defaults to %(default)s (recommended).")
+
+    group = parser.parser.add_argument_group("Routing")
+    group.add_argument(
+        "--iptables", dest="is_enable_iptables",
+        action="store_true", default=False,
+        help="use iptables to traffic shaping.")
+    group.add_argument(
+        "--src-network",
+        help="""
+        set traffic shaping rule to a specific packets that routed from
+        --src-network to --network. This option required to execute with
+        the --iptables option. 
+        the shaping rule only affect to outgoing packets
+        (no effect to if you execute with "--direction incoming" option)
+        """)
 
     return parser.parser.parse_args()
 
@@ -165,17 +171,18 @@ class TcConfigLoader(object):
         command_list = []
 
         for device, device_table in six.iteritems(self.__config_table):
+            device_option = "--device={:s}".format(device)
+
             if self.is_overwrite:
-                command_list.append("tcdel --device " + device)
+                command_list.append("tcdel {:s}".format(device_option))
 
             for direction, direction_table in six.iteritems(device_table):
                 for tc_filter, filter_table in six.iteritems(direction_table):
-                    if filter_table == {}:
+                    if not filter_table:
                         continue
 
                     option_list = [
-                        "--device=" + device,
-                        "--direction=" + direction,
+                        device_option, "--direction={:s}".format(direction),
                     ] + [
                         "--{:s}={:s}".format(k, v)
                         for k, v in six.iteritems(filter_table)
@@ -268,7 +275,8 @@ def main():
         return 1
 
     if options.overwrite:
-        set_log_level(logbook.ERROR)
+        if options.log_level == logbook.INFO:
+            set_log_level(logbook.ERROR)
 
         try:
             tc.delete_tc()

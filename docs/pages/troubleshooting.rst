@@ -6,7 +6,7 @@ Phenomenon
 `tcset` command failed with an error message `RTNETLINK answers: No such file or directory`.
 
 
-Cause and counter measures
+Solutions
 --------------------------
 The cause of this error is `sch_netem` kernel module is not loaded in your system.
 Execute the following command to solve this problem: 

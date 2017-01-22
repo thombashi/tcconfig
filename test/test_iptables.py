@@ -4,6 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import unicode_literals
 import random
 
 import pytest
@@ -200,10 +201,12 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
         for i in range(5):
             mark_id = IptablesMangleController.get_unique_mark_id()
 
-            assert mark_id == (i + 1)
+            assert mark_id == (i + 101)
+
             mangle_mark = IptablesMangleMark(
                 mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
                 chain=random.choice(VALID_CHAIN_LIST))
+
             assert IptablesMangleController.add(mangle_mark) == 0
 
 
@@ -269,7 +272,7 @@ class Test_IptablesMangleController_parse(object):
         for lhs_mangle, rhs_mangle in zip(
                 IptablesMangleController.parse(), reverse_mangle_mark_list):
 
-            print("lhs: {:s}".format(lhs_mangle))
-            print("rhs: {:s}".format(rhs_mangle))
+            print("lhs: {}".format(lhs_mangle))
+            print("rhs: {}".format(rhs_mangle))
 
             assert lhs_mangle == rhs_mangle

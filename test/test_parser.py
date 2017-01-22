@@ -4,6 +4,9 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import print_function
+from __future__ import unicode_literals
+
 import pytest
 import six
 
@@ -73,12 +76,17 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
             six.b("""filter parent 1f1c: protocol ip pref 1 fw
 filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""),
             [
-                {'classid': u'1f1c:1', 'handle': 101},
+                {'classid': '1f1c:1', 'handle': 101},
             ],
         ],
     ])
     def test_normal(self, filter_parser, value, expected):
-        assert filter_parser.parse_filter(value) == expected
+        actual = filter_parser.parse_filter(value)
+
+        print("[expected]\n{}".format(expected))
+        print("\n[actual]\n{}".format(actual))
+
+        assert actual == expected
 
 
 class Test_TcFilterParser_parse_incoming_device(object):
@@ -112,51 +120,31 @@ filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800
 class Test_TcQdiscParser_parse(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
-        ["", {}],
         [
-            six.b("""qdisc prio 1: root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
-qdisc netem 11: parent 1:1 limit 1000 delay 10.0ms loss 0.1% corrupt 0.1%
-qdisc tbf 20: parent 11:1 rate 100Mbit burst 100000b limit 10000b"""),
-            {
-                'parent': '1:1',
-                'corrupt': "0.1",
-                'delay': '10.0',
-                'loss': '0.1',
-                'rate': '100M',
-            },
+            six.b("""qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 1 direct_qlen 1000
+qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
+"""),
+            [{'delay': '1.0', 'loss': '0.01', 'parent': '1f87:2'}],
         ],
         [
-            six.b("""qdisc prio 1: dev eth0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
-qdisc netem 11: dev eth0 parent 1:1 limit 1000 delay 10.0ms  2.0ms loss 0.1% corrupt 0.1%
-qdisc tbf 20: dev eth0 parent 11:1 rate 100Mbit burst 100000b limit 10000b
-qdisc pfifo_fast 0: dev ifb0 root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1"""),
-            {
-                'parent': '1:1',
-                'corrupt': "0.1",
-                'delay': '10.0',
-                'delay-distro': '2.0',
-                'loss': '0.1',
-                'rate': '100M',
-            },
+            six.b("""
+qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 0 direct_qlen 1000
+qdisc netem 2007: parent 1f87:2 limit 1000 delay 5.0ms
+qdisc netem 2008: parent 1f87:3 limit 1000 delay 50.0ms  1.0ms loss 5%
+"""),
+            [
+                {'delay': '5.0', 'parent': '1f87:2'},
+                {
+                    'delay': '50.0', 'loss': '5',
+                    'delay-distro': '1.0', 'parent': '1f87:3',
+                },
+            ],
         ],
-        [
-            six.b("""qdisc prio 1: root refcnt 2 bands 3 priomap  1 2 2 2 1 2 0 0 1 1 1 1 1 1 1 1
-qdisc netem 11: parent 1:1 limit 1000 delay 1.0ms loss 0.01%
-qdisc tbf 20: parent 11:1 rate 250Kbit burst 1600b lat 268.8ms"""),
-            {
-                'parent': '1:1',
-                'delay': '1.0',
-                'loss': '0.01',
-                'rate': '250K',
-            },
-        ]
     ])
     def test_normal(self, qdisc_parser, value, expected):
-        assert qdisc_parser.parse(value) == expected
+        actual = list(qdisc_parser.parse(value))
 
-    @pytest.mark.parametrize(["value", "expected"], [
-        [None, AttributeError],
-    ])
-    def test_exception(self, qdisc_parser, value, expected):
-        with pytest.raises(expected):
-            qdisc_parser.parse(value)
+        print("[expected]\n{}".format(expected))
+        print("\n[actual]\n{}".format(actual))
+
+        assert actual == expected

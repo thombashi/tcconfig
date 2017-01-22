@@ -5,8 +5,9 @@
 """
 
 from __future__ import division
-import itertools
+from __future__ import unicode_literals
 
+from allpairspy import AllPairs
 import dataproperty
 import pytest
 from subprocrunner import SubprocessRunner
@@ -16,8 +17,15 @@ SKIP_TEST = False
 
 
 @pytest.fixture
-def device_option(request):
+def device_value(request):
     return request.config.getoption("--device")
+
+
+def is_valid_combination(row):
+    if all([dataproperty.is_empty_string(param) for param in row]):
+        return False
+
+    return True
 
 
 def is_invalid_param(rate, delay, loss, corrupt):
@@ -71,7 +79,12 @@ class NormalTestValue(object):
     ]
     OVERWRITE_LIST = [
         "",
+        "--add",
         "--overwrite",
+    ]
+    IPTABLES_LIST = [
+        "",
+        "--iptables",
     ]
 
 
@@ -90,11 +103,11 @@ class Test_tcconfig(object):
     @pytest.mark.parametrize(
         [
             "rate", "delay", "delay_distro", "loss", "corrupt",
-            "direction", "network", "port", "overwrite",
+            "direction", "network", "port", "overwrite", "is_enable_iptables",
         ],
         [
             opt_list
-            for opt_list in itertools.product(
+            for opt_list in AllPairs([
                 NormalTestValue.RATE_LIST,
                 NormalTestValue.DELAY_LIST,
                 NormalTestValue.DELAY_DISTRO_LIST,
@@ -103,24 +116,29 @@ class Test_tcconfig(object):
                 NormalTestValue.DIRECTION_LIST,
                 NormalTestValue.NETWORK_LIST,
                 NormalTestValue.PORT_LIST,
-                NormalTestValue.OVERWRITE_LIST)
+                NormalTestValue.OVERWRITE_LIST,
+                NormalTestValue.IPTABLES_LIST,
+            ], n=3, filter_func=is_valid_combination)
         ])
     def test_smoke(
-            self, device_option, rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite):
+            self, device_value, rate, delay, delay_distro, loss, corrupt,
+            direction, network, port, overwrite, is_enable_iptables):
 
-        if device_option is None:
-            pytest.skip("device option is null")
+        if device_value is None:
+            pytest.skip("device is empty")
 
         if is_invalid_param(rate, delay, loss, corrupt):
             pytest.skip("skip null parameters")
 
-        command = " ".join([
-            "tcset",
-            "--device " + device_option,
-            rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite,
-        ])
-        assert SubprocessRunner(command).run() == 0
+        device_option = "--device {}".format(device_value)
 
-        SubprocessRunner("tcdel --device " + device_option).run()
+        SubprocessRunner("tcdel {:s}".format(device_option)).run()
+
+        assert SubprocessRunner(" ".join([
+            "tcset",
+            device_option,
+            rate, delay, delay_distro, loss, corrupt,
+            direction, network, port, overwrite, is_enable_iptables,
+        ])).run() == 0
+
+        SubprocessRunner("tcdel {:s}".format(device_option)).run()

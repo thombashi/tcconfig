@@ -9,12 +9,13 @@ from __future__ import unicode_literals
 import re
 
 import dataproperty
-from subprocrunner import SubprocessRunner
 
 from .._common import (
     logging_context,
     run_command_helper,
+    run_tc_show,
 )
+from .._const import Tc
 from .._converter import Humanreadable
 from .._error import (
     TcAlreadyExist,
@@ -144,12 +145,10 @@ class HtbShaper(AbstractShaper):
             self.add_filter()
 
     def __get_unique_qdisc_minor_id(self):
-        runner = SubprocessRunner("tc class show {:s}".format(self.dev))
-        runner.run()
         exist_class_item_list = re.findall(
             "class htb {}".format(
                 self._tc_obj.qdisc_major_id_str) + "[\:][0-9]+",
-            runner.stdout,
+            run_tc_show(Tc.Subcommand.CLASS, self.tc_device),
             re.MULTILINE)
 
         exist_class_minor_id_list = []
@@ -175,10 +174,10 @@ class HtbShaper(AbstractShaper):
         return next_minor_id
 
     def __get_unique_netem_major_id(self):
-        runner = SubprocessRunner("tc qdisc show {:s}".format(self.dev))
-        runner.run()
         exist_netem_item_list = re.findall(
-            "qdisc [a-z]+ [a-z0-9]+", runner.stdout, re.MULTILINE)
+            "qdisc [a-z]+ [a-z0-9]+",
+            run_tc_show(Tc.Subcommand.QDISC, self.tc_device),
+            re.MULTILINE)
 
         exist_netem_major_id_list = []
         for netem_item in exist_netem_item_list:

@@ -13,6 +13,7 @@ from subprocrunner import SubprocessRunner
 
 from ._const import ANYWHERE_NETWORK
 from ._common import sanitize_network
+from ._logger import logger
 from ._split_line_list import split_line_list
 
 
@@ -127,6 +128,7 @@ class IptablesMangleController(object):
     __RE_CHAIN_NAME = re.compile(
         "{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))
     __MAX_MARK_ID = 0xffffffff
+    __MARK_ID_OFFSET = 100
 
     enable = True
 
@@ -138,20 +140,22 @@ class IptablesMangleController(object):
         for mangle in cls.parse():
             proc = SubprocessRunner(mangle.to_delete_command())
             if proc.run() != 0:
-                raise RuntimeError(str(proc.stderr))
+                raise RuntimeError(proc.stderr)
 
     @classmethod
     def get_iptables(cls):
         proc = SubprocessRunner("iptables -t mangle --line-numbers -L")
         if proc.run() != 0:
-            raise RuntimeError(str(proc.stderr))
+            raise RuntimeError(proc.stderr)
 
         return proc.stdout
 
     @classmethod
     def get_unique_mark_id(cls):
         mark_id_list = [mangle.mark_id for mangle in cls.parse()]
-        unique_mark_id = 1
+        logger.debug("mangle mark list: {}".format(mark_id_list))
+
+        unique_mark_id = 1 + cls.__MARK_ID_OFFSET
         while unique_mark_id < cls.__MAX_MARK_ID:
             if unique_mark_id not in mark_id_list:
                 return unique_mark_id

@@ -3,8 +3,12 @@ tcconfig
 
 .. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
    :target: https://pypi.python.org/pypi/tcconfig
+
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
+
+.. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
+   :target: https://github.com/thombashi/tcconfig
 
 Summary
 -------
@@ -88,8 +92,7 @@ e.g. Specify the IP network and port of traffic control
 Delete traffic control (``tcdel`` command)
 ------------------------------------------
 
-``tcdel`` is a command to delete traffic control from a network
-interface (device).
+``tcdel`` is a command to delete traffic shaping rules from a network interface (device).
 
 e.g. Delete traffic control of eth0
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -142,14 +145,25 @@ http://tcconfig.rtfd.io/en/latest/pages/usage/index.html
 Installation
 ============
 
-Install via pip
----------------
-``tcconfig`` can be installed via
-`pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package manager).
+Installing from PyPI
+------------------------------
+``tcconfig`` can be installed from `PyPI <https://pypi.python.org/pypi>`__ via
+`pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package manager) command.
 
 .. code:: console
 
     sudo pip install tcconfig
+
+
+Installing from binary
+------------------------------
+``tcconfig`` can be installed environments which cannot access to
+`PyPI <https://pypi.python.org/pypi>`__ directly:
+
+1. ``https://github.com/thombashi/tcconfig/releases/download/v0.7.0/tcconfig_wheel.tar.gz``
+2. ``tar xvf tcconfig_wheel.tar.gz``
+3. ``cd tcconfig_wheel/``
+4. ``./install.sh``
 
 
 Dependencies
@@ -157,7 +171,8 @@ Dependencies
 
 Linux packages
 --------------
-- iproute2 (required for tc command)
+- iproute2 (mandatory: required for tc command)
+- iptables (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
 ----------------------------
@@ -183,6 +198,7 @@ Optional
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- `allpairspy <https://github.com/thombashi/allpairspy>`__
 - `pingparsing <https://github.com/thombashi/pingparsing>`__
 - `pytest <http://pytest.org/latest/>`__
 - `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
@@ -201,7 +217,7 @@ Phenomenon
 `tcset` command failed with an error message `RTNETLINK answers: No such file or directory`.
 
 
-Cause and counter measures
+Solutions
 --------------------------
 The cause of this error is `sch_netem` kernel module is not loaded in your system.
 Execute the following command to solve this problem:

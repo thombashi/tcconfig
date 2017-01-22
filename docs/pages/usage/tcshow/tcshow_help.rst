@@ -3,8 +3,7 @@
 
 ::
 
-    usage: tcshow [-h] [--version] [--logging] [--stacktrace] [--debug | --quiet]
-                  --device DEVICE
+    usage: tcdel [-h] [--version] [--debug | --quiet] --device DEVICE
 
 .. option:: tcshow command options
 
@@ -12,11 +11,18 @@
       -h, --help       show this help message and exit
       --version        show program's version number and exit
       --debug          for debug print.
-      --quiet          suppress output of execution log message.
+      --quiet          suppress execution log messages.
 
-    Miscellaneous:
-      --logging        output execution log to a file (tcshow.log).
-      --stacktrace     display stack trace when an error occurred.
+    Traffic Control:
+      --device DEVICE  network device name (e.g. eth0)
+    [/home/GitHubDesktop/tcconfig]# tcshow -h
+    usage: tcshow [-h] [--version] [--debug | --quiet] --device DEVICE
+
+    optional arguments:
+      -h, --help       show this help message and exit
+      --version        show program's version number and exit
+      --debug          for debug print.
+      --quiet          suppress execution log messages.
 
     Traffic Control:
       --device DEVICE  network device name (e.g. eth0)

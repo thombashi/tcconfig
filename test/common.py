@@ -21,7 +21,7 @@ def is_invalid_param(rate, delay, loss, corrupt):
     ])
 
     try:
-        Humanreadable(rate, kilo_size=1000).to_no_prefix_value(rate)
+        Humanreadable(rate, kilo_size=1000).to_no_prefix_value()
     except ValueError:
         pass
     else:
