@@ -102,7 +102,7 @@ class Test_tcconfig(object):
     @pytest.mark.parametrize(
         [
             "rate", "delay", "delay_distro", "loss", "corrupt",
-            "direction", "network", "port", "overwrite",
+            "direction", "network", "port", "overwrite", "is_enable_iptables",
         ],
         [
             opt_list
@@ -121,7 +121,7 @@ class Test_tcconfig(object):
         ])
     def test_smoke(
             self, device_value, rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite):
+            direction, network, port, overwrite, is_enable_iptables):
 
         if device_value is None:
             pytest.skip("device is empty")
@@ -135,7 +135,7 @@ class Test_tcconfig(object):
             "tcset",
             device_option,
             rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite,
+            direction, network, port, overwrite, is_enable_iptables,
         ])).run() == 0
 
         SubprocessRunner("tcdel {:s}".format(device_option)).run()
