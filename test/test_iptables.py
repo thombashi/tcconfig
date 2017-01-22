@@ -4,6 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import unicode_literals
 import random
 
 import pytest
@@ -269,7 +270,7 @@ class Test_IptablesMangleController_parse(object):
         for lhs_mangle, rhs_mangle in zip(
                 IptablesMangleController.parse(), reverse_mangle_mark_list):
 
-            print("lhs: {:s}".format(lhs_mangle))
-            print("rhs: {:s}".format(rhs_mangle))
+            print("lhs: {}".format(lhs_mangle))
+            print("rhs: {}".format(rhs_mangle))
 
             assert lhs_mangle == rhs_mangle

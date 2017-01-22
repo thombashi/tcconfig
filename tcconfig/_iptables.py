@@ -9,6 +9,7 @@ import re
 
 import dataproperty
 from dataproperty import IntegerType
+from mbstrdecoder import MultiByteStrDecoder
 from subprocrunner import SubprocessRunner
 
 from ._const import ANYWHERE_NETWORK
@@ -146,7 +147,7 @@ class IptablesMangleController(object):
         if proc.run() != 0:
             raise RuntimeError(str(proc.stderr))
 
-        return proc.stdout
+        return MultiByteStrDecoder(proc.stdout).unicode_str
 
     @classmethod
     def get_unique_mark_id(cls):

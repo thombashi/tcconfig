@@ -54,12 +54,12 @@ def sanitize_network(network):
         return ANYWHERE_NETWORK
 
     try:
-        ipaddress.IPv4Address(six.u(network))
+        ipaddress.IPv4Address(network)
         return network + "/32"
     except ipaddress.AddressValueError:
         pass
 
-    ipaddress.IPv4Network(six.u(network))  # validate network str
+    ipaddress.IPv4Network(network)  # validate network str
 
     return network
 
