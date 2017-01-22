@@ -76,7 +76,10 @@ class TrafficControl(object):
     EXISTS_MSG_TEMPLATE = (
         "{:s} "
         "execute with --overwrite option if you want to overwrite "
-        "the existing settings.")
+        "the existing rules."
+        "execute with --add option if you want to add a new rule in addition "
+        "to the existing rules."
+    )
 
     @property
     def ifb_device(self):
