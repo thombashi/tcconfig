@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 import re
 
 import dataproperty
-from subprocrunner import SubprocessRunner
 
 from .._common import (
     logging_context,
