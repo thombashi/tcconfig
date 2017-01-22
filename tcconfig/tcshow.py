@@ -6,23 +6,29 @@
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
+import copy
 import json
 import sys
-import six
 
 import dataproperty
 from dataproperty import IntegerType
 import logbook
+import six
 import subprocrunner
 from subprocrunner import SubprocessRunner
 
 from .parser import (
     TcFilterParser,
     TcQdiscParser,
+    TcClassParser,
 )
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
-from ._const import VERSION
+from ._const import (
+    VERSION,
+    Tc,
+)
 from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController
 from ._logger import (
@@ -48,7 +54,7 @@ def parse_option():
     return parser.parser.parse_args()
 
 
-class TcParamParser(object):
+class TcShapingRuleParser(object):
 
     @property
     def device(self):
@@ -61,31 +67,29 @@ class TcParamParser(object):
     def get_tc_parameter(self):
         return {
             self.device: {
-                TrafficDirection.OUTGOING: self.__get_filter(self.device),
-                TrafficDirection.INCOMING: self.__get_filter(
+                TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
+                TrafficDirection.INCOMING: self.__get_shaping_rule(
                     self.__get_ifb_from_device()),
             },
         }
 
     def __get_ifb_from_device(self):
-        filter_parser = TcFilterParser()
-        command = "tc filter show dev {:s} root".format(self.device)
-        filter_runner = SubprocessRunner(command)
+        filter_runner = SubprocessRunner(
+            "tc filter show dev {:s} root".format(self.device))
         filter_runner.run()
 
-        return filter_parser.parse_incoming_device(filter_runner.stdout)
+        return TcFilterParser().parse_incoming_device(filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
         network_format = "network={:s}"
         port_format = "port={:d}"
         key_item_list = []
 
-        if "handle" in filter_param:
-            handle = filter_param.get("handle")
-
+        if Tc.Param.HANDLE in filter_param:
+            handle = filter_param.get(Tc.Param.HANDLE)
             IntegerType(handle).validate()
-
             handle = int(handle)
+
             for mangle in IptablesMangleController.parse():
                 if mangle.mark_id != handle:
                     continue
@@ -99,48 +103,100 @@ class TcParamParser(object):
             else:
                 raise ValueError("mangle mark not found: {}".format(mangle))
         else:
-            if dataproperty.is_not_empty_string(filter_param.get("network")):
-                key_item_list.append(
-                    network_format.format(filter_param.get("network")))
+            network = filter_param.get(Tc.Param.NETWORK)
+            if dataproperty.is_not_empty_string(network):
+                key_item_list.append(network_format.format(network))
 
-            if IntegerType(filter_param.get("port")).is_type():
-                key_item_list.append(
-                    port_format.format(filter_param.get("port")))
+            port = filter_param.get(Tc.Param.PORT)
+            if IntegerType(port).is_type():
+                key_item_list.append(port_format.format(port))
 
         return ", ".join(key_item_list)
 
-    def __get_filter(self, device):
+    def __get_shaping_rule(self, device):
         if dataproperty.is_empty_string(device):
             return {}
 
-        # parse filter ---
-        filter_parser = TcFilterParser()
-        command = "tc filter show dev {:s}".format(device)
-        filter_show_runner = SubprocessRunner(command)
-        filter_show_runner.run()
+        class_param_list = self.__parse_tc_class(device)
+        filter_param_list = self.__parse_tc_filter(device)
+        qdisc_param_list = self.__parse_tc_qdisc(device)
 
-        qdisc_param = self.__parse_qdisc(device)
+        shaping_rule_mapping = {}
 
-        filter_table = {}
-        for filter_param in filter_parser.parse_filter(filter_show_runner.stdout):
+        for filter_param in filter_param_list:
+            logger.debug(
+                "{:s} param: {}".format(Tc.Subcommand.FILTER, filter_param))
+            shaping_rule = {}
+
             filter_key = self.__get_filter_key(filter_param)
-            filter_table[filter_key] = {}
-            if qdisc_param.get("parent") in (
-                    filter_param.get("flowid"), filter_param.get("classid")):
-                work_qdisc_param = dict(qdisc_param)
-                del work_qdisc_param["parent"]
-                filter_table[filter_key] = work_qdisc_param
+            if dataproperty.is_empty_string(filter_key):
+                logger.debug("empty filter key: {}".format(filter_param))
+                continue
 
-        return filter_table
+            for qdisc_param in qdisc_param_list:
+                logger.debug(
+                    "{:s} param: {}".format(Tc.Subcommand.QDISC, qdisc_param))
+
+                if qdisc_param.get(Tc.Param.PARENT) not in (
+                        filter_param.get(Tc.Param.FLOW_ID),
+                        filter_param.get(Tc.Param.CLASS_ID)):
+                    continue
+
+                work_qdisc_param = copy.deepcopy(qdisc_param)
+                del work_qdisc_param[Tc.Param.PARENT]
+                shaping_rule.update(work_qdisc_param)
+
+            for class_param in class_param_list:
+                logger.debug(
+                    "{:s} param: {}".format(Tc.Subcommand.CLASS, class_param))
+
+                if class_param.get(Tc.Param.CLASS_ID) not in (
+                        filter_param.get(Tc.Param.FLOW_ID),
+                        filter_param.get(Tc.Param.CLASS_ID)):
+                    continue
+
+                work_class_param = copy.deepcopy(class_param)
+                del work_class_param[Tc.Param.CLASS_ID]
+                shaping_rule.update(work_class_param)
+
+            if not shaping_rule:
+                continue
+
+            logger.debug(
+                "rule found: {} {}".format(filter_key, shaping_rule))
+
+            shaping_rule_mapping[filter_key] = shaping_rule
+
+        return shaping_rule_mapping
 
     @staticmethod
-    def __parse_qdisc(device):
-        qdisc_parser = TcQdiscParser()
-        command = "tc qdisc show dev {:s}".format(device)
-        qdisk_show_runner = SubprocessRunner(command)
-        qdisk_show_runner.run()
+    def __execute_tc_show(subcommand, device):
+        runner = SubprocessRunner(
+            "tc {:s} show dev {:s}".format(subcommand, device))
+        runner.run()
 
-        return qdisc_parser.parse(qdisk_show_runner.stdout)
+        return runner.stdout
+
+    def __parse_tc_qdisc(self, device):
+        param_list = list(TcQdiscParser().parse(
+            self.__execute_tc_show(Tc.Subcommand.QDISC, device)))
+        logger.debug("tc qdisc parse result: {}".format(param_list))
+
+        return param_list
+
+    def __parse_tc_filter(self, device):
+        param_list = list(TcFilterParser().parse_filter(
+            self.__execute_tc_show(Tc.Subcommand.FILTER, device)))
+        logger.debug("tc filter parse result: {}".format(param_list))
+
+        return param_list
+
+    def __parse_tc_class(self, device):
+        param_list = list(TcClassParser().parse(
+            self.__execute_tc_show(Tc.Subcommand.CLASS, device)))
+        logger.debug("tc class parse result: {}".format(param_list))
+
+        return param_list
 
 
 def main():
@@ -158,7 +214,7 @@ def main():
             logger.debug(str(e))
             continue
 
-        tc_param.update(TcParamParser(device, logger).get_tc_parameter())
+        tc_param.update(TcShapingRuleParser(device, logger).get_tc_parameter())
 
     six.print_(json.dumps(tc_param, indent=4))
 

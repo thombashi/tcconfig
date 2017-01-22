@@ -6,11 +6,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+import copy
 import re
 
 import dataproperty
 import pyparsing as pp
 
+from ._const import Tc
 from ._logger import logger
 
 
@@ -91,6 +93,7 @@ class TcFilterParser(object):
                     "classid": self.classid,
                     "handle": self.handle,
                 })
+                self.__clear()
                 continue
 
             tc_filter = self.__get_filter()
@@ -98,24 +101,22 @@ class TcFilterParser(object):
             try:
                 self.__parse_flow_id(line)
 
-                logger.debug("store filter: {}".format(tc_filter))
-                filter_data_matrix.append(tc_filter)
+                if tc_filter.get(Tc.Param.FLOW_ID):
+                    logger.debug("store filter: {}".format(tc_filter))
+                    filter_data_matrix.append(tc_filter)
+                    self.__clear()
+                    self.__parse_flow_id(line)
+
                 continue
             except pp.ParseException:
                 logger.debug("failed to parse flow id: {}".format(line))
 
             try:
                 self.__parse_filter(line)
-                continue
             except pp.ParseException:
-
-            if self.flow_id is not None:
-                filter_data_matrix.append(self.__get_filter())
                 logger.debug("failed to parse filter: {}".format(line))
 
-            self.__clear()
-
-        if self.flow_id is not None:
+        if self.flow_id:
             filter_data_matrix.append(self.__get_filter())
 
         return filter_data_matrix
@@ -141,11 +142,11 @@ class TcFilterParser(object):
         self.__classid = None
 
     def __get_filter(self):
-        return {
+        return copy.deepcopy({
             "flowid": self.flow_id,
             "network": self.filter_network,
             "port": self.filter_port,
-        }
+        })
 
     def __parse_flow_id(self, line):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
@@ -191,9 +192,14 @@ class TcFilterParser(object):
 class TcQdiscParser(object):
 
     def __init__(self):
-        self.__parsed_param = {}
+        self.__clear()
 
     def parse(self, text):
+        if dataproperty.is_empty_string(text):
+            raise ValueError("empty text")
+
+        text = text.strip()
+
         for line in text.splitlines():
             if dataproperty.is_empty_string(line):
                 continue
@@ -202,6 +208,8 @@ class TcQdiscParser(object):
 
             if re.search("qdisc netem|qdisc tbf", line) is None:
                 continue
+
+            self.__clear()
 
             if re.search("qdisc netem", line) is not None:
                 self.__parse_netem_param(line, "parent", pp.hexnums + ":")
@@ -212,7 +220,10 @@ class TcQdiscParser(object):
             self.__parse_netem_param(line, "corrupt", pp.nums + ".")
             self.__parse_tbf_rate(line)
 
-        return self.__parsed_param
+            yield self.__parsed_param
+
+    def __clear(self):
+        self.__parsed_param = {}
 
     def __parse_netem_delay_distro(self, line):
         parse_param_name = "delay"
