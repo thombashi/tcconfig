@@ -5,6 +5,7 @@
 """
 
 from __future__ import division
+from __future__ import unicode_literals
 
 from allpairspy import AllPairs
 import dataproperty
@@ -130,6 +131,8 @@ class Test_tcconfig(object):
             pytest.skip("skip null parameters")
 
         device_option = "--device {}".format(device_value)
+
+        SubprocessRunner("tcdel {:s}".format(device_option)).run()
 
         assert SubprocessRunner(" ".join([
             "tcset",
