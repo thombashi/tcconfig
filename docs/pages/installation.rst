@@ -13,7 +13,7 @@ Installing from PyPI
 
 Installing from binary
 ------------------------------
-``tcconfig`` can be installed environments where cannot access to 
+``tcconfig`` can be installed environments which cannot access to 
 `PyPI <https://pypi.python.org/pypi>`__ directly:
 
 1. ``https://github.com/thombashi/tcconfig/releases/download/v0.7.0/tcconfig_wheel.tar.gz``
