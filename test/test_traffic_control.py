@@ -6,6 +6,7 @@
 
 import itertools
 
+from allpairspy import AllPairs
 from dataproperty import FloatType
 import pytest
 
@@ -24,31 +25,30 @@ def device_option(request):
 
 @pytest.mark.parametrize(["value"], [
     ["".join(opt_list)]
-    for opt_list in itertools.product(
+    for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
             "k", " k", "K", " K",
             "m", " m", "M", " M",
             "g", " g", "G", " G",
         ]
-    )
+    ])
 ])
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
-    print(tc_obj.bandwidth_rate)
     tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
     ["".join(opt_list), ValueError]
-    for opt_list in itertools.product(
+    for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
             "kb", "kbps", "KB",
             "mb", "mbps", "MB",
             "gb", "gbps", "GB",
         ]
-    )
+    ])
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     tc_obj = TrafficControl("dummy", bandwidth_rate=value)
@@ -78,7 +78,7 @@ class Test_TrafficControl_validate(object):
         ],
         [
             opt_list
-            for opt_list in itertools.product(
+            for opt_list in AllPairs([
                 [None, "", "100K", "0.5M", "0.1G"],  # rate
                 [TrafficDirection.OUTGOING],
                 [None, 0, 10000],  # delay
@@ -92,7 +92,7 @@ class Test_TrafficControl_validate(object):
                     "192.168.0.1/32", "192.168.0.0/24"
                 ],  # network
                 [None, 0, 65535],  # port
-            )
+            ], n=3)
         ])
     def test_normal(
             self, device_option, rate, direction, delay, delay_distro, loss,
