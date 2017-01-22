@@ -122,7 +122,7 @@ class Test_TrafficControl_validate(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         [{"latency_ms": -1}, ValueError],
-        [{"latency_ms": 10001}, ValueError],
+        [{"latency_ms": 3600001}, ValueError],
 
         [{"latency_distro_ms": -1}, ValueError],
         [{"latency_distro_ms": 10001}, ValueError],
