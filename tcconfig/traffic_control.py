@@ -177,9 +177,19 @@ class TrafficControl(object):
     def validate(self):
         verify_network_interface(self.__device)
         self.__validate_netem_parameter()
+        self.__validate_src_network()
+
         self.__network = sanitize_network(self.network)
         self.__src_network = sanitize_network(self.src_network)
         self.__validate_port()
+
+    def __validate_src_network(self):
+        if dataproperty.is_empty_string(self.src_network):
+            return
+
+        if not self.is_enable_iptables:
+            raise InvalidParameterError(
+                "--iptables option will be required to use --src-network option")
 
     def validate_bandwidth_rate(self):
         if not dataproperty.FloatType(self.bandwidth_rate).is_type():
