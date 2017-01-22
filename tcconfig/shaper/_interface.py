@@ -55,8 +55,6 @@ class ShaperInterface(object):
 
 class AbstractShaper(ShaperInterface):
 
-    __FILTER_IPTABLES_MARK_ID_OFFSET = 100
-
     @property
     def tc_device(self):
         return "{:s}".format(self._tc_obj.get_tc_device())
@@ -153,9 +151,7 @@ class AbstractShaper(ShaperInterface):
         raise ValueError("unknown direction: {}".format(self.direction))
 
     def _get_unique_mangle_mark_id(self):
-        mark_id = (
-            IptablesMangleController.get_unique_mark_id() +
-            self.__FILTER_IPTABLES_MARK_ID_OFFSET)
+        mark_id = IptablesMangleController.get_unique_mark_id()
 
         self.__add_mangle_mark(mark_id)
 

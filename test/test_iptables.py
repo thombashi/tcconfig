@@ -201,10 +201,12 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
         for i in range(5):
             mark_id = IptablesMangleController.get_unique_mark_id()
 
-            assert mark_id == (i + 1)
+            assert mark_id == (i + 101)
+
             mangle_mark = IptablesMangleMark(
                 mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
                 chain=random.choice(VALID_CHAIN_LIST))
+
             assert IptablesMangleController.add(mangle_mark) == 0
 
 
