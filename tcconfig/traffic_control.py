@@ -230,7 +230,7 @@ class TrafficControl(object):
                     "RTNETLINK answers: Invalid argument",
                     "RTNETLINK answers: No such file or directory",
                 ])),
-                "failed to delete qdisc: no qdisc for incomming packets")
+                "failed to delete qdisc: no qdisc for incoming packets")
             result_list.append(returncode == 0)
 
         with logging_context("delete ifb device"):
