@@ -3,19 +3,19 @@ Troubleshooting
 
 Phenomenon
 ------------------------
-`tcset` command failed with an error message `RTNETLINK answers: No such file or directory`.
+``tcset`` command failed with an error message `RTNETLINK answers: No such file or directory`.
 
 
 Solutions
 ~~~~~~~~~~~~~~~~~~~~~~~~
-The cause of this error is `sch_netem` kernel module is not loaded in your system.
+The cause of this error is ``sch_netem`` kernel module is not loaded in your system.
 Execute the following command to solve this problem: 
 
 .. code:: console
 
     # modprobe sch_netem
 
-The command is loading the `sch_netem` module.
+The command is loading the ``sch_netem`` module.
 If the command failed with below message, you need to install additional kernel module.
 
 .. code:: console
@@ -39,12 +39,12 @@ After that, re-execute `modprobe sch_netem` command.
 
 Phenomenon
 ------------------------
-`tcset` command with `--direction incoming` failed with an error message `RTNETLINK answers: Operation not supported`.
+``tcset`` command with ``--direction incoming`` failed with an error message `RTNETLINK answers: Operation not supported`.
 
 Solutions
 ~~~~~~~~~~~~~~~~~~~~~~~~
 The cause may be some mandatory kernel configurations are disabled.
-Following configurations are needed to be enabled to use `--direction incoming` option.
+Following configurations are needed to be enabled to use ``--direction incoming`` option.
 
 - CONFIG_IP_ADVANCED_ROUTER
 - CONFIG_IP_MULTIPLE_TABLES
@@ -73,7 +73,7 @@ e.g. Display kernel configurations that enabled the above configurations (Debian
     CONFIG_NET_SCH_INGRESS=m
     CONFIG_SCSI_NETLINK=y
 
-These configurations need to either `y` or `m`.
+These configurations need to either ``y`` or ``m``.
 If some of the configurations are disabled, you need to enable the configurations and recompile the kernel.
 
 .. note::
