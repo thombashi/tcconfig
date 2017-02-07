@@ -64,8 +64,10 @@ def main():
         "http://{:s}.rtfd.io/".format(PROJECT_NAME),
     ])
 
-    maker.write_file(
-        maker.doc_page_root_dir_path.joinpath("troubleshooting.rst"))
+    maker.write_chapter("Troubleshooting")
+    maker.write_line_list([
+        "http://tcconfig.readthedocs.io/en/latest/pages/troubleshooting.html",
+    ])
 
     return 0
 
