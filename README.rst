@@ -13,8 +13,7 @@ tcconfig
 Summary
 -------
 
-A Simple tc command wrapper tool.
-Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.
+A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.
 
 Traffic control features
 ------------------------
@@ -45,7 +44,7 @@ Usage
 Set traffic control (``tcset`` command)
 ---------------------------------------
 
-``tcset`` is a command to impose traffic control to a network interface (device).
+``tcset`` is a command to add traffic control rule to a network interface (device).
 
 e.g. Set a limit on bandwidth up to 100Kbps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -210,40 +209,7 @@ Documentation
 http://tcconfig.rtfd.io/
 
 Troubleshooting
-========================
+===============
 
-Phenomenon
-------------------------
-`tcset` command failed with an error message `RTNETLINK answers: No such file or directory`.
-
-
-Solutions
---------------------------
-The cause of this error is `sch_netem` kernel module is not loaded in your system.
-Execute the following command to solve this problem:
-
-.. code:: console
-
-    # modprobe sch_netem
-
-The command is loading the `sch_netem` module.
-If the command failed with below message, you need to install additional kernel module.
-
-.. code:: console
-
-    # modprobe: FATAL: Module sch_netem not found in directory /lib/modules/xxxxxx
-
-Execute the following command to install kernel modules (includes the `sch_netem` module).
-
-.. code:: console
-
-    # dnf install kernel-modules-extra
-
-(in the case of `RHEL`/`CentOS`/`Fedora`).
-After that, re-execute `modprobe sch_netem` command.
-
-.. code:: console
-
-    # modprobe sch_netem
-    #
+http://tcconfig.readthedocs.io/en/latest/pages/troubleshooting.html
 
