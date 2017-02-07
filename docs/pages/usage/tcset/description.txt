@@ -1,2 +1,1 @@
 ``tcset`` is a command to add traffic control rule to a network interface (device).
-You can delete rule(s) from a network interface by :doc:`../tcdel/index`.
