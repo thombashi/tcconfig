@@ -4,9 +4,12 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import unicode_literals
+
 import os.path
-import setuptools
 import sys
+
+import setuptools
 
 import tcconfig
 

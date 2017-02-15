@@ -27,7 +27,7 @@ from ._interface import AbstractShaper
 
 class HtbShaper(AbstractShaper):
 
-    __NO_LIMIT = "1000G"
+    __NO_LIMIT = "1G"
     __DEFAULT_CLASS_MINOR_ID = 1
 
     class MinQdiscMinorId(object):
