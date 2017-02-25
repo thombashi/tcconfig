@@ -7,8 +7,8 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
-import dataproperty
 from subprocrunner import SubprocessRunner
+import typepy
 
 from .._common import (
     logging_context,
@@ -122,8 +122,8 @@ class TbfShaper(AbstractShaper):
             return 0
 
         if all([
-            dataproperty.is_empty_string(self._tc_obj.network),
-            not dataproperty.IntegerType(self._tc_obj.port).is_type(),
+            typepy.is_null_string(self._tc_obj.network),
+            not typepy.type.Integer(self._tc_obj.port).is_type(),
         ]):
             flowid = "{:s}:{:d}".format(
                 self._tc_obj.qdisc_major_id_str,

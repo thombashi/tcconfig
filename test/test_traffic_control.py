@@ -6,12 +6,12 @@
 
 import itertools
 
-from allpairspy import AllPairs
-from dataproperty import FloatType
 import pytest
 
-from tcconfig.traffic_control import TrafficControl
+from allpairspy import AllPairs
 from tcconfig._traffic_direction import TrafficDirection
+from tcconfig.traffic_control import TrafficControl
+
 from .common import is_invalid_param
 
 

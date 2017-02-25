@@ -6,10 +6,10 @@
 
 from __future__ import division
 
-import dataproperty
 import pingparsing
 import pytest
 from subprocrunner import SubprocessRunner
+import typepy
 
 
 WAIT_TIME = 5  # [sec]
@@ -63,8 +63,8 @@ class Test_tcset_two_network(object):
             pytest.skip("device option is null")
 
         if any([
-            dataproperty.is_empty_string(dst_host_option),
-            dataproperty.is_empty_string(dst_host_ex_option),
+            typepy.is_null_string(dst_host_option),
+            typepy.is_null_string(dst_host_ex_option),
         ]):
             pytest.skip("destination host is null")
 

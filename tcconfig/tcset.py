@@ -6,15 +6,16 @@
 """
 
 from __future__ import absolute_import
+
 import sys
 
-import dataproperty
 import logbook
-import pyparsing as pp
 import six
 import subprocrunner
+import typepy
 
-from .traffic_control import TrafficControl
+import pyparsing as pp
+
 from ._argparse_wrapper import ArgparseWrapper
 from ._const import (
     VERSION,
@@ -30,6 +31,7 @@ from ._logger import (
     set_log_level,
 )
 from ._traffic_direction import TrafficDirection
+from .traffic_control import TrafficControl
 
 
 logbook.StderrHandler(
@@ -249,7 +251,7 @@ def main():
     except subprocrunner.CommandNotFoundError as e:
         logger.error(str(e))
 
-    if dataproperty.is_not_empty_string(options.config_file):
+    if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
 
     tc = TrafficControl(

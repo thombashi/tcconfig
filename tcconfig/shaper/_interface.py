@@ -6,11 +6,12 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import abc
 
-import dataproperty
 import six
 from subprocrunner import SubprocessRunner
+import typepy
 
 from .._common import run_command_helper
 from .._const import ANYWHERE_NETWORK
@@ -114,7 +115,7 @@ class AbstractShaper(ShaperInterface):
             command_list.append(
                 "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
-            if dataproperty.is_empty_string(self._tc_obj.network):
+            if typepy.is_null_string(self._tc_obj.network):
                 network = ANYWHERE_NETWORK
             else:
                 network = self._tc_obj.network
@@ -163,7 +164,7 @@ class AbstractShaper(ShaperInterface):
 
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
             dst_network = self._tc_obj.network
-            if dataproperty.is_empty_string(self._tc_obj.src_network):
+            if typepy.is_null_string(self._tc_obj.src_network):
                 chain = "OUTPUT"
             else:
                 src_network = self._tc_obj.src_network

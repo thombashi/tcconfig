@@ -6,10 +6,12 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import copy
 import re
 
-import dataproperty
+import typepy
+
 import pyparsing as pp
 
 from ._const import Tc
@@ -75,13 +77,13 @@ class TcFilterParser(object):
     def parse_filter(self, text):
         self.__clear()
 
-        if dataproperty.is_empty_string(text):
+        if typepy.is_null_string(text):
             return []
 
         filter_data_matrix = []
 
         for line in text.splitlines():
-            if dataproperty.is_empty_string(line):
+            if typepy.is_null_string(line):
                 continue
 
             try:
@@ -122,7 +124,7 @@ class TcFilterParser(object):
         return filter_data_matrix
 
     def parse_incoming_device(self, text):
-        if dataproperty.is_empty_string(text):
+        if typepy.is_null_string(text):
             return None
 
         match = re.search(
@@ -195,13 +197,13 @@ class TcQdiscParser(object):
         self.__clear()
 
     def parse(self, text):
-        if dataproperty.is_empty_string(text):
+        if typepy.is_null_string(text):
             raise ValueError("empty text")
 
         text = text.strip()
 
         for line in text.splitlines():
-            if dataproperty.is_empty_string(line):
+            if typepy.is_null_string(line):
                 continue
 
             line = _to_unicode(line.lstrip())
@@ -246,7 +248,7 @@ class TcQdiscParser(object):
 
         try:
             result = pattern.parseString(_to_unicode(line))[-1]
-            if dataproperty.is_not_empty_string(result):
+            if typepy.is_not_null_string(result):
                 self.__parsed_param[parse_param_name] = result
         except pp.ParseException:
             pass
@@ -259,7 +261,7 @@ class TcQdiscParser(object):
 
         try:
             result = pattern.parseString(line)[-1]
-            if dataproperty.is_not_empty_string(result):
+            if typepy.is_not_null_string(result):
                 result = result.rstrip("bit")
                 self.__parsed_param[parse_param_name] = result
         except pp.ParseException:
@@ -283,7 +285,7 @@ class TcClassParser(object):
         for line in text.splitlines():
             self.__clear()
 
-            if dataproperty.is_empty_string(line):
+            if typepy.is_null_string(line):
                 continue
 
             line = _to_unicode(line.lstrip())

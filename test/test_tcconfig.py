@@ -7,10 +7,11 @@
 from __future__ import division
 from __future__ import unicode_literals
 
-from allpairspy import AllPairs
-import dataproperty
 import pytest
 from subprocrunner import SubprocessRunner
+import typepy
+
+from allpairspy import AllPairs
 
 
 SKIP_TEST = False
@@ -22,7 +23,7 @@ def device_value(request):
 
 
 def is_valid_combination(row):
-    if all([dataproperty.is_empty_string(param) for param in row]):
+    if all([typepy.is_null_string(param) for param in row]):
         return False
 
     return True
@@ -37,7 +38,7 @@ def is_invalid_param(rate, delay, loss, corrupt):
     ]
 
     return all([
-        dataproperty.is_empty_string(param) for param in params
+        typepy.is_null_string(param) for param in params
     ])
 
 

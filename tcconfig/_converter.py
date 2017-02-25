@@ -9,7 +9,7 @@ from __future__ import division
 from __future__ import unicode_literals
 import re
 
-import dataproperty
+import typepy
 
 
 class Humanreadable(object):
@@ -38,7 +38,7 @@ class Humanreadable(object):
         :raises ValueError:
         """
 
-        if dataproperty.is_empty_string(self.__readable_size):
+        if typepy.is_null_string(self.__readable_size):
             raise ValueError("readable_size is empty")
 
         size = self.__readable_size[:-1]

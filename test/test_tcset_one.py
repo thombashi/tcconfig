@@ -5,12 +5,13 @@
 """
 
 from __future__ import division
+
 import platform
 
-import dataproperty
 import pingparsing
 import pytest
 from subprocrunner import SubprocessRunner
+import typepy
 
 
 WAIT_TIME = 5  # [sec]
@@ -61,7 +62,7 @@ class Test_tcset_one_network(object):
         if device_option is None:
             pytest.skip("device option is null")
 
-        if dataproperty.is_empty_string(dst_host_option):
+        if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
         SubprocessRunner("tcdel --device " + device_option).run()
@@ -98,7 +99,7 @@ class Test_tcset_one_network(object):
     def test_const_latency_distro(
             self, device_option, dst_host_option, transmitter, pingparser,
             delay, delay_distro):
-        if dataproperty.is_empty_string(dst_host_option):
+        if typepy.is_null_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 
@@ -142,7 +143,7 @@ class Test_tcset_one_network(object):
     def test_const_packet_loss(
             self, device_option, dst_host_option, transmitter, pingparser,
             option, value):
-        if dataproperty.is_empty_string(dst_host_option):
+        if typepy.is_null_string(dst_host_option):
             # alternative to pytest.mark.skipif
             return
 

@@ -6,11 +6,13 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import contextlib
 
-import dataproperty
 import logbook
 import six
+import typepy
+
 import subprocrunner as spr
 
 from ._const import ANYWHERE_NETWORK
@@ -47,7 +49,7 @@ def sanitize_network(network):
 
     import ipaddress
 
-    if dataproperty.is_empty_string(network):
+    if typepy.is_null_string(network):
         return ""
 
     if network.lower() == "anywhere":
@@ -82,7 +84,7 @@ def run_command_helper(command, error_regexp, message, exception=None):
         logger.error(proc.stderr)
         return proc.returncode
 
-    if dataproperty.is_not_empty_string(message):
+    if typepy.is_not_null_string(message):
         logger.notice(message)
 
     if exception is not None:

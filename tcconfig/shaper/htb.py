@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import re
 
-import dataproperty
+import typepy
 
 from .._common import (
     logging_context,
@@ -169,11 +169,11 @@ class HtbShaper(AbstractShaper):
 
         exist_class_minor_id_list = []
         for class_item in exist_class_item_list:
-            inttype = dataproperty.IntegerType(class_item.split(":")[1])
-            if not inttype.is_convertible_type():
+            try:
+                exist_class_minor_id_list.append(
+                    typepy.type.Integer(class_item.split(":")[1]).convert())
+            except typepy.TypeConversionError:
                 continue
-
-            exist_class_minor_id_list.append(inttype.convert())
 
         logger.debug("existing class list with {:s}: {}".format(
             self.dev, exist_class_item_list))

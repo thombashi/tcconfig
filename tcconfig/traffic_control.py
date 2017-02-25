@@ -9,13 +9,11 @@ from __future__ import division
 
 import re
 
-from dataproperty import (
-    DataProperty,
-    FloatType,
-)
-import dataproperty
+from dataproperty import DataProperty
 import six
 from subprocrunner import SubprocessRunner
+import typepy
+from typepy.type import RealNumber
 
 from ._common import (
     logging_context,
@@ -169,7 +167,7 @@ class TrafficControl(object):
         try:
             self.__bandwidth_rate = Humanreadable(
                 bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_value()
-        except ValueError:
+        except (TypeError, ValueError):
             self.__bandwidth_rate = None
 
         IptablesMangleController.enable = is_enable_iptables
@@ -186,7 +184,7 @@ class TrafficControl(object):
         self.__validate_port()
 
     def __validate_src_network(self):
-        if dataproperty.is_empty_string(self.src_network):
+        if typepy.is_null_string(self.src_network):
             return
 
         if not self.is_enable_iptables:
@@ -194,7 +192,7 @@ class TrafficControl(object):
                 "--iptables option will be required to use --src-network option")
 
     def validate_bandwidth_rate(self):
-        if not dataproperty.FloatType(self.bandwidth_rate).is_type():
+        if not RealNumber(self.bandwidth_rate).is_type():
             raise EmptyParameterError("bandwidth_rate is empty")
 
         if self.bandwidth_rate <= 0:
@@ -300,7 +298,7 @@ class TrafficControl(object):
         ]
 
         if all([
-            not FloatType(
+            not RealNumber(
                 netem_param_value).is_type() or netem_param_value == 0
             for netem_param_value in netem_param_value_list
         ]):
@@ -322,7 +320,7 @@ class TrafficControl(object):
         if self.direction != TrafficDirection.INCOMING:
             return 0
 
-        if dataproperty.is_empty_string(self.ifb_device):
+        if typepy.is_null_string(self.ifb_device):
             return -1
 
         return_code = 0

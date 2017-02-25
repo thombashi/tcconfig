@@ -4,7 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
-from dataproperty import FloatType
+from typepy.type import RealNumber
 
 from tcconfig._converter import Humanreadable
 
@@ -17,7 +17,7 @@ def is_invalid_param(rate, delay, loss, corrupt):
     ]
 
     is_invalid = all([
-        not FloatType(param).is_type() or param == 0 for param in params
+        not RealNumber(param).is_type() or param == 0 for param in params
     ])
 
     try:
