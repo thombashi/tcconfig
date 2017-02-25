@@ -7,22 +7,18 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import copy
 import json
 import sys
 
-import dataproperty
-from dataproperty import IntegerType
 import logbook
 import six
-import subprocrunner
 from subprocrunner import SubprocessRunner
+import subprocrunner
+import typepy
+from typepy.type import Integer
 
-from .parser import (
-    TcFilterParser,
-    TcQdiscParser,
-    TcClassParser,
-)
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     verify_network_interface,
@@ -40,6 +36,11 @@ from ._logger import (
     set_log_level,
 )
 from ._traffic_direction import TrafficDirection
+from .parser import (
+    TcFilterParser,
+    TcQdiscParser,
+    TcClassParser,
+)
 
 
 logbook.StderrHandler(
@@ -90,7 +91,7 @@ class TcShapingRuleParser(object):
 
         if Tc.Param.HANDLE in filter_param:
             handle = filter_param.get(Tc.Param.HANDLE)
-            IntegerType(handle).validate()
+            Integer(handle).validate()
             handle = int(handle)
 
             for mangle in IptablesMangleController.parse():
@@ -98,7 +99,7 @@ class TcShapingRuleParser(object):
                     continue
 
                 key_item_list.append(network_format.format(mangle.destination))
-                if dataproperty.is_not_empty_string(mangle.source):
+                if typepy.is_not_null_string(mangle.source):
                     key_item_list.append("source={:s}".format(mangle.source))
                 key_item_list.append("protocol={}".format(mangle.protocol))
 
@@ -107,17 +108,17 @@ class TcShapingRuleParser(object):
                 raise ValueError("mangle mark not found: {}".format(mangle))
         else:
             network = filter_param.get(Tc.Param.NETWORK)
-            if dataproperty.is_not_empty_string(network):
+            if typepy.is_not_null_string(network):
                 key_item_list.append(network_format.format(network))
 
             port = filter_param.get(Tc.Param.PORT)
-            if IntegerType(port).is_type():
+            if Integer(port).is_type():
                 key_item_list.append(port_format.format(port))
 
         return ", ".join(key_item_list)
 
     def __get_shaping_rule(self, device):
-        if dataproperty.is_empty_string(device):
+        if typepy.is_null_string(device):
             return {}
 
         class_param_list = self.__parse_tc_class(device)
@@ -132,7 +133,7 @@ class TcShapingRuleParser(object):
             shaping_rule = {}
 
             filter_key = self.__get_filter_key(filter_param)
-            if dataproperty.is_empty_string(filter_key):
+            if typepy.is_null_string(filter_key):
                 logger.debug("empty filter key: {}".format(filter_param))
                 continue
 

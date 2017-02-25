@@ -188,6 +188,7 @@ Dependency python packages are automatically installed during
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
 - `six <https://pypi.python.org/pypi/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
+- `typepy <https://github.com/thombashi/typepy>`__
 - `voluptuous <https://github.com/alecthomas/voluptuous>`__
 
 Optional

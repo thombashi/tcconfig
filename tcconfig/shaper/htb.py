@@ -8,14 +8,17 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 import re
 
-import dataproperty
+import typepy
 
 from .._common import (
     logging_context,
     run_command_helper,
     run_tc_show,
 )
-from .._const import Tc
+from .._const import (
+    KILO_SIZE,
+    Tc,
+)
 from .._converter import Humanreadable
 from .._error import (
     TcAlreadyExist,
@@ -27,7 +30,6 @@ from ._interface import AbstractShaper
 
 class HtbShaper(AbstractShaper):
 
-    __NO_LIMIT = "1G"
     __DEFAULT_CLASS_MINOR_ID = 1
 
     class MinQdiscMinorId(object):
@@ -55,6 +57,21 @@ class HtbShaper(AbstractShaper):
             self.__netem_major_id = self.__get_unique_netem_major_id()
 
         return self.__netem_major_id
+
+    def get_no_limit_kbits(self):
+        # upper rate limit of iproute2 was 34.359.738.360 bits per second
+        # older than 3.14.0
+        # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
+
+        iproute2_upper_kbits = Humanreadable(
+            "32G", kilo_size=KILO_SIZE).to_kilo_value()
+
+        try:
+            with open("/sys/class/net/{:s}/speed".format(self.tc_device)) as f:
+                return min(
+                    int(f.read().strip()) * KILO_SIZE, iproute2_upper_kbits)
+        except IOError:
+            return iproute2_upper_kbits
 
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
@@ -85,14 +102,13 @@ class HtbShaper(AbstractShaper):
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id())
-        no_limit_bits = Humanreadable(
-            self.__NO_LIMIT, kilo_size=1000).to_kilo_value()
+        no_limit_kbits = self.get_no_limit_kbits()
 
         try:
             self._tc_obj.validate_bandwidth_rate()
-            kbitps = self._tc_obj.bandwidth_rate
+            kbits = self._tc_obj.bandwidth_rate
         except EmptyParameterError:
-            kbitps = no_limit_bits
+            kbits = no_limit_kbits
 
         command_list = [
             "tc class add",
@@ -100,14 +116,14 @@ class HtbShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {:f}Kbit".format(kbitps),
-            "ceil {:f}Kbit".format(kbitps),
+            "rate {:f}Kbit".format(kbits),
+            "ceil {:f}Kbit".format(kbits),
         ]
 
-        if kbitps != no_limit_bits:
+        if kbits != no_limit_kbits:
             command_list.extend([
-                "burst {:f}KB".format(kbitps / (10 * 8)),
-                "cburst {:f}KB".format(kbitps / (10 * 8)),
+                "burst {:f}KB".format(kbits / (10 * 8)),
+                "cburst {:f}KB".format(kbits / (10 * 8)),
             ])
 
         command = " ".join(command_list)
@@ -153,11 +169,11 @@ class HtbShaper(AbstractShaper):
 
         exist_class_minor_id_list = []
         for class_item in exist_class_item_list:
-            inttype = dataproperty.IntegerType(class_item.split(":")[1])
-            if not inttype.is_convertible_type():
+            try:
+                exist_class_minor_id_list.append(
+                    typepy.type.Integer(class_item.split(":")[1]).convert())
+            except typepy.TypeConversionError:
                 continue
-
-            exist_class_minor_id_list.append(inttype.convert())
 
         logger.debug("existing class list with {:s}: {}".format(
             self.dev, exist_class_item_list))
@@ -207,7 +223,7 @@ class HtbShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {}bit".format(self.__NO_LIMIT),
+            "rate {}kbit".format(self.get_no_limit_kbits()),
         ])
 
         if self._tc_obj.is_add_shaper:

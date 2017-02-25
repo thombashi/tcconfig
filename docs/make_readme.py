@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 import os.path
 import sys
 
+from path import Path
 import readmemaker
 
 
@@ -20,16 +21,18 @@ def write_examples(maker):
     maker.set_indent_level(0)
     maker.write_chapter("Usage")
 
+    usage_root = Path(os.path.join("pages", "usage"))
+
     maker.inc_indent_level()
     maker.write_chapter("Set traffic control (``tcset`` command)")
-    maker.write_example_file(os.path.join("tcset", "description.txt"))
-    maker.write_example_file(os.path.join("tcset", "basic_usage.rst"))
+    maker.write_file(usage_root.joinpath("tcset", "description.txt"))
+    maker.write_file(usage_root.joinpath("tcset", "basic_usage.rst"))
 
-    maker.write_example_file(os.path.join("tcdel", "header.rst"))
-    maker.write_example_file(os.path.join("tcdel", "usage.rst"))
+    maker.write_file(usage_root.joinpath("tcdel", "header.rst"))
+    maker.write_file(usage_root.joinpath("tcdel", "usage.rst"))
 
-    maker.write_example_file(os.path.join("tcshow", "header.rst"))
-    maker.write_example_file(os.path.join("tcshow", "usage.rst"))
+    maker.write_file(usage_root.joinpath("tcshow", "header.rst"))
+    maker.write_file(usage_root.joinpath("tcshow", "usage.rst"))
 
     maker.write_chapter("For more information")
     maker.write_line_list([

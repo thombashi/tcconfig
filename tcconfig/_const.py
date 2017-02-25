@@ -8,9 +8,10 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-VERSION = "0.7.1-alpha"
+VERSION = "0.7.1"
 
 ANYWHERE_NETWORK = "0.0.0.0/0"
+KILO_SIZE = 1000
 
 
 class Tc(object):
