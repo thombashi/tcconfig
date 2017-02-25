@@ -90,9 +90,9 @@ class HtbShaper(AbstractShaper):
 
         try:
             self._tc_obj.validate_bandwidth_rate()
-            kbitps = self._tc_obj.bandwidth_rate
+            kbits = self._tc_obj.bandwidth_rate
         except EmptyParameterError:
-            kbitps = no_limit_bits
+            kbits = no_limit_bits
 
         command_list = [
             "tc class add",
@@ -100,14 +100,14 @@ class HtbShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {:f}Kbit".format(kbitps),
-            "ceil {:f}Kbit".format(kbitps),
+            "rate {:f}Kbit".format(kbits),
+            "ceil {:f}Kbit".format(kbits),
         ]
 
-        if kbitps != no_limit_bits:
+        if kbits != no_limit_bits:
             command_list.extend([
-                "burst {:f}KB".format(kbitps / (10 * 8)),
-                "cburst {:f}KB".format(kbitps / (10 * 8)),
+                "burst {:f}KB".format(kbits / (10 * 8)),
+                "cburst {:f}KB".format(kbits / (10 * 8)),
             ])
 
         command = " ".join(command_list)
