@@ -85,14 +85,14 @@ class HtbShaper(AbstractShaper):
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id())
-        no_limit_bits = Humanreadable(
+        no_limit_kbits = Humanreadable(
             self.__NO_LIMIT, kilo_size=1000).to_kilo_value()
 
         try:
             self._tc_obj.validate_bandwidth_rate()
             kbits = self._tc_obj.bandwidth_rate
         except EmptyParameterError:
-            kbits = no_limit_bits
+            kbits = no_limit_kbits
 
         command_list = [
             "tc class add",
@@ -104,7 +104,7 @@ class HtbShaper(AbstractShaper):
             "ceil {:f}Kbit".format(kbits),
         ]
 
-        if kbits != no_limit_bits:
+        if kbits != no_limit_kbits:
             command_list.extend([
                 "burst {:f}KB".format(kbits / (10 * 8)),
                 "cburst {:f}KB".format(kbits / (10 * 8)),
