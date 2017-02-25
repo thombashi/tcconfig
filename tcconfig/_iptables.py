@@ -5,14 +5,16 @@
 """
 
 from __future__ import absolute_import
+from __future__ import unicode_literals
+
 import re
 
-import dataproperty
 from dataproperty import IntegerType
+import dataproperty
 from subprocrunner import SubprocessRunner
 
-from ._const import ANYWHERE_NETWORK
 from ._common import sanitize_network
+from ._const import ANYWHERE_NETWORK
 from ._logger import logger
 from ._split_line_list import split_line_list
 
