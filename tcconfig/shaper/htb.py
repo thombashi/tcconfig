@@ -15,7 +15,10 @@ from .._common import (
     run_command_helper,
     run_tc_show,
 )
-from .._const import Tc
+from .._const import (
+    KILO_SIZE,
+    Tc,
+)
 from .._converter import Humanreadable
 from .._error import (
     TcAlreadyExist,
@@ -61,11 +64,12 @@ class HtbShaper(AbstractShaper):
         # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
         iproute2_upper_kbits = Humanreadable(
-            "32G", kilo_size=1000).to_kilo_value()
+            "32G", kilo_size=KILO_SIZE).to_kilo_value()
 
         try:
             with open("/sys/class/net/{:s}/speed".format(self.tc_device)) as f:
-                return min(int(f.read().strip()) * 1000, iproute2_upper_kbits)
+                return min(
+                    int(f.read().strip()) * KILO_SIZE, iproute2_upper_kbits)
         except IOError:
             return iproute2_upper_kbits
 

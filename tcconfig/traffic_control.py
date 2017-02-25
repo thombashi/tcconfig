@@ -6,13 +6,14 @@
 
 from __future__ import absolute_import
 from __future__ import division
+
 import re
 
-import dataproperty
 from dataproperty import (
     DataProperty,
     FloatType,
 )
+import dataproperty
 import six
 from subprocrunner import SubprocessRunner
 
@@ -22,6 +23,7 @@ from ._common import (
     verify_network_interface,
     run_command_helper,
 )
+from ._const import KILO_SIZE
 from ._converter import Humanreadable
 from ._error import (
     NetworkInterfaceNotFoundError,
@@ -166,7 +168,7 @@ class TrafficControl(object):
         # bandwidth string [G/M/K bit per second]
         try:
             self.__bandwidth_rate = Humanreadable(
-                bandwidth_rate, kilo_size=1000).to_kilo_value()
+                bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_value()
         except ValueError:
             self.__bandwidth_rate = None
 
