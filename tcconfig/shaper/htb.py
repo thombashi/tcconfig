@@ -27,7 +27,6 @@ from ._interface import AbstractShaper
 
 class HtbShaper(AbstractShaper):
 
-    __NO_LIMIT = "1G"
     __DEFAULT_CLASS_MINOR_ID = 1
 
     class MinQdiscMinorId(object):
@@ -55,6 +54,20 @@ class HtbShaper(AbstractShaper):
             self.__netem_major_id = self.__get_unique_netem_major_id()
 
         return self.__netem_major_id
+
+    def get_no_limit_kbits(self):
+        # upper rate limit of iproute2 was 34.359.738.360 bits per second
+        # older than 3.14.0
+        # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
+
+        iproute2_upper_kbits = Humanreadable(
+            "32G", kilo_size=1000).to_kilo_value()
+
+        try:
+            with open("/sys/class/net/{:s}/speed".format(self.tc_device)) as f:
+                return min(int(f.read().strip()) * 1000, iproute2_upper_kbits)
+        except IOError:
+            return iproute2_upper_kbits
 
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
@@ -85,8 +98,7 @@ class HtbShaper(AbstractShaper):
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id())
-        no_limit_kbits = Humanreadable(
-            self.__NO_LIMIT, kilo_size=1000).to_kilo_value()
+        no_limit_kbits = self.get_no_limit_kbits()
 
         try:
             self._tc_obj.validate_bandwidth_rate()
@@ -207,7 +219,7 @@ class HtbShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {}bit".format(self.__NO_LIMIT),
+            "rate {}kbit".format(self.get_no_limit_kbits()),
         ])
 
         if self._tc_obj.is_add_shaper:
