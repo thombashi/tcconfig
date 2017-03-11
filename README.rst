@@ -6,9 +6,11 @@ tcconfig
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
+   :alt: Linux CI test status
 
 .. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
    :target: https://github.com/thombashi/tcconfig
+   :alt: GitHub repository
 
 Summary
 -------
