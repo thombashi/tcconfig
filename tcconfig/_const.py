@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-VERSION = "0.7.1"
+VERSION = "0.7.2"
 
 ANYWHERE_NETWORK = "0.0.0.0/0"
 KILO_SIZE = 1000

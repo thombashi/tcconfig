@@ -71,7 +71,8 @@ class TcShapingRuleParser(object):
     def get_tc_parameter(self):
         return {
             self.device: {
-                TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
+                TrafficDirection.OUTGOING: self.__get_shaping_rule(
+                    self.device),
                 TrafficDirection.INCOMING: self.__get_shaping_rule(
                     self.__get_ifb_from_device()),
             },
@@ -174,8 +175,12 @@ class TcShapingRuleParser(object):
         return shaping_rule_mapping
 
     def __parse_tc_qdisc(self, device):
-        param_list = list(TcQdiscParser().parse(
-            run_tc_show(Tc.Subcommand.QDISC, device)))
+        try:
+            param_list = list(TcQdiscParser().parse(
+                run_tc_show(Tc.Subcommand.QDISC, device)))
+        except ValueError:
+            return []
+
         logger.debug("tc qdisc parse result: {}".format(param_list))
 
         return param_list
