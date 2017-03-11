@@ -71,7 +71,8 @@ class TcShapingRuleParser(object):
     def get_tc_parameter(self):
         return {
             self.device: {
-                TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
+                TrafficDirection.OUTGOING: self.__get_shaping_rule(
+                    self.device),
                 TrafficDirection.INCOMING: self.__get_shaping_rule(
                     self.__get_ifb_from_device()),
             },
