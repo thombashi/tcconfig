@@ -174,8 +174,12 @@ class TcShapingRuleParser(object):
         return shaping_rule_mapping
 
     def __parse_tc_qdisc(self, device):
-        param_list = list(TcQdiscParser().parse(
-            run_tc_show(Tc.Subcommand.QDISC, device)))
+        try:
+            param_list = list(TcQdiscParser().parse(
+                run_tc_show(Tc.Subcommand.QDISC, device)))
+        except ValueError:
+            return []
+
         logger.debug("tc qdisc parse result: {}".format(param_list))
 
         return param_list
