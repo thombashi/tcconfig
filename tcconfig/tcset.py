@@ -7,6 +7,7 @@
 
 from __future__ import absolute_import
 
+import errno
 import sys
 
 import logbook
@@ -274,7 +275,7 @@ def main():
         tc.validate()
     except (NetworkInterfaceNotFoundError, ValueError) as e:
         logger.error(str(e))
-        return 1
+        return errno.EINVAL
 
     if options.overwrite:
         if options.log_level == logbook.INFO:

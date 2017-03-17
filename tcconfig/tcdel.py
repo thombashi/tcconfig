@@ -6,12 +6,13 @@
 """
 
 from __future__ import absolute_import
+
+import errno
 import sys
 
 import logbook
 import subprocrunner
 
-from .traffic_control import TrafficControl
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import verify_network_interface
 from ._const import VERSION
@@ -21,6 +22,7 @@ from ._logger import (
     logger,
     set_log_level,
 )
+from .traffic_control import TrafficControl
 
 
 logbook.StderrHandler(
@@ -49,7 +51,7 @@ def main():
         verify_network_interface(options.device)
     except NetworkInterfaceNotFoundError as e:
         logger.error(e)
-        return 1
+        return errno.EINVAL
 
     tc = TrafficControl(options.device)
     if options.log_level == logbook.INFO:
@@ -59,9 +61,8 @@ def main():
         return tc.delete_tc()
     except NetworkInterfaceNotFoundError as e:
         logger.debug(e)
-        return 0
 
-    return 1
+    return 0
 
 
 if __name__ == '__main__':
