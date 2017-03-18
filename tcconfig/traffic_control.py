@@ -11,9 +11,13 @@ import re
 
 from dataproperty import DataProperty
 import six
-from subprocrunner import SubprocessRunner
 import typepy
-from typepy.type import RealNumber
+from typepy.type import (
+    String,
+    RealNumber,
+)
+
+import subprocrunner as spr
 
 from ._common import (
     logging_context,
@@ -21,7 +25,11 @@ from ._common import (
     verify_network_interface,
     run_command_helper,
 )
-from ._const import KILO_SIZE
+from ._const import (
+    KILO_SIZE,
+    TcCoomandOutput,
+    LIST_MANGLE_TABLE_COMMAND,
+)
 from ._converter import Humanreadable
 from ._error import (
     NetworkInterfaceNotFoundError,
@@ -137,6 +145,10 @@ class TrafficControl(object):
     def qdisc_major_id_str(self):
         return "{:x}".format(self.__qdisc_major_id)
 
+    @property
+    def tc_command_output(self):
+        return self.__tc_command_output
+
     def __init__(
             self, device,
             direction=None, bandwidth_rate=None,
@@ -147,6 +159,7 @@ class TrafficControl(object):
             is_add_shaper=False,
             is_enable_iptables=True,
             shaping_algorithm=None,
+            tc_command_output=TcCoomandOutput.NOT_SET,
     ):
         self.__device = device
 
@@ -160,6 +173,7 @@ class TrafficControl(object):
         self.__port = port
         self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
+        self.__tc_command_output = tc_command_output
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
 
@@ -208,6 +222,18 @@ class TrafficControl(object):
             return self.ifb_device
 
         raise ValueError("unknown direction: " + self.direction)
+
+    def get_command_history(self):
+        def tc_filter(command):
+            if command == LIST_MANGLE_TABLE_COMMAND:
+                return False
+
+            if re.search("^tc .* show dev", command):
+                return False
+
+            return True
+
+        return filter(tc_filter, spr.SubprocessRunner.get_history())
 
     def set_tc(self):
         self.__setup_ifb()
@@ -325,7 +351,7 @@ class TrafficControl(object):
 
         return_code = 0
 
-        return_code |= SubprocessRunner("modprobe ifb").run()
+        return_code |= spr.SubprocessRunner("modprobe ifb").run()
 
         return_code |= run_command_helper(
             "ip link add {:s} type ifb".format(self.ifb_device),
@@ -333,7 +359,7 @@ class TrafficControl(object):
             self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add ip link: ip link already exists."))
 
-        return_code |= SubprocessRunner(
+        return_code |= spr.SubprocessRunner(
             "ip link set dev {:s} up".format(self.ifb_device)).run()
 
         return_code |= run_command_helper(
@@ -342,7 +368,7 @@ class TrafficControl(object):
             self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: ingress qdisc already exists."))
 
-        return_code |= SubprocessRunner(" ".join([
+        return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",
             "dev " + self.__device,
             "parent ffff: protocol ip u32 match u32 0 0",
@@ -363,7 +389,7 @@ class TrafficControl(object):
         ]
 
         if all([
-            SubprocessRunner(command).run() != 0
+            spr.SubprocessRunner(command).run() != 0
             for command in command_list
         ]):
             return 2

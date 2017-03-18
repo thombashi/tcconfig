@@ -10,6 +10,8 @@ import argparse
 
 import logbook
 
+from ._const import TcCoomandOutput
+
 
 class ArgparseWrapper(object):
     """
@@ -23,6 +25,7 @@ class ArgparseWrapper(object):
         self.parser.add_argument(
             "--version", action="version", version="%(prog)s " + version)
 
+        self._add_tc_command_arg_group()
         self._add_log_level_argument_group()
 
     def _add_log_level_argument_group(self):
@@ -39,3 +42,10 @@ class ArgparseWrapper(object):
             help="suppress execution log messages.")
 
         return group
+
+    def _add_tc_command_arg_group(self):
+        group = self.parser.add_argument_group("TC Commands")
+        group.add_argument(
+            "--tc-command", dest="tc_command_output", action="store_const",
+            const=TcCoomandOutput.STDOUT, default=TcCoomandOutput.NOT_SET,
+            help="use iptables to traffic shaping.")

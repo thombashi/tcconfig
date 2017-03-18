@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 import abc
 
 import six
-from subprocrunner import SubprocessRunner
+import subprocrunner
 import typepy
 
 from .._common import run_command_helper
@@ -136,7 +136,7 @@ class AbstractShaper(ShaperInterface):
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id()))
 
-        return SubprocessRunner(" ".join(command_list)).run()
+        return subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
 
     def _is_use_iptables(self):
         return all([

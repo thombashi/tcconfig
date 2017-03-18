@@ -30,3 +30,9 @@ class Tc(object):
         NETWORK = "network"
         PARENT = "parent"
         PORT = "port"
+
+
+class TcCoomandOutput(object):
+    NOT_SET = None
+    STDOUT = "STDOUT"
+    SCRIPT = "SCRIPT"

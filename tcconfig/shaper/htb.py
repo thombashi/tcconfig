@@ -6,6 +6,7 @@
 
 from __future__ import absolute_import
 from __future__ import unicode_literals
+
 import re
 
 import typepy
@@ -18,6 +19,7 @@ from .._common import (
 from .._const import (
     KILO_SIZE,
     Tc,
+    TcCoomandOutput,
 )
 from .._converter import Humanreadable
 from .._error import (
@@ -44,6 +46,7 @@ class HtbShaper(AbstractShaper):
         super(HtbShaper, self).__init__(tc_obj)
 
         self.__qdisc_minor_id = None
+        self.__qdisc_minor_id_count = 0
         self.__netem_major_id = None
 
     def get_qdisc_minor_id(self):
@@ -162,6 +165,11 @@ class HtbShaper(AbstractShaper):
             self.add_filter()
 
     def __get_unique_qdisc_minor_id(self):
+        if self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET:
+            self.__qdisc_minor_id_count += 1
+
+            return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
+
         exist_class_item_list = re.findall(
             "class htb {}".format(
                 self._tc_obj.qdisc_major_id_str) + "[\:][0-9]+",
