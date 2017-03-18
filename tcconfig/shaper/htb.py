@@ -75,14 +75,6 @@ class HtbShaper(AbstractShaper):
 
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
-        command = " ".join([
-            "tc qdisc add",
-            self.dev,
-            "root",
-            "handle {:s}".format(handle),
-            self.algorithm_name,
-            "default {:d}".format(self.__DEFAULT_CLASS_MINOR_ID),
-        ])
 
         if self._tc_obj.is_add_shaper:
             message = None
@@ -93,7 +85,17 @@ class HtbShaper(AbstractShaper):
                     self.dev, handle, self.algorithm_name))
 
         run_command_helper(
-            command, self._tc_obj.REGEXP_FILE_EXISTS, message, TcAlreadyExist)
+            " ".join([
+                "tc qdisc add",
+                self.dev,
+                "root",
+                "handle {:s}".format(handle),
+                self.algorithm_name,
+                "default {:d}".format(self.__DEFAULT_CLASS_MINOR_ID),
+            ]),
+            self._tc_obj.REGEXP_FILE_EXISTS,
+            message,
+            TcAlreadyExist)
 
         return self.__add_default_class()
 
@@ -216,14 +218,6 @@ class HtbShaper(AbstractShaper):
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
-        command = " ".join([
-            "tc class add",
-            self.dev,
-            "parent {:s}".format(parent),
-            "classid {:s}".format(classid),
-            self.algorithm_name,
-            "rate {}kbit".format(self.get_no_limit_kbits()),
-        ])
 
         if self._tc_obj.is_add_shaper:
             message = None
@@ -234,6 +228,13 @@ class HtbShaper(AbstractShaper):
                     self.dev, parent, classid, self.algorithm_name))
 
         return run_command_helper(
-            command,
+            " ".join([
+                "tc class add",
+                self.dev,
+                "parent {:s}".format(parent),
+                "classid {:s}".format(classid),
+                self.algorithm_name,
+                "rate {}kbit".format(self.get_no_limit_kbits()),
+            ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             message)

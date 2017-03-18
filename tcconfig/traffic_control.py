@@ -325,8 +325,7 @@ class TrafficControl(object):
 
         return_code = 0
 
-        command = "modprobe ifb"
-        return_code |= SubprocessRunner(command).run()
+        return_code |= SubprocessRunner("modprobe ifb").run()
 
         return_code |= run_command_helper(
             "ip link add {:s} type ifb".format(self.ifb_device),
@@ -334,8 +333,8 @@ class TrafficControl(object):
             self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add ip link: ip link already exists."))
 
-        command = "ip link set dev {:s} up".format(self.ifb_device)
-        return_code |= SubprocessRunner(command).run()
+        return_code |= SubprocessRunner(
+            "ip link set dev {:s} up".format(self.ifb_device)).run()
 
         return_code |= run_command_helper(
             "tc qdisc add dev {:s} ingress".format(self.__device),
@@ -343,15 +342,14 @@ class TrafficControl(object):
             self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: ingress qdisc already exists."))
 
-        command_list = [
+        return_code |= SubprocessRunner(" ".join([
             "tc filter add",
             "dev " + self.__device,
             "parent ffff: protocol ip u32 match u32 0 0",
             "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
             "action mirred egress redirect",
             "dev " + self.ifb_device,
-        ]
-        return_code |= SubprocessRunner(" ".join(command_list)).run()
+        ])).run()
 
         return return_code
 

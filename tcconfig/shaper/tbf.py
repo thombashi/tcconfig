@@ -55,13 +55,12 @@ class TbfShaper(AbstractShaper):
 
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
-        command = " ".join([
-            "tc qdisc add", self.dev, "root",
-            "handle {:s}".format(handle), "prio",
-        ])
 
         return run_command_helper(
-            command,
+            " ".join([
+                "tc qdisc add", self.dev, "root",
+                "handle {:s}".format(handle), "prio",
+            ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: prio qdisc already exists "
@@ -131,7 +130,7 @@ class TbfShaper(AbstractShaper):
         else:
             flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
-        command = " ".join([
+        return SubprocessRunner(" ".join([
             "tc filter add",
             self.dev,
             "protocol ip",
@@ -140,6 +139,4 @@ class TbfShaper(AbstractShaper):
                 self._get_network_direction_str(),
                 ANYWHERE_NETWORK),
             "flowid {:s}".format(flowid),
-        ])
-
-        return SubprocessRunner(command).run()
+        ])).run()
