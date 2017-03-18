@@ -5,6 +5,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
 
 import re
@@ -121,14 +122,14 @@ class HtbShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {:f}Kbit".format(kbits),
-            "ceil {:f}Kbit".format(kbits),
+            "rate {}Kbit".format(kbits),
+            "ceil {}Kbit".format(kbits),
         ]
 
         if kbits != no_limit_kbits:
             command_item_list.extend([
-                "burst {:f}KB".format(kbits / (10 * 8)),
-                "cburst {:f}KB".format(kbits / (10 * 8)),
+                "burst {}KB".format(kbits / (10 * 8)),
+                "cburst {}KB".format(kbits / (10 * 8)),
             ])
 
         run_command_helper(

@@ -86,10 +86,10 @@ class AbstractShaper(ShaperInterface):
 
         if self._tc_obj.latency_ms > 0:
             command_item_list.append(
-                "delay {:f}ms".format(self._tc_obj.latency_ms))
+                "delay {}ms".format(self._tc_obj.latency_ms))
 
             if self._tc_obj.latency_distro_ms > 0:
-                command_item_list.append("{:f}ms distribution normal".format(
+                command_item_list.append("{}ms distribution normal".format(
                     self._tc_obj.latency_distro_ms))
 
         if self._tc_obj.corruption_rate > 0:
