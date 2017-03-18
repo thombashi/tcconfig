@@ -44,11 +44,18 @@ class ArgparseWrapper(object):
         return group
 
     def _add_tc_command_arg_group(self):
-        group = self.parser.add_argument_group("TC Commands")
+        group = self.parser.add_mutually_exclusive_group()
         group.add_argument(
             "--tc-command", dest="tc_command_output", action="store_const",
             const=TcCoomandOutput.STDOUT, default=TcCoomandOutput.NOT_SET,
             help="""
             display tc commands to be executed and exit.
             commands are not actually executed.
+            """)
+
+        group.add_argument(
+            "--tc-script", dest="tc_command_output", action="store_const",
+            const=TcCoomandOutput.SCRIPT, default=TcCoomandOutput.NOT_SET,
+            help="""
+            generate a script file that include tc command to be executed.
             """)

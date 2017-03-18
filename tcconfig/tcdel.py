@@ -15,7 +15,10 @@ import logbook
 import subprocrunner
 
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import verify_network_interface
+from ._common import (
+    verify_network_interface,
+    write_tc_script,
+)
 from ._const import (
     VERSION,
     TcCoomandOutput,
@@ -76,10 +79,18 @@ def main():
         return 0
 
     command_history = "\n".join(tc.get_command_history())
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
+
+    if options.tc_command_output == TcCoomandOutput.STDOUT:
         print(command_history)
-    else:
-        logger.debug("command history\n{}".format(command_history))
+        return return_code
+
+    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+        set_logger(True)
+        write_tc_script(
+            "tcdel", command_history, filename_suffix=options.device)
+        return return_code
+
+    logger.debug("command history\n{}".format(command_history))
 
     return return_code
 

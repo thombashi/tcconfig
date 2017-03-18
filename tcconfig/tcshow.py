@@ -23,6 +23,7 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     verify_network_interface,
     run_tc_show,
+    write_tc_script,
 )
 from ._const import (
     VERSION,
@@ -222,10 +223,18 @@ def main():
 
         tc_param.update(TcShapingRuleParser(device, logger).get_tc_parameter())
 
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        print("\n".join(SubprocessRunner.get_history()))
-    else:
-        print(json.dumps(tc_param, indent=4))
+    command_history = "\n".join(SubprocessRunner.get_history())
+
+    if options.tc_command_output == TcCoomandOutput.STDOUT:
+        print(command_history)
+        return 0
+
+    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+        write_tc_script("tcshow", command_history)
+        return 0
+
+    logger.debug("command history\n{}".format(command_history))
+    print(json.dumps(tc_param, indent=4))
 
     return 0
 
