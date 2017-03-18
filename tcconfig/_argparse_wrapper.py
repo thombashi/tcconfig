@@ -48,4 +48,7 @@ class ArgparseWrapper(object):
         group.add_argument(
             "--tc-command", dest="tc_command_output", action="store_const",
             const=TcCoomandOutput.STDOUT, default=TcCoomandOutput.NOT_SET,
-            help="use iptables to traffic shaping.")
+            help="""
+            display tc commands to be executed and exit.
+            commands are not actually executed.
+            """)
