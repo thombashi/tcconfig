@@ -12,10 +12,7 @@ import re
 from dataproperty import DataProperty
 import six
 import typepy
-from typepy.type import (
-    String,
-    RealNumber,
-)
+from typepy.type import RealNumber
 
 import subprocrunner as spr
 

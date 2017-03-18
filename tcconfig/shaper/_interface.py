@@ -136,7 +136,8 @@ class AbstractShaper(ShaperInterface):
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id()))
 
-        return subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
+        return subprocrunner.SubprocessRunner(
+            " ".join(command_item_list)).run()
 
     def _is_use_iptables(self):
         return all([
