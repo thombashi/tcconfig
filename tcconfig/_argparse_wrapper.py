@@ -57,5 +57,6 @@ class ArgparseWrapper(object):
             "--tc-script", dest="tc_command_output", action="store_const",
             const=TcCoomandOutput.SCRIPT, default=TcCoomandOutput.NOT_SET,
             help="""
-            generate a script file that include tc command to be executed.
+            generate a script file that described tc commands to be executed
+            by this command.
             """)
