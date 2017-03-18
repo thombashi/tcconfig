@@ -1,0 +1,15 @@
+usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
+             --device DEVICE
+
+optional arguments:
+  -h, --help       show this help message and exit
+  --version        show program's version number and exit
+  --tc-command     display tc commands to be executed and exit. commands are
+                   not actually executed.
+  --tc-script      generate a script file that described tc commands to be
+                   executed by this command.
+  --debug          for debug print.
+  --quiet          suppress execution log messages.
+
+Traffic Control:
+  --device DEVICE  network device name (e.g. eth0)
