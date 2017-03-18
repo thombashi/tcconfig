@@ -123,5 +123,5 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
             command_history,
         ]) + "\n")
 
-    os.chmod(filename, 0755)
+    os.chmod(filename, 0o755)
     logger.info("written a tc script to '{:s}'".format(filename))
