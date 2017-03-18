@@ -18,6 +18,13 @@ logger = logbook.Logger("tcconfig")
 logger.disable()
 
 
+def set_logger(is_enable):
+    if is_enable:
+        logger.enable()
+    else:
+        logger.disable()
+
+
 def set_log_level(log_level):
     """
     Set logging level of this module. The module using
@@ -32,7 +39,7 @@ def set_log_level(log_level):
     subprocrunner.set_log_level(log_level)
 
     if log_level == logbook.NOTSET:
-        logger.disable()
+        set_logger(is_enable=False)
     else:
-        logger.enable()
+        set_logger(is_enable=True)
         logger.level = log_level
