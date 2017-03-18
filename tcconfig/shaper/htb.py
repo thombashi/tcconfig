@@ -110,7 +110,7 @@ class HtbShaper(AbstractShaper):
         except EmptyParameterError:
             kbits = no_limit_kbits
 
-        command_list = [
+        command_item_list = [
             "tc class add",
             self.dev,
             "parent {:s}".format(parent),
@@ -121,14 +121,13 @@ class HtbShaper(AbstractShaper):
         ]
 
         if kbits != no_limit_kbits:
-            command_list.extend([
+            command_item_list.extend([
                 "burst {:f}KB".format(kbits / (10 * 8)),
                 "cburst {:f}KB".format(kbits / (10 * 8)),
             ])
 
-        command = " ".join(command_list)
         run_command_helper(
-            command,
+            " ".join(command_item_list),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add class: class already exists "
