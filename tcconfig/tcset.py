@@ -6,7 +6,9 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
+import errno
 import sys
 
 import logbook
@@ -17,9 +19,11 @@ import typepy
 import pyparsing as pp
 
 from ._argparse_wrapper import ArgparseWrapper
+from ._common import write_tc_script
 from ._const import (
     VERSION,
     ANYWHERE_NETWORK,
+    TcCoomandOutput,
 )
 from ._error import (
     ModuleNotFoundError,
@@ -122,7 +126,7 @@ def parse_option():
         help="""
         set traffic shaping rule to a specific packets that routed from
         --src-network to --network. This option required to execute with
-        the --iptables option. 
+        the --iptables option.
         the shaping rule only affect to outgoing packets
         (no effect to if you execute with "--direction incoming" option)
         """)
@@ -267,14 +271,19 @@ def main():
         port=options.port,
         is_add_shaper=options.is_add_shaper,
         is_enable_iptables=options.is_enable_iptables,
-        shaping_algorithm=options.shaping_algorithm
+        shaping_algorithm=options.shaping_algorithm,
+        tc_command_output=options.tc_command_output,
     )
 
     try:
         tc.validate()
     except (NetworkInterfaceNotFoundError, ValueError) as e:
         logger.error(str(e))
-        return 1
+        return errno.EINVAL
+
+    subprocrunner.SubprocessRunner.is_save_history = True
+    if options.tc_command_output != TcCoomandOutput.NOT_SET:
+        subprocrunner.SubprocessRunner.is_dry_run = True
 
     if options.overwrite:
         if options.log_level == logbook.INFO:
@@ -288,6 +297,18 @@ def main():
         set_log_level(options.log_level)
 
     tc.set_tc()
+    command_history = "\n".join(tc.get_command_history())
+
+    if options.tc_command_output == TcCoomandOutput.STDOUT:
+        print(command_history)
+        return 0
+
+    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+        write_tc_script(
+            "tcset", command_history, filename_suffix=options.device)
+        return 0
+
+    logger.debug("command history\n{}".format(command_history))
 
     return 0
 
