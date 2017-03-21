@@ -37,6 +37,11 @@ class TcFilterParser(object):
         pp.SkipTo("flowid", include=True) +
         pp.Word(pp.hexnums + ":")
     )
+    __FILTER_PROTOCOL_PATTERN = (
+        pp.Literal("filter parent") +
+        pp.SkipTo("protocol", include=True) +
+        pp.Word(pp.alphanums)
+    )
     __FILTER_MATCH_PATTERN = (
         pp.Literal("match") +
         pp.Word(pp.alphanums + "/") +
@@ -54,6 +59,10 @@ class TcFilterParser(object):
     @property
     def flow_id(self):
         return self.__flow_id
+
+    @property
+    def protocol(self):
+        return self.__protocol
 
     @property
     def filter_network(self):
@@ -118,6 +127,11 @@ class TcFilterParser(object):
             except pp.ParseException:
                 logger.debug("failed to parse filter: {}".format(line))
 
+            try:
+                self.__parse_protocol(line)
+            except pp.ParseException:
+                logger.debug("failed to parse protocol: {}".format(line))
+
         if self.flow_id:
             filter_data_matrix.append(self.__get_filter())
 
@@ -139,6 +153,7 @@ class TcFilterParser(object):
         self.__flow_id = None
         self.__filter_network = None
         self.__filter_port = None
+        self.__protocol = None
 
         self.__handle = None
         self.__classid = None
@@ -148,6 +163,7 @@ class TcFilterParser(object):
             "flowid": self.flow_id,
             "network": self.filter_network,
             "port": self.filter_port,
+            "protocol": self.protocol
         })
 
     def __parse_flow_id(self, line):
@@ -156,6 +172,11 @@ class TcFilterParser(object):
         self.__flow_id = parsed_list[-1]
         logger.debug("succeed to parse flow id: flow-id={}, line={}".format(
             self.flow_id, line))
+
+    def __parse_protocol(self, line):
+        parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(
+            _to_unicode(line.lstrip()))
+        self.__protocol = parsed_list[-1]
 
     def __parse_mangle_mark(self, line):
         parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(

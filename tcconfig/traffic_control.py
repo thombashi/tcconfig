@@ -137,12 +137,20 @@ class TrafficControl(object):
     def qdisc_major_id_str(self):
         return "{:x}".format(self.__qdisc_major_id)
 
+    @property
+    def protocol(self):
+        return "ipv6" if self.__is_ipv6 else "ip"
+
+    @property
+    def protocol_match(self):
+        return "ip6" if self.__is_ipv6 else "ip"
+
     def __init__(
             self, device,
             direction=None, bandwidth_rate=None,
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, corruption_rate=None,
-            network=None, port=None,
+            network=None, port=None, is_ipv6=False,
             src_network=None,
             is_add_shaper=False,
             is_enable_iptables=True,
@@ -158,6 +166,7 @@ class TrafficControl(object):
         self.__network = network
         self.__src_network = src_network
         self.__port = port
+        self.__is_ipv6 = is_ipv6
         self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
 
@@ -230,7 +239,7 @@ class TrafficControl(object):
                     "RTNETLINK answers: Invalid argument",
                     "RTNETLINK answers: No such file or directory",
                 ])),
-                "failed to delete qdisc: no qdisc for incomming packets")
+                "failed to delete qdisc: no qdisc for incoming packets")
             result_list.append(returncode == 0)
 
         with logging_context("delete ifb device"):
@@ -346,7 +355,7 @@ class TrafficControl(object):
         command_list = [
             "tc filter add",
             "dev " + self.__device,
-            "parent ffff: protocol ip u32 match u32 0 0",
+            "parent ffff: protocol " + self.protocol + " u32 match u32 0 0",
             "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
             "action mirred egress redirect",
             "dev " + self.ifb_device,

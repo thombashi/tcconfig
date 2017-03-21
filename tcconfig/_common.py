@@ -61,7 +61,7 @@ def sanitize_network(network):
     except ipaddress.AddressValueError:
         pass
 
-    ipaddress.IPv4Network(six.text_type(network))  # validate network str
+    ipaddress.ip_network(six.text_type(network))  # validate network str
 
     return network
 

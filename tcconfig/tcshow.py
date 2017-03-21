@@ -87,6 +87,7 @@ class TcShapingRuleParser(object):
     def __get_filter_key(self, filter_param):
         network_format = "network={:s}"
         port_format = "port={:d}"
+        protocol_format = "protocol={:s}"
         key_item_list = []
 
         if Tc.Param.HANDLE in filter_param:
@@ -115,6 +116,9 @@ class TcShapingRuleParser(object):
             if Integer(port).is_type():
                 key_item_list.append(port_format.format(port))
 
+            protocol = filter_param.get("protocol")
+            if typepy.is_not_null_string(protocol):
+                key_item_list.append(protocol_format.format(protocol))
         return ", ".join(key_item_list)
 
     def __get_shaping_rule(self, device):
