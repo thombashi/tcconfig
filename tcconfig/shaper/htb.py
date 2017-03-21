@@ -5,7 +5,9 @@
 """
 
 from __future__ import absolute_import
+from __future__ import division
 from __future__ import unicode_literals
+
 import re
 
 import typepy
@@ -18,6 +20,7 @@ from .._common import (
 from .._const import (
     KILO_SIZE,
     Tc,
+    TcCoomandOutput,
 )
 from .._converter import Humanreadable
 from .._error import (
@@ -44,6 +47,7 @@ class HtbShaper(AbstractShaper):
         super(HtbShaper, self).__init__(tc_obj)
 
         self.__qdisc_minor_id = None
+        self.__qdisc_minor_id_count = 0
         self.__netem_major_id = None
 
     def get_qdisc_minor_id(self):
@@ -75,14 +79,6 @@ class HtbShaper(AbstractShaper):
 
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
-        command = " ".join([
-            "tc qdisc add",
-            self.dev,
-            "root",
-            "handle {:s}".format(handle),
-            self.algorithm_name,
-            "default {:d}".format(self.__DEFAULT_CLASS_MINOR_ID),
-        ])
 
         if self._tc_obj.is_add_shaper:
             message = None
@@ -93,7 +89,17 @@ class HtbShaper(AbstractShaper):
                     self.dev, handle, self.algorithm_name))
 
         run_command_helper(
-            command, self._tc_obj.REGEXP_FILE_EXISTS, message, TcAlreadyExist)
+            " ".join([
+                "tc qdisc add",
+                self.dev,
+                "root",
+                "handle {:s}".format(handle),
+                self.algorithm_name,
+                "default {:d}".format(self.__DEFAULT_CLASS_MINOR_ID),
+            ]),
+            self._tc_obj.REGEXP_FILE_EXISTS,
+            message,
+            TcAlreadyExist)
 
         return self.__add_default_class()
 
@@ -110,25 +116,24 @@ class HtbShaper(AbstractShaper):
         except EmptyParameterError:
             kbits = no_limit_kbits
 
-        command_list = [
+        command_item_list = [
             "tc class add",
             self.dev,
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {:f}Kbit".format(kbits),
-            "ceil {:f}Kbit".format(kbits),
+            "rate {}Kbit".format(kbits),
+            "ceil {}Kbit".format(kbits),
         ]
 
         if kbits != no_limit_kbits:
-            command_list.extend([
-                "burst {:f}KB".format(kbits / (10 * 8)),
-                "cburst {:f}KB".format(kbits / (10 * 8)),
+            command_item_list.extend([
+                "burst {}KB".format(kbits / (10 * 8)),
+                "cburst {}KB".format(kbits / (10 * 8)),
             ])
 
-        command = " ".join(command_list)
         run_command_helper(
-            command,
+            " ".join(command_item_list),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add class: class already exists "
@@ -161,6 +166,11 @@ class HtbShaper(AbstractShaper):
             self.add_filter()
 
     def __get_unique_qdisc_minor_id(self):
+        if self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET:
+            self.__qdisc_minor_id_count += 1
+
+            return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
+
         exist_class_item_list = re.findall(
             "class htb {}".format(
                 self._tc_obj.qdisc_major_id_str) + "[\:][0-9]+",
@@ -217,14 +227,6 @@ class HtbShaper(AbstractShaper):
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
-        command = " ".join([
-            "tc class add",
-            self.dev,
-            "parent {:s}".format(parent),
-            "classid {:s}".format(classid),
-            self.algorithm_name,
-            "rate {}kbit".format(self.get_no_limit_kbits()),
-        ])
 
         if self._tc_obj.is_add_shaper:
             message = None
@@ -235,6 +237,13 @@ class HtbShaper(AbstractShaper):
                     self.dev, parent, classid, self.algorithm_name))
 
         return run_command_helper(
-            command,
+            " ".join([
+                "tc class add",
+                self.dev,
+                "parent {:s}".format(parent),
+                "classid {:s}".format(classid),
+                self.algorithm_name,
+                "rate {}kbit".format(self.get_no_limit_kbits()),
+            ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             message)

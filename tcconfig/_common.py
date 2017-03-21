@@ -12,6 +12,7 @@ import contextlib
 import logbook
 import six
 import typepy
+import typepy
 
 import subprocrunner as spr
 
@@ -99,3 +100,28 @@ def run_tc_show(subcommand, device):
     runner.run()
 
     return runner.stdout
+
+
+def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
+    import datetime
+    import io
+    import os
+
+    filename_item_list = [tcconfig_command]
+    if typepy.is_not_null_string(filename_suffix):
+        filename_item_list.append(filename_suffix)
+
+    filename = "_".join(filename_item_list) + ".sh"
+    with io.open(filename, "w", encoding="utf8") as fp:
+        fp.write("\n".join([
+            "#!/bin/bash",
+            "",
+            "# tc script file, created by {:s} on {:s}.".format(
+                tcconfig_command,
+                datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
+            "",
+            command_history,
+        ]) + "\n")
+
+    os.chmod(filename, 0o755)
+    logger.info("written a tc script to '{:s}'".format(filename))

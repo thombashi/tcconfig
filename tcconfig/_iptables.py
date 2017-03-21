@@ -14,7 +14,10 @@ import typepy
 from typepy.type import Integer
 
 from ._common import sanitize_network
-from ._const import ANYWHERE_NETWORK
+from ._const import (
+    ANYWHERE_NETWORK,
+    LIST_MANGLE_TABLE_COMMAND,
+)
 from ._logger import logger
 from ._split_line_list import split_line_list
 
@@ -146,7 +149,7 @@ class IptablesMangleController(object):
 
     @classmethod
     def get_iptables(cls):
-        proc = SubprocessRunner("iptables -t mangle --line-numbers -L")
+        proc = SubprocessRunner(LIST_MANGLE_TABLE_COMMAND)
         if proc.run() != 0:
             raise RuntimeError(proc.stderr)
 

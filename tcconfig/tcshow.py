@@ -6,6 +6,7 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 from __future__ import unicode_literals
 
 import copy
@@ -13,7 +14,6 @@ import json
 import sys
 
 import logbook
-import six
 from subprocrunner import SubprocessRunner
 import subprocrunner
 import typepy
@@ -23,10 +23,12 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     verify_network_interface,
     run_tc_show,
+    write_tc_script,
 )
 from ._const import (
     VERSION,
     Tc,
+    TcCoomandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController
@@ -71,7 +73,8 @@ class TcShapingRuleParser(object):
     def get_tc_parameter(self):
         return {
             self.device: {
-                TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
+                TrafficDirection.OUTGOING: self.__get_shaping_rule(
+                    self.device),
                 TrafficDirection.INCOMING: self.__get_shaping_rule(
                     self.__get_ifb_from_device()),
             },
@@ -178,8 +181,12 @@ class TcShapingRuleParser(object):
         return shaping_rule_mapping
 
     def __parse_tc_qdisc(self, device):
-        param_list = list(TcQdiscParser().parse(
-            run_tc_show(Tc.Subcommand.QDISC, device)))
+        try:
+            param_list = list(TcQdiscParser().parse(
+                run_tc_show(Tc.Subcommand.QDISC, device)))
+        except ValueError:
+            return []
+
         logger.debug("tc qdisc parse result: {}".format(param_list))
 
         return param_list
@@ -206,6 +213,10 @@ def main():
 
     subprocrunner.Which("tc").verify()
 
+    subprocrunner.SubprocessRunner.is_save_history = True
+    if options.tc_command_output != TcCoomandOutput.NOT_SET:
+        subprocrunner.SubprocessRunner.is_dry_run = True
+
     tc_param = {}
     for device in options.device:
         try:
@@ -216,7 +227,18 @@ def main():
 
         tc_param.update(TcShapingRuleParser(device, logger).get_tc_parameter())
 
-    six.print_(json.dumps(tc_param, indent=4))
+    command_history = "\n".join(SubprocessRunner.get_history())
+
+    if options.tc_command_output == TcCoomandOutput.STDOUT:
+        print(command_history)
+        return 0
+
+    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+        write_tc_script("tcshow", command_history)
+        return 0
+
+    logger.debug("command history\n{}".format(command_history))
+    print(json.dumps(tc_param, indent=4))
 
     return 0
 

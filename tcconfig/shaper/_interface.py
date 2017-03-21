@@ -10,7 +10,7 @@ from __future__ import unicode_literals
 import abc
 
 import six
-from subprocrunner import SubprocessRunner
+import subprocrunner
 import typepy
 
 from .._common import run_command_helper
@@ -72,7 +72,7 @@ class AbstractShaper(ShaperInterface):
             self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
         handle = "{:x}".format(
             self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
-        command_list = [
+        command_item_list = [
             "tc qdisc add",
             "dev {:s}".format(self._tc_obj.get_tc_device()),
             "parent {:s}".format(parent),
@@ -81,29 +81,31 @@ class AbstractShaper(ShaperInterface):
         ]
 
         if self._tc_obj.packet_loss_rate > 0:
-            command_list.append(
+            command_item_list.append(
                 "loss {:f}%".format(self._tc_obj.packet_loss_rate))
 
         if self._tc_obj.latency_ms > 0:
-            command_list.append("delay {:f}ms".format(self._tc_obj.latency_ms))
+            command_item_list.append(
+                "delay {}ms".format(self._tc_obj.latency_ms))
 
             if self._tc_obj.latency_distro_ms > 0:
-                command_list.append("{:f}ms distribution normal".format(
+                command_item_list.append("{}ms distribution normal".format(
                     self._tc_obj.latency_distro_ms))
 
         if self._tc_obj.corruption_rate > 0:
-            command_list.append(
+            command_item_list.append(
                 "corrupt {:f}%".format(self._tc_obj.corruption_rate))
 
         return run_command_helper(
-            " ".join(command_list), self._tc_obj.REGEXP_FILE_EXISTS,
+            " ".join(command_item_list),
+            self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to add qdisc: netem qdisc already exists "
                 "(dev={:s}, parent={:s}, handle={:s})".format(
                     self._tc_obj.get_tc_device(), parent, handle)))
 
     def add_filter(self):
-        command_list = [
+        command_item_list = [
             "tc filter add",
             self.dev,
             "protocol {:s}".format(self._tc_obj.protocol),
@@ -112,7 +114,7 @@ class AbstractShaper(ShaperInterface):
         ]
 
         if self._is_use_iptables():
-            command_list.append(
+            command_item_list.append(
                 "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
             if typepy.is_null_string(self._tc_obj.network):
@@ -120,21 +122,22 @@ class AbstractShaper(ShaperInterface):
             else:
                 network = self._tc_obj.network
 
-            command_list.extend([
+            command_item_list.extend([
                 "u32",
                 "match {:s} {:s} {:s}".format(
                     self._tc_obj.protocol_match, self._get_network_direction_str(), network),
             ])
 
             if self._tc_obj.port is not None:
-                command_list.append(
+                command_item_list.append(
                     "match {:s} dport {:d} 0xffff".format(self._tc_obj.protocol_match, self._tc_obj.port))
 
-        command_list.append("flowid {:s}:{:d}".format(
+        command_item_list.append("flowid {:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id()))
 
-        return SubprocessRunner(" ".join(command_list)).run()
+        return subprocrunner.SubprocessRunner(
+            " ".join(command_item_list)).run()
 
     def _is_use_iptables(self):
         return all([
