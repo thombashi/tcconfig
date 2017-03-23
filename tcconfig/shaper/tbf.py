@@ -133,7 +133,7 @@ class TbfShaper(AbstractShaper):
         return SubprocessRunner(" ".join([
             "tc filter add",
             self.dev,
-            "protocol ip",
+            "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 2 u32 match ip {:s} {:s}".format(
                 self._get_network_direction_str(),

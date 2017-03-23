@@ -112,6 +112,9 @@ def parse_option():
         "--port", type=int,
         help="target port number to control traffic.")
     group.add_argument(
+        "--ipv6", dest="is_ipv6", action="store_true", default=False,
+        help="apply traffic control to IPv6 packets rather than IPv4.")
+    group.add_argument(
         "--shaping-algo", dest="shaping_algorithm",
         choices=["tbf", "htb"], default="htb",
         help="shaping algorithm. defaults to %(default)s (recommended).")
@@ -269,6 +272,7 @@ def main():
         network=options.network,
         src_network=options.src_network,
         port=options.port,
+        is_ipv6=options.is_ipv6,
         is_add_shaper=options.is_add_shaper,
         is_enable_iptables=options.is_enable_iptables,
         shaping_algorithm=options.shaping_algorithm,

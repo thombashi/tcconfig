@@ -108,7 +108,7 @@ class AbstractShaper(ShaperInterface):
         command_item_list = [
             "tc filter add",
             self.dev,
-            "protocol ip",
+            "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 1",
         ]
@@ -124,13 +124,13 @@ class AbstractShaper(ShaperInterface):
 
             command_item_list.extend([
                 "u32",
-                "match ip {:s} {:s}".format(
-                    self._get_network_direction_str(), network),
+                "match {:s} {:s} {:s}".format(
+                    self._tc_obj.protocol_match, self._get_network_direction_str(), network),
             ])
 
             if self._tc_obj.port is not None:
                 command_item_list.append(
-                    "match ip dport {:d} 0xffff".format(self._tc_obj.port))
+                    "match {:s} dport {:d} 0xffff".format(self._tc_obj.protocol_match, self._tc_obj.port))
 
         command_item_list.append("flowid {:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
