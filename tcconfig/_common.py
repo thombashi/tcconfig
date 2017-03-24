@@ -12,7 +12,6 @@ import contextlib
 import logbook
 import six
 import typepy
-import typepy
 
 import subprocrunner as spr
 
