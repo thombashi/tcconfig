@@ -22,7 +22,7 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._common import write_tc_script
 from ._const import (
     VERSION,
-    ANYWHERE_NETWORK,
+    Network,
     TcCoomandOutput,
 )
 from ._error import (
@@ -199,7 +199,8 @@ class TcConfigLoader(object):
 
                     try:
                         network = self.__parse_tc_filter_network(tc_filter)
-                        if network != ANYWHERE_NETWORK:
+                        if network not in (
+                                Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
                             option_list.append("--network=" + network)
                     except pp.ParseException:
                         pass
@@ -287,7 +288,7 @@ def main():
 
     subprocrunner.SubprocessRunner.is_save_history = True
     if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.is_dry_run = True
+        subprocrunner.SubprocessRunner.is_dry_run_default = True
 
     if options.overwrite:
         if options.log_level == logbook.INFO:

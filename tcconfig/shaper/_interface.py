@@ -13,12 +13,11 @@ import six
 import subprocrunner
 import typepy
 
-from .._common import run_command_helper
-from .._const import ANYWHERE_NETWORK
-from .._iptables import (
-    IptablesMangleController,
-    IptablesMangleMark
+from .._common import (
+    get_anywhere_network,
+    run_command_helper,
 )
+from .._iptables import IptablesMangleMark
 from .._traffic_direction import TrafficDirection
 
 
@@ -118,7 +117,7 @@ class AbstractShaper(ShaperInterface):
                 "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
             if typepy.is_null_string(self._tc_obj.network):
-                network = ANYWHERE_NETWORK
+                network = get_anywhere_network(self._tc_obj.ip_version)
             else:
                 network = self._tc_obj.network
 
@@ -158,7 +157,7 @@ class AbstractShaper(ShaperInterface):
         raise ValueError("unknown direction: {}".format(self.direction))
 
     def _get_unique_mangle_mark_id(self):
-        mark_id = IptablesMangleController.get_unique_mark_id()
+        mark_id = self._tc_obj.iptables_ctrl.get_unique_mark_id()
 
         self.__add_mangle_mark(mark_id)
 
@@ -179,6 +178,6 @@ class AbstractShaper(ShaperInterface):
             src_network = self._tc_obj.network
             chain = "INPUT"
 
-        IptablesMangleController.add(IptablesMangleMark(
-            mark_id=mark_id, source=src_network, destination=dst_network,
-            chain=chain))
+        self._tc_obj.iptables_ctrl.add(IptablesMangleMark(
+            ip_version=self._tc_obj.ip_version, mark_id=mark_id,
+            source=src_network, destination=dst_network, chain=chain))

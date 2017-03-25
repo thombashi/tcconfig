@@ -12,9 +12,9 @@ import typepy
 
 from .._common import (
     logging_context,
+    get_anywhere_network,
     run_command_helper,
 )
-from .._const import ANYWHERE_NETWORK
 from .._error import EmptyParameterError
 from .._traffic_direction import TrafficDirection
 from ._interface import AbstractShaper
@@ -138,6 +138,6 @@ class TbfShaper(AbstractShaper):
             "prio 2 u32 match {:s} {:s} {:s}".format(
                 self._tc_obj.protocol,
                 self._get_network_direction_str(),
-                ANYWHERE_NETWORK),
+                get_anywhere_network(self._tc_obj.ip_version)),
             "flowid {:s}".format(flowid),
         ])).run()

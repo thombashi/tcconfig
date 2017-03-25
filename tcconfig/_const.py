@@ -10,7 +10,6 @@ from __future__ import unicode_literals
 
 VERSION = "0.8.0"
 
-ANYWHERE_NETWORK = "0.0.0.0/0"
 KILO_SIZE = 1000
 LIST_MANGLE_TABLE_COMMAND = "iptables -t mangle --line-numbers -L"
 

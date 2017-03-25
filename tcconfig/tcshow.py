@@ -56,6 +56,13 @@ def parse_option():
     group.add_argument(
         "--device", action="append", required=True,
         help="network device name (e.g. eth0)")
+    group.add_argument(
+        "--ipv6", dest="ip_version", action="store_const",
+        const=6, default=4,
+        help="""
+        Display IPv6 shaping rules.
+        Defaults to show IPv4 shaping rules.
+        """)
 
     return parser.parser.parse_args()
 
@@ -66,9 +73,12 @@ class TcShapingRuleParser(object):
     def device(self):
         return self.__device
 
-    def __init__(self, device, logger):
+    def __init__(self, device, ip_version, logger):
         self.__device = device
+        self.__ip_version = ip_version
         self.__logger = logger
+
+        self.__iptables_ctrl = IptablesMangleController(True, ip_version)
 
     def get_tc_parameter(self):
         return {
@@ -85,7 +95,8 @@ class TcShapingRuleParser(object):
             "tc filter show dev {:s} root".format(self.device), dry_run=False)
         filter_runner.run()
 
-        return TcFilterParser().parse_incoming_device(filter_runner.stdout)
+        return TcFilterParser(self.__ip_version).parse_incoming_device(
+            filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
         network_format = "network={:s}"
@@ -98,7 +109,8 @@ class TcShapingRuleParser(object):
             Integer(handle).validate()
             handle = int(handle)
 
-            for mangle in IptablesMangleController.parse():
+            # for mangle in IptablesMangleController.parse(self.__ip_version):
+            for mangle in self.__iptables_ctrl.parse():
                 if mangle.mark_id != handle:
                     continue
 
@@ -192,7 +204,7 @@ class TcShapingRuleParser(object):
         return param_list
 
     def __parse_tc_filter(self, device):
-        param_list = list(TcFilterParser().parse_filter(
+        param_list = list(TcFilterParser(self.__ip_version).parse_filter(
             run_tc_show(Tc.Subcommand.FILTER, device)))
         logger.debug("tc filter parse result: {}".format(param_list))
 
@@ -215,7 +227,7 @@ def main():
 
     subprocrunner.SubprocessRunner.is_save_history = True
     if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.is_dry_run = True
+        subprocrunner.SubprocessRunner.is_dry_run_default = True
 
     tc_param = {}
     for device in options.device:
@@ -225,7 +237,8 @@ def main():
             logger.debug(str(e))
             continue
 
-        tc_param.update(TcShapingRuleParser(device, logger).get_tc_parameter())
+        tc_param.update(TcShapingRuleParser(
+            device, options.ip_version, logger).get_tc_parameter())
 
     command_history = "\n".join(SubprocessRunner.get_history())
 

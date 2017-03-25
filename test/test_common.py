@@ -55,27 +55,31 @@ class Test_get_anywhere_network:
 
 class Test_sanitize_network:
 
-    @pytest.mark.parametrize(["value", "expected"], [
-        ["192.168.0.1", "192.168.0.1/32"],
-        ["192.168.0.1/32", "192.168.0.1/32"],
-        ["192.168.0.0/24", "192.168.0.0/24"],
-        ["192.168.0.0/23", "192.168.0.0/23"],
-        ["anywhere", "0.0.0.0/0"],
-        ["ANYWHERE", "0.0.0.0/0"],
-        ["", ""],
-        [None, ""],
+    @pytest.mark.parametrize(["value", "ip_version", "expected"], [
+        ["192.168.0.1", 4, "192.168.0.1/32"],
+        ["192.168.0.1/32", 4, "192.168.0.1/32"],
+        ["192.168.0.0/24", 4, "192.168.0.0/24"],
+        ["192.168.0.0/23", 4, "192.168.0.0/23"],
+        ["2001:db00::0/24", 6, "2001:db00::/24"],
+        ["anywhere", 4, "0.0.0.0/0"],
+        ["ANYWHERE", 4, "0.0.0.0/0"],
+        ["anywhere", 6, "::0/0"],
+        ["ANYWHERE", 6, "::0/0"],
+        ["", 4, ""],
+        [None, 4, ""],
     ])
-    def test_normal(self, value, expected):
-        assert sanitize_network(value) == expected
+    def test_normal(self, value, ip_version, expected):
+        assert sanitize_network(value, ip_version) == expected
 
-    @pytest.mark.parametrize(["value", "expected"], [
-        ["192.168.0.1111", ValueError],
-        ["192.168.0.", ValueError],
-        [".168.0.1", ValueError],
-        ["192.168.1.0/23", ValueError],
-        ["192.168.0.0/33", ValueError],
-        ["test", ValueError],
+    @pytest.mark.parametrize(["value", "ip_version", "expected"], [
+        ["192.168.0.1111", 4, ValueError],
+        ["192.168.0.", 4, ValueError],
+        [".168.0.1", 4, ValueError],
+        ["192.168.1.0/23", 4, ValueError],
+        ["192.168.0.0/33", 4, ValueError],
+        ["192.168.1.0/24", 6, ValueError],
+        ["2001:db00::0/24", 4, ValueError],
     ])
-    def test_exception(self, value, expected):
+    def test_exception(self, value, ip_version, expected):
         with pytest.raises(expected):
-            sanitize_network(value)
+            sanitize_network(value, ip_version)

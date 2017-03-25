@@ -15,10 +15,7 @@ import typepy
 
 import subprocrunner as spr
 
-from ._const import (
-    ANYWHERE_NETWORK,
-    Network,
-)
+from ._const import Network
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -62,7 +59,7 @@ def verify_network_interface(device):
             "network interface not found: {}".format(device))
 
 
-def sanitize_network(network):
+def sanitize_network(network, ip_version):
     """
     :return: Network string
     :rtype: str
@@ -75,17 +72,28 @@ def sanitize_network(network):
         return ""
 
     if network.lower() == "anywhere":
-        return ANYWHERE_NETWORK
+        return get_anywhere_network(ip_version)
 
     try:
-        ipaddress.IPv4Address(six.text_type(network))
-        return network + "/32"
+        if ip_version == 4:
+            ipaddress.IPv4Address(network)
+            return network.compress
+
+        if ip_version == 6:
+            ipaddress.IPv6Address(network)
+            return network.compress
     except ipaddress.AddressValueError:
         pass
 
-    ipaddress.ip_network(six.text_type(network))  # validate network str
+    # validate network str ---
 
-    return network
+    if ip_version == 4:
+        return ipaddress.IPv4Network(six.text_type(network)).compressed
+
+    if ip_version == 6:
+        return ipaddress.IPv6Network(six.text_type(network)).compressed
+
+    raise ValueError("unexpected ip version: {}".format(ip_version))
 
 
 def run_command_helper(command, error_regexp, message, exception=None):
