@@ -3,8 +3,9 @@ usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
              [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
              [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
              [--loss PACKET_LOSS_RATE] [--corrupt CORRUPTION_RATE]
-             [--network NETWORK] [--port PORT] [--shaping-algo {tbf,htb}]
-             [--iptables] [--src-network SRC_NETWORK]
+             [--network NETWORK] [--port PORT] [--ipv6]
+             [--shaping-algo {tbf,htb}] [--iptables]
+             [--src-network SRC_NETWORK]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -48,6 +49,8 @@ Traffic Control:
                         random offset in the packet. (default=0)
   --network NETWORK     target IP address/network to control traffic
   --port PORT           target port number to control traffic.
+  --ipv6                apply traffic control to IPv6 packets rather than
+                        IPv4.
   --shaping-algo {tbf,htb}
                         shaping algorithm. defaults to htb (recommended).
 
