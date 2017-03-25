@@ -82,7 +82,7 @@ class TcShapingRuleParser(object):
 
     def __get_ifb_from_device(self):
         filter_runner = SubprocessRunner(
-            "tc filter show dev {:s} root".format(self.device))
+            "tc filter show dev {:s} root".format(self.device), dry_run=False)
         filter_runner.run()
 
         return TcFilterParser().parse_incoming_device(filter_runner.stdout)
