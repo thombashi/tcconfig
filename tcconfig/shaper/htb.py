@@ -53,6 +53,8 @@ class HtbShaper(AbstractShaper):
     def get_qdisc_minor_id(self):
         if self.__qdisc_minor_id is None:
             self.__qdisc_minor_id = self.__get_unique_qdisc_minor_id()
+            logger.debug("__get_unique_qdisc_minor_id: {:d}".format(
+                self.__qdisc_minor_id))
 
         return self.__qdisc_minor_id
 

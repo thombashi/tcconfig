@@ -160,3 +160,30 @@ class Test_TrafficControl_validate(object):
 
         with pytest.raises(expected):
             tc_obj.validate()
+
+
+class Test_TrafficControl_ipv4(object):
+
+    @pytest.mark.parametrize(
+        [
+            "network", "is_ipv6",
+            "expected_ip_ver", "expected_protocol", "expected_protocol_match"
+        ],
+        [
+            ["192.168.0.1", False, 4, "ip", "ip"],
+            ["192.168.0.0/24", False, 4, "ip", "ip"],
+            ["::1", True, 6, "ipv6", "ip6"],
+            ["2001:db00::0/24", True, 6, "ipv6", "ip6"],
+        ])
+    def test_normal(
+            self, device_option, network, is_ipv6,
+            expected_ip_ver, expected_protocol, expected_protocol_match):
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        tc_obj = TrafficControl(
+            device=device_option, network=network, is_ipv6=is_ipv6)
+
+        assert tc_obj.ip_version == expected_ip_ver
+        assert tc_obj.protocol == expected_protocol
+        assert tc_obj.protocol_match == expected_protocol_match

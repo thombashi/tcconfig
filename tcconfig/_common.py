@@ -12,11 +12,10 @@ import contextlib
 import logbook
 import six
 import typepy
-import typepy
 
 import subprocrunner as spr
 
-from ._const import ANYWHERE_NETWORK
+from ._const import Network
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -30,6 +29,25 @@ def logging_context(name):
         logger.debug("----- {:s}: {:s} ----|".format("complete", name))
 
 
+def is_anywhere_network(network, ip_version):
+    try:
+        return network.strip() == get_anywhere_network(ip_version)
+    except AttributeError as e:
+        raise ValueError(e)
+
+
+def get_anywhere_network(ip_version):
+    ip_version_n = typepy.type.Integer(ip_version).try_convert()
+
+    if ip_version_n == 4:
+        return Network.Ipv4.ANYWHERE
+
+    if ip_version_n == 6:
+        return Network.Ipv6.ANYWHERE
+
+    raise ValueError("unknown ip version: {}".format(ip_version))
+
+
 def verify_network_interface(device):
     try:
         import netifaces
@@ -41,7 +59,7 @@ def verify_network_interface(device):
             "network interface not found: {}".format(device))
 
 
-def sanitize_network(network):
+def sanitize_network(network, ip_version):
     """
     :return: Network string
     :rtype: str
@@ -54,17 +72,27 @@ def sanitize_network(network):
         return ""
 
     if network.lower() == "anywhere":
-        return ANYWHERE_NETWORK
+        return get_anywhere_network(ip_version)
 
     try:
-        ipaddress.IPv4Address(six.text_type(network))
-        return network + "/32"
+        if ip_version == 4:
+            ipaddress.IPv4Address(network)
+            return network + "/32"
+
+        if ip_version == 6:
+            return ipaddress.IPv6Address(network).compressed
     except ipaddress.AddressValueError:
         pass
 
-    ipaddress.ip_network(six.text_type(network))  # validate network str
+    # validate network str ---
 
-    return network
+    if ip_version == 4:
+        return ipaddress.IPv4Network(six.text_type(network)).compressed
+
+    if ip_version == 6:
+        return ipaddress.IPv6Network(six.text_type(network)).compressed
+
+    raise ValueError("unexpected ip version: {}".format(ip_version))
 
 
 def run_command_helper(command, error_regexp, message, exception=None):

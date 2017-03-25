@@ -43,13 +43,33 @@ e.g. Set 100ms +- 20ms network latency with normal distribution
 
 Multiple traffic shaping rules per interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 You can set multiple shaping rules to a network interface with ``--add`` option.
 
 .. code-block:: console
 
     tcset --device eth0 --rate 500M --network 192.168.2.0/24
     tcset --device eth0 --rate 100M --network 192.168.0.0/24 --add
+
+
+Using IPv6
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+IPv6 addresses can be used at ``tcset``/``tcshow`` commands with ``--ipv6`` option.
+
+.. code-block:: console
+
+    # tcset --device eth0 --delay 100 --network 2001:db00::0/24 --ipv6
+    # tcshow --device eth0 --ipv6
+    {
+        "eth0": {
+            "outgoing": {
+                "network=2001:db00::/24, protocol=ipv6": {
+                    "delay": "100.0",
+                    "rate": "1G"
+                }
+            },
+            "incoming": {}
+        }
+    }
 
 
 Get ``tc`` commands

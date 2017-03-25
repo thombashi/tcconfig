@@ -15,8 +15,8 @@ from typepy.type import Integer
 
 from ._common import sanitize_network
 from ._const import (
-    ANYWHERE_NETWORK,
     LIST_MANGLE_TABLE_COMMAND,
+    Network,
 )
 from ._logger import logger
 from ._split_line_list import split_line_list
@@ -52,12 +52,12 @@ class IptablesMangleMark(object):
         return self.__chain
 
     def __init__(
-            self, mark_id, source, destination, chain, protocol="all",
-            line_number=None):
+            self, ip_version, mark_id, source, destination, chain,
+            protocol="all", line_number=None):
         self.__line_number = line_number
         self.__mark_id = mark_id
-        self.__source = sanitize_network(source)
-        self.__destination = sanitize_network(destination)
+        self.__source = sanitize_network(source, ip_version)
+        self.__destination = sanitize_network(destination, ip_version)
         self.__protocol = protocol
 
         if chain not in VALID_CHAIN_LIST:
@@ -122,7 +122,7 @@ class IptablesMangleMark(object):
     def __is_valid_srcdst(srcdst):
         return (
             typepy.is_not_null_string(srcdst) and
-            srcdst != ANYWHERE_NETWORK
+            srcdst not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE)
         )
 
 
@@ -135,33 +135,37 @@ class IptablesMangleController(object):
     __MAX_MARK_ID = 0xffffffff
     __MARK_ID_OFFSET = 100
 
-    enable = True
+    @property
+    def enable(self):
+        return self.__enable
 
-    @classmethod
-    def clear(cls):
-        if not cls.enable:
+    def __init__(self, enable, ip_version):
+        self.__enable = enable
+        self.__ip_version = ip_version
+
+    def clear(self):
+        if not self.enable:
             return
 
-        for mangle in cls.parse():
+        for mangle in self.parse():
             proc = SubprocessRunner(mangle.to_delete_command())
             if proc.run() != 0:
                 raise RuntimeError(proc.stderr)
 
-    @classmethod
-    def get_iptables(cls):
+    def get_iptables(self):
         proc = SubprocessRunner(LIST_MANGLE_TABLE_COMMAND)
         if proc.run() != 0:
             raise RuntimeError(proc.stderr)
 
         return proc.stdout
 
-    @classmethod
-    def get_unique_mark_id(cls):
-        mark_id_list = [mangle.mark_id for mangle in cls.parse()]
+    def get_unique_mark_id(self):
+        mark_id_list = [
+            mangle.mark_id for mangle in self.parse()]
         logger.debug("mangle mark list: {}".format(mark_id_list))
 
-        unique_mark_id = 1 + cls.__MARK_ID_OFFSET
-        while unique_mark_id < cls.__MAX_MARK_ID:
+        unique_mark_id = 1 + self.__MARK_ID_OFFSET
+        while unique_mark_id < self.__MAX_MARK_ID:
             if unique_mark_id not in mark_id_list:
                 return unique_mark_id
 
@@ -169,18 +173,17 @@ class IptablesMangleController(object):
 
         raise RuntimeError("usable mark id not found")
 
-    @classmethod
-    def parse(cls):
-        for block in split_line_list(cls.get_iptables().splitlines()):
+    def parse(self):
+        for block in split_line_list(self.get_iptables().splitlines()):
             if len(block) <= 1:
                 # skip if no entry exists
                 continue
 
-            match = cls.__RE_CHAIN.search(block[0])
+            match = self.__RE_CHAIN.search(block[0])
             if match is None:
                 continue
 
-            chain = cls.__RE_CHAIN_NAME.search(match.group()).group()
+            chain = self.__RE_CHAIN_NAME.search(match.group()).group()
 
             for line in reversed(block[2:]):
                 item_list = line.split()
@@ -202,6 +205,7 @@ class IptablesMangleController(object):
                     continue
 
                 yield IptablesMangleMark(
+                    ip_version=self.__ip_version,
                     mark_id=mark, source=source, destination=destination,
                     chain=chain, protocol=protocol, line_number=line_number)
 

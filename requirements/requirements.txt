@@ -1,8 +1,7 @@
 DataProperty>=0.16.2
-ipaddress
 logbook
-pyparsing
+pyparsing>=2.2.0
 six
-subprocrunner>=0.6.0
+subprocrunner>=0.7.0
 typepy>=0.0.4
 voluptuous

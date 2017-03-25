@@ -18,6 +18,7 @@ import subprocrunner as spr
 
 from ._common import (
     logging_context,
+    get_anywhere_network,
     sanitize_network,
     verify_network_interface,
     run_command_helper,
@@ -143,6 +144,10 @@ class TrafficControl(object):
         return "{:x}".format(self.__qdisc_major_id)
 
     @property
+    def ip_version(self):
+        return 6 if self.__is_ipv6 else 4
+
+    @property
     def protocol(self):
         return "ipv6" if self.__is_ipv6 else "ip"
 
@@ -150,8 +155,13 @@ class TrafficControl(object):
     def protocol_match(self):
         return "ip6" if self.__is_ipv6 else "ip"
 
+    @property
     def tc_command_output(self):
         return self.__tc_command_output
+
+    @property
+    def iptables_ctrl(self):
+        return self.__iptables_ctrl
 
     def __init__(
             self, device,
@@ -189,7 +199,8 @@ class TrafficControl(object):
         except (TypeError, ValueError):
             self.__bandwidth_rate = None
 
-        IptablesMangleController.enable = is_enable_iptables
+        self.__iptables_ctrl = IptablesMangleController(
+            is_enable_iptables, self.ip_version)
 
         self.__init_shaper(shaping_algorithm)
 
@@ -198,8 +209,9 @@ class TrafficControl(object):
         self.__validate_netem_parameter()
         self.__validate_src_network()
 
-        self.__network = sanitize_network(self.network)
-        self.__src_network = sanitize_network(self.src_network)
+        self.__network = sanitize_network(self.network, self.ip_version)
+        self.__src_network = sanitize_network(
+            self.src_network, self.ip_version)
         self.__validate_port()
 
     def __validate_src_network(self):
@@ -227,6 +239,9 @@ class TrafficControl(object):
             return self.ifb_device
 
         raise ValueError("unknown direction: " + self.direction)
+
+    def get_anywhere_network(self):
+        return get_anywhere_network(self, )
 
     def get_command_history(self):
         def tc_filter(command):
@@ -272,7 +287,8 @@ class TrafficControl(object):
                 result_list.append(False)
 
         with logging_context("delete iptables mangle table entries"):
-            IptablesMangleController.clear()
+            self.iptables_ctrl.clear()
+            # IptablesMangleController.clear()
 
         return any(result_list)
 

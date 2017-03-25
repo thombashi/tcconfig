@@ -8,11 +8,18 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-VERSION = "0.8.0"
+VERSION = "0.9.0"
 
-ANYWHERE_NETWORK = "0.0.0.0/0"
 KILO_SIZE = 1000
 LIST_MANGLE_TABLE_COMMAND = "iptables -t mangle --line-numbers -L"
+
+
+class Network(object):
+    class Ipv4(object):
+        ANYWHERE = "0.0.0.0/0"
+
+    class Ipv6(object):
+        ANYWHERE = "::0/0"
 
 
 class Tc(object):

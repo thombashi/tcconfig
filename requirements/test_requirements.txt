@@ -1,4 +1,4 @@
 allpairspy
-pingparsing>=0.4.2
+pingparsing>=0.5.0
 pytest
 tox

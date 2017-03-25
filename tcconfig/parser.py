@@ -8,6 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import copy
+import ipaddress
 import re
 
 import typepy
@@ -27,10 +28,15 @@ def _to_unicode(text):
 
 class TcFilterParser(object):
 
-    class FilterMatchId(object):
+    class FilterMatchIdIpv4(object):
         INCOMING_NETWORK = 12
         OUTGOING_NETWORK = 16
         PORT = 20
+
+    class FilterMatchIdIpv6(object):
+        INCOMING_NETWORK_LIST = [8, 12, 16, 20]
+        OUTGOING_NETWORK_LIST = [24, 28, 32, 36]
+        PORT = 40
 
     __FILTER_FLOWID_PATTERN = (
         pp.Literal("filter parent") +
@@ -80,8 +86,12 @@ class TcFilterParser(object):
     def classid(self):
         return self.__classid
 
-    def __init__(self):
+    def __init__(self, ip_version):
+        self.__ip_version = ip_version
         self.__clear()
+
+        self.__buffer = None
+        self.__parse_idx = 0
 
     def parse_filter(self, text):
         self.__clear()
@@ -90,8 +100,13 @@ class TcFilterParser(object):
             return []
 
         filter_data_matrix = []
+        self.__buffer = text.splitlines()
+        self.__parse_idx = 0
 
-        for line in text.splitlines():
+        while self.__parse_idx < len(self.__buffer):
+            line = self.__buffer[self.__parse_idx].strip()
+            self.__parse_idx += 1
+
             if typepy.is_null_string(line):
                 continue
 
@@ -123,14 +138,21 @@ class TcFilterParser(object):
                 logger.debug("failed to parse flow id: {}".format(line))
 
             try:
-                self.__parse_filter(line)
-            except pp.ParseException:
-                logger.debug("failed to parse filter: {}".format(line))
-
-            try:
                 self.__parse_protocol(line)
+                continue
             except pp.ParseException:
                 logger.debug("failed to parse protocol: {}".format(line))
+
+            try:
+                if self.__ip_version == 4:
+                    self.__parse_filter_ipv4(line)
+                elif self.__ip_version == 6:
+                    self.__parse_filter_ipv6(line)
+                else:
+                    raise ValueError(
+                        "unknown ip version: {}".format(self.__ip_version))
+            except pp.ParseException:
+                logger.debug("failed to parse filter: {}".format(line))
 
         if self.flow_id:
             filter_data_matrix.append(self.__get_filter())
@@ -187,15 +209,20 @@ class TcFilterParser(object):
             "succeed to parse mangle mark: classid={}, handle={}, line={}".format(
                 self.classid, self.handle, line))
 
-    def __parse_filter(self, line):
+    def __parse_filter_line(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
             _to_unicode(line))
         value_hex, mask_hex = parsed_list[1].split("/")
         match_id = int(parsed_list[3])
 
+        return (value_hex, mask_hex, match_id)
+
+    def __parse_filter_ipv4(self, line):
+        value_hex, mask_hex, match_id = self.__parse_filter_line(line)
+
         if match_id in [
-            self.FilterMatchId.INCOMING_NETWORK,
-            self.FilterMatchId.OUTGOING_NETWORK,
+            self.FilterMatchIdIpv4.INCOMING_NETWORK,
+            self.FilterMatchIdIpv4.OUTGOING_NETWORK,
         ]:
             ipaddr = ".".join([
                 str(int(value_hex[i: i + 2], 16))
@@ -204,7 +231,63 @@ class TcFilterParser(object):
             netmask = bin(int(mask_hex, 16)).count("1")
 
             self.__filter_network = "{:s}/{:d}".format(ipaddr, netmask)
-        elif match_id == self.FilterMatchId.PORT:
+        elif match_id == self.FilterMatchIdIpv4.PORT:
+            self.__filter_port = int(value_hex, 16)
+
+        logger.debug(
+            "succeed to parse filter: filter_network={}, filter_port={}, line={}".format(
+                self.filter_network, self.filter_port, line))
+
+    def __parse_filter_ipv6(self, line):
+        netmask = 0
+        value_hex, mask_hex, match_id = self.__parse_filter_line(line)
+
+        octet_list = []
+        octet_len = 4
+
+        if (
+            match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
+            match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
+        ):
+            octet_list.extend([
+                value_hex[i: i + octet_len]
+                for i in range(0, len(value_hex), octet_len)
+            ])
+            netmask += bin(int(mask_hex, 16)).count("1")
+
+            while True:
+                try:
+                    line = self.__buffer[self.__parse_idx].strip()
+                except IndexError:
+                    break
+
+                try:
+                    value_hex, mask_hex, match_id = self.__parse_filter_line(
+                        line)
+                except pp.ParseException:
+                    break
+
+                if (
+                    match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
+                    match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
+                ):
+                    octet_list.extend([
+                        value_hex[i: i + octet_len]
+                        for i in range(0, len(value_hex), octet_len)
+                    ])
+                    netmask += bin(int(mask_hex, 16)).count("1")
+                else:
+                    break
+
+                self.__parse_idx += 1
+
+            while len(octet_list) < 8:
+                octet_list.append("0000")
+
+            self.__filter_network = ipaddress.IPv6Network("{:s}/{:d}".format(
+                ":".join(octet_list), netmask)).compressed
+
+        elif match_id == self.FilterMatchIdIpv6.PORT:
             self.__filter_port = int(value_hex, 16)
 
         logger.debug(

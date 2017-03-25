@@ -1,5 +1,5 @@
 usage: tcshow [-h] [--version] [--tc-command | --tc-script]
-              [--debug | --quiet] --device DEVICE
+              [--debug | --quiet] --device DEVICE [--ipv6]
 
 optional arguments:
   -h, --help       show this help message and exit
@@ -13,3 +13,5 @@ optional arguments:
 
 Traffic Control:
   --device DEVICE  network device name (e.g. eth0)
+  --ipv6           Display IPv6 shaping rules. Defaults to show IPv4 shaping
+                   rules.

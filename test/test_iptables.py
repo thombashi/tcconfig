@@ -5,14 +5,15 @@
 """
 
 from __future__ import unicode_literals
+
 import random
 
 import pytest
 from subprocrunner import SubprocessRunner
 
-from tcconfig._iptables import VALID_CHAIN_LIST
-from tcconfig._iptables import IptablesMangleMark
 from tcconfig._iptables import IptablesMangleController
+from tcconfig._iptables import IptablesMangleMark
+from tcconfig._iptables import VALID_CHAIN_LIST
 
 
 _DEF_SRC = "192.168.0.0/24"
@@ -21,6 +22,7 @@ _DEF_DST = "192.168.100.0/24"
 
 prerouting_mangle_mark_list = [
     IptablesMangleMark(
+        ip_version=4,
         line_number=1,
         mark_id=1,
         source=_DEF_SRC,
@@ -32,6 +34,7 @@ prerouting_mangle_mark_list = [
 
 input_mangle_mark_list = [
     IptablesMangleMark(
+        ip_version=4,
         line_number=1,
         mark_id=1234,
         source="anywhere",
@@ -43,6 +46,7 @@ input_mangle_mark_list = [
 
 output_mangle_mark_list = [
     IptablesMangleMark(
+        ip_version=4,
         line_number=1,
         mark_id=12,
         source=_DEF_SRC,
@@ -51,6 +55,7 @@ output_mangle_mark_list = [
         protocol="tcp"
     ),
     IptablesMangleMark(
+        ip_version=4,
         line_number=2,
         mark_id=123,
         source=_DEF_SRC,
@@ -59,6 +64,7 @@ output_mangle_mark_list = [
         protocol="all"
     ),
     IptablesMangleMark(
+        ip_version=4,
         line_number=3,
         mark_id=12345,
         source="anywhere",
@@ -79,6 +85,11 @@ reverse_mangle_mark_list = (
     list(reversed(input_mangle_mark_list)) +
     list(reversed(output_mangle_mark_list))
 )
+
+
+@pytest.fixture
+def iptables_ctrl_ipv4():
+    return IptablesMangleController(True, ip_version=4)
 
 
 class Test_IptablesMangleMark_repr(object):
@@ -133,6 +144,7 @@ class Test_IptablesMangleMark_to_append_command(object):
             self, mark_id, source, destination, chain, protocol, line_number,
             expected):
         mark = IptablesMangleMark(
+            ip_version=4,
             mark_id=mark_id, source=source, destination=destination,
             chain=chain, protocol=protocol, line_number=line_number)
         assert mark.to_append_command() == expected
@@ -160,6 +172,7 @@ class Test_IptablesMangleMark_to_delete_command(object):
             self, mark_id, source, destination, chain, protocol, line_number,
             expected):
         mark = IptablesMangleMark(
+            ip_version=4,
             mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
             chain=chain, protocol=protocol, line_number=line_number)
         assert mark.to_delete_command() == expected
@@ -180,6 +193,7 @@ class Test_IptablesMangleMark_to_delete_command(object):
             self, mark_id, source, destination, chain, protocol, line_number,
             expected):
         mark = IptablesMangleMark(
+            ip_version=4,
             mark_id=mark_id, source=source, destination=destination,
             chain=chain, protocol=protocol, line_number=line_number)
         with pytest.raises(expected):
@@ -188,89 +202,64 @@ class Test_IptablesMangleMark_to_delete_command(object):
 
 class Test_IptablesMangleController_get_unique_mark_id(object):
 
-    @classmethod
-    def setup_class(cls):
-        IptablesMangleController.clear()
-
-    @classmethod
-    def teardown_class(cls):
-        IptablesMangleController.clear()
-
     @pytest.mark.xfail
-    def test_normal(self):
+    def test_normal(self, iptables_ctrl_ipv4):
+        iptables_ctrl_ipv4.clear()
+
         for i in range(5):
-            mark_id = IptablesMangleController.get_unique_mark_id()
+            mark_id = iptables_ctrl_ipv4.get_unique_mark_id()
 
             assert mark_id == (i + 101)
 
             mangle_mark = IptablesMangleMark(
+                ip_version=4,
                 mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
                 chain=random.choice(VALID_CHAIN_LIST))
 
-            assert IptablesMangleController.add(mangle_mark) == 0
+            assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
 
 class Test_IptablesMangleController_add(object):
 
-    @classmethod
-    def setup_class(cls):
-        IptablesMangleController.clear()
-
-    @classmethod
-    def teardown_class(cls):
-        IptablesMangleController.clear()
-
     @pytest.mark.xfail
-    def test_normal(self):
-        initial_len = len(IptablesMangleController.get_iptables())
+    def test_normal(self, iptables_ctrl_ipv4):
+        iptables_ctrl_ipv4.clear()
+        initial_len = len(iptables_ctrl_ipv4.get_iptables())
 
         for mangle_mark in mangle_mark_list:
-            assert IptablesMangleController.add(mangle_mark) == 0
+            assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
-        assert len(IptablesMangleController.get_iptables()) > initial_len
+        assert len(iptables_ctrl_ipv4.get_iptables()) > initial_len
 
 
 class Test_IptablesMangleController_clear(object):
 
-    @classmethod
-    def setup_class(cls):
-        IptablesMangleController.clear()
-
-    @classmethod
-    def teardown_class(cls):
-        IptablesMangleController.clear()
-
     @pytest.mark.xfail
-    def test_normal(self):
-        initial_len = len(IptablesMangleController.get_iptables())
+    def test_normal(self, iptables_ctrl_ipv4):
+        iptables_ctrl_ipv4.clear()
+
+        initial_len = len(iptables_ctrl_ipv4.get_iptables())
 
         for mangle_mark in mangle_mark_list:
-            assert IptablesMangleController.add(mangle_mark) == 0
+            assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
-        assert len(IptablesMangleController.get_iptables()) > initial_len
+        assert len(iptables_ctrl_ipv4.get_iptables()) > initial_len
 
-        IptablesMangleController.clear()
+        iptables_ctrl_ipv4.clear()
 
-        assert len(IptablesMangleController.get_iptables()) == initial_len
+        assert len(iptables_ctrl_ipv4.get_iptables()) == initial_len
 
 
 class Test_IptablesMangleController_parse(object):
-
-    @classmethod
-    def setup_class(cls):
-        IptablesMangleController.clear()
-
-    @classmethod
-    def teardown_class(cls):
-        IptablesMangleController.clear()
-
     @pytest.mark.xfail
-    def test_normal(self):
+    def test_normal(self, iptables_ctrl_ipv4):
+        iptables_ctrl_ipv4.clear()
+
         for mangle_mark in mangle_mark_list:
-            assert IptablesMangleController.add(mangle_mark) == 0
+            assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
         for lhs_mangle, rhs_mangle in zip(
-                IptablesMangleController.parse(), reverse_mangle_mark_list):
+                iptables_ctrl_ipv4.parse(), reverse_mangle_mark_list):
 
             print("lhs: {}".format(lhs_mangle))
             print("rhs: {}".format(rhs_mangle))
