@@ -1,5 +1,4 @@
 DataProperty>=0.16.2
-ipaddress
 logbook
 pyparsing
 six
