@@ -135,7 +135,8 @@ class TbfShaper(AbstractShaper):
             self.dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio 2 u32 match ip {:s} {:s}".format(
+            "prio 2 u32 match {:s} {:s} {:s}".format(
+                self._tc_obj.protocol,
                 self._get_network_direction_str(),
                 ANYWHERE_NETWORK),
             "flowid {:s}".format(flowid),
