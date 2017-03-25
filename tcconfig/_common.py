@@ -17,8 +17,7 @@ import subprocrunner as spr
 
 from ._const import (
     ANYWHERE_NETWORK,
-    Ipv4Network,
-    Ipv6Network,
+    Network,
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
@@ -44,10 +43,10 @@ def get_anywhere_network(ip_version):
     ip_version_n = typepy.type.Integer(ip_version).try_convert()
 
     if ip_version_n == 4:
-        return Ipv4Network.ANYWHERE
+        return Network.Ipv4.ANYWHERE
 
     if ip_version_n == 6:
-        return Ipv6Network.ANYWHERE
+        return Network.Ipv6.ANYWHERE
 
     raise ValueError("unknown ip version: {}".format(ip_version))
 
