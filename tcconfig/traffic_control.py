@@ -150,6 +150,7 @@ class TrafficControl(object):
     def protocol_match(self):
         return "ip6" if self.__is_ipv6 else "ip"
 
+    @property
     def tc_command_output(self):
         return self.__tc_command_output
 
