@@ -77,11 +77,10 @@ def sanitize_network(network, ip_version):
     try:
         if ip_version == 4:
             ipaddress.IPv4Address(network)
-            return network.compressed
+            return network + "/32"
 
         if ip_version == 6:
-            ipaddress.IPv6Address(network)
-            return network.compressed
+            return ipaddress.IPv6Address(network).compressed
     except ipaddress.AddressValueError:
         pass
 
