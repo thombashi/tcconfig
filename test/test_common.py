@@ -6,7 +6,51 @@
 
 import pytest
 
-from tcconfig._common import sanitize_network
+from tcconfig._common import (
+    is_anywhere_network,
+    get_anywhere_network,
+    sanitize_network,
+)
+
+
+class Test_is_anywhere_network:
+
+    @pytest.mark.parametrize(["network", "ip_version", "expected"], [
+        ["0.0.0.0/0", 4, True],
+        ["192.168.0.0/0", 4, False],
+        ["::0/0", 6, True],
+        ["2001:db00::0/24", 6, False],
+    ])
+    def test_normal(self, network, ip_version, expected):
+        assert is_anywhere_network(network, ip_version) == expected
+
+    @pytest.mark.parametrize(["network", "ip_version",  "expected"], [
+        [None, 4, ValueError],
+        ["0.0.0.0/0", None, ValueError],
+    ])
+    def test_exception(self, network, ip_version, expected):
+        with pytest.raises(expected):
+            is_anywhere_network(network, ip_version)
+
+
+class Test_get_anywhere_network:
+
+    @pytest.mark.parametrize(["value", "expected"], [
+        [4, "0.0.0.0/0"],
+        ["4", "0.0.0.0/0"],
+        [6, "::0/0"],
+        ["6", "::0/0"],
+    ])
+    def test_normal(self, value, expected):
+        assert get_anywhere_network(value) == expected
+
+    @pytest.mark.parametrize(["value", "expected"], [
+        [None, ValueError],
+        ["test", ValueError],
+    ])
+    def test_exception(self, value, expected):
+        with pytest.raises(expected):
+            get_anywhere_network(value)
 
 
 class Test_sanitize_network:

@@ -15,7 +15,11 @@ import typepy
 
 import subprocrunner as spr
 
-from ._const import ANYWHERE_NETWORK
+from ._const import (
+    ANYWHERE_NETWORK,
+    Ipv4Network,
+    Ipv6Network,
+)
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -27,6 +31,25 @@ def logging_context(name):
         yield
     finally:
         logger.debug("----- {:s}: {:s} ----|".format("complete", name))
+
+
+def is_anywhere_network(network, ip_version):
+    try:
+        return network.strip() == get_anywhere_network(ip_version)
+    except AttributeError as e:
+        raise ValueError(e)
+
+
+def get_anywhere_network(ip_version):
+    ip_version_n = typepy.type.Integer(ip_version).try_convert()
+
+    if ip_version_n == 4:
+        return Ipv4Network.ANYWHERE
+
+    if ip_version_n == 6:
+        return Ipv6Network.ANYWHERE
+
+    raise ValueError("unknown ip version: {}".format(ip_version))
 
 
 def verify_network_interface(device):

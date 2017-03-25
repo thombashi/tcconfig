@@ -15,6 +15,14 @@ KILO_SIZE = 1000
 LIST_MANGLE_TABLE_COMMAND = "iptables -t mangle --line-numbers -L"
 
 
+class Ipv4Network(object):
+    ANYWHERE = "0.0.0.0/0"
+
+
+class Ipv6Network(object):
+    ANYWHERE = "::0/0"
+
+
 class Tc(object):
 
     class Subcommand(object):
