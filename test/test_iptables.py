@@ -9,11 +9,12 @@ from __future__ import unicode_literals
 import random
 
 import pytest
-from subprocrunner import SubprocessRunner
 
-from tcconfig._iptables import IptablesMangleController
-from tcconfig._iptables import IptablesMangleMark
-from tcconfig._iptables import VALID_CHAIN_LIST
+from tcconfig._iptables import (
+    IptablesMangleController,
+    IptablesMangleMark,
+    VALID_CHAIN_LIST,
+)
 
 
 _DEF_SRC = "192.168.0.0/24"
@@ -179,8 +180,8 @@ class Test_IptablesMangleMark_to_delete_command(object):
 
     @pytest.mark.parametrize(
         [
-            "mark_id", "source", "destination", "chain", "protocol", "line_number",
-            "expected"
+            "mark_id", "source", "destination", "chain", "protocol",
+            "line_number", "expected"
         ],
         [
             [

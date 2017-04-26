@@ -5,6 +5,7 @@
 """
 
 from __future__ import unicode_literals
+
 import re
 
 import pytest
@@ -102,7 +103,9 @@ class Test_split_line_list:
                 ],
             ],
         ])
-    def test_normal(self, value, separator, is_include_matched_line, is_strip, expected):
+    def test_normal(
+            self, value, separator, is_include_matched_line, is_strip,
+            expected):
         assert split_line_list(
             value, separator, is_include_matched_line, is_strip) == expected
 
@@ -117,7 +120,9 @@ class Test_split_line_list:
             [[1, 2, 3], re.compile(""), False, True, AttributeError],
             [[1, 2, 3], re.compile(""), False, False, TypeError],
         ])
-    def test_exception(self, value, separator, is_include_matched_line, is_strip, expected):
+    def test_exception(
+            self, value, separator, is_include_matched_line, is_strip,
+            expected):
         with pytest.raises(expected):
             split_line_list(
                 value, separator, is_include_matched_line, is_strip)
