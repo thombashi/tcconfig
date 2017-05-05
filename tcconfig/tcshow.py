@@ -109,7 +109,6 @@ class TcShapingRuleParser(object):
             Integer(handle).validate()
             handle = int(handle)
 
-            # for mangle in IptablesMangleController.parse(self.__ip_version):
             for mangle in self.__iptables_ctrl.parse():
                 if mangle.mark_id != handle:
                     continue
