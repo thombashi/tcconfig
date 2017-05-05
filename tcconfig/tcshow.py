@@ -130,7 +130,7 @@ class TcShapingRuleParser(object):
             if Integer(port).is_type():
                 key_item_list.append(port_format.format(port))
 
-            protocol = filter_param.get("protocol")
+            protocol = filter_param.get(Tc.Param.PROTOCOL)
             if typepy.is_not_null_string(protocol):
                 key_item_list.append(protocol_format.format(protocol))
         return ", ".join(key_item_list)

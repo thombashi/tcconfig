@@ -37,6 +37,7 @@ class Tc(object):
         NETWORK = "network"
         PARENT = "parent"
         PORT = "port"
+        PROTOCOL = "protocol"
 
 
 class TcCoomandOutput(object):
