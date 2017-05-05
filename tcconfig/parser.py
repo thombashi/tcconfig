@@ -294,8 +294,11 @@ class TcFilterParser(object):
             self.__filter_dst_port = int(value_hex, 16)
 
         logger.debug(
-            "succeed to parse filter: filter_network={}, filter_port={}, line={}".format(
-                self.filter_network, self.filter_port, line))
+            "succeed to parse filter: " + ", ".join([
+                "filter_network={}".format(self.filter_network),
+                "filter_port={}".format(self.filter_port),
+                "line={}".format(line)
+            ]))
 
 
 class TcQdiscParser(object):
