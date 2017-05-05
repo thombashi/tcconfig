@@ -36,7 +36,7 @@ class Tc(object):
         HANDLE = "handle"
         NETWORK = "network"
         PARENT = "parent"
-        PORT = "port"
+        DST_PORT = "port"
         PROTOCOL = "protocol"
 
 

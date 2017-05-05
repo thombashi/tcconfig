@@ -45,12 +45,16 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
   match 00000000/00000000 at 16"""),
             [
                 {
-                    Tc.Param.FLOW_ID: '1:1', Tc.Param.NETWORK: '192.168.0.10/32',
-                    Tc.Param.PROTOCOL: 'ip', Tc.Param.PORT: None,
+                    Tc.Param.FLOW_ID: '1:1',
+                    Tc.Param.NETWORK: '192.168.0.10/32',
+                    Tc.Param.PROTOCOL: 'ip',
+                    Tc.Param.DST_PORT: None,
                 },
                 {
-                    Tc.Param.FLOW_ID: '1:2', Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.PROTOCOL: None, Tc.Param.PORT: None,
+                    Tc.Param.FLOW_ID: '1:2',
+                    Tc.Param.NETWORK: '0.0.0.0/0',
+                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.DST_PORT: None,
                 },
             ],
         ],
@@ -66,12 +70,16 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
   match 00000000/00000000 at 16"""),
             [
                 {
-                    Tc.Param.FLOW_ID: '1:1', Tc.Param.NETWORK: '192.168.0.0/24',
-                    Tc.Param.PROTOCOL: 'ip', Tc.Param.PORT: 80,
+                    Tc.Param.FLOW_ID: '1:1',
+                    Tc.Param.NETWORK: '192.168.0.0/24',
+                    Tc.Param.PROTOCOL: 'ip',
+                    Tc.Param.DST_PORT: 80,
                 },
                 {
-                    Tc.Param.FLOW_ID: '1:2', Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.PROTOCOL: None, Tc.Param.PORT: None,
+                    Tc.Param.FLOW_ID: '1:2',
+                    Tc.Param.NETWORK: '0.0.0.0/0',
+                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.DST_PORT: None,
                 },
             ],
         ],
@@ -87,12 +95,16 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
   match 00000000/00000000 at 12"""),
             [
                 {
-                    Tc.Param.FLOW_ID: '1:3', Tc.Param.NETWORK: '192.168.0.10/32',
-                    Tc.Param.PROTOCOL: 'ip', Tc.Param.PORT: 8080,
+                    Tc.Param.FLOW_ID: '1:3',
+                    Tc.Param.NETWORK: '192.168.0.10/32',
+                    Tc.Param.PROTOCOL: 'ip',
+                    Tc.Param.DST_PORT: 8080,
                 },
                 {
-                    Tc.Param.FLOW_ID: '1:2', Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.PROTOCOL: None, Tc.Param.PORT: None,
+                    Tc.Param.FLOW_ID: '1:2',
+                    Tc.Param.NETWORK: '0.0.0.0/0',
+                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.DST_PORT: None,
                 },
             ],
         ],
@@ -128,8 +140,10 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
   match 00000001/ffffffff at 36"""),
             [
                 {
-                    Tc.Param.FLOW_ID: '1f87:2', Tc.Param.NETWORK: '::1/128',
-                    Tc.Param.PROTOCOL: 'ipv6', Tc.Param.PORT: None,
+                    Tc.Param.FLOW_ID: '1f87:2',
+                    Tc.Param.NETWORK: '::1/128',
+                    Tc.Param.PROTOCOL: 'ipv6',
+                    Tc.Param.DST_PORT: None,
                 },
             ]
         ],
@@ -143,8 +157,10 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
   match 00000001/ffffffff at 20"""),
             [
                 {
-                    Tc.Param.FLOW_ID: '1f87:2', Tc.Param.PROTOCOL: 'ipv6',
-                    Tc.Param.NETWORK: '2001:db00::1/128', Tc.Param.PORT: None
+                    Tc.Param.FLOW_ID: '1f87:2',
+                    Tc.Param.PROTOCOL: 'ipv6',
+                    Tc.Param.NETWORK: '2001:db00::1/128',
+                    Tc.Param.DST_PORT: None
                 }
             ]
         ],
@@ -163,16 +179,22 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
   match 00001f90/0000ffff at 40"""),
             [
                 {
-                    Tc.Param.FLOW_ID: '1f87:2', Tc.Param.PROTOCOL: 'ipv6',
-                    Tc.Param.NETWORK: '2001:db00::/24', Tc.Param.PORT: None
+                    Tc.Param.FLOW_ID: '1f87:2',
+                    Tc.Param.PROTOCOL: 'ipv6',
+                    Tc.Param.NETWORK: '2001:db00::/24',
+                    Tc.Param.DST_PORT: None
                 },
                 {
-                    Tc.Param.FLOW_ID: '1f87:3', Tc.Param.PROTOCOL: None,
-                    Tc.Param.NETWORK: '2001:db00::1/128', Tc.Param.PORT: None
+                    Tc.Param.FLOW_ID: '1f87:3',
+                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.NETWORK: '2001:db00::1/128',
+                    Tc.Param.DST_PORT: None
                 },
                 {
-                    Tc.Param.FLOW_ID: '1f87:4', Tc.Param.PROTOCOL: None,
-                    Tc.Param.NETWORK: None, Tc.Param.PORT: 8080
+                    Tc.Param.FLOW_ID: '1f87:4',
+                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.NETWORK: None,
+                    Tc.Param.DST_PORT: 8080
                 },
             ]
         ],
