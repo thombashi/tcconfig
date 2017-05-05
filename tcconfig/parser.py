@@ -76,7 +76,7 @@ class TcFilterParser(object):
 
     @property
     def filter_port(self):
-        return self.__filter_port
+        return self.__filter_dst_port
 
     @property
     def handle(self):
@@ -174,7 +174,7 @@ class TcFilterParser(object):
     def __clear(self):
         self.__flow_id = None
         self.__filter_network = None
-        self.__filter_port = None
+        self.__filter_dst_port = None
         self.__protocol = None
 
         self.__handle = None
@@ -232,7 +232,7 @@ class TcFilterParser(object):
 
             self.__filter_network = "{:s}/{:d}".format(ipaddr, netmask)
         elif match_id == self.FilterMatchIdIpv4.PORT:
-            self.__filter_port = int(value_hex, 16)
+            self.__filter_dst_port = int(value_hex, 16)
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
@@ -291,7 +291,7 @@ class TcFilterParser(object):
                 ":".join(octet_list), netmask)).compressed
 
         elif match_id == self.FilterMatchIdIpv6.PORT:
-            self.__filter_port = int(value_hex, 16)
+            self.__filter_dst_port = int(value_hex, 16)
 
         logger.debug(
             "succeed to parse filter: filter_network={}, filter_port={}, line={}".format(
