@@ -201,13 +201,14 @@ class TcConfigLoader(object):
                         network = self.__parse_tc_filter_network(tc_filter)
                         if network not in (
                                 Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
-                            option_list.append("--network=" + network)
+                            option_list.append(
+                                "--network={:s}".format(network))
                     except pp.ParseException:
                         pass
 
                     try:
                         port = self.__parse_tc_filter_port(tc_filter)
-                        option_list.append("--port=" + port)
+                        option_list.append("--port={}".format(port))
                     except pp.ParseException:
                         pass
 

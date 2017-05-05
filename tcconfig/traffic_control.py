@@ -391,11 +391,12 @@ class TrafficControl(object):
 
         return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",
-            "dev " + self.__device,
-            "parent ffff: protocol " + self.protocol + " u32 match u32 0 0",
+            "dev {:s}".format(self.__device),
+            "parent ffff: protocol {:s} u32 match u32 0 0".format(
+                self.protocol),
             "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
             "action mirred egress redirect",
-            "dev " + self.ifb_device,
+            "dev {:s}".format(self.ifb_device),
         ])).run()
 
         return return_code
