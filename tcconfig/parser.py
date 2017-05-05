@@ -63,24 +63,8 @@ class TcFilterParser(object):
     )
 
     @property
-    def flow_id(self):
-        return self.__flow_id
-
-    @property
     def protocol(self):
         return self.__protocol
-
-    @property
-    def filter_network(self):
-        return self.__filter_network
-
-    @property
-    def handle(self):
-        return self.__handle
-
-    @property
-    def classid(self):
-        return self.__classid
 
     def __init__(self, ip_version):
         self.__ip_version = ip_version
@@ -112,8 +96,8 @@ class TcFilterParser(object):
                 logger.debug("failed to parse mangle: {}".format(line))
             else:
                 filter_data_matrix.append({
-                    "classid": self.classid,
-                    "handle": self.handle,
+                    "classid": self.__classid,
+                    "handle": self.__handle,
                 })
                 self.__clear()
                 continue
@@ -150,7 +134,7 @@ class TcFilterParser(object):
             except pp.ParseException:
                 logger.debug("failed to parse filter: {}".format(line))
 
-        if self.flow_id:
+        if self.__flow_id:
             filter_data_matrix.append(self.__get_filter())
 
         return filter_data_matrix
@@ -178,8 +162,8 @@ class TcFilterParser(object):
 
     def __get_filter(self):
         return copy.deepcopy({
-            "flowid": self.flow_id,
-            "network": self.filter_network,
+            "flowid": self.__flow_id,
+            "network": self.__filter_network,
             "port": self.__filter_dst_port,
             "protocol": self.protocol
         })
@@ -189,7 +173,7 @@ class TcFilterParser(object):
             _to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
         logger.debug("succeed to parse flow id: flow-id={}, line={}".format(
-            self.flow_id, line))
+            self.__flow_id, line))
 
     def __parse_protocol(self, line):
         parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(
@@ -203,7 +187,7 @@ class TcFilterParser(object):
         self.__handle = int(u"0" + parsed_list[-3], 16)
         logger.debug(
             "succeed to parse mangle mark: classid={}, handle={}, line={}".format(
-                self.classid, self.handle, line))
+                self.__classid, self.__handle, line))
 
     def __parse_filter_line(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
@@ -232,7 +216,7 @@ class TcFilterParser(object):
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
-                "filter_network={}".format(self.filter_network),
+                "filter_network={}".format(self.__filter_network),
                 "filter_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
             ]))
@@ -291,7 +275,7 @@ class TcFilterParser(object):
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
-                "filter_network={}".format(self.filter_network),
+                "filter_network={}".format(self.__filter_network),
                 "filter_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
             ]))
