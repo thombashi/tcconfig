@@ -9,6 +9,7 @@ import itertools
 import pytest
 
 from allpairspy import AllPairs
+from tcconfig._const import Tc
 from tcconfig._traffic_direction import TrafficDirection
 from tcconfig.traffic_control import TrafficControl
 
@@ -133,12 +134,12 @@ class Test_TrafficControl_validate(object):
         [{"corruption_rate": -0.1}, ValueError],
         [{"corruption_rate": 100.1}, ValueError],
 
-        [{"network": "192.168.0."}, ValueError],
-        [{"network": "192.168.0.256"}, ValueError],
-        [{"network": "192.168.0.0/0"}, ValueError],
-        [{"network": "192.168.0.0/33"}, ValueError],
-        [{"network": "192.168.0.2/24"}, ValueError],
-        [{"network": "192.168.0.0000/24"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0."}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.256"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.0/0"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.0/33"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.2/24"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.0000/24"}, ValueError],
 
         [{"port": -1}, ValueError],
         [{"port": 65536}, ValueError],
@@ -154,7 +155,7 @@ class Test_TrafficControl_validate(object):
             latency_distro_ms=value.get("latency_distro_ms"),
             packet_loss_rate=value.get("packet_loss_rate"),
             corruption_rate=value.get("corruption_rate"),
-            network=value.get("network"),
+            network=value.get(Tc.Param.NETWORK),
             port=value.get("port"),
         )
 

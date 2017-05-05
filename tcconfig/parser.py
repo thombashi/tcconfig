@@ -96,8 +96,8 @@ class TcFilterParser(object):
                 logger.debug("failed to parse mangle: {}".format(line))
             else:
                 filter_data_matrix.append({
-                    "classid": self.__classid,
-                    "handle": self.__handle,
+                    Tc.Param.CLASS_ID: self.__classid,
+                    Tc.Param.HANDLE: self.__handle,
                 })
                 self.__clear()
                 continue
@@ -162,9 +162,9 @@ class TcFilterParser(object):
 
     def __get_filter(self):
         return {
-            "flowid": self.__flow_id,
-            "network": self.__filter_network,
-            "port": self.__filter_dst_port,
+            Tc.Param.FLOW_ID: self.__flow_id,
+            Tc.Param.NETWORK: self.__filter_network,
+            Tc.Param.PORT: self.__filter_dst_port,
             "protocol": self.protocol
         }
 
