@@ -106,11 +106,11 @@ def parse_option():
             TrafficControl.MIN_CORRUPTION_RATE,
             TrafficControl.MAX_CORRUPTION_RATE))
     group.add_argument(
-        "--network",
+        "--network", "--dst-network",
         help="target IP address/network to control traffic")
     group.add_argument(
-        "--port", type=int,
-        help="target port number to control traffic.")
+        "--port", "--dst-port", type=int,
+        help="target destination port number to control traffic.")
     group.add_argument(
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
         help="apply traffic control to IPv6 packets rather than IPv4.")
