@@ -75,10 +75,6 @@ class TcFilterParser(object):
         return self.__filter_network
 
     @property
-    def filter_port(self):
-        return self.__filter_dst_port
-
-    @property
     def handle(self):
         return self.__handle
 
@@ -184,7 +180,7 @@ class TcFilterParser(object):
         return copy.deepcopy({
             "flowid": self.flow_id,
             "network": self.filter_network,
-            "port": self.filter_port,
+            "port": self.__filter_dst_port,
             "protocol": self.protocol
         })
 
@@ -237,7 +233,7 @@ class TcFilterParser(object):
         logger.debug(
             "succeed to parse filter: " + ", ".join([
                 "filter_network={}".format(self.filter_network),
-                "filter_port={}".format(self.filter_port),
+                "filter_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
             ]))
 
@@ -296,7 +292,7 @@ class TcFilterParser(object):
         logger.debug(
             "succeed to parse filter: " + ", ".join([
                 "filter_network={}".format(self.filter_network),
-                "filter_port={}".format(self.filter_port),
+                "filter_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
             ]))
 
