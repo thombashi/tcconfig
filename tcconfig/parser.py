@@ -161,12 +161,12 @@ class TcFilterParser(object):
         self.__classid = None
 
     def __get_filter(self):
-        return copy.deepcopy({
+        return {
             "flowid": self.__flow_id,
             "network": self.__filter_network,
             "port": self.__filter_dst_port,
             "protocol": self.protocol
-        })
+        }
 
     def __parse_flow_id(self, line):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
