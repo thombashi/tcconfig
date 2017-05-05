@@ -282,8 +282,13 @@ def main():
 
     try:
         tc.validate()
-    except (NetworkInterfaceNotFoundError, ValueError) as e:
+    except (NetworkInterfaceNotFoundError) as e:
         logger.error(str(e))
+        return errno.EINVAL
+    except ValueError as e:
+        logger.error(
+            "{}. ".format(e) +
+            "--ipv6 option will be required to use IPv6 address.")
         return errno.EINVAL
 
     subprocrunner.SubprocessRunner.is_save_history = True
