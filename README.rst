@@ -20,13 +20,13 @@ A Simple tc command wrapper tool. Easy to set up traffic control of network band
 Traffic control features
 ------------------------
 
-Network
+Trafic shaping target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Traffic control can be specified network to apply to:
+Apply traffic shaping rules to specific target:
 
 -  Outgoing/Incoming packets
--  Certain IP address/network and port
+-  Certain IP address/network or port
 
 Available parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -119,7 +119,7 @@ Example
     {
         "eth0": {
             "outgoing": {
-                "network=192.168.0.10/32, port=8080": {
+                "network=192.168.0.10/32, dst-port=8080": {
                     "delay": "10.0",
                     "loss": "0.01",
                     "rate": "250K",
