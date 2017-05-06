@@ -129,7 +129,12 @@ class AbstractShaper(ShaperInterface):
                     network),
             ])
 
-            if self._tc_obj.dst_port is not None:
+            if self._tc_obj.src_port:
+                command_item_list.append(
+                    "match {:s} sport {:d} 0xffff".format(
+                        self._tc_obj.protocol_match, self._tc_obj.src_port))
+
+            if self._tc_obj.dst_port:
                 command_item_list.append(
                     "match {:s} dport {:d} 0xffff".format(
                         self._tc_obj.protocol_match, self._tc_obj.dst_port))

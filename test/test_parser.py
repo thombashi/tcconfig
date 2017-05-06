@@ -69,7 +69,8 @@ filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 
 filter parent 1: protocol ip pref 2 u32
 filter parent 1: protocol ip pref 2 u32 fh 800: ht divisor 1
 filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:2
-  match 00000000/00000000 at 16"""),
+  match 00000000/00000000 at 16
+  match 04d20000/ffff0000 at 20"""),
             [
                 {
                     Tc.Param.FLOW_ID: '1:1',
@@ -81,8 +82,8 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 {
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.SRC_PORT: None,
                     Tc.Param.PROTOCOL: 'ip',
+                    Tc.Param.SRC_PORT: 1234,
                     Tc.Param.DST_PORT: None,
                 },
             ],
@@ -111,6 +112,22 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                     Tc.Param.PROTOCOL: 'ip',
                     Tc.Param.SRC_PORT: None,
                     Tc.Param.DST_PORT: None,
+                },
+            ],
+        ],
+        [
+            six.b("""filter parent 1a1a: protocol ip pref 1 u32
+filter parent 1a1a: protocol ip pref 1 u32 fh 800: ht divisor 1
+filter parent 1a1a: protocol ip pref 1 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1a1a:2
+  match 00000000/00000000 at 16
+  match 15b3115c/ffffffff at 20"""),
+            [
+                {
+                    Tc.Param.FLOW_ID: '1a1a:2',
+                    Tc.Param.NETWORK: '0.0.0.0/0',
+                    Tc.Param.PROTOCOL: 'ip',
+                    Tc.Param.SRC_PORT: 5555,
+                    Tc.Param.DST_PORT: 4444,
                 },
             ],
         ],
@@ -173,8 +190,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
             ]
         ],
         [
-            six.b("""[/home/GitHubDesktop/tcconfig]# tc filter show dev ens33
-filter parent 1f87: protocol ipv6 pref 1 u32
+            six.b("""filter parent 1f87: protocol ipv6 pref 1 u32
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800: ht divisor 1
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1f87:2
   match 2001db00/ffffff00 at 24
@@ -205,6 +221,21 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.NETWORK: None,
                     Tc.Param.SRC_PORT: None,
+                    Tc.Param.DST_PORT: 8080
+                },
+            ]
+        ],
+        [
+            six.b("""filter parent 1f87: protocol ipv6 pref 1 u32
+filter parent 1f87: protocol ipv6 pref 1 u32 fh 800: ht divisor 1
+filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 bkt 0 flowid 1f87:4
+  match 00501f90/ffffffff at 40"""),
+            [
+                {
+                    Tc.Param.FLOW_ID: '1f87:4',
+                    Tc.Param.PROTOCOL: 'ipv6',
+                    Tc.Param.NETWORK: None,
+                    Tc.Param.SRC_PORT: 80,
                     Tc.Param.DST_PORT: 8080
                 },
             ]

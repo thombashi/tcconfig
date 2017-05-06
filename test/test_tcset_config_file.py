@@ -36,6 +36,10 @@ class Test_tcconfig(object):
                 "loss": "0.01",
                 "rate": "250K",
                 "delay-distro": "2.0"
+            },
+            "network=0.0.0.0/0, src-port=1234, protocol=ip": {
+                "delay": "50.0",
+                "rate": "1G"
             }
         },
         "incoming": {

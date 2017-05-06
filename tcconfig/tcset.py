@@ -112,6 +112,9 @@ def parse_option():
         "--port", "--dst-port", dest="dst_port", type=int,
         help="target destination port number to control traffic.")
     group.add_argument(
+        "--src-port", type=int,
+        help="target source port number to control traffic.")
+    group.add_argument(
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
         help="apply traffic control to IPv6 packets rather than IPv4.")
     group.add_argument(
@@ -186,7 +189,13 @@ class TcConfigLoader(object):
                 command_list.append("tcdel {:s}".format(device_option))
 
             for direction, direction_table in six.iteritems(device_table):
+                is_first_set = True
+
                 for tc_filter, filter_table in six.iteritems(direction_table):
+                    self.__logger.debug(
+                        "is_first_set={}, filter='{}', table={}".format(
+                            is_first_set, tc_filter, filter_table))
+
                     if not filter_table:
                         continue
 
@@ -207,10 +216,21 @@ class TcConfigLoader(object):
                         pass
 
                     try:
-                        dst_port = self.__parse_tc_filter_port(tc_filter)
+                        src_port = self.__parse_tc_filter_src_port(tc_filter)
+                        option_list.append("--src-port={}".format(src_port))
+                    except pp.ParseException:
+                        pass
+
+                    try:
+                        dst_port = self.__parse_tc_filter_dst_port(tc_filter)
                         option_list.append("--dst-port={}".format(dst_port))
                     except pp.ParseException:
                         pass
+
+                    if not is_first_set:
+                        option_list.append("--add")
+
+                    is_first_set = False
 
                     command_list.append(" ".join(["tcset"] + option_list))
 
@@ -225,9 +245,17 @@ class TcConfigLoader(object):
         return network_pattern.parseString(text)[-1]
 
     @staticmethod
-    def __parse_tc_filter_port(text):
+    def __parse_tc_filter_src_port(text):
         port_pattern = (
-            pp.SkipTo("port=", include=True) +
+            pp.SkipTo("src-port=", include=True) +
+            pp.Word(pp.nums))
+
+        return port_pattern.parseString(text)[-1]
+
+    @staticmethod
+    def __parse_tc_filter_dst_port(text):
+        port_pattern = (
+            pp.SkipTo("dst-port=", include=True) +
             pp.Word(pp.nums))
 
         return port_pattern.parseString(text)[-1]
@@ -273,6 +301,7 @@ def main():
         corruption_rate=options.corruption_rate,
         network=options.network,
         src_network=options.src_network,
+        src_port=options.src_port,
         dst_port=options.dst_port,
         is_ipv6=options.is_ipv6,
         is_add_shaper=options.is_add_shaper,

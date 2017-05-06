@@ -125,6 +125,11 @@ class TcShapingRuleParser(object):
             if typepy.is_not_null_string(network):
                 key_item_list.append(network_format.format(network))
 
+            src_port = filter_param.get(Tc.Param.SRC_PORT)
+            if Integer(src_port).is_type():
+                port_format = Tc.Param.SRC_PORT + "={:d}"
+                key_item_list.append(port_format.format(src_port))
+
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             if Integer(dst_port).is_type():
                 port_format = Tc.Param.DST_PORT + "={:d}"
@@ -133,6 +138,7 @@ class TcShapingRuleParser(object):
             protocol = filter_param.get(Tc.Param.PROTOCOL)
             if typepy.is_not_null_string(protocol):
                 key_item_list.append(protocol_format.format(protocol))
+
         return ", ".join(key_item_list)
 
     def __get_shaping_rule(self, device):
