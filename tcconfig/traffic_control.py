@@ -124,8 +124,12 @@ class TrafficControl(object):
         return self.__src_network
 
     @property
-    def port(self):
-        return self.__port
+    def src_port(self):
+        return self.__src_port
+
+    @property
+    def dst_port(self):
+        return self.__dst_port
 
     @property
     def is_add_shaper(self):
@@ -168,7 +172,7 @@ class TrafficControl(object):
             direction=None, bandwidth_rate=None,
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, corruption_rate=None,
-            network=None, port=None, is_ipv6=False,
+            network=None, src_port=None, dst_port=None, is_ipv6=False,
             src_network=None,
             is_add_shaper=False,
             is_enable_iptables=True,
@@ -184,7 +188,8 @@ class TrafficControl(object):
         self.__corruption_rate = corruption_rate  # [%]
         self.__network = network
         self.__src_network = src_network
-        self.__port = port
+        self.__src_port = src_port
+        self.__dst_port = dst_port
         self.__is_ipv6 = is_ipv6
         self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
@@ -353,7 +358,12 @@ class TrafficControl(object):
 
     def __validate_port(self):
         _validate_within_min_max(
-            "port", self.port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
+            "src_port", self.src_port, self.__MIN_PORT, self.__MAX_PORT,
+            unit=None)
+
+        _validate_within_min_max(
+            "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT,
+            unit=None)
 
     def __get_device_qdisc_major_id(self):
         import hashlib
@@ -391,11 +401,12 @@ class TrafficControl(object):
 
         return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",
-            "dev " + self.__device,
-            "parent ffff: protocol " + self.protocol + " u32 match u32 0 0",
+            "dev {:s}".format(self.__device),
+            "parent ffff: protocol {:s} u32 match u32 0 0".format(
+                self.protocol),
             "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
             "action mirred egress redirect",
-            "dev " + self.ifb_device,
+            "dev {:s}".format(self.ifb_device),
         ])).run()
 
         return return_code

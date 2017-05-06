@@ -9,6 +9,7 @@ import itertools
 import pytest
 
 from allpairspy import AllPairs
+from tcconfig._const import Tc
 from tcconfig._traffic_direction import TrafficDirection
 from tcconfig.traffic_control import TrafficControl
 
@@ -74,7 +75,7 @@ class Test_TrafficControl_validate(object):
     @pytest.mark.parametrize(
         [
             "rate", "direction", "delay", "delay_distro", "loss",
-            "corrupt", "network", "port",
+            "corrupt", "network", "src_port", "dst_port",
         ],
         [
             opt_list
@@ -91,12 +92,13 @@ class Test_TrafficControl_validate(object):
                     "192.168.0.1", "192.168.0.254",
                     "192.168.0.1/32", "192.168.0.0/24"
                 ],  # network
-                [None, 0, 65535],  # port
+                [None, 65535],  # src_port
+                [None, 65535],  # dst_port
             ], n=3)
         ])
     def test_normal(
             self, device_option, rate, direction, delay, delay_distro, loss,
-            corrupt, network, port):
+            corrupt, network, src_port, dst_port):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -109,7 +111,8 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=loss,
             corruption_rate=corrupt,
             network=network,
-            port=port,
+            src_port=src_port,
+            dst_port=dst_port,
             src_network=None,
             is_enable_iptables=True,
         )
@@ -133,15 +136,18 @@ class Test_TrafficControl_validate(object):
         [{"corruption_rate": -0.1}, ValueError],
         [{"corruption_rate": 100.1}, ValueError],
 
-        [{"network": "192.168.0."}, ValueError],
-        [{"network": "192.168.0.256"}, ValueError],
-        [{"network": "192.168.0.0/0"}, ValueError],
-        [{"network": "192.168.0.0/33"}, ValueError],
-        [{"network": "192.168.0.2/24"}, ValueError],
-        [{"network": "192.168.0.0000/24"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0."}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.256"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.0/0"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.0/33"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.2/24"}, ValueError],
+        [{Tc.Param.NETWORK: "192.168.0.0000/24"}, ValueError],
 
-        [{"port": -1}, ValueError],
-        [{"port": 65536}, ValueError],
+        [{"src_port": -1}, ValueError],
+        [{"src_port": 65536}, ValueError],
+
+        [{"dst_port": -1}, ValueError],
+        [{"dst_port": 65536}, ValueError],
     ])
     def test_exception(self, device_option, value, expected):
         if device_option is None:
@@ -154,8 +160,9 @@ class Test_TrafficControl_validate(object):
             latency_distro_ms=value.get("latency_distro_ms"),
             packet_loss_rate=value.get("packet_loss_rate"),
             corruption_rate=value.get("corruption_rate"),
-            network=value.get("network"),
-            port=value.get("port"),
+            network=value.get(Tc.Param.NETWORK),
+            src_port=value.get("src_port"),
+            dst_port=value.get("dst_port"),
         )
 
         with pytest.raises(expected):

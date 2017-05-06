@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-VERSION = "0.9.0"
+VERSION = "0.10.0"
 
 KILO_SIZE = 1000
 LIST_MANGLE_TABLE_COMMAND = "iptables -t mangle --line-numbers -L"
@@ -36,7 +36,9 @@ class Tc(object):
         HANDLE = "handle"
         NETWORK = "network"
         PARENT = "parent"
-        PORT = "port"
+        SRC_PORT = "src-port"
+        DST_PORT = "dst-port"
+        PROTOCOL = "protocol"
 
 
 class TcCoomandOutput(object):

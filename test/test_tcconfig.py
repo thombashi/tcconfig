@@ -135,11 +135,12 @@ class Test_tcconfig(object):
 
         SubprocessRunner("tcdel {:s}".format(device_option)).run()
 
-        assert SubprocessRunner(" ".join([
+        tcset_proc = SubprocessRunner(" ".join([
             "tcset",
             device_option,
             rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite, is_enable_iptables,
-        ])).run() == 0
+        ]))
+        assert tcset_proc.run() == 0, tcset_proc.stderr
 
         SubprocessRunner("tcdel {:s}".format(device_option)).run()

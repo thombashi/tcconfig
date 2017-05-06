@@ -106,11 +106,14 @@ def parse_option():
             TrafficControl.MIN_CORRUPTION_RATE,
             TrafficControl.MAX_CORRUPTION_RATE))
     group.add_argument(
-        "--network",
+        "--network", "--dst-network",
         help="target IP address/network to control traffic")
     group.add_argument(
-        "--port", type=int,
-        help="target port number to control traffic.")
+        "--port", "--dst-port", dest="dst_port", type=int,
+        help="target destination port number to control traffic.")
+    group.add_argument(
+        "--src-port", type=int,
+        help="target source port number to control traffic.")
     group.add_argument(
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
         help="apply traffic control to IPv6 packets rather than IPv4.")
@@ -186,7 +189,13 @@ class TcConfigLoader(object):
                 command_list.append("tcdel {:s}".format(device_option))
 
             for direction, direction_table in six.iteritems(device_table):
+                is_first_set = True
+
                 for tc_filter, filter_table in six.iteritems(direction_table):
+                    self.__logger.debug(
+                        "is_first_set={}, filter='{}', table={}".format(
+                            is_first_set, tc_filter, filter_table))
+
                     if not filter_table:
                         continue
 
@@ -201,15 +210,27 @@ class TcConfigLoader(object):
                         network = self.__parse_tc_filter_network(tc_filter)
                         if network not in (
                                 Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
-                            option_list.append("--network=" + network)
+                            option_list.append(
+                                "--network={:s}".format(network))
                     except pp.ParseException:
                         pass
 
                     try:
-                        port = self.__parse_tc_filter_port(tc_filter)
-                        option_list.append("--port=" + port)
+                        src_port = self.__parse_tc_filter_src_port(tc_filter)
+                        option_list.append("--src-port={}".format(src_port))
                     except pp.ParseException:
                         pass
+
+                    try:
+                        dst_port = self.__parse_tc_filter_dst_port(tc_filter)
+                        option_list.append("--dst-port={}".format(dst_port))
+                    except pp.ParseException:
+                        pass
+
+                    if not is_first_set:
+                        option_list.append("--add")
+
+                    is_first_set = False
 
                     command_list.append(" ".join(["tcset"] + option_list))
 
@@ -224,9 +245,17 @@ class TcConfigLoader(object):
         return network_pattern.parseString(text)[-1]
 
     @staticmethod
-    def __parse_tc_filter_port(text):
+    def __parse_tc_filter_src_port(text):
         port_pattern = (
-            pp.SkipTo("port=", include=True) +
+            pp.SkipTo("src-port=", include=True) +
+            pp.Word(pp.nums))
+
+        return port_pattern.parseString(text)[-1]
+
+    @staticmethod
+    def __parse_tc_filter_dst_port(text):
+        port_pattern = (
+            pp.SkipTo("dst-port=", include=True) +
             pp.Word(pp.nums))
 
         return port_pattern.parseString(text)[-1]
@@ -272,7 +301,8 @@ def main():
         corruption_rate=options.corruption_rate,
         network=options.network,
         src_network=options.src_network,
-        port=options.port,
+        src_port=options.src_port,
+        dst_port=options.dst_port,
         is_ipv6=options.is_ipv6,
         is_add_shaper=options.is_add_shaper,
         is_enable_iptables=options.is_enable_iptables,
@@ -282,8 +312,13 @@ def main():
 
     try:
         tc.validate()
-    except (NetworkInterfaceNotFoundError, ValueError) as e:
+    except (NetworkInterfaceNotFoundError) as e:
         logger.error(str(e))
+        return errno.EINVAL
+    except ValueError as e:
+        logger.error(
+            "{}. ".format(e) +
+            "--ipv6 option will be required to use IPv6 address.")
         return errno.EINVAL
 
     subprocrunner.SubprocessRunner.is_save_history = True

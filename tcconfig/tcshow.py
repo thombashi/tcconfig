@@ -99,9 +99,8 @@ class TcShapingRuleParser(object):
             filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
-        network_format = "network={:s}"
-        port_format = "port={:d}"
-        protocol_format = "protocol={:s}"
+        network_format = Tc.Param.NETWORK + "={:s}"
+        protocol_format = Tc.Param.PROTOCOL + "={:s}"
         key_item_list = []
 
         if Tc.Param.HANDLE in filter_param:
@@ -109,7 +108,6 @@ class TcShapingRuleParser(object):
             Integer(handle).validate()
             handle = int(handle)
 
-            # for mangle in IptablesMangleController.parse(self.__ip_version):
             for mangle in self.__iptables_ctrl.parse():
                 if mangle.mark_id != handle:
                     continue
@@ -117,7 +115,7 @@ class TcShapingRuleParser(object):
                 key_item_list.append(network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
                     key_item_list.append("source={:s}".format(mangle.source))
-                key_item_list.append("protocol={}".format(mangle.protocol))
+                key_item_list.append(protocol_format.format(mangle.protocol))
 
                 break
             else:
@@ -127,13 +125,20 @@ class TcShapingRuleParser(object):
             if typepy.is_not_null_string(network):
                 key_item_list.append(network_format.format(network))
 
-            port = filter_param.get(Tc.Param.PORT)
-            if Integer(port).is_type():
-                key_item_list.append(port_format.format(port))
+            src_port = filter_param.get(Tc.Param.SRC_PORT)
+            if Integer(src_port).is_type():
+                port_format = Tc.Param.SRC_PORT + "={:d}"
+                key_item_list.append(port_format.format(src_port))
 
-            protocol = filter_param.get("protocol")
+            dst_port = filter_param.get(Tc.Param.DST_PORT)
+            if Integer(dst_port).is_type():
+                port_format = Tc.Param.DST_PORT + "={:d}"
+                key_item_list.append(port_format.format(dst_port))
+
+            protocol = filter_param.get(Tc.Param.PROTOCOL)
             if typepy.is_not_null_string(protocol):
                 key_item_list.append(protocol_format.format(protocol))
+
         return ", ".join(key_item_list)
 
     def __get_shaping_rule(self, device):

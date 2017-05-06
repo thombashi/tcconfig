@@ -83,7 +83,7 @@ class Test_tcshow(object):
                 "loss": "1",
                 "rate": "100M"
             },
-           "network=192.168.0.10/32, port=8080, protocol=ip": {
+           "network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "delay": "10.0",
                 "loss": "0.01",
                 "rate": "248",
@@ -91,7 +91,7 @@ class Test_tcshow(object):
             }
         },
         "incoming": {
-            "network=192.168.11.0/24, port=80": {
+            "network=192.168.11.0/24, dst-port=80": {
                 "delay": "1.0",
                 "loss": "0.02",
                 "rate": "100K"
@@ -177,7 +177,7 @@ class Test_tcshow(object):
                 "loss": "1",
                 "rate": "100M"
             },
-            "network=::1/128, port=8080, protocol=ipv6": {
+            "network=::1/128, dst-port=8080, protocol=ipv6": {
                 "delay": "10.0",
                 "loss": "0.01",
                 "rate": "248",
@@ -185,7 +185,7 @@ class Test_tcshow(object):
             }
         },
         "incoming": {
-            "network=2001:db00::/25, port=80": {
+            "network=2001:db00::/25, dst-port=80": {
                 "delay": "1.0",
                 "loss": "0.02",
                 "rate": "100K"

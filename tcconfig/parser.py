@@ -63,28 +63,8 @@ class TcFilterParser(object):
     )
 
     @property
-    def flow_id(self):
-        return self.__flow_id
-
-    @property
     def protocol(self):
         return self.__protocol
-
-    @property
-    def filter_network(self):
-        return self.__filter_network
-
-    @property
-    def filter_port(self):
-        return self.__filter_port
-
-    @property
-    def handle(self):
-        return self.__handle
-
-    @property
-    def classid(self):
-        return self.__classid
 
     def __init__(self, ip_version):
         self.__ip_version = ip_version
@@ -92,6 +72,8 @@ class TcFilterParser(object):
 
         self.__buffer = None
         self.__parse_idx = 0
+
+        self.__protocol = None
 
     def parse_filter(self, text):
         self.__clear()
@@ -116,8 +98,8 @@ class TcFilterParser(object):
                 logger.debug("failed to parse mangle: {}".format(line))
             else:
                 filter_data_matrix.append({
-                    "classid": self.classid,
-                    "handle": self.handle,
+                    Tc.Param.CLASS_ID: self.__classid,
+                    Tc.Param.HANDLE: self.__handle,
                 })
                 self.__clear()
                 continue
@@ -154,7 +136,7 @@ class TcFilterParser(object):
             except pp.ParseException:
                 logger.debug("failed to parse filter: {}".format(line))
 
-        if self.flow_id:
+        if self.__flow_id:
             filter_data_matrix.append(self.__get_filter())
 
         return filter_data_matrix
@@ -174,26 +156,27 @@ class TcFilterParser(object):
     def __clear(self):
         self.__flow_id = None
         self.__filter_network = None
-        self.__filter_port = None
-        self.__protocol = None
+        self.__filter_src_port = None
+        self.__filter_dst_port = None
 
         self.__handle = None
         self.__classid = None
 
     def __get_filter(self):
-        return copy.deepcopy({
-            "flowid": self.flow_id,
-            "network": self.filter_network,
-            "port": self.filter_port,
-            "protocol": self.protocol
-        })
+        return {
+            Tc.Param.FLOW_ID: self.__flow_id,
+            Tc.Param.NETWORK: self.__filter_network,
+            Tc.Param.SRC_PORT: self.__filter_src_port,
+            Tc.Param.DST_PORT: self.__filter_dst_port,
+            Tc.Param.PROTOCOL: self.protocol
+        }
 
     def __parse_flow_id(self, line):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
             _to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
         logger.debug("succeed to parse flow id: flow-id={}, line={}".format(
-            self.flow_id, line))
+            self.__flow_id, line))
 
     def __parse_protocol(self, line):
         parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(
@@ -207,7 +190,7 @@ class TcFilterParser(object):
         self.__handle = int(u"0" + parsed_list[-3], 16)
         logger.debug(
             "succeed to parse mangle mark: classid={}, handle={}, line={}".format(
-                self.classid, self.handle, line))
+                self.__classid, self.__handle, line))
 
     def __parse_filter_line(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
@@ -216,6 +199,29 @@ class TcFilterParser(object):
         match_id = int(parsed_list[3])
 
         return (value_hex, mask_hex, match_id)
+
+    def __parse_filter_port(self, value_hex):
+        # Port filter consists eight hex digits.
+        # The upper-half represents source port filter and
+        # the bottom-half represents destination port filter.
+
+        if len(value_hex) != 8:
+            raise ValueError("invalid port filter value: {}".format(value_hex))
+
+        src_port_hex = value_hex[:4]
+        dst_port_hex = value_hex[4:]
+
+        logger.debug(
+            "parse ipv4 port: src-port-hex={}, dst-port-hex={}".format(
+                src_port_hex, dst_port_hex))
+
+        src_port_decimal = int(src_port_hex, 16)
+        self.__filter_src_port = (
+            src_port_decimal if src_port_decimal != 0 else None)
+
+        dst_port_decimal = int(dst_port_hex, 16)
+        self.__filter_dst_port = (
+            dst_port_decimal if dst_port_decimal != 0 else None)
 
     def __parse_filter_ipv4(self, line):
         value_hex, mask_hex, match_id = self.__parse_filter_line(line)
@@ -232,11 +238,15 @@ class TcFilterParser(object):
 
             self.__filter_network = "{:s}/{:d}".format(ipaddr, netmask)
         elif match_id == self.FilterMatchIdIpv4.PORT:
-            self.__filter_port = int(value_hex, 16)
+            self.__parse_filter_port(value_hex)
 
         logger.debug(
-            "succeed to parse filter: filter_network={}, filter_port={}, line={}".format(
-                self.filter_network, self.filter_port, line))
+            "succeed to parse filter: " + ", ".join([
+                "network={}".format(self.__filter_network),
+                "src_port={}".format(self.__filter_src_port),
+                "dst_port={}".format(self.__filter_dst_port),
+                "line={}".format(line)
+            ]))
 
     def __parse_filter_ipv6(self, line):
         netmask = 0
@@ -288,11 +298,15 @@ class TcFilterParser(object):
                 ":".join(octet_list), netmask)).compressed
 
         elif match_id == self.FilterMatchIdIpv6.PORT:
-            self.__filter_port = int(value_hex, 16)
+            self.__parse_filter_port(value_hex)
 
         logger.debug(
-            "succeed to parse filter: filter_network={}, filter_port={}, line={}".format(
-                self.filter_network, self.filter_port, line))
+            "succeed to parse filter: " + ", ".join([
+                "network={}".format(self.__filter_network),
+                "src_port={}".format(self.__filter_src_port),
+                "dst_port={}".format(self.__filter_dst_port),
+                "line={}".format(line)
+            ]))
 
 
 class TcQdiscParser(object):
