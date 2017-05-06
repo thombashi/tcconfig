@@ -73,6 +73,8 @@ class TcFilterParser(object):
         self.__buffer = None
         self.__parse_idx = 0
 
+        self.__protocol = None
+
     def parse_filter(self, text):
         self.__clear()
 
@@ -156,7 +158,6 @@ class TcFilterParser(object):
         self.__filter_network = None
         self.__filter_src_port = None
         self.__filter_dst_port = None
-        self.__protocol = None
 
         self.__handle = None
         self.__classid = None

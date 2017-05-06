@@ -54,7 +54,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 {
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.PROTOCOL: 'ip',
                     Tc.Param.SRC_PORT: None,
                     Tc.Param.DST_PORT: None,
                 },
@@ -81,8 +81,8 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 {
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.PROTOCOL: None,
                     Tc.Param.SRC_PORT: None,
+                    Tc.Param.PROTOCOL: 'ip',
                     Tc.Param.DST_PORT: None,
                 },
             ],
@@ -108,7 +108,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 {
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.NETWORK: '0.0.0.0/0',
-                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.PROTOCOL: 'ip',
                     Tc.Param.SRC_PORT: None,
                     Tc.Param.DST_PORT: None,
                 },
@@ -195,14 +195,14 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
                 },
                 {
                     Tc.Param.FLOW_ID: '1f87:3',
-                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.NETWORK: '2001:db00::1/128',
                     Tc.Param.SRC_PORT: None,
                     Tc.Param.DST_PORT: None
                 },
                 {
                     Tc.Param.FLOW_ID: '1f87:4',
-                    Tc.Param.PROTOCOL: None,
+                    Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.NETWORK: None,
                     Tc.Param.SRC_PORT: None,
                     Tc.Param.DST_PORT: 8080
