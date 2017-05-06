@@ -75,7 +75,7 @@ class Test_TrafficControl_validate(object):
     @pytest.mark.parametrize(
         [
             "rate", "direction", "delay", "delay_distro", "loss",
-            "corrupt", "network", "port",
+            "corrupt", "network", "dst_port",
         ],
         [
             opt_list
@@ -97,7 +97,7 @@ class Test_TrafficControl_validate(object):
         ])
     def test_normal(
             self, device_option, rate, direction, delay, delay_distro, loss,
-            corrupt, network, port):
+            corrupt, network, dst_port):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -110,7 +110,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=loss,
             corruption_rate=corrupt,
             network=network,
-            port=port,
+            dst_port=dst_port,
             src_network=None,
             is_enable_iptables=True,
         )
@@ -141,8 +141,8 @@ class Test_TrafficControl_validate(object):
         [{Tc.Param.NETWORK: "192.168.0.2/24"}, ValueError],
         [{Tc.Param.NETWORK: "192.168.0.0000/24"}, ValueError],
 
-        [{"port": -1}, ValueError],
-        [{"port": 65536}, ValueError],
+        [{"dst_port": -1}, ValueError],
+        [{"dst_port": 65536}, ValueError],
     ])
     def test_exception(self, device_option, value, expected):
         if device_option is None:
@@ -156,7 +156,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=value.get("packet_loss_rate"),
             corruption_rate=value.get("corruption_rate"),
             network=value.get(Tc.Param.NETWORK),
-            port=value.get("port"),
+            dst_port=value.get("dst_port"),
         )
 
         with pytest.raises(expected):

@@ -129,10 +129,10 @@ class AbstractShaper(ShaperInterface):
                     network),
             ])
 
-            if self._tc_obj.port is not None:
+            if self._tc_obj.dst_port is not None:
                 command_item_list.append(
                     "match {:s} dport {:d} 0xffff".format(
-                        self._tc_obj.protocol_match, self._tc_obj.port))
+                        self._tc_obj.protocol_match, self._tc_obj.dst_port))
 
         command_item_list.append("flowid {:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,

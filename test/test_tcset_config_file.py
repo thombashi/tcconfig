@@ -31,7 +31,7 @@ class Test_tcconfig(object):
         p = tmpdir.join("tcconfig.json")
         config = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
-            "network=192.168.0.10/32, port=8080, protocol=ip": {
+            "network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "delay": "10.0",
                 "loss": "0.01",
                 "rate": "250K",

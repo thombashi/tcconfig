@@ -124,8 +124,8 @@ class TrafficControl(object):
         return self.__src_network
 
     @property
-    def port(self):
-        return self.__port
+    def dst_port(self):
+        return self.__dst_port
 
     @property
     def is_add_shaper(self):
@@ -168,7 +168,7 @@ class TrafficControl(object):
             direction=None, bandwidth_rate=None,
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, corruption_rate=None,
-            network=None, port=None, is_ipv6=False,
+            network=None, dst_port=None, is_ipv6=False,
             src_network=None,
             is_add_shaper=False,
             is_enable_iptables=True,
@@ -184,7 +184,7 @@ class TrafficControl(object):
         self.__corruption_rate = corruption_rate  # [%]
         self.__network = network
         self.__src_network = src_network
-        self.__port = port
+        self.__dst_port = dst_port
         self.__is_ipv6 = is_ipv6
         self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
@@ -353,7 +353,7 @@ class TrafficControl(object):
 
     def __validate_port(self):
         _validate_within_min_max(
-            "port", self.port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
+            "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
 
     def __get_device_qdisc_major_id(self):
         import hashlib

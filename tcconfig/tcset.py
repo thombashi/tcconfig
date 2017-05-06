@@ -109,7 +109,7 @@ def parse_option():
         "--network", "--dst-network",
         help="target IP address/network to control traffic")
     group.add_argument(
-        "--port", "--dst-port", type=int,
+        "--port", "--dst-port", dest="dst_port", type=int,
         help="target destination port number to control traffic.")
     group.add_argument(
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
@@ -207,8 +207,8 @@ class TcConfigLoader(object):
                         pass
 
                     try:
-                        port = self.__parse_tc_filter_port(tc_filter)
-                        option_list.append("--port={}".format(port))
+                        dst_port = self.__parse_tc_filter_port(tc_filter)
+                        option_list.append("--dst-port={}".format(dst_port))
                     except pp.ParseException:
                         pass
 
@@ -273,7 +273,7 @@ def main():
         corruption_rate=options.corruption_rate,
         network=options.network,
         src_network=options.src_network,
-        port=options.port,
+        dst_port=options.dst_port,
         is_ipv6=options.is_ipv6,
         is_add_shaper=options.is_add_shaper,
         is_enable_iptables=options.is_enable_iptables,
