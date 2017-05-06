@@ -55,7 +55,7 @@ After restore
     {
         "eth1": {
             "outgoing": {
-                "port=80": {
+                "dst-port=80": {
                     "delay": "2.5",
                     "loss": "0.01",
                     "rate": "250K",
@@ -73,7 +73,7 @@ After restore
         },
         "eth0": {
             "outgoing": {
-                "network=192.168.0.10/32, port=8080": {
+                "network=192.168.0.10/32, dst-port=8080": {
                     "delay": "10.0",
                     "loss": "0.01",
                     "rate": "250K",

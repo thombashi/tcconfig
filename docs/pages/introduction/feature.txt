@@ -1,13 +1,13 @@
 Traffic control features
 ------------------------
 
-Network
+Trafic shaping target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-Traffic control can be specified network to apply to:
+Apply traffic shaping rules to specific target:
 
 -  Outgoing/Incoming packets
--  Certain IP address/network and port
+-  Certain IP address/network or port
 
 Available parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

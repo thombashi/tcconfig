@@ -3,7 +3,7 @@ Welcome to tcconfig's documentation!
 
 .. toctree::
    :caption: Table of Contents
-   :maxdepth: 3
+   :maxdepth: 4
    :numbered:
 
    pages/introduction/index

@@ -3,8 +3,8 @@ usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
              [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
              [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
              [--loss PACKET_LOSS_RATE] [--corrupt CORRUPTION_RATE]
-             [--network NETWORK] [--port PORT] [--ipv6]
-             [--shaping-algo {tbf,htb}] [--iptables]
+             [--network NETWORK] [--port DST_PORT] [--src-port SRC_PORT]
+             [--ipv6] [--shaping-algo {tbf,htb}] [--iptables]
              [--src-network SRC_NETWORK]
 
 optional arguments:
@@ -47,8 +47,11 @@ Traffic Control:
                         packet corruption rate [%]. the valid range is 0 to
                         100. packet corruption means single bit error at a
                         random offset in the packet. (default=0)
-  --network NETWORK     target IP address/network to control traffic
-  --port PORT           target port number to control traffic.
+  --network NETWORK, --dst-network NETWORK
+                        target IP address/network to control traffic
+  --port DST_PORT, --dst-port DST_PORT
+                        target destination port number to control traffic.
+  --src-port SRC_PORT   target source port number to control traffic.
   --ipv6                apply traffic control to IPv6 packets rather than
                         IPv4.
   --shaping-algo {tbf,htb}
