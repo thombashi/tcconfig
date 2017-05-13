@@ -69,7 +69,7 @@ class TrafficControl(object):
     MAX_PACKET_LOSS_RATE = 100  # [%]
 
     MIN_LATENCY_MS = 0  # [millisecond]
-    MAX_LATENCY_MS = 3600000  # [millisecond]
+    MAX_LATENCY_MS = 3600000  # [millisecond] (60 minutes)
 
     MIN_CORRUPTION_RATE = 0  # [%]
     MAX_CORRUPTION_RATE = 100  # [%]
