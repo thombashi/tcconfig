@@ -356,7 +356,7 @@ class TrafficControl(object):
         ]):
             raise ValueError(
                 "there is no valid net emulation parameter value."
-                "one or more following parameters are required: "
+                "at least one or more following parameters are required: "
                 "--rate, --delay, --loss, --corrupt"
             )
 
