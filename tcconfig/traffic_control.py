@@ -354,7 +354,11 @@ class TrafficControl(object):
                 netem_param_value).is_type() or netem_param_value == 0
             for netem_param_value in netem_param_value_list
         ]):
-            raise ValueError("there is no valid net emulation parameter value")
+            raise ValueError(
+                "there is no valid net emulation parameter value."
+                "one or more following parameters are required: "
+                "--rate, --delay, --loss, --corrupt"
+            )
 
     def __validate_port(self):
         _validate_within_min_max(
