@@ -78,20 +78,20 @@ class Test_tcshow(object):
 
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
-            "network=192.168.1.0/24": {
-                "delay": "1.0",
-                "loss": "1",
-                "rate": "100M"
-            },
            "network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "delay": "10.0",
                 "loss": "0.01",
                 "rate": "248",
                 "delay-distro": "2.0"
+            },
+            "network=192.168.1.0/24, protocol=ip": {
+                "delay": "1.0",
+                "loss": "1",
+                "rate": "100M"
             }
         },
         "incoming": {
-            "network=192.168.11.0/24, dst-port=80": {
+            "network=192.168.11.0/24, dst-port=80, protocol=ip": {
                 "delay": "1.0",
                 "loss": "0.02",
                 "rate": "100K"
@@ -172,20 +172,20 @@ class Test_tcshow(object):
 
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
-            "network=2001:db00::/24": {
-                "delay": "1.0",
-                "loss": "1",
-                "rate": "100M"
-            },
             "network=::1/128, dst-port=8080, protocol=ipv6": {
                 "delay": "10.0",
                 "loss": "0.01",
                 "rate": "248",
                 "delay-distro": "2.0"
+            },
+            "network=2001:db00::/24, protocol=ipv6": {
+                "delay": "1.0",
+                "loss": "1",
+                "rate": "100M"
             }
         },
         "incoming": {
-            "network=2001:db00::/25, dst-port=80": {
+            "network=2001:db00::/25, dst-port=80, protocol=ipv6": {
                 "delay": "1.0",
                 "loss": "0.02",
                 "rate": "100K"

@@ -1,7 +1,7 @@
-DataProperty>=0.21.0
+DataProperty>=0.21.1
 logbook
 pyparsing>=2.2.0
 six
-subprocrunner>=0.7.0
+subprocrunner>=0.8.0
 typepy>=0.0.10
 voluptuous

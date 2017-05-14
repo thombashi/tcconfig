@@ -16,7 +16,7 @@ from tcconfig.traffic_control import TrafficControl
 from .common import is_invalid_param
 
 
-MIN_PACKET_LOSS = 0.0000000232  # [%]
+MIN_VALID_PACKET_LOSS = 0.0000000232  # [%]
 
 
 @pytest.fixture
@@ -82,10 +82,23 @@ class Test_TrafficControl_validate(object):
             for opt_list in AllPairs([
                 [None, "", "100K", "0.5M", "0.1G"],  # rate
                 [TrafficDirection.OUTGOING],
-                [None, 0, 10000],  # delay
-                [None, 0, 10000],  # delay_distro
-                [None, 0, MIN_PACKET_LOSS, 100],  # loss
-                [None, 0, 100],  # corrupt
+                [
+                    None, TrafficControl.MIN_LATENCY_MS,
+                    TrafficControl.MAX_LATENCY_MS,
+                ],  # delay
+                [
+                    None, TrafficControl.MIN_LATENCY_MS,
+                    TrafficControl.MAX_LATENCY_MS,
+                ],  # delay_distro
+                [
+                    None,
+                    TrafficControl.MIN_PACKET_LOSS_RATE, MIN_VALID_PACKET_LOSS,
+                    TrafficControl.MAX_PACKET_LOSS_RATE,
+                ],  # loss
+                [
+                    None, TrafficControl.MIN_CORRUPTION_RATE,
+                    TrafficControl.MAX_CORRUPTION_RATE,
+                ],  # corrupt
                 [
                     None,
                     "",
@@ -124,17 +137,41 @@ class Test_TrafficControl_validate(object):
             tc_obj.validate()
 
     @pytest.mark.parametrize(["value", "expected"], [
-        [{"latency_ms": -1}, ValueError],
-        [{"latency_ms": 3600001}, ValueError],
+        [{"latency_ms": TrafficControl.MIN_LATENCY_MS - 1}, ValueError],
+        [{"latency_ms": TrafficControl.MAX_LATENCY_MS + 1}, ValueError],
 
-        [{"latency_distro_ms": -1}, ValueError],
-        [{"latency_distro_ms": 10001}, ValueError],
+        [
+            {
+                "latency_ms": 100,
+                "latency_distro_ms": TrafficControl.MIN_LATENCY_MS - 1,
+            },
+            ValueError
+        ],
+        [
+            {
+                "latency_ms": 100,
+                "latency_distro_ms": TrafficControl.MAX_LATENCY_MS + 1,
+            },
+            ValueError
+        ],
 
-        [{"packet_loss_rate": -0.1}, ValueError],
-        [{"packet_loss_rate": 100.1}, ValueError],
+        [
+            {"packet_loss_rate": TrafficControl.MIN_PACKET_LOSS_RATE - 0.1},
+            ValueError
+        ],
+        [
+            {"packet_loss_rate": TrafficControl.MAX_PACKET_LOSS_RATE + 0.1},
+            ValueError
+        ],
 
-        [{"corruption_rate": -0.1}, ValueError],
-        [{"corruption_rate": 100.1}, ValueError],
+        [
+            {"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1},
+            ValueError
+        ],
+        [
+            {"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1},
+            ValueError
+        ],
 
         [{Tc.Param.NETWORK: "192.168.0."}, ValueError],
         [{Tc.Param.NETWORK: "192.168.0.256"}, ValueError],

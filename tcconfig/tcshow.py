@@ -114,7 +114,8 @@ class TcShapingRuleParser(object):
 
                 key_item_list.append(network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
-                    key_item_list.append("source={:s}".format(mangle.source))
+                    key_item_list.append(
+                        "src-network={:s}".format(mangle.source))
                 key_item_list.append(protocol_format.format(mangle.protocol))
 
                 break
@@ -232,7 +233,7 @@ def main():
 
     subprocrunner.SubprocessRunner.is_save_history = True
     if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.is_dry_run_default = True
+        subprocrunner.SubprocessRunner.default_is_dry_run = True
 
     tc_param = {}
     for device in options.device:
