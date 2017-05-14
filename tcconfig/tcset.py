@@ -323,7 +323,7 @@ def main():
 
     subprocrunner.SubprocessRunner.is_save_history = True
     if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.is_dry_run_default = True
+        subprocrunner.SubprocessRunner.default_is_dry_run = True
 
     if options.overwrite:
         if options.log_level == logbook.INFO:
