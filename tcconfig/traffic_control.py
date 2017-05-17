@@ -64,15 +64,20 @@ def _validate_within_min_max(param_name, value, min_value, max_value, unit):
 
 
 class TrafficControl(object):
-
     MIN_PACKET_LOSS_RATE = 0  # [%]
     MAX_PACKET_LOSS_RATE = 100  # [%]
+
+    MIN_PACKET_DUPLICATE_RATE = 0  # [%]
+    MAX_PACKET_DUPLICATE_RATE = 100  # [%]
 
     MIN_LATENCY_MS = 0  # [millisecond]
     MAX_LATENCY_MS = 3600000  # [millisecond] (60 minutes)
 
     MIN_CORRUPTION_RATE = 0  # [%]
     MAX_CORRUPTION_RATE = 100  # [%]
+
+    MIN_REORDERING_RATE = 0  # [%]
+    MAX_REORDERING_RATE = 100  # [%]
 
     __MIN_PORT = 0
     __MAX_PORT = 65535
@@ -112,8 +117,16 @@ class TrafficControl(object):
         return self.__packet_loss_rate
 
     @property
+    def packet_duplicate_rate(self):
+        return self.__packet_duplicate_rate
+
+    @property
     def corruption_rate(self):
         return self.__corruption_rate
+
+    @property
+    def reordering_rate(self):
+        return self.__reordering_rate
 
     @property
     def network(self):
@@ -171,7 +184,7 @@ class TrafficControl(object):
             self, device,
             direction=None, bandwidth_rate=None,
             latency_ms=None, latency_distro_ms=None,
-            packet_loss_rate=None, corruption_rate=None,
+            packet_loss_rate=None, packet_duplicate_rate=None, corruption_rate=None, reordering_rate=None,
             network=None, src_port=None, dst_port=None, is_ipv6=False,
             src_network=None,
             is_add_shaper=False,
@@ -185,7 +198,9 @@ class TrafficControl(object):
         self.__latency_ms = latency_ms  # [milliseconds]
         self.__latency_distro_ms = latency_distro_ms  # [milliseconds]
         self.__packet_loss_rate = packet_loss_rate  # [%]
+        self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
         self.__corruption_rate = corruption_rate  # [%]
+        self.__reordering_rate = reordering_rate
         self.__network = network
         self.__src_network = src_network
         self.__src_port = src_port
@@ -327,10 +342,24 @@ class TrafficControl(object):
             "loss (packet loss rate)", self.packet_loss_rate,
             self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE, unit="%")
 
+    def __validate_packet_duplicate_rate(self):
+        _validate_within_min_max(
+            "duplicate (packet duplicate rate)", self.packet_duplicate_rate,
+            self.MIN_PACKET_DUPLICATE_RATE, self.MAX_PACKET_DUPLICATE_RATE, unit="%")
+
     def __validate_corruption_rate(self):
         _validate_within_min_max(
             "corruption (packet corruption rate)", self.corruption_rate,
             self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE, unit="%")
+
+    def __validate_reordering_rate(self):
+        _validate_within_min_max(
+            "reordering (packet reordering rate)", self.reordering_rate,
+            self.MIN_REORDERING_RATE, self.MAX_REORDERING_RATE, unit="%")
+
+    def __validate_reordering_and_delay(self):
+        if self.reordering_rate and not self.latency_ms:
+            raise ValueError('reordering needs latency to be specified: set latency > 0')
 
     def __validate_netem_parameter(self):
         try:
@@ -340,18 +369,23 @@ class TrafficControl(object):
 
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
+        self.__validate_packet_duplicate_rate()
         self.__validate_corruption_rate()
+        self.__validate_reordering_rate()
+        self.__validate_reordering_and_delay()
 
         netem_param_value_list = [
             self.bandwidth_rate,
             self.latency_ms,
             self.packet_loss_rate,
+            self.packet_duplicate_rate,
             self.corruption_rate,
+            self.reordering_rate
         ]
 
         if all([
-            not RealNumber(
-                netem_param_value).is_type() or netem_param_value == 0
+                    not RealNumber(
+                        netem_param_value).is_type() or netem_param_value == 0
             for netem_param_value in netem_param_value_list
         ]):
             raise ValueError(
@@ -425,7 +459,7 @@ class TrafficControl(object):
         ]
 
         if all([
-            spr.SubprocessRunner(command).run() != 0
+                    spr.SubprocessRunner(command).run() != 0
             for command in command_list
         ]):
             return 2

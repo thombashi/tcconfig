@@ -23,7 +23,6 @@ from .._traffic_direction import TrafficDirection
 
 @six.add_metaclass(abc.ABCMeta)
 class ShaperInterface(object):
-
     @abc.abstractproperty
     def algorithm_name(self):  # pragma: no cover
         pass
@@ -54,7 +53,6 @@ class ShaperInterface(object):
 
 
 class AbstractShaper(ShaperInterface):
-
     @property
     def tc_device(self):
         return "{:s}".format(self._tc_obj.get_tc_device())
@@ -83,6 +81,10 @@ class AbstractShaper(ShaperInterface):
             command_item_list.append(
                 "loss {:f}%".format(self._tc_obj.packet_loss_rate))
 
+        if self._tc_obj.packet_duplicate_rate > 0:
+            command_item_list.append(
+                "duplicate {:f}%".format(self._tc_obj.packet_duplicate_rate))
+
         if self._tc_obj.latency_ms > 0:
             command_item_list.append(
                 "delay {}ms".format(self._tc_obj.latency_ms))
@@ -94,6 +96,10 @@ class AbstractShaper(ShaperInterface):
         if self._tc_obj.corruption_rate > 0:
             command_item_list.append(
                 "corrupt {:f}%".format(self._tc_obj.corruption_rate))
+
+        if self._tc_obj.reordering_rate > 0:
+            command_item_list.append(
+                "reorder {:f}%".format(self._tc_obj.reordering_rate))
 
         return run_command_helper(
             " ".join(command_item_list),
