@@ -166,7 +166,6 @@ def verify_netem_module():
 
 
 class TcConfigLoader(object):
-
     def __init__(self, logger):
         self.__logger = logger
         self.__config_table = None
@@ -213,12 +212,10 @@ class TcConfigLoader(object):
                     if not filter_table:
                         continue
 
-                    option_list = [
-                        device_option, "--direction={:s}".format(direction),
-                    ] + [
-                        "--{:s}={:s}".format(k, v)
-                        for k, v in six.iteritems(filter_table)
-                    ]
+                    option_list = [device_option,
+                                   "--direction={:s}".format(direction), ] + [
+                                      "--{:s}={:s}".format(k, v) for k, v in
+                                      six.iteritems(filter_table)]
 
                     try:
                         network = self.__parse_tc_filter_network(tc_filter)

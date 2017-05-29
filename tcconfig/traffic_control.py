@@ -184,7 +184,8 @@ class TrafficControl(object):
             self, device,
             direction=None, bandwidth_rate=None,
             latency_ms=None, latency_distro_ms=None,
-            packet_loss_rate=None, packet_duplicate_rate=None, corruption_rate=None, reordering_rate=None,
+            packet_loss_rate=None, packet_duplicate_rate=None,
+            corruption_rate=None, reordering_rate=None,
             network=None, src_port=None, dst_port=None, is_ipv6=False,
             src_network=None,
             is_add_shaper=False,
@@ -345,7 +346,8 @@ class TrafficControl(object):
     def __validate_packet_duplicate_rate(self):
         _validate_within_min_max(
             "duplicate (packet duplicate rate)", self.packet_duplicate_rate,
-            self.MIN_PACKET_DUPLICATE_RATE, self.MAX_PACKET_DUPLICATE_RATE, unit="%")
+            self.MIN_PACKET_DUPLICATE_RATE, self.MAX_PACKET_DUPLICATE_RATE,
+            unit="%")
 
     def __validate_corruption_rate(self):
         _validate_within_min_max(
@@ -359,7 +361,8 @@ class TrafficControl(object):
 
     def __validate_reordering_and_delay(self):
         if self.reordering_rate and not self.latency_ms:
-            raise ValueError('reordering needs latency to be specified: set latency > 0')
+            raise ValueError(
+                'reordering needs latency to be specified: set latency > 0')
 
     def __validate_netem_parameter(self):
         try:
@@ -383,11 +386,9 @@ class TrafficControl(object):
             self.reordering_rate
         ]
 
-        if all([
-                    not RealNumber(
-                        netem_param_value).is_type() or netem_param_value == 0
-            for netem_param_value in netem_param_value_list
-        ]):
+        if all([not RealNumber(
+                netem_param_value).is_type() or netem_param_value == 0 for
+                netem_param_value in netem_param_value_list]):
             raise ValueError(
                 "there is no valid net emulation parameter value."
                 "at least one or more following parameters are required: "
@@ -405,7 +406,6 @@ class TrafficControl(object):
 
     def __get_device_qdisc_major_id(self):
         import hashlib
-
         base_device_hash = hashlib.md5(six.b(self.__device)).hexdigest()[:3]
         device_hash_prefix = "1"
 
@@ -458,10 +458,8 @@ class TrafficControl(object):
             "ip link delete {:s} type ifb".format(self.ifb_device),
         ]
 
-        if all([
-                    spr.SubprocessRunner(command).run() != 0
-            for command in command_list
-        ]):
+        if all([spr.SubprocessRunner(command).run() != 0 for command in
+                command_list]):
             return 2
 
         return 0
