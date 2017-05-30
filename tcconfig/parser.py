@@ -336,7 +336,9 @@ class TcQdiscParser(object):
             self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
             self.__parse_netem_param(line, "loss", pp.nums + ".")
+            self.__parse_netem_param(line, "duplicate", pp.nums + ".")
             self.__parse_netem_param(line, "corrupt", pp.nums + ".")
+            self.__parse_netem_param(line, "reorder", pp.nums + ".")
             self.__parse_tbf_rate(line)
 
             yield self.__parsed_param

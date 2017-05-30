@@ -44,7 +44,6 @@ from .parser import (
     TcClassParser,
 )
 
-
 logbook.StderrHandler(
     level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
@@ -68,7 +67,6 @@ def parse_option():
 
 
 class TcShapingRuleParser(object):
-
     @property
     def device(self):
         return self.__device
@@ -243,8 +241,8 @@ def main():
             logger.debug(str(e))
             continue
 
-        tc_param.update(TcShapingRuleParser(
-            device, options.ip_version, logger).get_tc_parameter())
+        tc_param.update(TcShapingRuleParser(device, options.ip_version,
+                                            logger).get_tc_parameter())
 
     command_history = "\n".join(SubprocessRunner.get_history())
 

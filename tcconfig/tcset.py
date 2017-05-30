@@ -12,11 +12,10 @@ import errno
 import sys
 
 import logbook
+import pyparsing as pp
 import six
 import subprocrunner
 import typepy
-
-import pyparsing as pp
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import write_tc_script
@@ -36,7 +35,6 @@ from ._logger import (
 )
 from ._traffic_direction import TrafficDirection
 from .traffic_control import TrafficControl
-
 
 logbook.StderrHandler(
     level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
@@ -97,6 +95,14 @@ def parse_option():
             TrafficControl.MIN_PACKET_LOSS_RATE,
             TrafficControl.MAX_PACKET_LOSS_RATE))
     group.add_argument(
+        "--duplicate", dest="packet_duplicate_rate", type=float, default=0,
+        help="""
+        round trip packet duplicate rate [%%]. the valid range is {:d} to {:d}.
+        (default=%(default)s)
+        """.format(
+            TrafficControl.MIN_PACKET_DUPLICATE_RATE,
+            TrafficControl.MAX_PACKET_DUPLICATE_RATE))
+    group.add_argument(
         "--corrupt", dest="corruption_rate", type=float, default=0,
         help="""
         packet corruption rate [%%]. the valid range is {:d} to {:d}.
@@ -105,6 +111,14 @@ def parse_option():
         """.format(
             TrafficControl.MIN_CORRUPTION_RATE,
             TrafficControl.MAX_CORRUPTION_RATE))
+    group.add_argument(
+        "--reordering", dest="reordering_rate", type=float, default=0,
+        help="""
+        packet reordering rate [%%]. the valid range is {:d} to {:d}.
+        (default=%(default)s)
+        """.format(
+            TrafficControl.MIN_REORDERING_RATE,
+            TrafficControl.MAX_REORDERING_RATE))
     group.add_argument(
         "--network", "--dst-network",
         help="target IP address/network to control traffic")
@@ -152,7 +166,6 @@ def verify_netem_module():
 
 
 class TcConfigLoader(object):
-
     def __init__(self, logger):
         self.__logger = logger
         self.__config_table = None
@@ -199,12 +212,10 @@ class TcConfigLoader(object):
                     if not filter_table:
                         continue
 
-                    option_list = [
-                        device_option, "--direction={:s}".format(direction),
-                    ] + [
-                        "--{:s}={:s}".format(k, v)
-                        for k, v in six.iteritems(filter_table)
-                    ]
+                    option_list = [device_option,
+                                   "--direction={:s}".format(direction), ] + [
+                                      "--{:s}={:s}".format(k, v) for k, v in
+                                      six.iteritems(filter_table)]
 
                     try:
                         network = self.__parse_tc_filter_network(tc_filter)
@@ -298,7 +309,9 @@ def main():
         latency_ms=options.network_latency,
         latency_distro_ms=options.latency_distro_ms,
         packet_loss_rate=options.packet_loss_rate,
+        packet_duplicate_rate=options.packet_duplicate_rate,
         corruption_rate=options.corruption_rate,
+        reordering_rate=options.reordering_rate,
         network=options.network,
         src_network=options.src_network,
         src_port=options.src_port,
