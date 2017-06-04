@@ -392,7 +392,7 @@ class TrafficControl(object):
             raise ValueError(
                 "there is no valid net emulation parameter value."
                 "at least one or more following parameters are required: "
-                "--rate, --delay, --loss, --corrupt"
+                "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
             )
 
     def __validate_port(self):
