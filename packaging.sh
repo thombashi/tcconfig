@@ -18,7 +18,7 @@ pip download Logbook --no-deps --dest ${wheelhouse_dir_path}
 
 # make an install script ---
 cat <<EOF > ${install_script_path}
-#!/bin/bash
+#!/bin/sh
 
 set -eu
 
