@@ -153,8 +153,7 @@ class Test_tcset_one_network(object):
         # w/o packet loss tc ---
         result = transmitter.ping()
         pingparser.parse(result.stdout)
-        without_tc_loss = (
-            pingparser.packet_receive / pingparser.packet_transmit) * 100
+        without_tc_loss_rate = pingparser.packet_loss_rate
 
         # w/ packet loss tc ---
         command_list = [
@@ -166,11 +165,10 @@ class Test_tcset_one_network(object):
 
         result = transmitter.ping()
         pingparser.parse(result.stdout)
-        with_tc_loss = (
-            pingparser.packet_receive / pingparser.packet_transmit) * 100
+        with_tc_loss_rate = pingparser.packet_loss_rate
 
         # assertion ---
-        loss_diff = without_tc_loss - with_tc_loss
+        loss_diff = with_tc_loss_rate - without_tc_loss_rate
         assert loss_diff > (value / 2.0)
 
         # finalize ---
