@@ -4,6 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import absolute_import
 from __future__ import division
 
 import platform
@@ -12,6 +13,8 @@ import pingparsing
 import pytest
 from subprocrunner import SubprocessRunner
 import typepy
+
+from .common import execute_tcdel
 
 
 WAIT_TIME = 5  # [sec]
@@ -65,7 +68,7 @@ class Test_tcset_one_network(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
@@ -90,7 +93,7 @@ class Test_tcset_one_network(object):
         assert rtt_diff > (delay / 2.0)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
 
     @pytest.mark.skipif("platform.system() == 'Windows'")
     @pytest.mark.parametrize(["delay", "delay_distro"], [
@@ -103,7 +106,7 @@ class Test_tcset_one_network(object):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
@@ -134,7 +137,7 @@ class Test_tcset_one_network(object):
         assert rtt_diff > (delay_distro / 2.0)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
 
     @pytest.mark.parametrize(["option", "value"], [
         ["--loss", 10],
@@ -147,7 +150,7 @@ class Test_tcset_one_network(object):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
         transmitter.destination_host = dst_host_option
 
         # w/o packet loss tc ---
@@ -172,7 +175,7 @@ class Test_tcset_one_network(object):
         assert loss_diff > (value / 2)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
 
     @pytest.mark.parametrize(["option", "value"], [
         ["--duplicate", 50],
@@ -184,7 +187,7 @@ class Test_tcset_one_network(object):
             # alternative to pytest.mark.skipif
             return
 
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)
         transmitter.destination_host = dst_host_option
 
         # w/o packet duplicate tc ---
@@ -209,4 +212,4 @@ class Test_tcset_one_network(object):
         assert duplicate_rate_diff > (value / 2)
 
         # finalize ---
-        SubprocessRunner("tcdel --device " + device_option).run()
+        execute_tcdel(device_option)

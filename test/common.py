@@ -4,6 +4,8 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from __future__ import absolute_import
+
 from subprocrunner import SubprocessRunner
 from typepy.type import RealNumber
 
@@ -33,3 +35,7 @@ def is_invalid_param(
         is_invalid = False
 
     return is_invalid
+
+
+def execute_tcdel(device):
+    SubprocessRunner("tcdel --device {}".format(device)).run()
