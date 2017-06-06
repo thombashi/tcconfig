@@ -76,27 +76,33 @@ Get ``tc`` commands
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 You can get ``tc`` commands to be executed by ``tcconfing`` commands by 
-executing with ``--tc-command`` option (displayed commands are not actually executed).
+executing with ``--tc-command`` option
+(no tc configuration have made to the execution server by this command).
 
-.. code-block:: console
+:Examples: 
 
-    # tcset --device eth0 --delay 10 --tc-command
-    tc qdisc add dev eth0 root handle 1f87: htb default 1
-    tc class add dev eth0 parent 1f87: classid 1f87:1 htb rate 1000000kbit
-    tc class add dev eth0 parent 1f87: classid 1f87:2 htb rate 1000000Kbit ceil 1000000Kbit
-    tc qdisc add dev eth0 parent 1f87:2 handle 2007: netem delay 10.0ms
-    tc filter add dev eth0 protocol ip parent 1f87: prio 1 u32 match ip dst 0.0.0.0/0 flowid 1f87:2
+    .. code-block:: console
+
+        # tcset --device eth0 --delay 10 --tc-command
+        tc qdisc add dev eth0 root handle 1f87: htb default 1
+        tc class add dev eth0 parent 1f87: classid 1f87:1 htb rate 1000000kbit
+        tc class add dev eth0 parent 1f87: classid 1f87:2 htb rate 1000000Kbit ceil 1000000Kbit
+        tc qdisc add dev eth0 parent 1f87:2 handle 2007: netem delay 10.0ms
+        tc filter add dev eth0 protocol ip parent 1f87: prio 1 u32 match ip dst 0.0.0.0/0 flowid 1f87:2
 
 
 Generate a ``tc`` script file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-You can generate a script file that described ``tc`` commands to be
-executed by ``tcconfig`` commands with ``--tc-script`` option.
-Created script can execute at other hosts where tcconfig is not installed but tc command is available.
+``--tc-script`` option will generate a executable script which includes
+tc commands to be executed by tcconfig commands.
+The created script can execute at other servers where tcconfig is not installed
+(still, the tc command will be required to execute the script).
 
-.. code-block:: console
+:Examples: 
 
-    # tcset --device eth0 --delay 10 --tc-script
-    [INFO] tcconfig: written a tc script to 'tcset_eth0.sh'
-    # ./tcset_eth0.sh
+    .. code-block:: console
+
+        # tcset --device eth0 --delay 10 --tc-script
+        [INFO] tcconfig: written a tc script to 'tcset_eth0.sh'
+        # ./tcset_eth0.sh
