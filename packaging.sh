@@ -8,6 +8,8 @@ install_script_path=${dist_dir}/"install.sh"
 lancher_script="launcher.sh"
 
 
+pip install pip --upgrade
+
 # make wheelhouse ---
 python setup.py bdist_wheel --dist-dir ${dist_dir} --universal
 pip wheel -r requirements/requirements.txt --wheel-dir ${wheelhouse_dir_path}
