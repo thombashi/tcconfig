@@ -4,20 +4,25 @@
 .. codeauthor:: Tsuyoshi Hombashi <gogogo.vm@gmail.com>
 """
 
+from subprocrunner import SubprocessRunner
 from typepy.type import RealNumber
 
 from tcconfig._converter import Humanreadable
 
 
-def is_invalid_param(rate, delay, loss, corrupt):
-    params = [
+def is_invalid_param(
+        rate, delay, packet_loss, packet_duplicate, corrupt, reordering):
+    param_value_list = [
         delay,
-        loss,
+        packet_loss,
+        packet_duplicate,
         corrupt,
+        reordering,
     ]
 
     is_invalid = all([
-        not RealNumber(param).is_type() or param == 0 for param in params
+        not RealNumber(param_value).is_type() or param_value <= 0
+        for param_value in param_value_list
     ])
 
     try:

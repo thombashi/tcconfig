@@ -74,7 +74,7 @@ class Test_TrafficControl_validate(object):
 
     @pytest.mark.parametrize(
         [
-            "rate", "direction", "delay", "delay_distro", "loss",
+            "rate", "direction", "delay", "delay_distro", "loss", "duplicate",
             "corrupt", "network", "src_port", "dst_port",
         ],
         [
@@ -96,6 +96,10 @@ class Test_TrafficControl_validate(object):
                     TrafficControl.MAX_PACKET_LOSS_RATE,
                 ],  # loss
                 [
+                    None, TrafficControl.MIN_PACKET_DUPLICATE_RATE,
+                    TrafficControl.MAX_PACKET_DUPLICATE_RATE,
+                ],  # duplicate
+                [
                     None, TrafficControl.MIN_CORRUPTION_RATE,
                     TrafficControl.MAX_CORRUPTION_RATE,
                 ],  # corrupt
@@ -110,8 +114,8 @@ class Test_TrafficControl_validate(object):
             ], n=3)
         ])
     def test_normal(
-            self, device_option, rate, direction, delay, delay_distro, loss,
-            corrupt, network, src_port, dst_port):
+            self, device_option, rate, direction, delay, delay_distro,
+            loss, duplicate, corrupt, network, src_port, dst_port):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -122,6 +126,7 @@ class Test_TrafficControl_validate(object):
             latency_ms=delay,
             latency_distro_ms=delay_distro,
             packet_loss_rate=loss,
+            packet_duplicate_rate=duplicate,
             corruption_rate=corrupt,
             network=network,
             src_port=src_port,
@@ -130,11 +135,42 @@ class Test_TrafficControl_validate(object):
             is_enable_iptables=True,
         )
 
-        if is_invalid_param(rate, delay, loss, corrupt):
+        if is_invalid_param(
+                rate, delay, loss, duplicate, corrupt, reordering=None):
             with pytest.raises(ValueError):
                 tc_obj.validate()
         else:
             tc_obj.validate()
+
+    @pytest.mark.parametrize(
+        ["direction", "delay", "reordering"],
+        [
+            opt_list
+            for opt_list in AllPairs([
+                [TrafficDirection.OUTGOING],
+                [
+                    TrafficControl.MIN_LATENCY_MS + 0.1,
+                    TrafficControl.MAX_LATENCY_MS,
+                ],  # delay
+                [
+                    TrafficControl.MIN_REORDERING_RATE,
+                    TrafficControl.MAX_REORDERING_RATE,
+                ],  # reordering
+            ], n=2)
+        ])
+    def test_normal_reordering(
+            self, device_option, direction, delay, reordering):
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        tc_obj = TrafficControl(
+            device=device_option,
+            direction=direction,
+            latency_ms=delay,
+            reordering_rate=reordering,
+        )
+
+        tc_obj.validate()
 
     @pytest.mark.parametrize(["value", "expected"], [
         [{"latency_ms": TrafficControl.MIN_LATENCY_MS - 1}, ValueError],
@@ -165,6 +201,21 @@ class Test_TrafficControl_validate(object):
         ],
 
         [
+            {
+                "latency_ms": 100,
+                "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
+            },
+            ValueError
+        ],
+        [
+            {
+                "latency_ms": 100,
+                "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
+            },
+            ValueError
+        ],
+
+        [
             {"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1},
             ValueError
         ],
@@ -172,6 +223,16 @@ class Test_TrafficControl_validate(object):
             {"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1},
             ValueError
         ],
+
+        [
+            {"reordering_rate": TrafficControl.MIN_REORDERING_RATE - 0.1},
+            ValueError
+        ],
+        [
+            {"reordering_rate": TrafficControl.MAX_REORDERING_RATE + 0.1},
+            ValueError
+        ],
+
 
         [{Tc.Param.NETWORK: "192.168.0."}, ValueError],
         [{Tc.Param.NETWORK: "192.168.0.256"}, ValueError],
@@ -196,6 +257,7 @@ class Test_TrafficControl_validate(object):
             latency_ms=value.get("latency_ms"),
             latency_distro_ms=value.get("latency_distro_ms"),
             packet_loss_rate=value.get("packet_loss_rate"),
+            packet_duplicate_rate=value.get("packet_duplicate_rate"),
             corruption_rate=value.get("corruption_rate"),
             network=value.get(Tc.Param.NETWORK),
             src_port=value.get("src_port"),

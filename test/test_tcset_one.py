@@ -169,7 +169,44 @@ class Test_tcset_one_network(object):
 
         # assertion ---
         loss_diff = with_tc_loss_rate - without_tc_loss_rate
-        assert loss_diff > (value / 2.0)
+        assert loss_diff > (value / 2)
+
+        # finalize ---
+        SubprocessRunner("tcdel --device " + device_option).run()
+
+    @pytest.mark.parametrize(["option", "value"], [
+        ["--duplicate", 50],
+    ])
+    def test_const_packet_duplicate(
+            self, device_option, dst_host_option, transmitter, pingparser,
+            option, value):
+        if typepy.is_null_string(dst_host_option):
+            # alternative to pytest.mark.skipif
+            return
+
+        SubprocessRunner("tcdel --device " + device_option).run()
+        transmitter.destination_host = dst_host_option
+
+        # w/o packet duplicate tc ---
+        result = transmitter.ping()
+        pingparser.parse(result.stdout)
+        without_tc_duplicate_rate = pingparser.packet_duplicate_rate
+
+        # w/ packet duplicate tc ---
+        command_list = [
+            "tcset",
+            "--device {:s}".format(device_option),
+            "{:s} {:f}".format(option, value),
+        ]
+        assert SubprocessRunner(" ".join(command_list)).run() == 0
+
+        result = transmitter.ping()
+        pingparser.parse(result.stdout)
+        with_tc_duplicate_rate = pingparser.packet_duplicate_rate
+
+        # assertion ---
+        duplicate_rate_diff = with_tc_duplicate_rate - without_tc_duplicate_rate
+        assert duplicate_rate_diff > (value / 2)
 
         # finalize ---
         SubprocessRunner("tcdel --device " + device_option).run()
