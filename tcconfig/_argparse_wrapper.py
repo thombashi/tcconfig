@@ -18,7 +18,9 @@ class ArgparseWrapper(object):
     wrapper class of argparse
     """
 
-    def __init__(self, version, description="", epilog=""):
+    def __init__(self, version, description=""):
+        epilog = "Issue tracker: https://github.com/thombashi/tcconfig/issues"
+
         self.parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
             description=description, epilog=epilog)
