@@ -55,7 +55,11 @@ def main():
     set_log_level(options.log_level)
 
     if is_execute_tc_command(options.tc_command_output):
-        subprocrunner.Which("tc").verify()
+        try:
+            subprocrunner.Which("tc").verify()
+        except subprocrunner.CommandNotFoundError as e:
+            logger.error(e)
+            return errno.ENOENT
 
     try:
         verify_network_interface(options.device)

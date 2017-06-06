@@ -10,11 +10,15 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import copy
+import errno
 import json
 import sys
 
 import logbook
-from subprocrunner import SubprocessRunner
+from subprocrunner import (
+    CommandNotFoundError,
+    SubprocessRunner,
+)
 import subprocrunner
 import typepy
 from typepy.type import Integer
@@ -43,6 +47,7 @@ from .parser import (
     TcQdiscParser,
     TcClassParser,
 )
+
 
 logbook.StderrHandler(
     level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
@@ -227,7 +232,11 @@ def main():
 
     set_log_level(options.log_level)
 
-    subprocrunner.Which("tc").verify()
+    try:
+        subprocrunner.Which("tc").verify()
+    except CommandNotFoundError as e:
+        logger.error(e)
+        return errno.ENOENT
 
     subprocrunner.SubprocessRunner.is_save_history = True
     if options.tc_command_output != TcCoomandOutput.NOT_SET:

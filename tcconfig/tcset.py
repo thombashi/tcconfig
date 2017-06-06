@@ -12,10 +12,11 @@ import errno
 import sys
 
 import logbook
-import pyparsing as pp
 import six
 import subprocrunner
 import typepy
+
+import pyparsing as pp
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
@@ -38,6 +39,7 @@ from ._logger import (
 )
 from ._traffic_direction import TrafficDirection
 from .traffic_control import TrafficControl
+
 
 logbook.StderrHandler(
     level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
@@ -215,10 +217,13 @@ class TcConfigLoader(object):
                     if not filter_table:
                         continue
 
-                    option_list = [device_option,
-                                   "--direction={:s}".format(direction), ] + [
-                                      "--{:s}={:s}".format(k, v) for k, v in
-                                      six.iteritems(filter_table)]
+                    option_list = [
+                        device_option,
+                        "--direction={:s}".format(direction),
+                    ] + [
+                        "--{:s}={:s}".format(k, v)
+                        for k, v in six.iteritems(filter_table)
+                    ]
 
                     try:
                         network = self.__parse_tc_filter_network(tc_filter)
@@ -295,7 +300,11 @@ def main():
     set_log_level(options.log_level)
 
     if is_execute_tc_command(options.tc_command_output):
-        subprocrunner.Which("tc").verify()
+        try:
+            subprocrunner.Which("tc").verify()
+        except subprocrunner.CommandNotFoundError as e:
+            logger.error(e)
+            return errno.ENOENT
 
     try:
         verify_netem_module()
