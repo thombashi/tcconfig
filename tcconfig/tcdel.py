@@ -16,6 +16,7 @@ import subprocrunner
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
+    is_execute_tc_command,
     verify_network_interface,
     write_tc_script,
 )
@@ -53,7 +54,8 @@ def main():
 
     set_log_level(options.log_level)
 
-    subprocrunner.Which("tc").verify()
+    if is_execute_tc_command(options.tc_command_output):
+        subprocrunner.Which("tc").verify()
 
     try:
         verify_network_interface(options.device)

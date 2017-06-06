@@ -18,7 +18,10 @@ import subprocrunner
 import typepy
 
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import write_tc_script
+from ._common import (
+    is_execute_tc_command,
+    write_tc_script,
+)
 from ._const import (
     VERSION,
     Network,
@@ -291,7 +294,9 @@ def main():
 
     set_log_level(options.log_level)
 
-    subprocrunner.Which("tc").verify()
+    if is_execute_tc_command(options.tc_command_output):
+        subprocrunner.Which("tc").verify()
+
     try:
         verify_netem_module()
     except ModuleNotFoundError as e:

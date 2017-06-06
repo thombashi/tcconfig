@@ -15,7 +15,10 @@ import typepy
 
 import subprocrunner as spr
 
-from ._const import Network
+from ._const import (
+    Network,
+    TcCoomandOutput,
+)
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -34,6 +37,10 @@ def is_anywhere_network(network, ip_version):
         return network.strip() == get_anywhere_network(ip_version)
     except AttributeError as e:
         raise ValueError(e)
+
+
+def is_execute_tc_command(tc_command_output):
+    return tc_command_output == TcCoomandOutput.NOT_SET
 
 
 def get_anywhere_network(ip_version):
