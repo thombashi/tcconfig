@@ -36,6 +36,8 @@ class Test_tcshow(object):
             "--delay", "10",
             "--delay-distro", "2",
             "--loss", "0.01",
+            "--duplicate", "0.5",
+            "--reorder", "0.2",
             "--rate", "0.25K",
             "--network", "192.168.0.10",
             "--port", "8080",
@@ -66,6 +68,8 @@ class Test_tcshow(object):
             device_option,
             "--delay", "1",
             "--loss", "0.02",
+            "--duplicate", "0.5",
+            "--reorder", "0.2",
             "--rate", "0.1M",
             "--network", "192.168.11.0/24",
             "--port", "80",
@@ -81,6 +85,8 @@ class Test_tcshow(object):
            "network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "delay": "10.0",
                 "loss": "0.01",
+                "duplicate": "0.5",
+                "reorder": "0.2",
                 "rate": "248",
                 "delay-distro": "2.0"
             },
@@ -94,6 +100,8 @@ class Test_tcshow(object):
             "network=192.168.11.0/24, dst-port=80, protocol=ip": {
                 "delay": "1.0",
                 "loss": "0.02",
+                "duplicate": "0.5",
+                "reorder": "0.2",
                 "rate": "100K"
             },
             "network=0.0.0.0/0, protocol=ip": {
@@ -105,8 +113,8 @@ class Test_tcshow(object):
     }
 }"""
 
-        print("[expected]\n{}".format(expected))
-        print("[actual]\n{}".format(runner.stdout))
+        print("[expected]\n{}\n".format(expected))
+        print("[actual]\n{}\n".format(runner.stdout))
 
         assert json.loads(runner.stdout) == json.loads(expected)
 
@@ -126,6 +134,8 @@ class Test_tcshow(object):
             "--delay", "10",
             "--delay-distro", "2",
             "--loss", "0.01",
+            "--duplicate", "5",
+            "--reorder", "2",
             "--rate", "0.25K",
             "--network", "::1",
             "--port", "8080",
@@ -159,6 +169,8 @@ class Test_tcshow(object):
             device_option,
             "--delay", "1",
             "--loss", "0.02",
+            "--duplicate", "5",
+            "--reorder", "2",
             "--rate", "0.1M",
             "--network", "2001:db00::0/25",
             "--port", "80",
@@ -175,6 +187,8 @@ class Test_tcshow(object):
             "network=::1/128, dst-port=8080, protocol=ipv6": {
                 "delay": "10.0",
                 "loss": "0.01",
+                "duplicate": "5",
+                "reorder": "2",
                 "rate": "248",
                 "delay-distro": "2.0"
             },
@@ -188,6 +202,8 @@ class Test_tcshow(object):
             "network=2001:db00::/25, dst-port=80, protocol=ipv6": {
                 "delay": "1.0",
                 "loss": "0.02",
+                "duplicate": "5",
+                "reorder": "2",
                 "rate": "100K"
             },
             "protocol=ipv6": {
@@ -199,8 +215,8 @@ class Test_tcshow(object):
     }
 }"""
 
-        print("[expected]\n{}".format(expected))
-        print("[actual]\n{}".format(runner.stdout))
+        print("[expected]\n{}\n".format(expected))
+        print("[actual]\n{}\n".format(runner.stdout))
 
         assert json.loads(runner.stdout) == json.loads(expected)
 

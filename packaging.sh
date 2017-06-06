@@ -8,6 +8,8 @@ install_script_path=${dist_dir}/"install.sh"
 lancher_script="launcher.sh"
 
 
+pip install pip --upgrade
+
 # make wheelhouse ---
 python setup.py bdist_wheel --dist-dir ${dist_dir} --universal
 pip wheel -r requirements/requirements.txt --wheel-dir ${wheelhouse_dir_path}
@@ -18,7 +20,7 @@ pip download Logbook --no-deps --dest ${wheelhouse_dir_path}
 
 # make an install script ---
 cat <<EOF > ${install_script_path}
-#!/bin/bash
+#!/bin/sh
 
 set -eu
 

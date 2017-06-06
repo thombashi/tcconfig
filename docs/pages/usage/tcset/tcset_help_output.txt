@@ -2,7 +2,8 @@ usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
              (--device DEVICE | -f CONFIG_FILE) [--overwrite | --add]
              [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
              [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
-             [--loss PACKET_LOSS_RATE] [--corrupt CORRUPTION_RATE]
+             [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
+             [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE]
              [--network NETWORK] [--port DST_PORT] [--src-port SRC_PORT]
              [--ipv6] [--shaping-algo {tbf,htb}] [--iptables]
              [--src-network SRC_NETWORK]
@@ -43,10 +44,16 @@ Traffic Control:
   --loss PACKET_LOSS_RATE
                         round trip packet loss rate [%]. the valid range is 0
                         to 100. (default=0)
+  --duplicate PACKET_DUPLICATE_RATE
+                        round trip packet duplicate rate [%]. the valid range
+                        is 0 to 100. (default=0)
   --corrupt CORRUPTION_RATE
                         packet corruption rate [%]. the valid range is 0 to
                         100. packet corruption means single bit error at a
                         random offset in the packet. (default=0)
+  --reordering REORDERING_RATE
+                        packet reordering rate [%]. the valid range is 0 to
+                        100. (default=0)
   --network NETWORK, --dst-network NETWORK
                         target IP address/network to control traffic
   --port DST_PORT, --dst-port DST_PORT

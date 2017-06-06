@@ -156,15 +156,20 @@ Installing from PyPI
     sudo pip install tcconfig
 
 
-Installing from binary
+Installing from files
 ------------------------------
-``tcconfig`` can be installed environments which cannot access to
-`PyPI <https://pypi.python.org/pypi>`__ directly:
+The following package include ``tcconfig`` and dependency packages.
+Tshi package is for environments which cannot access to
+`PyPI <https://pypi.python.org/pypi>`__ directly.
 
-1. ``https://github.com/thombashi/tcconfig/releases/download/v0.7.0/tcconfig_wheel.tar.gz``
-2. ``tar xvf tcconfig_wheel.tar.gz``
-3. ``cd tcconfig_wheel/``
-4. ``./install.sh``
+How to install:
+
+1. Navigate to ``https://github.com/thombashi/tcconfig/releases/``
+2. Download the latest version of ``tcconfig_wheel.tar.gz``
+3. Copy ``tcconfig_wheel.tar.gz`` to installation target
+4. ``tar xvf tcconfig_wheel.tar.gz``
+5. ``cd tcconfig_wheel/``
+6. ``./install.sh``
 
 
 Dependencies
@@ -172,8 +177,8 @@ Dependencies
 
 Linux packages
 --------------
-- iproute2 (mandatory: required for tc command)
-- iptables (optional: required to when you use ``--iptables`` option)
+- `iproute`/`iproute2` (mandatory: required for tc command)
+- `iptables` (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
 ----------------------------

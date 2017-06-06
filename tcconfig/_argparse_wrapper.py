@@ -18,7 +18,9 @@ class ArgparseWrapper(object):
     wrapper class of argparse
     """
 
-    def __init__(self, version, description="", epilog=""):
+    def __init__(self, version, description=""):
+        epilog = "Issue tracker: https://github.com/thombashi/tcconfig/issues"
+
         self.parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
             description=description, epilog=epilog)
@@ -50,13 +52,14 @@ class ArgparseWrapper(object):
             const=TcCoomandOutput.STDOUT, default=TcCoomandOutput.NOT_SET,
             help="""
             display tc commands to be executed and exit.
-            commands are not actually executed.
+            these commands are not actually executed.
             """)
 
         group.add_argument(
             "--tc-script", dest="tc_command_output", action="store_const",
             const=TcCoomandOutput.SCRIPT, default=TcCoomandOutput.NOT_SET,
             help="""
-            generate a script file that described tc commands to be executed
-            by this command.
+            generate a script file that described tc commands which equivalent
+            with execution tcconfig command. the script can be execute without
+            tcconfig package installation.
             """)

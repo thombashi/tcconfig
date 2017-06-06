@@ -1,5 +1,7 @@
 #!/bin/bash
 
+set -u
+
 commands=(
     "tcset"
     "tcdel"
@@ -7,5 +9,7 @@ commands=(
 )
 
 for command in "${commands[@]}"; do
-    ${command} -h > pages/usage/${command}/${command}_help_output.txt
+    output_path=pages/usage/${command}/${command}_help_output.txt
+    echo ${output_path}
+    ${command} -h > ${output_path}
 done

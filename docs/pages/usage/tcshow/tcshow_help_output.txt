@@ -4,10 +4,11 @@ usage: tcshow [-h] [--version] [--tc-command | --tc-script]
 optional arguments:
   -h, --help       show this help message and exit
   --version        show program's version number and exit
-  --tc-command     display tc commands to be executed and exit. commands are
-                   not actually executed.
-  --tc-script      generate a script file that described tc commands to be
-                   executed by this command.
+  --tc-command     display tc commands to be executed and exit. these commands
+                   are not actually executed.
+  --tc-script      generate a script file that described tc commands which
+                   equivalent with execution tcconfig command. the script can
+                   be execute without tcconfig package installation.
   --debug          for debug print.
   --quiet          suppress execution log messages.
 
@@ -15,3 +16,5 @@ Traffic Control:
   --device DEVICE  network device name (e.g. eth0)
   --ipv6           Display IPv6 shaping rules. Defaults to show IPv4 shaping
                    rules.
+
+Issue tracker: https://github.com/thombashi/tcconfig/issues

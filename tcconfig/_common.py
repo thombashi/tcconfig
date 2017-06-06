@@ -15,7 +15,10 @@ import typepy
 
 import subprocrunner as spr
 
-from ._const import Network
+from ._const import (
+    Network,
+    TcCoomandOutput,
+)
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -34,6 +37,10 @@ def is_anywhere_network(network, ip_version):
         return network.strip() == get_anywhere_network(ip_version)
     except AttributeError as e:
         raise ValueError(e)
+
+
+def is_execute_tc_command(tc_command_output):
+    return tc_command_output == TcCoomandOutput.NOT_SET
 
 
 def get_anywhere_network(ip_version):
@@ -130,6 +137,15 @@ def run_tc_show(subcommand, device):
     return runner.stdout
 
 
+def _get_original_tcconfig_command(tcconfig_command):
+    import sys
+
+    return " ".join([tcconfig_command] + [
+        command_item for command_item in sys.argv[1:]
+        if command_item != "--tc-script"
+    ])
+
+
 def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     import datetime
     import io
@@ -142,9 +158,13 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     filename = "_".join(filename_item_list) + ".sh"
     with io.open(filename, "w", encoding="utf8") as fp:
         fp.write("\n".join([
-            "#!/bin/bash",
+            "#!/bin/sh",
             "",
-            "# tc script file, created by {:s} on {:s}.".format(
+            "# tc script file:",
+            "#   the following command sequence lead to equivalent results as",
+            "#   '{:s}'.".format(
+                _get_original_tcconfig_command(tcconfig_command)),
+            "#   created by {:s} on {:s}.".format(
                 tcconfig_command,
                 datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
             "",
