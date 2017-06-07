@@ -14,7 +14,7 @@ Installing from PyPI
 Installing from files
 ------------------------------
 The following package include ``tcconfig`` and dependency packages.
-Tshi package is for environments which cannot access to 
+This package is for environments which cannot access to 
 `PyPI <https://pypi.python.org/pypi>`__ directly.
 
 How to install:
