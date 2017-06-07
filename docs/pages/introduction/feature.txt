@@ -1,7 +1,7 @@
 Traffic control features
 ------------------------
 
-Trafic shaping target
+Traffic shaping target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Apply traffic shaping rules to specific target:

@@ -26,7 +26,7 @@ need to the following conditions:
 -  Equal or later than ``iproute2`` package version **20070313**
 
 
-Set latency destribution
+Set latency distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Latency setting by ``--delay`` will be uniform-distribution.
@@ -74,12 +74,11 @@ IPv6 addresses can be used at ``tcset``/``tcshow`` commands with ``--ipv6`` opti
 
 Get ``tc`` commands
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-You can get ``tc`` commands to be executed by ``tcconfing`` commands by 
+You can get ``tc`` commands to be executed by ``tcconfig`` commands by
 executing with ``--tc-command`` option
 (no tc configuration have made to the execution server by this command).
 
-:Examples: 
+:Examples:
 
     .. code-block:: console
 
@@ -99,7 +98,7 @@ tc commands to be executed by tcconfig commands.
 The created script can execute at other servers where tcconfig is not installed
 (still, the tc command will be required to execute the script).
 
-:Examples: 
+:Examples:
 
     .. code-block:: console
 
