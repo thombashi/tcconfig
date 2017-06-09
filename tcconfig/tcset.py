@@ -9,6 +9,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import errno
+import ipaddress
 import sys
 
 import logbook
@@ -342,10 +343,13 @@ def main():
     except (NetworkInterfaceNotFoundError) as e:
         logger.error(str(e))
         return errno.EINVAL
-    except ValueError as e:
+    except ipaddress.AddressValueError as e:
         logger.error(
             "{}. ".format(e) +
             "--ipv6 option will be required to use IPv6 address.")
+        return errno.EINVAL
+    except ValueError as e:
+        logger.error(e)
         return errno.EINVAL
 
     subprocrunner.SubprocessRunner.is_save_history = True
