@@ -87,7 +87,7 @@ class TrafficControl(object):
     EXISTS_MSG_TEMPLATE = (
         "{:s} "
         "execute with --overwrite option if you want to overwrite "
-        "the existing rules."
+        "the existing rules. "
         "execute with --add option if you want to add a new rule in addition "
         "to the existing rules."
     )
@@ -392,7 +392,7 @@ class TrafficControl(object):
             for netem_param_value in netem_param_value_list
         ]):
             raise ValueError(
-                "there is no valid net emulation parameter value."
+                "there is no valid net emulation parameter value. "
                 "at least one or more following parameters are required: "
                 "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
             )
