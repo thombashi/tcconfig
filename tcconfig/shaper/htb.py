@@ -13,6 +13,7 @@ import re
 import typepy
 
 from .._common import (
+    get_no_limit_kbits,
     logging_context,
     run_command_helper,
     run_tc_show,
@@ -63,21 +64,6 @@ class HtbShaper(AbstractShaper):
 
         return self.__netem_major_id
 
-    def get_no_limit_kbits(self):
-        # upper rate limit of iproute2 was 34.359.738.360 bits per second
-        # older than 3.14.0
-        # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
-
-        iproute2_upper_kbits = Humanreadable(
-            "32G", kilo_size=KILO_SIZE).to_kilo_bit()
-
-        try:
-            with open("/sys/class/net/{:s}/speed".format(self.tc_device)) as f:
-                return min(
-                    int(f.read().strip()) * KILO_SIZE, iproute2_upper_kbits)
-        except IOError:
-            return iproute2_upper_kbits
-
     def make_qdisc(self):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
@@ -109,7 +95,7 @@ class HtbShaper(AbstractShaper):
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id())
-        no_limit_kbits = self.get_no_limit_kbits()
+        no_limit_kbits = get_no_limit_kbits(self.tc_device)
 
         try:
             self._tc_obj.validate_bandwidth_rate()
@@ -244,7 +230,7 @@ class HtbShaper(AbstractShaper):
                 "parent {:s}".format(parent),
                 "classid {:s}".format(classid),
                 self.algorithm_name,
-                "rate {}kbit".format(self.get_no_limit_kbits()),
+                "rate {}kbit".format(get_no_limit_kbits(self.tc_device)),
             ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             message)
