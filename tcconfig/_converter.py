@@ -33,7 +33,7 @@ class Humanreadable(object):
         ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
         ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
-    __RE_NUMBER = re.compile("^[0-9\.]+")
+    __RE_NUMBER = re.compile("^[\-\+]?[0-9\.]+")
 
     def __init__(self, readable_size, kilo_size=1024):
         """
