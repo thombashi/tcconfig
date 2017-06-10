@@ -51,9 +51,7 @@ class Humanreadable(object):
         if size < 0:
             raise ValueError("minus size")
 
-        coefficient = self.__get_coefficient(unit)
-
-        return size * coefficient
+        return size * self.__get_coefficient(unit)
 
     def to_kilo_value(self):
         """
