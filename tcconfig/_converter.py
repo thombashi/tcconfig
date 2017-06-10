@@ -38,6 +38,8 @@ class Humanreadable(object):
         self.__readable_size = readable_size
         self.kilo_size = kilo_size  # [byte]
 
+        self.__validate_kilo_size()
+
     def to_byte(self):
         """
         :raises ValueError:
@@ -65,9 +67,12 @@ class Humanreadable(object):
 
         return self.to_byte() / self.kilo_size
 
-    def __get_coefficient(self, unit_str):
+    def __validate_kilo_size(self):
         if self.kilo_size not in [1000, 1024]:
             raise ValueError("invalid kilo size: {}".format(self.kilo_size))
+
+    def __get_coefficient(self, unit_str):
+        self.__validate_kilo_size()
 
         for unit in self.__UNIT_LIST:
             if unit.regexp.search(unit_str):
