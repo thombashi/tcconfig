@@ -121,7 +121,7 @@ class TbfShaper(AbstractShaper):
             return 0
 
         if all([
-            typepy.is_null_string(self._tc_obj.network),
+            typepy.is_null_string(self._tc_obj.dst_network),
             not typepy.type.Integer(self._tc_obj.dst_port).is_type(),
         ]):
             flowid = "{:s}:{:d}".format(

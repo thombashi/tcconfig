@@ -131,7 +131,7 @@ def parse_option():
             TrafficControl.MIN_REORDERING_RATE,
             TrafficControl.MAX_REORDERING_RATE))
     group.add_argument(
-        "--network", "--dst-network",
+        "--network", "--dst-network", dest="dst_network",
         help="target IP address/network to control traffic")
     group.add_argument(
         "--port", "--dst-port", dest="dst_port", type=int,
@@ -156,7 +156,7 @@ def parse_option():
         "--src-network",
         help="""
         set traffic shaping rule to a specific packets that routed from
-        --src-network to --network. This option required to execute with
+        --src-network to --dst-network. This option required to execute with
         the --iptables option.
         the shaping rule only affect to outgoing packets
         (no effect to if you execute with "--direction incoming" option)
@@ -232,11 +232,11 @@ class TcConfigLoader(object):
                     ]
 
                     try:
-                        network = self.__parse_tc_filter_network(tc_filter)
-                        if network not in (
+                        dst_network = self.__parse_tc_filter_network(tc_filter)
+                        if dst_network not in (
                                 Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
                             option_list.append(
-                                "--network={:s}".format(network))
+                                "--dst_network={:s}".format(dst_network))
                     except pp.ParseException:
                         pass
 
@@ -264,7 +264,7 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_network(text):
         network_pattern = (
-            pp.SkipTo("network=", include=True) +
+            pp.SkipTo("dst-network=", include=True) +
             pp.Word(pp.alphanums + "." + "/"))
 
         return network_pattern.parseString(text)[-1]
@@ -333,7 +333,7 @@ def main():
             packet_duplicate_rate=options.packet_duplicate_rate,
             corruption_rate=options.corruption_rate,
             reordering_rate=options.reordering_rate,
-            network=options.network,
+            dst_network=options.dst_network,
             src_network=options.src_network,
             src_port=options.src_port,
             dst_port=options.dst_port,

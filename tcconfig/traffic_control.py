@@ -130,8 +130,8 @@ class TrafficControl(object):
         return self.__reordering_rate
 
     @property
-    def network(self):
-        return self.__network
+    def dst_network(self):
+        return self.__dst_network
 
     @property
     def src_network(self):
@@ -187,7 +187,7 @@ class TrafficControl(object):
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, packet_duplicate_rate=None,
             corruption_rate=None, reordering_rate=None,
-            network=None, src_port=None, dst_port=None, is_ipv6=False,
+            dst_network=None, src_port=None, dst_port=None, is_ipv6=False,
             src_network=None,
             is_add_shaper=False,
             is_enable_iptables=True,
@@ -203,7 +203,7 @@ class TrafficControl(object):
         self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
         self.__corruption_rate = corruption_rate  # [%]
         self.__reordering_rate = reordering_rate
-        self.__network = network
+        self.__dst_network = dst_network
         self.__src_network = src_network
         self.__src_port = src_port
         self.__dst_port = dst_port
@@ -233,7 +233,8 @@ class TrafficControl(object):
         self.__validate_netem_parameter()
         self.__validate_src_network()
 
-        self.__network = sanitize_network(self.network, self.ip_version)
+        self.__dst_network = sanitize_network(
+            self.dst_network, self.ip_version)
         self.__src_network = sanitize_network(
             self.src_network, self.ip_version)
         self.__validate_port()

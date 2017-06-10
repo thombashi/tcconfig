@@ -122,17 +122,17 @@ class AbstractShaper(ShaperInterface):
             command_item_list.append(
                 "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
-            if typepy.is_null_string(self._tc_obj.network):
-                network = get_anywhere_network(self._tc_obj.ip_version)
+            if typepy.is_null_string(self._tc_obj.dst_network):
+                dst_network = get_anywhere_network(self._tc_obj.ip_version)
             else:
-                network = self._tc_obj.network
+                dst_network = self._tc_obj.dst_network
 
             command_item_list.extend([
                 "u32",
                 "match {:s} {:s} {:s}".format(
                     self._tc_obj.protocol_match,
                     self._get_network_direction_str(),
-                    network),
+                    dst_network),
             ])
 
             if self._tc_obj.src_port:
@@ -179,14 +179,14 @@ class AbstractShaper(ShaperInterface):
         src_network = None
 
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
-            dst_network = self._tc_obj.network
+            dst_network = self._tc_obj.dst_network
             if typepy.is_null_string(self._tc_obj.src_network):
                 chain = "OUTPUT"
             else:
                 src_network = self._tc_obj.src_network
                 chain = "PREROUTING"
         elif self._tc_obj.direction == TrafficDirection.INCOMING:
-            src_network = self._tc_obj.network
+            src_network = self._tc_obj.dst_network
             chain = "INPUT"
 
         self._tc_obj.iptables_ctrl.add(IptablesMangleMark(
