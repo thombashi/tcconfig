@@ -11,22 +11,24 @@ import pytest
 import six
 
 from tcconfig._const import Tc
-import tcconfig.parser
+import tcconfig.parser._filter
+import tcconfig.parser._qdisc
+import tcconfig.parser.shaping_rule
 
 
 @pytest.fixture
 def filter_parser_ipv4():
-    return tcconfig.parser.TcFilterParser(ip_version=4)
+    return tcconfig.parser._filter.TcFilterParser(ip_version=4)
 
 
 @pytest.fixture
 def filter_parser_ipv6():
-    return tcconfig.parser.TcFilterParser(ip_version=6)
+    return tcconfig.parser._filter.TcFilterParser(ip_version=6)
 
 
 @pytest.fixture
 def qdisc_parser():
-    return tcconfig.parser.TcQdiscParser()
+    return tcconfig.parser._qdisc.TcQdiscParser()
 
 
 class Test_TcFilterParser_parse_filter_ipv4(object):
