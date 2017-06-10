@@ -33,9 +33,9 @@ def device_option(request):
     for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
-            "k", " k ", "K", " K ",
-            "m", " m ", "M", " M ",
-            "g", " g ", "G", " G ",
+            "k", " k ", "K", " K ", "kbps", "Kbps",
+            "m", " m ", "M", " M ", "mbps", "Mbps",
+            "g", " g ", "G", " G ", "gbps", "Gbps",
         ]
     ])
 ])
@@ -49,9 +49,9 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
     for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
-            "kb", "kbps", "KB",
-            "mb", "mbps", "MB",
-            "gb", "gbps", "GB",
+            "kb", "KB",
+            "mb", "MB",
+            "gb", "GB",
         ]
     ])
 ] + [

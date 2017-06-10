@@ -22,10 +22,15 @@ ByteUnit = namedtuple("ByteUnit", "regexp factor")
 class Humanreadable(object):
     __UNIT_LIST = [
         ByteUnit(regexp=re.compile("^b$", re.IGNORECASE), factor=0),
+        ByteUnit(regexp=re.compile("^bps$", re.IGNORECASE), factor=0),
         ByteUnit(regexp=re.compile("^k$", re.IGNORECASE), factor=1),
+        ByteUnit(regexp=re.compile("^kbps$", re.IGNORECASE), factor=1),
         ByteUnit(regexp=re.compile("^m$", re.IGNORECASE), factor=2),
+        ByteUnit(regexp=re.compile("^mbps$", re.IGNORECASE), factor=2),
         ByteUnit(regexp=re.compile("^g$", re.IGNORECASE), factor=3),
+        ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
         ByteUnit(regexp=re.compile("^t$", re.IGNORECASE), factor=4),
+        ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
         ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
     __RE_NUMBER = re.compile("^[0-9\.]+")

@@ -77,7 +77,11 @@ def parse_option():
         """)
     group.add_argument(
         "--rate", "--bandwidth-rate", dest="bandwidth_rate",
-        help="network bandwidth rate [K|M|G bit per second]")
+        help="""
+        network bandwidth rate [bit per second].
+        valid units are either: K/M/G/Kbps/Mbps/Gbps
+        e.g. --rate 10Mbps
+        """)
     group.add_argument(
         "--delay", dest="network_latency", type=float, default=0,
         help="""
