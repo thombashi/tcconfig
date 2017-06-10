@@ -265,7 +265,7 @@ class TrafficControl(object):
         if self.direction == TrafficDirection.INCOMING:
             return self.ifb_device
 
-        raise ValueError("unknown direction: " + self.direction)
+        raise ValueError("unknown direction: {}".format(self.direction))
 
     def get_anywhere_network(self):
         return get_anywhere_network(self, )
