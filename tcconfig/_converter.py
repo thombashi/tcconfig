@@ -37,11 +37,11 @@ class Humanreadable(object):
         """
 
         self.__readable_size = readable_size
-        self.kilo_size = kilo_size  # [byte]
+        self.kilo_size = kilo_size
 
         self.__validate_kilo_size()
 
-    def to_byte(self):
+    def to_bit(self):
         """
         :raises ValueError:
         """
@@ -69,7 +69,7 @@ class Humanreadable(object):
         :raises ValueError:
         """
 
-        return self.to_byte() / self.kilo_size
+        return self.to_bit() / self.kilo_size
 
     def __validate_kilo_size(self):
         if self.kilo_size not in [1000, 1024]:
