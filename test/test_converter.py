@@ -11,7 +11,7 @@ import pytest
 from tcconfig._converter import Humanreadable
 
 
-class Test_to_bit:
+class Test_to_bit(object):
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2],
@@ -75,7 +75,7 @@ class Test_to_bit:
             Humanreadable(value, kilo_size).to_bit()
 
 
-class Test_to_kilo_value:
+class Test_to_kilo_value(object):
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2 / 1024],

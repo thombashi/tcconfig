@@ -13,7 +13,7 @@ from tcconfig._common import (
 )
 
 
-class Test_is_anywhere_network:
+class Test_is_anywhere_network(object):
 
     @pytest.mark.parametrize(["network", "ip_version", "expected"], [
         ["0.0.0.0/0", 4, True],
@@ -33,7 +33,7 @@ class Test_is_anywhere_network:
             is_anywhere_network(network, ip_version)
 
 
-class Test_get_anywhere_network:
+class Test_get_anywhere_network(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         [4, "0.0.0.0/0"],
@@ -53,7 +53,7 @@ class Test_get_anywhere_network:
             get_anywhere_network(value)
 
 
-class Test_sanitize_network:
+class Test_sanitize_network(object):
 
     @pytest.mark.parametrize(["value", "ip_version", "expected"], [
         ["192.168.0.1", 4, "192.168.0.1/32"],
