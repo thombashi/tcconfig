@@ -236,7 +236,7 @@ class TcConfigLoader(object):
                         if dst_network not in (
                                 Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
                             option_list.append(
-                                "--dst_network={:s}".format(dst_network))
+                                "--dst-network={:s}".format(dst_network))
                     except pp.ParseException:
                         pass
 
