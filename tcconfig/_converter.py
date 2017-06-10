@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
+
 import re
 
 import typepy
@@ -50,7 +51,7 @@ class Humanreadable(object):
         if size < 0:
             raise ValueError("minus size")
 
-        coefficient = self.__unit_to_no_prefix(unit)
+        coefficient = self.__get_coefficient(unit)
 
         return size * coefficient
 
@@ -62,7 +63,7 @@ class Humanreadable(object):
 
         return self.to_no_prefix_value() / self.kilo_size
 
-    def __unit_to_no_prefix(self, unit):
+    def __get_coefficient(self, unit):
         if self.kilo_size not in [1000, 1024]:
             raise ValueError("invalid kilo size: {}".format(self.kilo_size))
 
@@ -72,4 +73,4 @@ class Humanreadable(object):
             if re_pattern.search(unit):
                 return self.kilo_size ** exp
 
-        raise ValueError("unknown unit: {}".format(unit))
+        raise ValueError("unit not found: value={}".format(unit))
