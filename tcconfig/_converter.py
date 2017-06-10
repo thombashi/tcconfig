@@ -13,6 +13,7 @@ import re
 
 import typepy
 
+from ._error import UnitNotFoundError
 from ._logger import logger
 
 ByteUnit = namedtuple("ByteUnit", "regexp factor")
@@ -59,10 +60,10 @@ class Humanreadable(object):
         except AttributeError:
             raise ValueError("invalid value: {}".format(self.__readable_size))
         size = float(size)
-
-        unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
         if size < 0:
             raise ValueError("minus size")
+
+        unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
         return size * self.__get_coefficient(unit)
 
@@ -85,4 +86,4 @@ class Humanreadable(object):
             if unit.regexp.search(unit_str):
                 return self.kilo_size ** unit.factor
 
-        raise ValueError("unit not found: value={}".format(unit_str))
+        raise UnitNotFoundError("unit not found: value={}".format(unit_str))

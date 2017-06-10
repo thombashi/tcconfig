@@ -33,6 +33,7 @@ from ._error import (
     NetworkInterfaceNotFoundError,
     EmptyParameterError,
     InvalidParameterError,
+    UnitNotFoundError,
 )
 from ._iptables import IptablesMangleController
 from ._logger import logger
@@ -217,6 +218,8 @@ class TrafficControl(object):
         try:
             self.__bandwidth_rate = Humanreadable(
                 bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        except UnitNotFoundError:
+            raise
         except (TypeError, ValueError):
             self.__bandwidth_rate = None
 

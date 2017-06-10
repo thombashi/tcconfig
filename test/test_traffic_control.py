@@ -10,7 +10,10 @@ import pytest
 
 from allpairspy import AllPairs
 from tcconfig._const import Tc
-from tcconfig._error import InvalidParameterError
+from tcconfig._error import (
+    InvalidParameterError,
+    UnitNotFoundError,
+)
 from tcconfig._traffic_direction import TrafficDirection
 from tcconfig.traffic_control import TrafficControl
 
@@ -42,7 +45,7 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), InvalidParameterError]
+    ["".join(opt_list), UnitNotFoundError]
     for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
@@ -51,10 +54,13 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
             "gb", "gbps", "GB",
         ]
     ])
+] + [
+    ["".join(value), InvalidParameterError]
+    for value in ("B", "K", "M", "G")
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
-    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
+        tc_obj = TrafficControl("dummy", bandwidth_rate=value)
         tc_obj.validate_bandwidth_rate()
 
 

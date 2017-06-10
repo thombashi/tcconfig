@@ -9,6 +9,7 @@ from __future__ import division
 import pytest
 
 from tcconfig._converter import Humanreadable
+from tcconfig._error import UnitNotFoundError
 
 
 class Test_to_bit(object):
@@ -59,6 +60,7 @@ class Test_to_bit(object):
         assert Humanreadable(value, kilo_size).to_bit() == expected
 
     @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
+        ["10", 1000, UnitNotFoundError],
         ["", 1000, ValueError],
         [None, 1000, ValueError],
         [True, 1000, ValueError],

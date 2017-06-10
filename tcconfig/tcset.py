@@ -32,6 +32,7 @@ from ._const import (
 from ._error import (
     ModuleNotFoundError,
     NetworkInterfaceNotFoundError,
+    UnitNotFoundError,
 )
 from ._logger import (
     LOG_FORMAT_STRING,
@@ -317,26 +318,31 @@ def main():
     if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
 
-    tc = TrafficControl(
-        options.device,
-        direction=options.direction,
-        bandwidth_rate=options.bandwidth_rate,
-        latency_ms=options.network_latency,
-        latency_distro_ms=options.latency_distro_ms,
-        packet_loss_rate=options.packet_loss_rate,
-        packet_duplicate_rate=options.packet_duplicate_rate,
-        corruption_rate=options.corruption_rate,
-        reordering_rate=options.reordering_rate,
-        network=options.network,
-        src_network=options.src_network,
-        src_port=options.src_port,
-        dst_port=options.dst_port,
-        is_ipv6=options.is_ipv6,
-        is_add_shaper=options.is_add_shaper,
-        is_enable_iptables=options.is_enable_iptables,
-        shaping_algorithm=options.shaping_algorithm,
-        tc_command_output=options.tc_command_output,
-    )
+    try:
+        tc = TrafficControl(
+            options.device,
+            direction=options.direction,
+            bandwidth_rate=options.bandwidth_rate,
+            latency_ms=options.network_latency,
+            latency_distro_ms=options.latency_distro_ms,
+            packet_loss_rate=options.packet_loss_rate,
+            packet_duplicate_rate=options.packet_duplicate_rate,
+            corruption_rate=options.corruption_rate,
+            reordering_rate=options.reordering_rate,
+            network=options.network,
+            src_network=options.src_network,
+            src_port=options.src_port,
+            dst_port=options.dst_port,
+            is_ipv6=options.is_ipv6,
+            is_add_shaper=options.is_add_shaper,
+            is_enable_iptables=options.is_enable_iptables,
+            shaping_algorithm=options.shaping_algorithm,
+            tc_command_output=options.tc_command_output,
+        )
+    except UnitNotFoundError:
+        logger.error(
+            "--rate/--bandwidth-rate require unit such as K/M/Kbps/Mbps/etc.")
+        return errno.EINVAL
 
     try:
         tc.validate()
