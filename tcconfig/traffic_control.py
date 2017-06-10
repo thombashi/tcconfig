@@ -213,7 +213,7 @@ class TrafficControl(object):
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
 
-        # bandwidth string [G/M/K bit per second]
+        # convert bandwidth string [K/M/G bit per second] to a number
         try:
             self.__bandwidth_rate = Humanreadable(
                 bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
