@@ -27,6 +27,7 @@ from ._common import (
 from ._const import (
     VERSION,
     Network,
+    Tc,
     TcCoomandOutput,
 )
 from ._error import (
@@ -264,7 +265,7 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_network(text):
         network_pattern = (
-            pp.SkipTo("dst-network=", include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.NETWORK), include=True) +
             pp.Word(pp.alphanums + "." + "/"))
 
         return network_pattern.parseString(text)[-1]
@@ -272,7 +273,7 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_src_port(text):
         port_pattern = (
-            pp.SkipTo("src-port=", include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.SRC_PORT), include=True) +
             pp.Word(pp.nums))
 
         return port_pattern.parseString(text)[-1]
@@ -280,7 +281,7 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_dst_port(text):
         port_pattern = (
-            pp.SkipTo("dst-port=", include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.DST_PORT), include=True) +
             pp.Word(pp.nums))
 
         return port_pattern.parseString(text)[-1]
