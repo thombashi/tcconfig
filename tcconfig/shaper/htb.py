@@ -19,15 +19,10 @@ from .._common import (
     run_tc_show,
 )
 from .._const import (
-    KILO_SIZE,
     Tc,
     TcCoomandOutput,
 )
-from .._converter import Humanreadable
-from .._error import (
-    InvalidParameterError,
-    TcAlreadyExist,
-)
+from .._error import TcAlreadyExist
 from .._logger import logger
 from ._interface import AbstractShaper
 

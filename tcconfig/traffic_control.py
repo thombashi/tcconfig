@@ -32,7 +32,6 @@ from ._const import (
 from ._converter import Humanreadable
 from ._error import (
     NetworkInterfaceNotFoundError,
-    EmptyParameterError,
     InvalidParameterError,
     UnitNotFoundError,
 )
