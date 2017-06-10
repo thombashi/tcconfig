@@ -305,6 +305,7 @@ def main():
     options = parse_option()
 
     set_log_level(options.log_level)
+    subprocrunner.SubprocessRunner.is_save_history = True
 
     if is_execute_tc_command(options.tc_command_output):
         try:
@@ -312,6 +313,8 @@ def main():
         except subprocrunner.CommandNotFoundError as e:
             logger.error(e)
             return errno.ENOENT
+    else:
+        subprocrunner.SubprocessRunner.default_is_dry_run = True
 
     try:
         verify_netem_module()
@@ -362,10 +365,6 @@ def main():
     except ValueError as e:
         logger.error(e)
         return errno.EINVAL
-
-    subprocrunner.SubprocessRunner.is_save_history = True
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.default_is_dry_run = True
 
     if options.overwrite:
         if options.log_level == logbook.INFO:
