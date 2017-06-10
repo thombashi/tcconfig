@@ -19,6 +19,7 @@ import subprocrunner as spr
 from ._common import (
     logging_context,
     get_anywhere_network,
+    get_no_limit_kbits,
     sanitize_network,
     verify_network_interface,
     run_command_helper,
@@ -103,7 +104,12 @@ class TrafficControl(object):
 
     @property
     def bandwidth_rate(self):
-        return self.__bandwidth_rate
+        # convert bandwidth string [K/M/G bit per second] to a number
+        try:
+            return Humanreadable(
+                self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        except (InvalidParameterError, UnitNotFoundError, TypeError, ValueError):
+            return None
 
     @property
     def latency_ms(self):
@@ -196,6 +202,7 @@ class TrafficControl(object):
         self.__device = device
 
         self.__direction = direction
+        self.__bandwidth_rate = bandwidth_rate
         self.__latency_ms = latency_ms  # [milliseconds]
         self.__latency_distro_ms = latency_distro_ms  # [milliseconds]
         self.__packet_loss_rate = packet_loss_rate  # [%]
@@ -212,15 +219,6 @@ class TrafficControl(object):
         self.__tc_command_output = tc_command_output
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
-
-        # convert bandwidth string [K/M/G bit per second] to a number
-        try:
-            self.__bandwidth_rate = Humanreadable(
-                bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
-        except (InvalidParameterError, UnitNotFoundError):
-            raise
-        except (TypeError, ValueError):
-            self.__bandwidth_rate = None
 
         self.__iptables_ctrl = IptablesMangleController(
             is_enable_iptables, self.ip_version)
@@ -247,26 +245,28 @@ class TrafficControl(object):
                 "--iptables option will be required to use --src-network option")
 
     def validate_bandwidth_rate(self):
-        from ._common import get_no_limit_kbits
-
-        if self.bandwidth_rate is None:
+        if typepy.is_null_string(self.__bandwidth_rate):
             return
 
-        if not RealNumber(self.bandwidth_rate).is_type():
+        # convert bandwidth string [K/M/G bit per second] to a number
+        bandwidth_rate = Humanreadable(
+            self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+
+        if not RealNumber(bandwidth_rate).is_type():
             raise InvalidParameterError(
                 "bandwidth_rate must be number: actual={}".format(
-                    self.bandwidth_rate))
+                    bandwidth_rate))
 
-        if self.bandwidth_rate <= 0:
+        if bandwidth_rate <= 0:
             raise InvalidParameterError(
                 "bandwidth_rate must be greater than zero: actual={}".format(
-                    self.bandwidth_rate))
+                    bandwidth_rate))
 
         no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
-        if self.bandwidth_rate > no_limit_kbits:
+        if bandwidth_rate > no_limit_kbits:
             raise InvalidParameterError(
                 "bandwidth_rate must be less than {}: actual={}".format(
-                    no_limit_kbits, self.bandwidth_rate))
+                    no_limit_kbits, bandwidth_rate))
 
     def get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:

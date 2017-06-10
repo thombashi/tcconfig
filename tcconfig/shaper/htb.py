@@ -97,10 +97,8 @@ class HtbShaper(AbstractShaper):
             self.get_qdisc_minor_id())
         no_limit_kbits = get_no_limit_kbits(self.tc_device)
 
-        try:
-            self._tc_obj.validate_bandwidth_rate()
-            kbits = self._tc_obj.bandwidth_rate
-        except InvalidParameterError:
+        kbits = self._tc_obj.bandwidth_rate
+        if kbits is None:
             kbits = no_limit_kbits
 
         command_item_list = [
