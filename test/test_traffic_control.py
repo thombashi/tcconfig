@@ -31,7 +31,7 @@ def device_option(request):
 @pytest.mark.parametrize(["value"], [
     ["".join(opt_list)]
     for opt_list in AllPairs([
-        ["0.1", "1", "2147483647"],
+        ["0.1", "+1.25", "30"],
         [
             "k", " k ", "K", " K ", "kbps", "Kbps",
             "m", " m ", "M", " M ", "mbps", "Mbps",
@@ -40,40 +40,41 @@ def device_option(request):
     ])
 ])
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
-    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
+    tc_obj = TrafficControl(
+        "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING)
     tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
     ["".join(opt_list), UnitNotFoundError]
     for opt_list in AllPairs([
-        ["0.1", "1", "2147483647"],
-        [
-            "kb", "KB",
-            "mb", "MB",
-            "gb", "GB",
-        ]
+        ["0.1", "1"],
+        ["", "kb", "KB", "mb", "MB", "gb", "GB"]
     ])
 ] + [
     ["".join(value), InvalidParameterError]
     for value in ("B", "K", "M", "G")
+] + [
+    ["0bps", InvalidParameterError],
+    ["34359738361bps", InvalidParameterError],
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
-        tc_obj = TrafficControl("dummy", bandwidth_rate=value)
+        tc_obj = TrafficControl(
+            "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING)
         tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), ValueError]
+    ["".join(opt_list), InvalidParameterError]
     for opt_list in itertools.product(
         ["-1", "0", "0.0"],
         ["k", "K", "m", "M", "g", "G"]
     )
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
-    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
+        tc_obj = TrafficControl("dummy", bandwidth_rate=value)
         tc_obj.validate_bandwidth_rate()
 
 

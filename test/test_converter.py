@@ -61,10 +61,10 @@ class Test_to_bit(object):
 
     @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
         ["10", 1000, UnitNotFoundError],
-        ["", 1000, ValueError],
-        [None, 1000, ValueError],
-        [True, 1000, ValueError],
-        [float("nan"), 1000, ValueError],
+        ["", 1000, TypeError],
+        [None, 1000, TypeError],
+        [True, 1000, TypeError],
+        [float("nan"), 1000, TypeError],
         ["a", 1000, ValueError],
         ["1k0 ", 1000, ValueError],
         ["10kb", 1000, ValueError],
