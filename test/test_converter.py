@@ -75,7 +75,7 @@ class Test_to_bit(object):
             Humanreadable(value, kilo_size).to_bit()
 
 
-class Test_to_kilo_value(object):
+class Test_to_kilo_bit(object):
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2 / 1024],
@@ -92,4 +92,4 @@ class Test_to_kilo_value(object):
         ["2p", 1000, 2 * 1000 ** 4],
     ])
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(value, kilo_size).to_kilo_value() == expected
+        assert Humanreadable(value, kilo_size).to_kilo_bit() == expected
