@@ -24,8 +24,8 @@ from .._const import (
 )
 from .._converter import Humanreadable
 from .._error import (
+    InvalidParameterError,
     TcAlreadyExist,
-    EmptyParameterError,
 )
 from .._logger import logger
 from ._interface import AbstractShaper
@@ -114,7 +114,7 @@ class HtbShaper(AbstractShaper):
         try:
             self._tc_obj.validate_bandwidth_rate()
             kbits = self._tc_obj.bandwidth_rate
-        except EmptyParameterError:
+        except InvalidParameterError:
             kbits = no_limit_kbits
 
         command_item_list = [

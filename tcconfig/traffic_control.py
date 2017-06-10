@@ -32,7 +32,7 @@ from ._converter import Humanreadable
 from ._error import (
     NetworkInterfaceNotFoundError,
     EmptyParameterError,
-    InvalidParameterError
+    InvalidParameterError,
 )
 from ._iptables import IptablesMangleController
 from ._logger import logger
@@ -245,7 +245,9 @@ class TrafficControl(object):
 
     def validate_bandwidth_rate(self):
         if not RealNumber(self.bandwidth_rate).is_type():
-            raise EmptyParameterError("bandwidth_rate is empty")
+            raise InvalidParameterError(
+                "bandwidth_rate must be number: actual={}".format(
+                    self.bandwidth_rate))
 
         if self.bandwidth_rate <= 0:
             raise InvalidParameterError(

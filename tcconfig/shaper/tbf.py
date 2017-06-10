@@ -15,7 +15,7 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
-from .._error import EmptyParameterError
+from .._error import InvalidParameterError
 from .._traffic_direction import TrafficDirection
 from ._interface import AbstractShaper
 
@@ -71,7 +71,7 @@ class TbfShaper(AbstractShaper):
     def add_rate(self):
         try:
             self._tc_obj.validate_bandwidth_rate()
-        except EmptyParameterError:
+        except InvalidParameterError:
             return 0
 
         parent = "{:x}:{:d}".format(

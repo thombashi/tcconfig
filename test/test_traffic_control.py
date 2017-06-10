@@ -10,6 +10,7 @@ import pytest
 
 from allpairspy import AllPairs
 from tcconfig._const import Tc
+from tcconfig._error import InvalidParameterError
 from tcconfig._traffic_direction import TrafficDirection
 from tcconfig.traffic_control import TrafficControl
 
@@ -41,7 +42,7 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), ValueError]
+    ["".join(opt_list), InvalidParameterError]
     for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
