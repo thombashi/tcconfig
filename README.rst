@@ -20,7 +20,7 @@ A Simple tc command wrapper tool. Easy to set up traffic control of network band
 Traffic control features
 ------------------------
 
-Trafic shaping target
+Traffic shaping target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Apply traffic shaping rules to specific target:
@@ -159,7 +159,7 @@ Installing from PyPI
 Installing from files
 ------------------------------
 The following package include ``tcconfig`` and dependency packages.
-Tshi package is for environments which cannot access to
+This package is for environments which cannot access to
 `PyPI <https://pypi.python.org/pypi>`__ directly.
 
 How to install:
