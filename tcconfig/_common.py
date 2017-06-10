@@ -188,6 +188,9 @@ def get_iproute2_upper_limite_rate():
 
 
 def get_no_limit_kbits(tc_device):
+    if typepy.is_null_string(tc_device):
+        return get_iproute2_upper_limite_rate()
+
     try:
         with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
             return min(
