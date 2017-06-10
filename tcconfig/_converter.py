@@ -13,7 +13,10 @@ import re
 
 import typepy
 
-from ._error import UnitNotFoundError
+from ._error import (
+    InvalidParameterError,
+    UnitNotFoundError,
+)
 from ._logger import logger
 
 ByteUnit = namedtuple("ByteUnit", "regexp factor")
@@ -56,17 +59,19 @@ class Humanreadable(object):
         logger.debug("readable_size: {}".format(self.__readable_size))
 
         if not typepy.is_not_null_string(self.__readable_size):
-            raise ValueError("readable_size must be a string ")
+            raise TypeError("readable_size must be a string ")
 
         self.__readable_size = self.__readable_size.strip()
 
         try:
             size = self.__RE_NUMBER.search(self.__readable_size).group()
         except AttributeError:
-            raise ValueError("invalid value: {}".format(self.__readable_size))
+            raise InvalidParameterError(
+                "invalid value: {}".format(self.__readable_size))
         size = float(size)
         if size < 0:
-            raise ValueError("minus size")
+            raise InvalidParameterError(
+                "size must be greater or equals to zero")
 
         unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
