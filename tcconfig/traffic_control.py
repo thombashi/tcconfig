@@ -218,7 +218,7 @@ class TrafficControl(object):
         try:
             self.__bandwidth_rate = Humanreadable(
                 bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
-        except UnitNotFoundError:
+        except (InvalidParameterError, UnitNotFoundError):
             raise
         except (TypeError, ValueError):
             self.__bandwidth_rate = None
@@ -248,6 +248,11 @@ class TrafficControl(object):
                 "--iptables option will be required to use --src-network option")
 
     def validate_bandwidth_rate(self):
+        from ._common import get_no_limit_kbits
+
+        if self.bandwidth_rate is None:
+            return
+
         if not RealNumber(self.bandwidth_rate).is_type():
             raise InvalidParameterError(
                 "bandwidth_rate must be number: actual={}".format(
@@ -255,8 +260,14 @@ class TrafficControl(object):
 
         if self.bandwidth_rate <= 0:
             raise InvalidParameterError(
-                "rate must be greater than zero: actual={}".format(
+                "bandwidth_rate must be greater than zero: actual={}".format(
                     self.bandwidth_rate))
+
+        no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
+        if self.bandwidth_rate > no_limit_kbits:
+            raise InvalidParameterError(
+                "bandwidth_rate must be less than {}: actual={}".format(
+                    no_limit_kbits, self.bandwidth_rate))
 
     def get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:
@@ -371,11 +382,7 @@ class TrafficControl(object):
                 'reordering needs latency to be specified: set latency > 0')
 
     def __validate_netem_parameter(self):
-        try:
-            self.validate_bandwidth_rate()
-        except EmptyParameterError:
-            pass
-
+        self.validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_packet_duplicate_rate()
