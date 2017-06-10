@@ -59,7 +59,9 @@ class Humanreadable(object):
         logger.debug("readable_size: {}".format(self.__readable_size))
 
         if not typepy.is_not_null_string(self.__readable_size):
-            raise TypeError("readable_size must be a string ")
+            raise TypeError(
+                "readable_size must be a string: actual={}".format(
+                    self.__readable_size))
 
         self.__readable_size = self.__readable_size.strip()
 
