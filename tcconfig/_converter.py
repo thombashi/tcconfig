@@ -13,6 +13,7 @@ import re
 
 import typepy
 
+from ._logger import logger
 
 ByteUnit = namedtuple("ByteUnit", "regexp factor")
 
@@ -45,6 +46,8 @@ class Humanreadable(object):
         """
         :raises ValueError:
         """
+
+        logger.debug("readable_size: {}".format(self.__readable_size))
 
         if not typepy.is_not_null_string(self.__readable_size):
             raise ValueError("readable_size must be a string ")
