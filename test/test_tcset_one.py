@@ -17,7 +17,7 @@ import typepy
 from .common import execute_tcdel
 
 
-WAIT_TIME = 5  # [sec]
+WAIT_TIME = 3  # [sec]
 
 
 @pytest.fixture

@@ -136,7 +136,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=loss,
             packet_duplicate_rate=duplicate,
             corruption_rate=corrupt,
-            network=network,
+            dst_network=network,
             src_port=src_port,
             dst_port=dst_port,
             src_network=None,
@@ -267,7 +267,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=value.get("packet_loss_rate"),
             packet_duplicate_rate=value.get("packet_duplicate_rate"),
             corruption_rate=value.get("corruption_rate"),
-            network=value.get(Tc.Param.NETWORK),
+            dst_network=value.get(Tc.Param.NETWORK),
             src_port=value.get("src_port"),
             dst_port=value.get("dst_port"),
         )
@@ -296,7 +296,7 @@ class Test_TrafficControl_ipv4(object):
             pytest.skip("device option is null")
 
         tc_obj = TrafficControl(
-            device=device_option, network=network, is_ipv6=is_ipv6)
+            device=device_option, dst_network=network, is_ipv6=is_ipv6)
 
         assert tc_obj.ip_version == expected_ip_ver
         assert tc_obj.protocol == expected_protocol
