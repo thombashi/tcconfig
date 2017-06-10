@@ -56,7 +56,7 @@ class Test_to_no_prefix_value:
         ["2.5 m", 1000, int(2.5 * 1000 ** 2)],
     ])
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(value, kilo_size).to_no_prefix_value() == expected
+        assert Humanreadable(value, kilo_size).to_byte() == expected
 
     @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
         ["", 1000, ValueError],
@@ -72,7 +72,7 @@ class Test_to_no_prefix_value:
     ])
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
-            Humanreadable(value, kilo_size).to_no_prefix_value()
+            Humanreadable(value, kilo_size).to_byte()
 
 
 class Test_to_kilo_value:

@@ -28,7 +28,7 @@ def is_invalid_param(
     ])
 
     try:
-        Humanreadable(rate, kilo_size=1000).to_no_prefix_value()
+        Humanreadable(rate, kilo_size=1000).to_byte()
     except ValueError:
         pass
     else:
