@@ -26,6 +26,7 @@ class Humanreadable(object):
         ByteUnit(regexp=re.compile("^t$", re.IGNORECASE), factor=4),
         ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
+    __RE_NUMBER = re.compile("^[0-9\.]+")
 
     def __init__(self, readable_size, kilo_size=1024):
         """
@@ -45,15 +46,18 @@ class Humanreadable(object):
         :raises ValueError:
         """
 
-        if typepy.is_null_string(self.__readable_size):
-            raise ValueError("readable_size is empty")
+        if not typepy.is_not_null_string(self.__readable_size):
+            raise ValueError("readable_size must be a string ")
 
-        size = self.__readable_size[:-1]
-        unit = self.__readable_size[-1]
+        self.__readable_size = self.__readable_size.strip()
 
+        try:
+            size = self.__RE_NUMBER.search(self.__readable_size).group()
+        except AttributeError:
+            raise ValueError("invalid value: {}".format(self.__readable_size))
         size = float(size)
-        unit = unit.lower()
 
+        unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
         if size < 0:
             raise ValueError("minus size")
 

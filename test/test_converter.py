@@ -61,8 +61,8 @@ class Test_to_no_prefix_value:
     @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
         ["", 1000, ValueError],
         [None, 1000, ValueError],
-        [True, 1000, TypeError],
-        [float("nan"), 1000, TypeError],
+        [True, 1000, ValueError],
+        [float("nan"), 1000, ValueError],
         ["a", 1000, ValueError],
         ["1k0 ", 1000, ValueError],
         ["10kb", 1000, ValueError],

@@ -29,9 +29,9 @@ def device_option(request):
     for opt_list in AllPairs([
         ["0.1", "1", "2147483647"],
         [
-            "k", " k", "K", " K",
-            "m", " m", "M", " M",
-            "g", " g", "G", " G",
+            "k", " k ", "K", " K ",
+            "m", " m ", "M", " M ",
+            "g", " g ", "G", " G ",
         ]
     ])
 ])
