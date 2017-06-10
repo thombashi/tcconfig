@@ -16,6 +16,7 @@ import typepy
 import subprocrunner as spr
 
 from ._const import (
+    KILO_SIZE,
     Network,
     TcCoomandOutput,
 )
@@ -175,21 +176,22 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     logger.info("written a tc script to '{:s}'".format(filename))
 
 
-def get_no_limit_kbits(tc_device):
-    from ._const import KILO_SIZE
+def get_iproute2_upper_limite_rate():
     from ._converter import Humanreadable
 
     # upper bandwidth rate limit of iproute2 was 34,359,738,360
     # bits per second older than 3.14.0
     # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
-    iproute2_upper_rate_kbits = Humanreadable(
+    return Humanreadable(
         "32G", kilo_size=KILO_SIZE).to_kilo_bit()
 
+
+def get_no_limit_kbits(tc_device):
     try:
         with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
             return min(
                 int(f.read().strip()) * KILO_SIZE,
-                iproute2_upper_rate_kbits)
+                get_iproute2_upper_limite_rate())
     except IOError:
-        return iproute2_upper_rate_kbits
+        return get_iproute2_upper_limite_rate()
