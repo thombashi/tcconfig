@@ -42,3 +42,8 @@ class InvalidParameterError(ValueError):
     Exception raised when an invalid parameter specified for
     a traffic shaping rule.
     """
+
+
+class UnitNotFoundError(InvalidParameterError):
+    """
+    """
