@@ -187,10 +187,9 @@ class TrafficControl(object):
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, packet_duplicate_rate=None,
             corruption_rate=None, reordering_rate=None,
-            dst_network=None, src_port=None, dst_port=None, is_ipv6=False,
-            src_network=None,
-            is_add_shaper=False,
-            is_enable_iptables=True,
+            dst_network=None, src_network=None,
+            dst_port=None, src_port=None,
+            is_ipv6=False, is_add_shaper=False, is_enable_iptables=True,
             shaping_algorithm=None,
             tc_command_output=TcCoomandOutput.NOT_SET,
     ):
