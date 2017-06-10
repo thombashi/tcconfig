@@ -8,19 +8,23 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
+from collections import namedtuple
 import re
 
 import typepy
 
 
+ByteUnit = namedtuple("ByteUnit", "regexp factor")
+
+
 class Humanreadable(object):
-    __RE_EXP_PAIR_LIST = [
-        [re.compile("^b$", re.IGNORECASE), 0],
-        [re.compile("^k$", re.IGNORECASE), 1],
-        [re.compile("^m$", re.IGNORECASE), 2],
-        [re.compile("^g$", re.IGNORECASE), 3],
-        [re.compile("^t$", re.IGNORECASE), 4],
-        [re.compile("^p$", re.IGNORECASE), 5],
+    __UNIT_LIST = [
+        ByteUnit(regexp=re.compile("^b$", re.IGNORECASE), factor=0),
+        ByteUnit(regexp=re.compile("^k$", re.IGNORECASE), factor=1),
+        ByteUnit(regexp=re.compile("^m$", re.IGNORECASE), factor=2),
+        ByteUnit(regexp=re.compile("^g$", re.IGNORECASE), factor=3),
+        ByteUnit(regexp=re.compile("^t$", re.IGNORECASE), factor=4),
+        ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
 
     def __init__(self, readable_size, kilo_size=1024):
@@ -61,14 +65,12 @@ class Humanreadable(object):
 
         return self.to_byte() / self.kilo_size
 
-    def __get_coefficient(self, unit):
+    def __get_coefficient(self, unit_str):
         if self.kilo_size not in [1000, 1024]:
             raise ValueError("invalid kilo size: {}".format(self.kilo_size))
 
-        for re_exp_pair in self.__RE_EXP_PAIR_LIST:
-            re_pattern, exp = re_exp_pair
+        for unit in self.__UNIT_LIST:
+            if unit.regexp.search(unit_str):
+                return self.kilo_size ** unit.factor
 
-            if re_pattern.search(unit):
-                return self.kilo_size ** exp
-
-        raise ValueError("unit not found: value={}".format(unit))
+        raise ValueError("unit not found: value={}".format(unit_str))
