@@ -89,7 +89,10 @@ def main():
         return 0
 
     if options.tc_command_output == TcCoomandOutput.SCRIPT:
-        write_tc_script("tcshow", command_history)
+        write_tc_script(
+            "tcshow",
+            command_history,
+            filename_suffix="-".join(options.device))
         return 0
 
     logger.debug("command history\n{}".format(command_history))
