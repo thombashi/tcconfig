@@ -119,16 +119,16 @@ Example
     {
         "eth0": {
             "outgoing": {
-                "network=192.168.0.10/32, dst-port=8080": {
+                "dst-network=192.168.0.10/32, dst-port=8080": {
                     "delay": "10.0",
                     "loss": "0.01",
                     "rate": "250K",
                     "delay-distro": "2.0"
                 },
-                "network=0.0.0.0/0": {}
+                "dst-network=0.0.0.0/0": {}
             },
             "incoming": {
-                "network=0.0.0.0/0": {
+                "dst-network=0.0.0.0/0": {
                     "delay": "1.0",
                     "loss": "0.02",
                     "rate": "500K"
@@ -177,12 +177,12 @@ Dependencies
 
 Linux packages
 --------------
-- `iproute`/`iproute2` (mandatory: required for tc command)
-- `iptables` (optional: required to when you use ``--iptables`` option)
+- ``iproute``/``iproute2`` (mandatory: required for tc command)
+- ``iptables`` (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
 ----------------------------
-- sch_netem
+- ``sch_netem``
 
 Python packages
 ---------------
