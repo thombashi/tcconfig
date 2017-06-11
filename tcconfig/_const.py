@@ -32,14 +32,14 @@ class Tc(object):
 
     class Param(object):
         CLASS_ID = "classid"
+        DST_NETWORK = "dst-network"
+        DST_PORT = "dst-port"
         FLOW_ID = "flowid"
         HANDLE = "handle"
-        DST_NETWORK = "dst-network"
         PARENT = "parent"
-        SRC_PORT = "src-port"
-        DST_PORT = "dst-port"
         PROTOCOL = "protocol"
         SRC_NETWORK = "src-network"
+        SRC_PORT = "src-port"
 
 
 class TcCoomandOutput(object):

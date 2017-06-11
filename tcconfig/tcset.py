@@ -42,6 +42,7 @@ from ._logger import (
     set_log_level,
 )
 from ._traffic_direction import TrafficDirection
+from .parser.shaping_rule import TcShapingRuleParser
 from .traffic_control import TrafficControl
 
 
@@ -288,6 +289,53 @@ class TcConfigLoader(object):
         return port_pattern.parseString(text)[-1]
 
 
+class TcShapingRuleFinder(object):
+    @property
+    def tc(self):
+        return self.__tc
+
+    def __init__(self, device, tc):
+        self.__device = device
+        self.__tc = tc
+
+    def exist_rule(self):
+        parser = TcShapingRuleParser(
+            self.__device, self.tc.ip_version, logger)
+
+        key_param_list = (
+            Tc.Param.DST_NETWORK, Tc.Param.SRC_NETWORK,
+            Tc.Param.DST_PORT, Tc.Param.SRC_NETWORK,
+        )
+
+        new_tc_filter = {
+            Tc.Param.DST_NETWORK: self.tc.dst_network,
+            Tc.Param.SRC_NETWORK: self.tc.src_network,
+            Tc.Param.DST_PORT: self.tc.dst_port,
+            Tc.Param.SRC_NETWORK: self.tc.src_port,
+        }
+
+        if self.tc.direction == TrafficDirection.OUTGOING:
+            current_tc_filter_list = parser.get_outgoing_tc_filter()
+        elif self.tc.direction == TrafficDirection.INCOMING:
+            current_tc_filter_list = parser.get_incoming_tc_filter()
+
+        logger.debug(
+            "exist_rule: direction={}, new-filter={} current-filters={}".format(
+                self.tc.direction, new_tc_filter, current_tc_filter_list))
+
+        for cuurent_tc_filter in current_tc_filter_list:
+            if all([
+                cuurent_tc_filter.get(
+                    key_param) == new_tc_filter.get(key_param)
+                for key_param in key_param_list
+            ]):
+                logger.debug("existing shaping rule found: {}".format(
+                    cuurent_tc_filter))
+                return True
+
+        return False
+
+
 def set_tc_from_file(logger, config_file_path, is_overwrite):
     return_code = 0
 
@@ -379,6 +427,16 @@ def main():
             pass
 
         set_log_level(options.log_level)
+
+    if (
+        options.is_add_shaper and
+        TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
+    ):
+        logger.error(
+            "adding a shaping rule failed. a shaping rule for the same "
+            "network/port already exist. try --overwrite option if you want "
+            "to overwrite the existing rule.")
+        return errno.EINVAL
 
     tc.set_tc()
     command_history = "\n".join(tc.get_command_history())

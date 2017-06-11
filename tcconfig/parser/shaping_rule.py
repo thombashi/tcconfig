@@ -45,6 +45,16 @@ class TcShapingRuleParser(object):
             },
         }
 
+    def get_outgoing_tc_filter(self):
+        return self.__parse_tc_filter(self.device)
+
+    def get_incoming_tc_filter(self):
+        ifb_device = self.__get_ifb_from_device()
+        if ifb_device is None:
+            return []
+
+        return self.__parse_tc_filter(ifb_device)
+
     def __get_ifb_from_device(self):
         filter_runner = subprocrunner.SubprocessRunner(
             "tc filter show dev {:s} root".format(self.device), dry_run=False)
