@@ -30,6 +30,7 @@ from ._const import (
     Network,
     Tc,
     TcCoomandOutput,
+    TrafficDirection,
 )
 from ._error import (
     ModuleNotFoundError,
@@ -41,7 +42,6 @@ from ._logger import (
     logger,
     set_log_level,
 )
-from ._traffic_direction import TrafficDirection
 from .parser.shaping_rule import TcShapingRuleParser
 from .traffic_control import TrafficControl
 

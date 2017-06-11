@@ -26,9 +26,10 @@ from ._common import (
 )
 from ._const import (
     KILO_SIZE,
+    LIST_MANGLE_TABLE_COMMAND,
     Tc,
     TcCoomandOutput,
-    LIST_MANGLE_TABLE_COMMAND,
+    TrafficDirection,
 )
 from ._converter import Humanreadable
 from ._error import (
@@ -38,7 +39,6 @@ from ._error import (
 )
 from ._iptables import IptablesMangleController
 from ._logger import logger
-from ._traffic_direction import TrafficDirection
 from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 

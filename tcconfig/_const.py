@@ -46,3 +46,9 @@ class TcCoomandOutput(object):
     NOT_SET = None
     STDOUT = "STDOUT"
     SCRIPT = "SCRIPT"
+
+
+class TrafficDirection(object):
+    OUTGOING = "outgoing"
+    INCOMING = "incoming"
+    LIST = [OUTGOING, INCOMING]

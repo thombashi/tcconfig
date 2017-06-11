@@ -15,9 +15,11 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
-from .._const import Tc
+from .._const import (
+    Tc,
+    TrafficDirection,
+)
 from .._error import InvalidParameterError
-from .._traffic_direction import TrafficDirection
 from ._interface import AbstractShaper
 
 

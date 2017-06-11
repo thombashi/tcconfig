@@ -17,9 +17,11 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
-from .._const import Tc
+from .._const import (
+    Tc,
+    TrafficDirection,
+)
 from .._iptables import IptablesMangleMark
-from .._traffic_direction import TrafficDirection
 
 
 @six.add_metaclass(abc.ABCMeta)

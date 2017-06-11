@@ -9,12 +9,14 @@ import itertools
 import pytest
 
 from allpairspy import AllPairs
-from tcconfig._const import Tc
+from tcconfig._const import (
+    Tc,
+    TrafficDirection,
+)
 from tcconfig._error import (
     InvalidParameterError,
     UnitNotFoundError,
 )
-from tcconfig._traffic_direction import TrafficDirection
 from tcconfig.traffic_control import TrafficControl
 
 from .common import is_invalid_param

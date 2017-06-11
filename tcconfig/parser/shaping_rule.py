@@ -14,10 +14,12 @@ import typepy
 from typepy.type import Integer
 
 from .._common import run_tc_show
-from .._const import Tc
+from .._const import (
+    Tc,
+    TrafficDirection,
+)
 from .._iptables import IptablesMangleController
 from .._logger import logger
-from .._traffic_direction import TrafficDirection
 from ._class import TcClassParser
 from ._filter import TcFilterParser
 from ._qdisc import TcQdiscParser
