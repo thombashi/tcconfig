@@ -54,7 +54,6 @@ def main():
     options = parse_option()
 
     set_log_level(options.log_level)
-    subprocrunner.SubprocessRunner.is_save_history = True
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
@@ -67,6 +66,8 @@ def main():
     except NetworkInterfaceNotFoundError as e:
         logger.error(e)
         return errno.EINVAL
+
+    subprocrunner.SubprocessRunner.is_save_history = True
 
     tc = TrafficControl(options.device)
     if options.log_level == logbook.INFO:
