@@ -315,7 +315,8 @@ class TrafficControl(object):
 
     def set_tc(self):
         self.__setup_ifb()
-        self.__shaper.set_shaping()
+
+        return self.__shaper.set_shaping()
 
     def delete_tc(self):
         result_list = []

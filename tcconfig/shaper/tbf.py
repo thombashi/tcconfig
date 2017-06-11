@@ -131,6 +131,8 @@ class TbfShaper(AbstractShaper):
         with logging_context("add_filter"):
             self.add_filter()
 
+        return 0
+
     def __set_pre_network_filter(self):
         if self._is_use_iptables():
             return 0

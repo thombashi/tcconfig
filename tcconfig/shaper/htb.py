@@ -8,6 +8,7 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
+import errno
 import re
 
 import typepy
@@ -138,20 +139,22 @@ class HtbShaper(AbstractShaper):
                 self.make_qdisc()
             except TcAlreadyExist:
                 if not is_add_shaper:
-                    return
+                    return errno.EINVAL
 
         with logging_context("add_rate"):
             try:
                 self.add_rate()
             except TcAlreadyExist:
                 if not is_add_shaper:
-                    return
+                    return errno.EINVAL
 
         with logging_context("set_netem"):
             self.set_netem()
 
         with logging_context("add_filter"):
             self.add_filter()
+
+        return 0
 
     def __get_unique_qdisc_minor_id(self):
         if (self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET or

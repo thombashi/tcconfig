@@ -450,7 +450,7 @@ def main():
             "to overwrite the existing rule.")
         return errno.EINVAL
 
-    tc.set_tc()
+    return_code = tc.set_tc()
     command_history = "\n".join(tc.get_command_history())
 
     if options.tc_command_output == TcCoomandOutput.STDOUT:
@@ -464,7 +464,7 @@ def main():
 
     logger.debug("command history\n{}".format(command_history))
 
-    return 0
+    return return_code
 
 
 if __name__ == '__main__':
