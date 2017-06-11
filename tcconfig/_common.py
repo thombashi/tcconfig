@@ -149,8 +149,6 @@ def run_tc_show(subcommand, device):
 
 
 def _get_original_tcconfig_command(tcconfig_command):
-    import sys
-
     return " ".join([tcconfig_command] + [
         command_item for command_item in sys.argv[1:]
         if command_item != "--tc-script"
