@@ -29,6 +29,7 @@ from ._const import (
     VERSION,
     Network,
     Tc,
+    TcCommand,
     TcCoomandOutput,
     TrafficDirection,
 )
@@ -223,7 +224,8 @@ class TcConfigLoader(object):
             device_option = "--device={:s}".format(device)
 
             if self.is_overwrite:
-                command_list.append("tcdel {:s}".format(device_option))
+                command_list.append("{:s} {:s}".format(
+                    TcCommand.TCDEL, device_option))
 
             for direction, direction_table in six.iteritems(device_table):
                 is_first_set = True
@@ -270,7 +272,8 @@ class TcConfigLoader(object):
 
                     is_first_set = False
 
-                    command_list.append(" ".join(["tcset"] + option_list))
+                    command_list.append(
+                        " ".join([TcCommand.TCSET] + option_list))
 
         return command_list
 
@@ -459,7 +462,7 @@ def main():
 
     if options.tc_command_output == TcCoomandOutput.SCRIPT:
         write_tc_script(
-            "tcset", command_history, filename_suffix=options.device)
+            TcCommand.TCSET, command_history, filename_suffix=options.device)
         return 0
 
     logger.debug("command history\n{}".format(command_history))

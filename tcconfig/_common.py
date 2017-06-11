@@ -20,6 +20,7 @@ import subprocrunner as spr
 from ._const import (
     KILO_SIZE,
     Network,
+    TcCommand,
     TcCoomandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
@@ -167,7 +168,7 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
         "# tc script file:",
     ]
 
-    if tcconfig_command != "tcshow":
+    if tcconfig_command != TcCommand.TCSHOW:
         script_line_list.extend([
             "#   the following command sequence lead to equivalent results as",
             "#   '{:s}'.".format(

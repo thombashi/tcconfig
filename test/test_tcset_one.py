@@ -14,6 +14,8 @@ import pytest
 from subprocrunner import SubprocessRunner
 import typepy
 
+from tcconfig._const import TcCommand
+
 from .common import execute_tcdel
 
 
@@ -78,7 +80,7 @@ class Test_tcset_one_network(object):
 
         # w/ latency tc ---
         command_list = [
-            "tcset",
+            TcCommand.TCSET,
             "--device " + device_option,
             "--delay {:d}".format(delay),
         ]
@@ -117,7 +119,7 @@ class Test_tcset_one_network(object):
 
         # w/ latency tc ---
         command_list = [
-            "tcset",
+            TcCommand.TCSET,
             "--device " + device_option,
             "--delay {:d}".format(delay),
             "--delay-distro {:d}".format(delay_distro),
@@ -160,7 +162,7 @@ class Test_tcset_one_network(object):
 
         # w/ packet loss tc ---
         command_list = [
-            "tcset",
+            TcCommand.TCSET,
             "--device " + device_option,
             "{:s} {:f}".format(option, value),
         ]
@@ -197,7 +199,7 @@ class Test_tcset_one_network(object):
 
         # w/ packet duplicate tc ---
         command_list = [
-            "tcset",
+            TcCommand.TCSET,
             "--device {:s}".format(device_option),
             "{:s} {:f}".format(option, value),
         ]

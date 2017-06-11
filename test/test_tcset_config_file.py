@@ -6,10 +6,13 @@
 
 from __future__ import division
 from __future__ import print_function
+
 import json
 
 import pytest
 from subprocrunner import SubprocessRunner
+
+from tcconfig._const import TcCommand
 
 
 @pytest.fixture
@@ -55,11 +58,14 @@ class Test_tcconfig(object):
 
         device_option = "--device {:s}".format(device_value)
 
-        SubprocessRunner("tcdel {:s}".format(device_option)).run()
-        command = " ".join(["tcset -f ", str(p), overwrite])
+        SubprocessRunner("{:s} {:s}".format(
+            TcCommand.TCDEL, device_option)).run()
+        command = " ".join(
+            ["{:s} -f ".format(TcCommand.TCSET), str(p), overwrite])
         SubprocessRunner(command).run()
 
-        runner = SubprocessRunner("tcshow {:s}".format(device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(
+            TcCommand.TCSHOW, device_option))
         runner.run()
 
         print("[expected]\n{}\n".format(config))
@@ -68,4 +74,5 @@ class Test_tcconfig(object):
 
         assert json.loads(runner.stdout) == json.loads(config)
 
-        SubprocessRunner("tcdel {:s}".format(device_option)).run()
+        SubprocessRunner("{:s} {:s}".format(
+            TcCommand.TCDEL, device_option)).run()

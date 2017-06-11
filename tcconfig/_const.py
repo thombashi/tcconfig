@@ -42,6 +42,12 @@ class Tc(object):
         SRC_PORT = "src-port"
 
 
+class TcCommand(object):
+    TCSET = "tcset"
+    TCDEL = "tcdel"
+    TCSHOW = "tcshow"
+
+
 class TcCoomandOutput(object):
     NOT_SET = None
     STDOUT = "STDOUT"

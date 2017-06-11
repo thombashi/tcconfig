@@ -23,6 +23,7 @@ from ._common import (
 )
 from ._const import (
     VERSION,
+    TcCommand,
     TcCoomandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
@@ -90,7 +91,7 @@ def main():
 
     if options.tc_command_output == TcCoomandOutput.SCRIPT:
         write_tc_script(
-            "tcshow",
+            TcCommand.TCSHOW,
             command_history,
             filename_suffix="-".join(options.device))
         return 0

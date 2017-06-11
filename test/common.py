@@ -10,6 +10,7 @@ from __future__ import print_function
 from subprocrunner import SubprocessRunner
 from typepy.type import RealNumber
 
+from tcconfig._const import TcCommand
 from tcconfig._converter import Humanreadable
 
 
@@ -41,4 +42,6 @@ def is_invalid_param(
 
 
 def execute_tcdel(device):
-    SubprocessRunner("tcdel --device {}".format(device), dry_run=False).run()
+    SubprocessRunner(
+        "{:s} --device {}".format(TcCommand.TCDEL, device),
+        dry_run=False).run()

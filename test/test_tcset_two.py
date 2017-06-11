@@ -12,6 +12,8 @@ import pytest
 from subprocrunner import SubprocessRunner
 import typepy
 
+from tcconfig._const import TcCommand
+
 from .common import execute_tcdel
 
 
@@ -76,7 +78,7 @@ class Test_tcset_two_network(object):
 
         # tc to specific network ---
         command_list = [
-            "tcset",
+            TcCommand.TCSET,
             "--device " + device_option,
             "--delay {:d}".format(delay),
             "--network " + dst_host_ex_option,
