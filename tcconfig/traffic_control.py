@@ -228,11 +228,6 @@ class TrafficControl(object):
         verify_network_interface(self.__device)
         self.__validate_netem_parameter()
         self.__validate_src_network()
-
-        self.__dst_network = sanitize_network(
-            self.dst_network, self.ip_version)
-        self.__src_network = sanitize_network(
-            self.src_network, self.ip_version)
         self.__validate_port()
 
     def __validate_src_network(self):
@@ -266,6 +261,12 @@ class TrafficControl(object):
             raise InvalidParameterError(
                 "bandwidth_rate must be less than {}: actual={}".format(
                     no_limit_kbits, bandwidth_rate))
+
+    def sanitize(self):
+        self.__dst_network = sanitize_network(
+            self.dst_network, self.ip_version)
+        self.__src_network = sanitize_network(
+            self.src_network, self.ip_version)
 
     def get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:

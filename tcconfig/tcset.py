@@ -363,6 +363,12 @@ def main():
         logger.error(e)
         return errno.EINVAL
 
+    try:
+        tc.sanitize()
+    except ValueError as e:
+        logger.error(e)
+        return errno.EINVAL
+
     if options.overwrite:
         if options.log_level == logbook.INFO:
             set_log_level(logbook.ERROR)
