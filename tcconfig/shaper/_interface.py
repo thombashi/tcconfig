@@ -17,6 +17,7 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
+from .._const import Tc
 from .._iptables import IptablesMangleMark
 from .._traffic_direction import TrafficDirection
 
@@ -65,7 +66,10 @@ class AbstractShaper(ShaperInterface):
         self._tc_obj = tc_obj
 
     def set_netem(self):
-        base_command = "tc qdisc add"
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         parent = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
         handle = "{:x}".format(
@@ -112,8 +116,12 @@ class AbstractShaper(ShaperInterface):
                     parent=parent, handle=handle)))
 
     def add_filter(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
+        if base_command is None:
+            return 0
+
         command_item_list = [
-            "tc filter add",
+            base_command,
             self.dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),

@@ -15,6 +15,7 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
+from .._const import Tc
 from .._error import InvalidParameterError
 from .._traffic_direction import TrafficDirection
 from ._interface import AbstractShaper
@@ -54,7 +55,10 @@ class TbfShaper(AbstractShaper):
             direction_offset)
 
     def make_qdisc(self):
-        base_command = "tc qdisc add"
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         return run_command_helper(
@@ -76,7 +80,10 @@ class TbfShaper(AbstractShaper):
         except InvalidParameterError:
             return 0
 
-        base_command = "tc qdisc add"
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         parent = "{:x}:{:d}".format(
             self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
             self.get_qdisc_minor_id())
@@ -137,7 +144,7 @@ class TbfShaper(AbstractShaper):
             flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
         return SubprocessRunner(" ".join([
-            "tc filter add",
+            self._tc_obj.get_tc_command(Tc.Subcommand.FILTER),
             self.dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),

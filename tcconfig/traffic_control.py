@@ -26,6 +26,7 @@ from ._common import (
 )
 from ._const import (
     KILO_SIZE,
+    Tc,
     TcCoomandOutput,
     LIST_MANGLE_TABLE_COMMAND,
 )
@@ -151,6 +152,10 @@ class TrafficControl(object):
         return self.__dst_port
 
     @property
+    def is_change_shaper(self):
+        return self.__is_change_shaper
+
+    @property
     def is_add_shaper(self):
         return self.__is_add_shaper
 
@@ -194,7 +199,8 @@ class TrafficControl(object):
             corruption_rate=None, reordering_rate=None,
             dst_network=None, src_network=None,
             dst_port=None, src_port=None,
-            is_ipv6=False, is_add_shaper=False, is_enable_iptables=True,
+            is_ipv6=False, is_change_shaper=False, is_add_shaper=False,
+            is_enable_iptables=True,
             shaping_algorithm=None,
             tc_command_output=TcCoomandOutput.NOT_SET,
     ):
@@ -213,6 +219,7 @@ class TrafficControl(object):
         self.__src_port = src_port
         self.__dst_port = dst_port
         self.__is_ipv6 = is_ipv6
+        self.__is_change_shaper = is_change_shaper
         self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
         self.__tc_command_output = tc_command_output
@@ -276,6 +283,20 @@ class TrafficControl(object):
             return self.ifb_device
 
         raise ValueError("unknown direction: {}".format(self.direction))
+
+    def get_tc_command(self, sub_command):
+        valid_sub_command_list = (
+            Tc.Subcommand.CLASS, Tc.Subcommand.FILTER, Tc.Subcommand.QDISC)
+        if sub_command not in valid_sub_command_list:
+            raise ValueError("unknown sub command: {}".format(sub_command))
+
+        if (self.is_change_shaper and
+                sub_command in (Tc.Subcommand.QDISC, Tc.Subcommand.FILTER)):
+            # no need to execute
+            return None
+
+        return "tc {:s} {:s}".format(
+            sub_command, "change" if self.is_change_shaper else "add")
 
     def get_anywhere_network(self):
         return get_anywhere_network(self, )

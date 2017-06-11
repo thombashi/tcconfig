@@ -60,7 +60,10 @@ class HtbShaper(AbstractShaper):
         return self.__netem_major_id
 
     def make_qdisc(self):
-        base_command = "tc qdisc add"
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         if self._tc_obj.is_add_shaper:
@@ -88,7 +91,7 @@ class HtbShaper(AbstractShaper):
         return self.__add_default_class()
 
     def add_rate(self):
-        base_command = "tc class add"
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
@@ -151,7 +154,8 @@ class HtbShaper(AbstractShaper):
             self.add_filter()
 
     def __get_unique_qdisc_minor_id(self):
-        if self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET:
+        if (self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET or
+                self._tc_obj.is_change_shaper):
             self.__qdisc_minor_id_count += 1
 
             return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
@@ -209,7 +213,7 @@ class HtbShaper(AbstractShaper):
         return next_netem_major_id
 
     def __add_default_class(self):
-        base_command = "tc class add"
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
