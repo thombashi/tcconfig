@@ -65,8 +65,10 @@ class Test_sanitize_network(object):
         ["ANYWHERE", 4, "0.0.0.0/0"],
         ["anywhere", 6, "::0/0"],
         ["ANYWHERE", 6, "::0/0"],
-        ["", 4, ""],
-        [None, 4, ""],
+        ["", 4, "0.0.0.0/0"],
+        [None, 4, "0.0.0.0/0"],
+        ["", 6, "::0/0"],
+        [None, 6, "::0/0"],
     ])
     def test_normal(self, value, ip_version, expected):
         assert sanitize_network(value, ip_version) == expected
