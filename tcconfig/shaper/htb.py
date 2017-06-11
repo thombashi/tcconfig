@@ -21,7 +21,7 @@ from .._common import (
 )
 from .._const import (
     Tc,
-    TcCoomandOutput,
+    TcCommandOutput,
 )
 from .._error import TcAlreadyExist
 from .._logger import logger
@@ -157,7 +157,7 @@ class HtbShaper(AbstractShaper):
         return 0
 
     def __get_unique_qdisc_minor_id(self):
-        if (self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET or
+        if (self._tc_obj.tc_command_output != TcCommandOutput.NOT_SET or
                 self._tc_obj.is_change_shaper):
             self.__qdisc_minor_id_count += 1
 

@@ -21,7 +21,7 @@ from ._const import (
     KILO_SIZE,
     Network,
     TcCommand,
-    TcCoomandOutput,
+    TcCommandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
@@ -44,7 +44,7 @@ def is_anywhere_network(network, ip_version):
 
 
 def is_execute_tc_command(tc_command_output):
-    return tc_command_output == TcCoomandOutput.NOT_SET
+    return tc_command_output == TcCommandOutput.NOT_SET
 
 
 def get_anywhere_network(ip_version):

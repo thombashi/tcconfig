@@ -30,7 +30,7 @@ from ._const import (
     Network,
     Tc,
     TcCommand,
-    TcCoomandOutput,
+    TcCommandOutput,
     TrafficDirection,
 )
 from ._error import (
@@ -456,11 +456,11 @@ def main():
     return_code = tc.set_tc()
     command_history = "\n".join(tc.get_command_history())
 
-    if options.tc_command_output == TcCoomandOutput.STDOUT:
+    if options.tc_command_output == TcCommandOutput.STDOUT:
         print(command_history)
         return 0
 
-    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+    if options.tc_command_output == TcCommandOutput.SCRIPT:
         write_tc_script(
             TcCommand.TCSET, command_history, filename_suffix=options.device)
         return 0

@@ -48,7 +48,7 @@ class TcCommand(object):
     TCSHOW = "tcshow"
 
 
-class TcCoomandOutput(object):
+class TcCommandOutput(object):
     NOT_SET = None
     STDOUT = "STDOUT"
     SCRIPT = "SCRIPT"

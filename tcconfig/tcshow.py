@@ -24,7 +24,7 @@ from ._common import (
 from ._const import (
     VERSION,
     TcCommand,
-    TcCoomandOutput,
+    TcCommandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import (
@@ -69,7 +69,7 @@ def main():
         return errno.ENOENT
 
     subprocrunner.SubprocessRunner.is_save_history = True
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
+    if options.tc_command_output != TcCommandOutput.NOT_SET:
         subprocrunner.SubprocessRunner.default_is_dry_run = True
 
     tc_param = {}
@@ -85,11 +85,11 @@ def main():
 
     command_history = "\n".join(subprocrunner.SubprocessRunner.get_history())
 
-    if options.tc_command_output == TcCoomandOutput.STDOUT:
+    if options.tc_command_output == TcCommandOutput.STDOUT:
         print(command_history)
         return 0
 
-    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+    if options.tc_command_output == TcCommandOutput.SCRIPT:
         write_tc_script(
             TcCommand.TCSHOW,
             command_history,

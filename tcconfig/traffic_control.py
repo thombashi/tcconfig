@@ -28,7 +28,7 @@ from ._const import (
     KILO_SIZE,
     LIST_MANGLE_TABLE_COMMAND,
     Tc,
-    TcCoomandOutput,
+    TcCommandOutput,
     TrafficDirection,
 )
 from ._converter import Humanreadable
@@ -202,7 +202,7 @@ class TrafficControl(object):
             is_ipv6=False, is_change_shaper=False, is_add_shaper=False,
             is_enable_iptables=True,
             shaping_algorithm=None,
-            tc_command_output=TcCoomandOutput.NOT_SET,
+            tc_command_output=TcCommandOutput.NOT_SET,
     ):
         self.__device = device
 
