@@ -1,5 +1,6 @@
 usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-             (--device DEVICE | -f CONFIG_FILE) [--overwrite | --add]
+             (--device DEVICE | -f CONFIG_FILE)
+             [--overwrite | --change | --add]
              [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
              [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
              [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
@@ -23,7 +24,12 @@ optional arguments:
   -f CONFIG_FILE, --config-file CONFIG_FILE
                         setting traffic controls from a configuration file.
                         output file of the tcshow.
-  --overwrite           overwrite existing settings
+  --overwrite           overwrite existing traffic shaping rules.
+  --change              change existing traffic shaping rules to new one. this
+                        option reduce the shaping rule switching side effect
+                        (such as traffic spike) compared to --overwrite
+                        option. note: the tcset command will fail when there
+                        is no existing shaping rules.
   --add                 add a traffic shaping rule in addition to existing
                         rules.
 

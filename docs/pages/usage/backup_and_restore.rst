@@ -61,28 +61,28 @@ After restore
                     "rate": "250K",
                     "delay-distro": "1.2"
                 },
-                "network=0.0.0.0/0": {}
+                "dst-network=0.0.0.0/0": {}
             },
             "incoming": {
-                "network=192.168.10.0/24": {
+                "dst-network=192.168.10.0/24": {
                     "corrupt": "0.02",
                     "rate": "1500K"
                 },
-                "network=0.0.0.0/0": {}
+                "dst-network=0.0.0.0/0": {}
             }
         },
         "eth0": {
             "outgoing": {
-                "network=192.168.0.10/32, dst-port=8080": {
+                "dst-network=192.168.0.10/32, dst-port=8080": {
                     "delay": "10.0",
                     "loss": "0.01",
                     "rate": "250K",
                     "delay-distro": "2.0"
                 },
-                "network=0.0.0.0/0": {}
+                "dst-network=0.0.0.0/0": {}
             },
             "incoming": {
-                "network=0.0.0.0/0": {
+                "dst-network=0.0.0.0/0": {
                     "delay": "1.0",
                     "loss": "0.02",
                     "rate": "500K"
