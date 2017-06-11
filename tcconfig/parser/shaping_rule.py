@@ -69,8 +69,8 @@ class TcShapingRuleParser(object):
 
                 key_item_list.append(network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
-                    key_item_list.append(
-                        "src-network={:s}".format(mangle.source))
+                    key_item_list.append("{:s}={:s}".format(
+                        Tc.Param.SRC_NETWORK, mangle.source))
                 key_item_list.append(protocol_format.format(mangle.protocol))
 
                 break

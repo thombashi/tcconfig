@@ -39,6 +39,7 @@ class Tc(object):
         SRC_PORT = "src-port"
         DST_PORT = "dst-port"
         PROTOCOL = "protocol"
+        SRC_NETWORK = "src-network"
 
 
 class TcCoomandOutput(object):
