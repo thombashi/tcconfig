@@ -13,7 +13,7 @@ from tcconfig._common import (
 )
 
 
-class Test_is_anywhere_network:
+class Test_is_anywhere_network(object):
 
     @pytest.mark.parametrize(["network", "ip_version", "expected"], [
         ["0.0.0.0/0", 4, True],
@@ -33,7 +33,7 @@ class Test_is_anywhere_network:
             is_anywhere_network(network, ip_version)
 
 
-class Test_get_anywhere_network:
+class Test_get_anywhere_network(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         [4, "0.0.0.0/0"],
@@ -53,7 +53,7 @@ class Test_get_anywhere_network:
             get_anywhere_network(value)
 
 
-class Test_sanitize_network:
+class Test_sanitize_network(object):
 
     @pytest.mark.parametrize(["value", "ip_version", "expected"], [
         ["192.168.0.1", 4, "192.168.0.1/32"],
@@ -65,8 +65,10 @@ class Test_sanitize_network:
         ["ANYWHERE", 4, "0.0.0.0/0"],
         ["anywhere", 6, "::0/0"],
         ["ANYWHERE", 6, "::0/0"],
-        ["", 4, ""],
-        [None, 4, ""],
+        ["", 4, "0.0.0.0/0"],
+        [None, 4, "0.0.0.0/0"],
+        ["", 6, "::0/0"],
+        [None, 6, "::0/0"],
     ])
     def test_normal(self, value, ip_version, expected):
         assert sanitize_network(value, ip_version) == expected

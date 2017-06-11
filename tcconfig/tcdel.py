@@ -16,13 +16,15 @@ import subprocrunner
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
+    check_tc_command_installation,
     is_execute_tc_command,
     verify_network_interface,
     write_tc_script,
 )
 from ._const import (
     VERSION,
-    TcCoomandOutput,
+    TcCommand,
+    TcCommandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import (
@@ -55,11 +57,10 @@ def main():
     set_log_level(options.log_level)
 
     if is_execute_tc_command(options.tc_command_output):
-        try:
-            subprocrunner.Which("tc").verify()
-        except subprocrunner.CommandNotFoundError as e:
-            logger.error(e)
-            return errno.ENOENT
+        check_tc_command_installation()
+    else:
+        subprocrunner.SubprocessRunner.default_is_dry_run = True
+        set_logger(False)
 
     try:
         verify_network_interface(options.device)
@@ -67,16 +68,11 @@ def main():
         logger.error(e)
         return errno.EINVAL
 
+    subprocrunner.SubprocessRunner.is_save_history = True
+
     tc = TrafficControl(options.device)
     if options.log_level == logbook.INFO:
         subprocrunner.set_log_level(logbook.ERROR)
-
-    subprocrunner.SubprocessRunner.is_save_history = True
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.default_is_dry_run = True
-
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        set_logger(False)
 
     try:
         return_code = tc.delete_tc()
@@ -86,14 +82,14 @@ def main():
 
     command_history = "\n".join(tc.get_command_history())
 
-    if options.tc_command_output == TcCoomandOutput.STDOUT:
+    if options.tc_command_output == TcCommandOutput.STDOUT:
         print(command_history)
         return return_code
 
-    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+    if options.tc_command_output == TcCommandOutput.SCRIPT:
         set_logger(True)
         write_tc_script(
-            "tcdel", command_history, filename_suffix=options.device)
+            TcCommand.TCDEL, command_history, filename_suffix=options.device)
         return return_code
 
     logger.debug("command history\n{}".format(command_history))

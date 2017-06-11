@@ -26,12 +26,24 @@ class TcCommandExecutionError(Exception):
 
 
 class TcAlreadyExist(TcCommandExecutionError):
-    pass
+    """
+    Exception raised when a traffic shaping rule already exist.
+    """
 
 
 class EmptyParameterError(ValueError):
-    pass
+    """
+    Exception raised when a parameter value is empty value.
+    """
 
 
 class InvalidParameterError(ValueError):
-    pass
+    """
+    Exception raised when an invalid parameter specified for
+    a traffic shaping rule.
+    """
+
+
+class UnitNotFoundError(InvalidParameterError):
+    """
+    """

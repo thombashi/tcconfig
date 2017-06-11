@@ -12,6 +12,7 @@ from subprocrunner import SubprocessRunner
 import typepy
 
 from allpairspy import AllPairs
+from tcconfig._const import TcCommand
 
 
 SKIP_TEST = False
@@ -133,10 +134,11 @@ class Test_tcconfig(object):
 
         device_option = "--device {}".format(device_value)
 
-        SubprocessRunner("tcdel {:s}".format(device_option)).run()
+        SubprocessRunner("{:s} {:s}".format(
+            TcCommand.TCDEL, device_option)).run()
 
         tcset_proc = SubprocessRunner(" ".join([
-            "tcset",
+            TcCommand.TCSET,
             device_option,
             rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite, is_enable_iptables,

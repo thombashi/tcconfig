@@ -19,24 +19,26 @@ import subprocrunner as spr
 from ._common import (
     logging_context,
     get_anywhere_network,
+    get_no_limit_kbits,
     sanitize_network,
     verify_network_interface,
     run_command_helper,
 )
 from ._const import (
     KILO_SIZE,
-    TcCoomandOutput,
     LIST_MANGLE_TABLE_COMMAND,
+    Tc,
+    TcCommandOutput,
+    TrafficDirection,
 )
 from ._converter import Humanreadable
 from ._error import (
     NetworkInterfaceNotFoundError,
-    EmptyParameterError,
-    InvalidParameterError
+    InvalidParameterError,
+    UnitNotFoundError,
 )
 from ._iptables import IptablesMangleController
 from ._logger import logger
-from ._traffic_direction import TrafficDirection
 from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
@@ -87,7 +89,7 @@ class TrafficControl(object):
     EXISTS_MSG_TEMPLATE = (
         "{:s} "
         "execute with --overwrite option if you want to overwrite "
-        "the existing rules."
+        "the existing rules. "
         "execute with --add option if you want to add a new rule in addition "
         "to the existing rules."
     )
@@ -102,7 +104,12 @@ class TrafficControl(object):
 
     @property
     def bandwidth_rate(self):
-        return self.__bandwidth_rate
+        # convert bandwidth string [K/M/G bit per second] to a number
+        try:
+            return Humanreadable(
+                self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        except (InvalidParameterError, UnitNotFoundError, TypeError, ValueError):
+            return None
 
     @property
     def latency_ms(self):
@@ -129,8 +136,8 @@ class TrafficControl(object):
         return self.__reordering_rate
 
     @property
-    def network(self):
-        return self.__network
+    def dst_network(self):
+        return self.__dst_network
 
     @property
     def src_network(self):
@@ -143,6 +150,10 @@ class TrafficControl(object):
     @property
     def dst_port(self):
         return self.__dst_port
+
+    @property
+    def is_change_shaper(self):
+        return self.__is_change_shaper
 
     @property
     def is_add_shaper(self):
@@ -186,39 +197,34 @@ class TrafficControl(object):
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, packet_duplicate_rate=None,
             corruption_rate=None, reordering_rate=None,
-            network=None, src_port=None, dst_port=None, is_ipv6=False,
-            src_network=None,
-            is_add_shaper=False,
+            dst_network=None, src_network=None,
+            dst_port=None, src_port=None,
+            is_ipv6=False, is_change_shaper=False, is_add_shaper=False,
             is_enable_iptables=True,
             shaping_algorithm=None,
-            tc_command_output=TcCoomandOutput.NOT_SET,
+            tc_command_output=TcCommandOutput.NOT_SET,
     ):
         self.__device = device
 
         self.__direction = direction
+        self.__bandwidth_rate = bandwidth_rate
         self.__latency_ms = latency_ms  # [milliseconds]
         self.__latency_distro_ms = latency_distro_ms  # [milliseconds]
         self.__packet_loss_rate = packet_loss_rate  # [%]
         self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
         self.__corruption_rate = corruption_rate  # [%]
         self.__reordering_rate = reordering_rate
-        self.__network = network
+        self.__dst_network = dst_network
         self.__src_network = src_network
         self.__src_port = src_port
         self.__dst_port = dst_port
         self.__is_ipv6 = is_ipv6
+        self.__is_change_shaper = is_change_shaper
         self.__is_add_shaper = is_add_shaper
         self.__is_enable_iptables = is_enable_iptables
         self.__tc_command_output = tc_command_output
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
-
-        # bandwidth string [G/M/K bit per second]
-        try:
-            self.__bandwidth_rate = Humanreadable(
-                bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_value()
-        except (TypeError, ValueError):
-            self.__bandwidth_rate = None
 
         self.__iptables_ctrl = IptablesMangleController(
             is_enable_iptables, self.ip_version)
@@ -229,10 +235,6 @@ class TrafficControl(object):
         verify_network_interface(self.__device)
         self.__validate_netem_parameter()
         self.__validate_src_network()
-
-        self.__network = sanitize_network(self.network, self.ip_version)
-        self.__src_network = sanitize_network(
-            self.src_network, self.ip_version)
         self.__validate_port()
 
     def __validate_src_network(self):
@@ -244,13 +246,34 @@ class TrafficControl(object):
                 "--iptables option will be required to use --src-network option")
 
     def validate_bandwidth_rate(self):
-        if not RealNumber(self.bandwidth_rate).is_type():
-            raise EmptyParameterError("bandwidth_rate is empty")
+        if typepy.is_null_string(self.__bandwidth_rate):
+            return
 
-        if self.bandwidth_rate <= 0:
+        # convert bandwidth string [K/M/G bit per second] to a number
+        bandwidth_rate = Humanreadable(
+            self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+
+        if not RealNumber(bandwidth_rate).is_type():
             raise InvalidParameterError(
-                "rate must be greater than zero: actual={}".format(
-                    self.bandwidth_rate))
+                "bandwidth_rate must be number: actual={}".format(
+                    bandwidth_rate))
+
+        if bandwidth_rate <= 0:
+            raise InvalidParameterError(
+                "bandwidth_rate must be greater than zero: actual={}".format(
+                    bandwidth_rate))
+
+        no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
+        if bandwidth_rate > no_limit_kbits:
+            raise InvalidParameterError(
+                "bandwidth_rate must be less than {}: actual={}".format(
+                    no_limit_kbits, bandwidth_rate))
+
+    def sanitize(self):
+        self.__dst_network = sanitize_network(
+            self.dst_network, self.ip_version)
+        self.__src_network = sanitize_network(
+            self.src_network, self.ip_version)
 
     def get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:
@@ -259,7 +282,21 @@ class TrafficControl(object):
         if self.direction == TrafficDirection.INCOMING:
             return self.ifb_device
 
-        raise ValueError("unknown direction: " + self.direction)
+        raise ValueError("unknown direction: {}".format(self.direction))
+
+    def get_tc_command(self, sub_command):
+        valid_sub_command_list = (
+            Tc.Subcommand.CLASS, Tc.Subcommand.FILTER, Tc.Subcommand.QDISC)
+        if sub_command not in valid_sub_command_list:
+            raise ValueError("unknown sub command: {}".format(sub_command))
+
+        if (self.is_change_shaper and
+                sub_command in (Tc.Subcommand.QDISC, Tc.Subcommand.FILTER)):
+            # no need to execute
+            return None
+
+        return "tc {:s} {:s}".format(
+            sub_command, "change" if self.is_change_shaper else "add")
 
     def get_anywhere_network(self):
         return get_anywhere_network(self, )
@@ -278,7 +315,8 @@ class TrafficControl(object):
 
     def set_tc(self):
         self.__setup_ifb()
-        self.__shaper.set_shaping()
+
+        return self.__shaper.set_shaping()
 
     def delete_tc(self):
         result_list = []
@@ -365,11 +403,7 @@ class TrafficControl(object):
                 'reordering needs latency to be specified: set latency > 0')
 
     def __validate_netem_parameter(self):
-        try:
-            self.validate_bandwidth_rate()
-        except EmptyParameterError:
-            pass
-
+        self.validate_bandwidth_rate()
         self.__validate_network_delay()
         self.__validate_packet_loss_rate()
         self.__validate_packet_duplicate_rate()
@@ -392,7 +426,7 @@ class TrafficControl(object):
             for netem_param_value in netem_param_value_list
         ]):
             raise ValueError(
-                "there is no valid net emulation parameter value."
+                "there is no valid net emulation parameter value. "
                 "at least one or more following parameters are required: "
                 "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
             )
@@ -433,11 +467,13 @@ class TrafficControl(object):
         return_code |= spr.SubprocessRunner(
             "ip link set dev {:s} up".format(self.ifb_device)).run()
 
+        base_command = "tc qdisc add"
         return_code |= run_command_helper(
-            "tc qdisc add dev {:s} ingress".format(self.__device),
+            "{:s} dev {:s} ingress".format(base_command, self.__device),
             self.REGEXP_FILE_EXISTS,
             self.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: ingress qdisc already exists."))
+                "failed to '{:s}': ingress qdisc already exists.".format(
+                    base_command)))
 
         return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",

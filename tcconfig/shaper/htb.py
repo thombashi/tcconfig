@@ -8,25 +8,22 @@ from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
 
+import errno
 import re
 
 import typepy
 
 from .._common import (
+    get_no_limit_kbits,
     logging_context,
     run_command_helper,
     run_tc_show,
 )
 from .._const import (
-    KILO_SIZE,
     Tc,
-    TcCoomandOutput,
+    TcCommandOutput,
 )
-from .._converter import Humanreadable
-from .._error import (
-    TcAlreadyExist,
-    EmptyParameterError,
-)
+from .._error import TcAlreadyExist
 from .._logger import logger
 from ._interface import AbstractShaper
 
@@ -63,35 +60,25 @@ class HtbShaper(AbstractShaper):
 
         return self.__netem_major_id
 
-    def get_no_limit_kbits(self):
-        # upper rate limit of iproute2 was 34.359.738.360 bits per second
-        # older than 3.14.0
-        # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
-
-        iproute2_upper_kbits = Humanreadable(
-            "32G", kilo_size=KILO_SIZE).to_kilo_value()
-
-        try:
-            with open("/sys/class/net/{:s}/speed".format(self.tc_device)) as f:
-                return min(
-                    int(f.read().strip()) * KILO_SIZE, iproute2_upper_kbits)
-        except IOError:
-            return iproute2_upper_kbits
-
     def make_qdisc(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         if self._tc_obj.is_add_shaper:
             message = None
         else:
             message = self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: qdisc already exists "
-                "({:s}, handle={:s}, algo={:s}).".format(
-                    self.dev, handle, self.algorithm_name))
+                "failed to '{command:s}': qdisc already exists "
+                "({dev:s}, handle={handle:s}, algo={algorithm:s}).".format(
+                    command=base_command, dev=self.dev, handle=handle,
+                    algorithm=self.algorithm_name))
 
         run_command_helper(
             " ".join([
-                "tc qdisc add",
+                base_command,
                 self.dev,
                 "root",
                 "handle {:s}".format(handle),
@@ -105,20 +92,19 @@ class HtbShaper(AbstractShaper):
         return self.__add_default_class()
 
     def add_rate(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
             self.get_qdisc_minor_id())
-        no_limit_kbits = self.get_no_limit_kbits()
+        no_limit_kbits = get_no_limit_kbits(self.tc_device)
 
-        try:
-            self._tc_obj.validate_bandwidth_rate()
-            kbits = self._tc_obj.bandwidth_rate
-        except EmptyParameterError:
+        kbits = self._tc_obj.bandwidth_rate
+        if kbits is None:
             kbits = no_limit_kbits
 
         command_item_list = [
-            "tc class add",
+            base_command,
             self.dev,
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
@@ -137,9 +123,11 @@ class HtbShaper(AbstractShaper):
             " ".join(command_item_list),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add class: class already exists "
-                "({:s}, parent={:s}, classid={:s}, algo={:s}).".format(
-                    self.dev, parent, classid, self.algorithm_name)),
+                "failed to '{command:s}': class already exists "
+                "({dev:s}, parent={parent:s}, classid={classid:s}, "
+                "algo={algorithm:s}).".format(
+                    command=base_command, dev=self.dev, parent=parent,
+                    classid=classid, algorithm=self.algorithm_name)),
             TcAlreadyExist
         )
 
@@ -151,14 +139,14 @@ class HtbShaper(AbstractShaper):
                 self.make_qdisc()
             except TcAlreadyExist:
                 if not is_add_shaper:
-                    return
+                    return errno.EINVAL
 
         with logging_context("add_rate"):
             try:
                 self.add_rate()
             except TcAlreadyExist:
                 if not is_add_shaper:
-                    return
+                    return errno.EINVAL
 
         with logging_context("set_netem"):
             self.set_netem()
@@ -166,8 +154,11 @@ class HtbShaper(AbstractShaper):
         with logging_context("add_filter"):
             self.add_filter()
 
+        return 0
+
     def __get_unique_qdisc_minor_id(self):
-        if self._tc_obj.tc_command_output != TcCoomandOutput.NOT_SET:
+        if (self._tc_obj.tc_command_output != TcCommandOutput.NOT_SET or
+                self._tc_obj.is_change_shaper):
             self.__qdisc_minor_id_count += 1
 
             return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
@@ -225,6 +216,7 @@ class HtbShaper(AbstractShaper):
         return next_netem_major_id
 
     def __add_default_class(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
@@ -233,18 +225,20 @@ class HtbShaper(AbstractShaper):
             message = None
         else:
             message = self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add default class: class already exists "
-                "({}, parent={:s}, classid={:s}, algo={:s})".format(
-                    self.dev, parent, classid, self.algorithm_name))
+                "failed to default '{command:s}': class already exists "
+                "({dev}, parent={parent:s}, classid={classid:s}, "
+                "algo={algorithm:s})".format(
+                    command=base_command, dev=self.dev, parent=parent,
+                    classid=classid, algorithm=self.algorithm_name))
 
         return run_command_helper(
             " ".join([
-                "tc class add",
+                base_command,
                 self.dev,
                 "parent {:s}".format(parent),
                 "classid {:s}".format(classid),
                 self.algorithm_name,
-                "rate {}kbit".format(self.get_no_limit_kbits()),
+                "rate {}kbit".format(get_no_limit_kbits(self.tc_device)),
             ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             message)

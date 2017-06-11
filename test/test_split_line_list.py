@@ -13,7 +13,7 @@ import pytest
 from tcconfig._split_line_list import split_line_list
 
 
-class Test_split_line_list:
+class Test_split_line_list(object):
 
     @pytest.mark.parametrize(
         [

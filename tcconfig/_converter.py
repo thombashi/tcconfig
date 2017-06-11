@@ -7,20 +7,36 @@
 from __future__ import absolute_import
 from __future__ import division
 from __future__ import unicode_literals
+
+from collections import namedtuple
 import re
 
 import typepy
 
+from ._error import (
+    InvalidParameterError,
+    UnitNotFoundError,
+)
+from ._logger import logger
+
+ByteUnit = namedtuple("ByteUnit", "regexp factor")
+
 
 class Humanreadable(object):
-    __RE_EXP_PAIR_LIST = [
-        [re.compile("^b$", re.IGNORECASE), 0],
-        [re.compile("^k$", re.IGNORECASE), 1],
-        [re.compile("^m$", re.IGNORECASE), 2],
-        [re.compile("^g$", re.IGNORECASE), 3],
-        [re.compile("^t$", re.IGNORECASE), 4],
-        [re.compile("^p$", re.IGNORECASE), 5],
+    __UNIT_LIST = [
+        ByteUnit(regexp=re.compile("^b$", re.IGNORECASE), factor=0),
+        ByteUnit(regexp=re.compile("^bps$", re.IGNORECASE), factor=0),
+        ByteUnit(regexp=re.compile("^k$", re.IGNORECASE), factor=1),
+        ByteUnit(regexp=re.compile("^kbps$", re.IGNORECASE), factor=1),
+        ByteUnit(regexp=re.compile("^m$", re.IGNORECASE), factor=2),
+        ByteUnit(regexp=re.compile("^mbps$", re.IGNORECASE), factor=2),
+        ByteUnit(regexp=re.compile("^g$", re.IGNORECASE), factor=3),
+        ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
+        ByteUnit(regexp=re.compile("^t$", re.IGNORECASE), factor=4),
+        ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
+        ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
+    __RE_NUMBER = re.compile("^[\-\+]?[0-9\.]+")
 
     def __init__(self, readable_size, kilo_size=1024):
         """
@@ -31,45 +47,55 @@ class Humanreadable(object):
         """
 
         self.__readable_size = readable_size
-        self.kilo_size = kilo_size  # [byte]
+        self.kilo_size = kilo_size
 
-    def to_no_prefix_value(self):
+        self.__validate_kilo_size()
+
+    def to_bit(self):
         """
         :raises ValueError:
         """
 
-        if typepy.is_null_string(self.__readable_size):
-            raise ValueError("readable_size is empty")
+        logger.debug("readable_size: {}".format(self.__readable_size))
 
-        size = self.__readable_size[:-1]
-        unit = self.__readable_size[-1]
+        if not typepy.is_not_null_string(self.__readable_size):
+            raise TypeError(
+                "readable_size must be a string: actual={}".format(
+                    self.__readable_size))
 
+        self.__readable_size = self.__readable_size.strip()
+
+        try:
+            size = self.__RE_NUMBER.search(self.__readable_size).group()
+        except AttributeError:
+            raise InvalidParameterError(
+                "invalid value: {}".format(self.__readable_size))
         size = float(size)
-        unit = unit.lower()
-
         if size < 0:
-            raise ValueError("minus size")
+            raise InvalidParameterError(
+                "size must be greater or equals to zero")
 
-        coefficient = self.__unit_to_no_prefix(unit)
+        unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
-        return size * coefficient
+        return size * self.__get_coefficient(unit)
 
-    def to_kilo_value(self):
+    def to_kilo_bit(self):
         """
         :param str readable_size: human readable size (bytes). e.g. 256 M
         :raises ValueError:
         """
 
-        return self.to_no_prefix_value() / self.kilo_size
+        return self.to_bit() / self.kilo_size
 
-    def __unit_to_no_prefix(self, unit):
+    def __validate_kilo_size(self):
         if self.kilo_size not in [1000, 1024]:
             raise ValueError("invalid kilo size: {}".format(self.kilo_size))
 
-        for re_exp_pair in self.__RE_EXP_PAIR_LIST:
-            re_pattern, exp = re_exp_pair
+    def __get_coefficient(self, unit_str):
+        self.__validate_kilo_size()
 
-            if re_pattern.search(unit):
-                return self.kilo_size ** exp
+        for unit in self.__UNIT_LIST:
+            if unit.regexp.search(unit_str):
+                return self.kilo_size ** unit.factor
 
-        raise ValueError("unknown unit: {}".format(unit))
+        raise UnitNotFoundError("unit not found: value={}".format(unit_str))

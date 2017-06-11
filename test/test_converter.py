@@ -9,9 +9,10 @@ from __future__ import division
 import pytest
 
 from tcconfig._converter import Humanreadable
+from tcconfig._error import UnitNotFoundError
 
 
-class Test_to_no_prefix_value:
+class Test_to_bit(object):
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2],
@@ -56,11 +57,12 @@ class Test_to_no_prefix_value:
         ["2.5 m", 1000, int(2.5 * 1000 ** 2)],
     ])
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(value, kilo_size).to_no_prefix_value() == expected
+        assert Humanreadable(value, kilo_size).to_bit() == expected
 
     @pytest.mark.parametrize(["value", "kilo_size", "exception"], [
-        ["", 1000, ValueError],
-        [None, 1000, ValueError],
+        ["10", 1000, UnitNotFoundError],
+        ["", 1000, TypeError],
+        [None, 1000, TypeError],
         [True, 1000, TypeError],
         [float("nan"), 1000, TypeError],
         ["a", 1000, ValueError],
@@ -72,10 +74,10 @@ class Test_to_no_prefix_value:
     ])
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
-            Humanreadable(value, kilo_size).to_no_prefix_value()
+            Humanreadable(value, kilo_size).to_bit()
 
 
-class Test_to_kilo_value:
+class Test_to_kilo_bit(object):
 
     @pytest.mark.parametrize(["value", "kilo_size", "expected"], [
         ["2b", 1024, 2 / 1024],
@@ -92,4 +94,4 @@ class Test_to_kilo_value:
         ["2p", 1000, 2 * 1000 ** 4],
     ])
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(value, kilo_size).to_kilo_value() == expected
+        assert Humanreadable(value, kilo_size).to_kilo_bit() == expected

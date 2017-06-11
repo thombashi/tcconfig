@@ -15,8 +15,11 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
-from .._error import EmptyParameterError
-from .._traffic_direction import TrafficDirection
+from .._const import (
+    Tc,
+    TrafficDirection,
+)
+from .._error import InvalidParameterError
 from ._interface import AbstractShaper
 
 
@@ -54,24 +57,33 @@ class TbfShaper(AbstractShaper):
             direction_offset)
 
     def make_qdisc(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         return run_command_helper(
             " ".join([
-                "tc qdisc add", self.dev, "root",
+                base_command, self.dev, "root",
                 "handle {:s}".format(handle), "prio",
             ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: prio qdisc already exists "
-                "({:s}, algo={:s}, handle={:s}).".format(
-                    self.dev, self.algorithm_name, handle))
+                "failed to '{command:s}': prio qdisc already exists "
+                "({dev:s}, algo={algorithm:s}, handle={handle:s}).".format(
+                    command=base_command, dev=self.dev,
+                    algorithm=self.algorithm_name, handle=handle))
         )
 
     def add_rate(self):
         try:
             self._tc_obj.validate_bandwidth_rate()
-        except EmptyParameterError:
+        except InvalidParameterError:
+            return 0
+
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
             return 0
 
         parent = "{:x}:{:d}".format(
@@ -80,7 +92,7 @@ class TbfShaper(AbstractShaper):
         handle = "{:d}:".format(20)
 
         command = " ".join([
-            "tc qdisc add",
+            base_command,
             self.dev,
             "parent {:s}".format(parent),
             "handle {:s}".format(handle),
@@ -96,9 +108,12 @@ class TbfShaper(AbstractShaper):
             command,
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: qdisc already exists "
-                "({:s}, algo={:s}, parent={:s}, handle={:s}).".format(
-                    self.dev, self.algorithm_name, parent, handle))
+                "failed to '{command:s}': qdisc already exists "
+                "({dev:s}, algo={algorithm:s}, parent={parent:s}, "
+                "handle={handle:s}).".format(
+                    command=base_command, dev=self.dev,
+                    algorithm=self.algorithm_name, parent=parent,
+                    handle=handle))
         )
 
         self.__set_pre_network_filter()
@@ -116,12 +131,14 @@ class TbfShaper(AbstractShaper):
         with logging_context("add_filter"):
             self.add_filter()
 
+        return 0
+
     def __set_pre_network_filter(self):
         if self._is_use_iptables():
             return 0
 
         if all([
-            typepy.is_null_string(self._tc_obj.network),
+            typepy.is_null_string(self._tc_obj.dst_network),
             not typepy.type.Integer(self._tc_obj.dst_port).is_type(),
         ]):
             flowid = "{:s}:{:d}".format(
@@ -131,7 +148,7 @@ class TbfShaper(AbstractShaper):
             flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
         return SubprocessRunner(" ".join([
-            "tc filter add",
+            self._tc_obj.get_tc_command(Tc.Subcommand.FILTER),
             self.dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),

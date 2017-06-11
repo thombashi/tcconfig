@@ -9,6 +9,7 @@ from __future__ import absolute_import
 from __future__ import print_function
 
 import errno
+import ipaddress
 import sys
 
 import logbook
@@ -20,24 +21,29 @@ import pyparsing as pp
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
+    check_tc_command_installation,
     is_execute_tc_command,
     write_tc_script,
 )
 from ._const import (
     VERSION,
     Network,
-    TcCoomandOutput,
+    Tc,
+    TcCommand,
+    TcCommandOutput,
+    TrafficDirection,
 )
 from ._error import (
     ModuleNotFoundError,
     NetworkInterfaceNotFoundError,
+    UnitNotFoundError,
 )
 from ._logger import (
     LOG_FORMAT_STRING,
     logger,
     set_log_level,
 )
-from ._traffic_direction import TrafficDirection
+from .parser.shaping_rule import TcShapingRuleParser
 from .traffic_control import TrafficControl
 
 
@@ -60,7 +66,17 @@ def parse_option():
     group = parser.parser.add_mutually_exclusive_group()
     group.add_argument(
         "--overwrite", action="store_true", default=False,
-        help="overwrite existing settings")
+        help="overwrite existing traffic shaping rules.")
+    group.add_argument(
+        "--change", dest="is_change_shaper", action="store_true",
+        default=False,
+        help="""
+        change existing traffic shaping rules to new one. this option reduce
+        the shaping rule switching side effect (such as traffic spike)
+        compared to --overwrite option.
+        note: the tcset command will fail when there is no existing shaping
+        rules.
+        """)
     group.add_argument(
         "--add", dest="is_add_shaper", action="store_true", default=False,
         help="add a traffic shaping rule in addition to existing rules.")
@@ -74,8 +90,12 @@ def parse_option():
         (default = ``%(default)s``)
         """)
     group.add_argument(
-        "--rate", dest="bandwidth_rate",
-        help="network bandwidth rate [K|M|G bit per second]")
+        "--rate", "--bandwidth-rate", dest="bandwidth_rate",
+        help="""
+        network bandwidth rate [bit per second].
+        valid units are either: K/M/G/Kbps/Mbps/Gbps
+        e.g. --rate 10Mbps
+        """)
     group.add_argument(
         "--delay", dest="network_latency", type=float, default=0,
         help="""
@@ -125,7 +145,7 @@ def parse_option():
             TrafficControl.MIN_REORDERING_RATE,
             TrafficControl.MAX_REORDERING_RATE))
     group.add_argument(
-        "--network", "--dst-network",
+        "--network", "--dst-network", dest="dst_network",
         help="target IP address/network to control traffic")
     group.add_argument(
         "--port", "--dst-port", dest="dst_port", type=int,
@@ -150,7 +170,7 @@ def parse_option():
         "--src-network",
         help="""
         set traffic shaping rule to a specific packets that routed from
-        --src-network to --network. This option required to execute with
+        --src-network to --dst-network. This option required to execute with
         the --iptables option.
         the shaping rule only affect to outgoing packets
         (no effect to if you execute with "--direction incoming" option)
@@ -204,7 +224,8 @@ class TcConfigLoader(object):
             device_option = "--device={:s}".format(device)
 
             if self.is_overwrite:
-                command_list.append("tcdel {:s}".format(device_option))
+                command_list.append("{:s} {:s}".format(
+                    TcCommand.TCDEL, device_option))
 
             for direction, direction_table in six.iteritems(device_table):
                 is_first_set = True
@@ -226,11 +247,11 @@ class TcConfigLoader(object):
                     ]
 
                     try:
-                        network = self.__parse_tc_filter_network(tc_filter)
-                        if network not in (
+                        dst_network = self.__parse_tc_filter_network(tc_filter)
+                        if dst_network not in (
                                 Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
                             option_list.append(
-                                "--network={:s}".format(network))
+                                "--dst-network={:s}".format(dst_network))
                     except pp.ParseException:
                         pass
 
@@ -251,14 +272,15 @@ class TcConfigLoader(object):
 
                     is_first_set = False
 
-                    command_list.append(" ".join(["tcset"] + option_list))
+                    command_list.append(
+                        " ".join([TcCommand.TCSET] + option_list))
 
         return command_list
 
     @staticmethod
     def __parse_tc_filter_network(text):
         network_pattern = (
-            pp.SkipTo("network=", include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.DST_NETWORK), include=True) +
             pp.Word(pp.alphanums + "." + "/"))
 
         return network_pattern.parseString(text)[-1]
@@ -266,7 +288,7 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_src_port(text):
         port_pattern = (
-            pp.SkipTo("src-port=", include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.SRC_PORT), include=True) +
             pp.Word(pp.nums))
 
         return port_pattern.parseString(text)[-1]
@@ -274,10 +296,57 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_dst_port(text):
         port_pattern = (
-            pp.SkipTo("dst-port=", include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.DST_PORT), include=True) +
             pp.Word(pp.nums))
 
         return port_pattern.parseString(text)[-1]
+
+
+class TcShapingRuleFinder(object):
+    @property
+    def tc(self):
+        return self.__tc
+
+    def __init__(self, device, tc):
+        self.__device = device
+        self.__tc = tc
+
+    def exist_rule(self):
+        parser = TcShapingRuleParser(
+            self.__device, self.tc.ip_version, logger)
+
+        key_param_list = (
+            Tc.Param.DST_NETWORK, Tc.Param.SRC_NETWORK,
+            Tc.Param.DST_PORT, Tc.Param.SRC_NETWORK,
+        )
+
+        new_tc_filter = {
+            Tc.Param.DST_NETWORK: self.tc.dst_network,
+            Tc.Param.SRC_NETWORK: self.tc.src_network,
+            Tc.Param.DST_PORT: self.tc.dst_port,
+            Tc.Param.SRC_NETWORK: self.tc.src_port,
+        }
+
+        if self.tc.direction == TrafficDirection.OUTGOING:
+            current_tc_filter_list = parser.get_outgoing_tc_filter()
+        elif self.tc.direction == TrafficDirection.INCOMING:
+            current_tc_filter_list = parser.get_incoming_tc_filter()
+
+        logger.debug(
+            "exist_rule: direction={}, new-filter={} current-filters={}".format(
+                self.tc.direction, new_tc_filter, current_tc_filter_list))
+
+        for cuurent_tc_filter in current_tc_filter_list:
+            if all([
+                cuurent_tc_filter.get(
+                    key_param) == new_tc_filter.get(key_param)
+                for key_param in key_param_list
+            ]):
+                logger.debug("existing shaping rule found: {}".format(
+                    cuurent_tc_filter))
+                return True
+
+        return False
 
 
 def set_tc_from_file(logger, config_file_path, is_overwrite):
@@ -300,11 +369,9 @@ def main():
     set_log_level(options.log_level)
 
     if is_execute_tc_command(options.tc_command_output):
-        try:
-            subprocrunner.Which("tc").verify()
-        except subprocrunner.CommandNotFoundError as e:
-            logger.error(e)
-            return errno.ENOENT
+        check_tc_command_installation()
+    else:
+        subprocrunner.SubprocessRunner.default_is_dry_run = True
 
     try:
         verify_netem_module()
@@ -316,41 +383,54 @@ def main():
     if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
 
-    tc = TrafficControl(
-        options.device,
-        direction=options.direction,
-        bandwidth_rate=options.bandwidth_rate,
-        latency_ms=options.network_latency,
-        latency_distro_ms=options.latency_distro_ms,
-        packet_loss_rate=options.packet_loss_rate,
-        packet_duplicate_rate=options.packet_duplicate_rate,
-        corruption_rate=options.corruption_rate,
-        reordering_rate=options.reordering_rate,
-        network=options.network,
-        src_network=options.src_network,
-        src_port=options.src_port,
-        dst_port=options.dst_port,
-        is_ipv6=options.is_ipv6,
-        is_add_shaper=options.is_add_shaper,
-        is_enable_iptables=options.is_enable_iptables,
-        shaping_algorithm=options.shaping_algorithm,
-        tc_command_output=options.tc_command_output,
-    )
+    subprocrunner.SubprocessRunner.is_save_history = True
+
+    try:
+        tc = TrafficControl(
+            options.device,
+            direction=options.direction,
+            bandwidth_rate=options.bandwidth_rate,
+            latency_ms=options.network_latency,
+            latency_distro_ms=options.latency_distro_ms,
+            packet_loss_rate=options.packet_loss_rate,
+            packet_duplicate_rate=options.packet_duplicate_rate,
+            corruption_rate=options.corruption_rate,
+            reordering_rate=options.reordering_rate,
+            dst_network=options.dst_network,
+            src_network=options.src_network,
+            src_port=options.src_port,
+            dst_port=options.dst_port,
+            is_ipv6=options.is_ipv6,
+            is_change_shaper=options.is_change_shaper,
+            is_add_shaper=options.is_add_shaper,
+            is_enable_iptables=options.is_enable_iptables,
+            shaping_algorithm=options.shaping_algorithm,
+            tc_command_output=options.tc_command_output,
+        )
+    except UnitNotFoundError:
+        logger.error(
+            "--rate/--bandwidth-rate require unit such as K/M/Kbps/Mbps/etc.")
+        return errno.EINVAL
 
     try:
         tc.validate()
     except (NetworkInterfaceNotFoundError) as e:
         logger.error(str(e))
         return errno.EINVAL
-    except ValueError as e:
+    except ipaddress.AddressValueError as e:
         logger.error(
             "{}. ".format(e) +
             "--ipv6 option will be required to use IPv6 address.")
         return errno.EINVAL
+    except ValueError as e:
+        logger.error(e)
+        return errno.EINVAL
 
-    subprocrunner.SubprocessRunner.is_save_history = True
-    if options.tc_command_output != TcCoomandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.default_is_dry_run = True
+    try:
+        tc.sanitize()
+    except ValueError as e:
+        logger.error(e)
+        return errno.EINVAL
 
     if options.overwrite:
         if options.log_level == logbook.INFO:
@@ -363,21 +443,31 @@ def main():
 
         set_log_level(options.log_level)
 
-    tc.set_tc()
+    if (
+        options.is_add_shaper and
+        TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
+    ):
+        logger.error(
+            "adding a shaping rule failed. a shaping rule for the same "
+            "network/port already exist. try --overwrite option if you want "
+            "to overwrite the existing rule.")
+        return errno.EINVAL
+
+    return_code = tc.set_tc()
     command_history = "\n".join(tc.get_command_history())
 
-    if options.tc_command_output == TcCoomandOutput.STDOUT:
+    if options.tc_command_output == TcCommandOutput.STDOUT:
         print(command_history)
         return 0
 
-    if options.tc_command_output == TcCoomandOutput.SCRIPT:
+    if options.tc_command_output == TcCommandOutput.SCRIPT:
         write_tc_script(
-            "tcset", command_history, filename_suffix=options.device)
+            TcCommand.TCSET, command_history, filename_suffix=options.device)
         return 0
 
     logger.debug("command history\n{}".format(command_history))
 
-    return 0
+    return return_code
 
 
 if __name__ == '__main__':

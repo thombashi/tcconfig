@@ -32,12 +32,12 @@ Dependencies
 
 Linux packages
 --------------
-- `iproute`/`iproute2` (mandatory: required for tc command)
-- `iptables` (optional: required to when you use ``--iptables`` option)
+- ``iproute``/``iproute2`` (mandatory: required for tc command)
+- ``iptables`` (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
 ----------------------------
-- sch_netem
+- ``sch_netem``
 
 Python packages
 ---------------

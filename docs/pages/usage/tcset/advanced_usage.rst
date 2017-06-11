@@ -62,7 +62,7 @@ IPv6 addresses can be used at ``tcset``/``tcshow`` commands with ``--ipv6`` opti
     {
         "eth0": {
             "outgoing": {
-                "network=2001:db00::/24, protocol=ipv6": {
+                "dst-network=2001:db00::/24, protocol=ipv6": {
                     "delay": "100.0",
                     "rate": "1G"
                 }

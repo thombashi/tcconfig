@@ -8,6 +8,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import contextlib
+import errno
+import sys
 
 import logbook
 import six
@@ -16,8 +18,10 @@ import typepy
 import subprocrunner as spr
 
 from ._const import (
+    KILO_SIZE,
     Network,
-    TcCoomandOutput,
+    TcCommand,
+    TcCommandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
@@ -40,7 +44,7 @@ def is_anywhere_network(network, ip_version):
 
 
 def is_execute_tc_command(tc_command_output):
-    return tc_command_output == TcCoomandOutput.NOT_SET
+    return tc_command_output == TcCommandOutput.NOT_SET
 
 
 def get_anywhere_network(ip_version):
@@ -53,6 +57,14 @@ def get_anywhere_network(ip_version):
         return Network.Ipv6.ANYWHERE
 
     raise ValueError("unknown ip version: {}".format(ip_version))
+
+
+def check_tc_command_installation():
+    try:
+        spr.Which("tc").verify()
+    except spr.CommandNotFoundError as e:
+        logger.error(e)
+        sys.exit(errno.ENOENT)
 
 
 def verify_network_interface(device):
@@ -75,10 +87,7 @@ def sanitize_network(network, ip_version):
 
     import ipaddress
 
-    if typepy.is_null_string(network):
-        return ""
-
-    if network.lower() == "anywhere":
+    if typepy.is_null_string(network) or network.lower() == "anywhere":
         return get_anywhere_network(ip_version)
 
     try:
@@ -138,8 +147,6 @@ def run_tc_show(subcommand, device):
 
 
 def _get_original_tcconfig_command(tcconfig_command):
-    import sys
-
     return " ".join([tcconfig_command] + [
         command_item for command_item in sys.argv[1:]
         if command_item != "--tc-script"
@@ -155,21 +162,54 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     if typepy.is_not_null_string(filename_suffix):
         filename_item_list.append(filename_suffix)
 
-    filename = "_".join(filename_item_list) + ".sh"
-    with io.open(filename, "w", encoding="utf8") as fp:
-        fp.write("\n".join([
-            "#!/bin/sh",
-            "",
-            "# tc script file:",
+    script_line_list = [
+        "#!/bin/sh",
+        "",
+        "# tc script file:",
+    ]
+
+    if tcconfig_command != TcCommand.TCSHOW:
+        script_line_list.extend([
             "#   the following command sequence lead to equivalent results as",
             "#   '{:s}'.".format(
                 _get_original_tcconfig_command(tcconfig_command)),
-            "#   created by {:s} on {:s}.".format(
-                tcconfig_command,
-                datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
-            "",
-            command_history,
-        ]) + "\n")
+        ])
+
+    script_line_list.extend([
+        "#   created by {:s} on {:s}.".format(
+            tcconfig_command,
+            datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
+        "",
+        command_history,
+    ])
+
+    filename = "_".join(filename_item_list) + ".sh"
+    with io.open(filename, "w", encoding="utf8") as fp:
+        fp.write("\n".join(script_line_list) + "\n")
 
     os.chmod(filename, 0o755)
     logger.info("written a tc script to '{:s}'".format(filename))
+
+
+def get_iproute2_upper_limite_rate():
+    from ._converter import Humanreadable
+
+    # upper bandwidth rate limit of iproute2 was 34,359,738,360
+    # bits per second older than 3.14.0
+    # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
+
+    return Humanreadable(
+        "32G", kilo_size=KILO_SIZE).to_kilo_bit()
+
+
+def get_no_limit_kbits(tc_device):
+    if typepy.is_null_string(tc_device):
+        return get_iproute2_upper_limite_rate()
+
+    try:
+        with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
+            return min(
+                int(f.read().strip()) * KILO_SIZE,
+                get_iproute2_upper_limite_rate())
+    except IOError:
+        return get_iproute2_upper_limite_rate()

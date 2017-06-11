@@ -5,10 +5,12 @@
 """
 
 from __future__ import absolute_import
+from __future__ import print_function
 
 from subprocrunner import SubprocessRunner
 from typepy.type import RealNumber
 
+from tcconfig._const import TcCommand
 from tcconfig._converter import Humanreadable
 
 
@@ -22,14 +24,16 @@ def is_invalid_param(
         reordering,
     ]
 
+    print(param_value_list)
+
     is_invalid = all([
         not RealNumber(param_value).is_type() or param_value <= 0
         for param_value in param_value_list
     ])
 
     try:
-        Humanreadable(rate, kilo_size=1000).to_no_prefix_value()
-    except ValueError:
+        Humanreadable(rate, kilo_size=1000).to_bit()
+    except (TypeError, ValueError):
         pass
     else:
         is_invalid = False
@@ -38,4 +42,6 @@ def is_invalid_param(
 
 
 def execute_tcdel(device):
-    SubprocessRunner("tcdel --device {}".format(device)).run()
+    SubprocessRunner(
+        "{:s} --device {}".format(TcCommand.TCDEL, device),
+        dry_run=False).run()

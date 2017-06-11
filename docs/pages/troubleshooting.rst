@@ -1,48 +1,70 @@
 Troubleshooting
 ========================
 
+RTNETLINK answers: No such file or directory
+------------------------------------------------
+
 Phenomenon
-------------------------
-``tcset`` command failed with an error message `RTNETLINK answers: No such file or directory`.
-
-
-Solutions
 ~~~~~~~~~~~~~~~~~~~~~~~~
-The cause of this error is ``sch_netem`` kernel module is not loaded in your system.
-Execute the following command to solve this problem: 
+``tcset`` command failed with an error message ``RTNETLINK answers: No such file or directory``.
+
+:Example:
+
+    .. code:: console
+
+        # tcset --device eth0 --rate 1M
+        [ERROR] tcconfig: RTNETLINK answers: No such file or directory
+
+
+Solution
+~~~~~~~~~~~~~~~~~~~~~~~~
+Load ``sch_netem`` module will solves the problem.
+
+The cause of the error is ``sch_netem`` kernel module not loaded in your system.
+Execute the following command to load ``sch_netem`` module: 
 
 .. code:: console
 
     # modprobe sch_netem
 
-The command is loading the ``sch_netem`` module.
-If the command failed with below message, you need to install additional kernel module.
+If the command failed with the below message, you need to install additional kernel module.
 
-.. code:: console
+:Example - Fedora:
 
-    # modprobe: FATAL: Module sch_netem not found in directory /lib/modules/xxxxxx
+    .. code:: console
 
-Execute the following command to install kernel modules (includes the `sch_netem` module).
+        # modprobe sch_netem
+        modprobe: FATAL: Module sch_netem not found in directory /lib/modules/4.11.3-202.fc25.x86_64
 
-.. code:: console
+In that case, install ``kernel-modules-extra`` package.
+This package includes the ``sch_netem`` module.
 
-    # dnf install kernel-modules-extra
+:Example - Fedora:
 
-(in the case of `RHEL`/`CentOS`/`Fedora`).
-After that, re-execute `modprobe sch_netem` command.
+    .. code:: console
+
+        # dnf install kernel-modules-extra
+
+Load ``sch_netem`` module after the package installation.
 
 .. code:: console
 
     # modprobe sch_netem
-    #
+    # 
 
+
+RTNETLINK answers: Operation not supported
+------------------------------------------------
 
 Phenomenon
-------------------------
-``tcset`` command with ``--direction incoming`` failed with an error message `RTNETLINK answers: Operation not supported`.
+~~~~~~~~~~~~~~~~~~~~~~~~
+``tcset`` command with ``--direction incoming`` failed with an error message
+``RTNETLINK answers: Operation not supported``.
 
 Solutions
 ~~~~~~~~~~~~~~~~~~~~~~~~
+Checking Linux kernel configurations and reconfigure it if required configurations are disabled.
+
 The cause may be some mandatory kernel configurations are disabled.
 Following configurations are needed to be enabled to use ``--direction incoming`` option.
 
@@ -57,11 +79,11 @@ Following configurations are needed to be enabled to use ``--direction incoming`
 - CONFIG_NET_SCH_INGRESS
 - CONFIG_SCSI_NETLINK
 
-e.g. Display kernel configurations that enabled the above configurations (Debian)
+e.g. Kernel configurations that enabled the above configurations (Debian)
 
 .. code:: console
 
-    cat /boot/config-3.16.0-4-amd64 | egrep "NETFILTER_NETLINK=|NETFILTER_NETLINK_QUEUE=|NETFILTER_NETLINK_LOG=|NF_CT_NETLINK=|SCSI_NETLINK=|IP_ADVANCED_ROUTER=|NET_SCH_INGRESS=|NET_SCHED=|IP_MULTIPLE_TABLES=|NETFILTER_XT_TARGET_MARK="
+    $ cat /boot/config-3.16.0-4-amd64 | egrep "NETFILTER_NETLINK=|NETFILTER_NETLINK_QUEUE=|NETFILTER_NETLINK_LOG=|NF_CT_NETLINK=|SCSI_NETLINK=|IP_ADVANCED_ROUTER=|NET_SCH_INGRESS=|NET_SCHED=|IP_MULTIPLE_TABLES=|NETFILTER_XT_TARGET_MARK="
     CONFIG_IP_ADVANCED_ROUTER=y
     CONFIG_IP_MULTIPLE_TABLES=y
     CONFIG_NETFILTER_NETLINK=m
@@ -74,8 +96,12 @@ e.g. Display kernel configurations that enabled the above configurations (Debian
     CONFIG_SCSI_NETLINK=y
 
 These configurations need to either ``y`` or ``m``.
-If some of the configurations are disabled, you need to enable the configurations and recompile the kernel.
+If some of the configurations are disabled, you need to:
+
+1. enable the kernel configurations
+2. build kernel
+3. using the compiled kernel image as boot kernel
 
 .. note::
     
-    Name of the `/boot/config-3.16.0-4-amd64` will be changed depends on environment.
+    Name of the kernel configuration file (``/boot/config-3.16.0-4-amd64``) will be different depends on the environment.

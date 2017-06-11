@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-VERSION = "0.11.0"
+VERSION = "0.12.0"
 
 KILO_SIZE = 1000
 LIST_MANGLE_TABLE_COMMAND = "iptables -t mangle --line-numbers -L"
@@ -32,16 +32,29 @@ class Tc(object):
 
     class Param(object):
         CLASS_ID = "classid"
+        DST_NETWORK = "dst-network"
+        DST_PORT = "dst-port"
         FLOW_ID = "flowid"
         HANDLE = "handle"
-        NETWORK = "network"
         PARENT = "parent"
-        SRC_PORT = "src-port"
-        DST_PORT = "dst-port"
         PROTOCOL = "protocol"
+        SRC_NETWORK = "src-network"
+        SRC_PORT = "src-port"
 
 
-class TcCoomandOutput(object):
+class TcCommand(object):
+    TCSET = "tcset"
+    TCDEL = "tcdel"
+    TCSHOW = "tcshow"
+
+
+class TcCommandOutput(object):
     NOT_SET = None
     STDOUT = "STDOUT"
     SCRIPT = "SCRIPT"
+
+
+class TrafficDirection(object):
+    OUTGOING = "outgoing"
+    INCOMING = "incoming"
+    LIST = [OUTGOING, INCOMING]

@@ -17,8 +17,11 @@ from .._common import (
     get_anywhere_network,
     run_command_helper,
 )
+from .._const import (
+    Tc,
+    TrafficDirection,
+)
 from .._iptables import IptablesMangleMark
-from .._traffic_direction import TrafficDirection
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -65,12 +68,16 @@ class AbstractShaper(ShaperInterface):
         self._tc_obj = tc_obj
 
     def set_netem(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        if base_command is None:
+            return 0
+
         parent = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
         handle = "{:x}".format(
             self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
         command_item_list = [
-            "tc qdisc add",
+            base_command,
             "dev {:s}".format(self._tc_obj.get_tc_device()),
             "parent {:s}".format(parent),
             "handle {:s}:".format(handle),
@@ -105,13 +112,18 @@ class AbstractShaper(ShaperInterface):
             " ".join(command_item_list),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: netem qdisc already exists "
-                "(dev={:s}, parent={:s}, handle={:s})".format(
-                    self._tc_obj.get_tc_device(), parent, handle)))
+                "failed to '{command:s}': netem qdisc already exists "
+                "(dev={dev:s}, parent={parent:s}, handle={handle:s})".format(
+                    command=base_command, dev=self._tc_obj.get_tc_device(),
+                    parent=parent, handle=handle)))
 
     def add_filter(self):
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
+        if base_command is None:
+            return 0
+
         command_item_list = [
-            "tc filter add",
+            base_command,
             self.dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
@@ -122,17 +134,17 @@ class AbstractShaper(ShaperInterface):
             command_item_list.append(
                 "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
-            if typepy.is_null_string(self._tc_obj.network):
-                network = get_anywhere_network(self._tc_obj.ip_version)
+            if typepy.is_null_string(self._tc_obj.dst_network):
+                dst_network = get_anywhere_network(self._tc_obj.ip_version)
             else:
-                network = self._tc_obj.network
+                dst_network = self._tc_obj.dst_network
 
             command_item_list.extend([
                 "u32",
                 "match {:s} {:s} {:s}".format(
                     self._tc_obj.protocol_match,
                     self._get_network_direction_str(),
-                    network),
+                    dst_network),
             ])
 
             if self._tc_obj.src_port:
@@ -179,14 +191,14 @@ class AbstractShaper(ShaperInterface):
         src_network = None
 
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
-            dst_network = self._tc_obj.network
+            dst_network = self._tc_obj.dst_network
             if typepy.is_null_string(self._tc_obj.src_network):
                 chain = "OUTPUT"
             else:
                 src_network = self._tc_obj.src_network
                 chain = "PREROUTING"
         elif self._tc_obj.direction == TrafficDirection.INCOMING:
-            src_network = self._tc_obj.network
+            src_network = self._tc_obj.dst_network
             chain = "INPUT"
 
         self._tc_obj.iptables_ctrl.add(IptablesMangleMark(

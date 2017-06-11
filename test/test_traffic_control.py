@@ -9,8 +9,14 @@ import itertools
 import pytest
 
 from allpairspy import AllPairs
-from tcconfig._const import Tc
-from tcconfig._traffic_direction import TrafficDirection
+from tcconfig._const import (
+    Tc,
+    TrafficDirection,
+)
+from tcconfig._error import (
+    InvalidParameterError,
+    UnitNotFoundError,
+)
 from tcconfig.traffic_control import TrafficControl
 
 from .common import is_invalid_param
@@ -27,46 +33,50 @@ def device_option(request):
 @pytest.mark.parametrize(["value"], [
     ["".join(opt_list)]
     for opt_list in AllPairs([
-        ["0.1", "1", "2147483647"],
+        ["0.1", "+1.25", "30"],
         [
-            "k", " k", "K", " K",
-            "m", " m", "M", " M",
-            "g", " g", "G", " G",
+            "k", " k ", "K", " K ", "kbps", "Kbps",
+            "m", " m ", "M", " M ", "mbps", "Mbps",
+            "g", " g ", "G", " G ", "gbps", "Gbps",
         ]
     ])
 ])
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
-    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
+    tc_obj = TrafficControl(
+        "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING)
     tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), ValueError]
+    ["".join(opt_list), UnitNotFoundError]
     for opt_list in AllPairs([
-        ["0.1", "1", "2147483647"],
-        [
-            "kb", "kbps", "KB",
-            "mb", "mbps", "MB",
-            "gb", "gbps", "GB",
-        ]
+        ["0.1", "1"],
+        ["", "kb", "KB", "mb", "MB", "gb", "GB"]
     ])
+] + [
+    ["".join(value), InvalidParameterError]
+    for value in ("B", "K", "M", "G")
+] + [
+    ["0bps", InvalidParameterError],
+    ["34359738361bps", InvalidParameterError],
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
-    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
+        tc_obj = TrafficControl(
+            "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING)
         tc_obj.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), ValueError]
+    ["".join(opt_list), InvalidParameterError]
     for opt_list in itertools.product(
         ["-1", "0", "0.0"],
         ["k", "K", "m", "M", "g", "G"]
     )
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
-    tc_obj = TrafficControl("dummy", bandwidth_rate=value)
     with pytest.raises(expected):
+        tc_obj = TrafficControl("dummy", bandwidth_rate=value)
         tc_obj.validate_bandwidth_rate()
 
 
@@ -128,7 +138,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=loss,
             packet_duplicate_rate=duplicate,
             corruption_rate=corrupt,
-            network=network,
+            dst_network=network,
             src_port=src_port,
             dst_port=dst_port,
             src_network=None,
@@ -234,12 +244,12 @@ class Test_TrafficControl_validate(object):
         ],
 
 
-        [{Tc.Param.NETWORK: "192.168.0."}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.256"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.0/0"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.0/33"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.2/24"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.0000/24"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0."}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, ValueError],
 
         [{"src_port": -1}, ValueError],
         [{"src_port": 65536}, ValueError],
@@ -259,7 +269,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=value.get("packet_loss_rate"),
             packet_duplicate_rate=value.get("packet_duplicate_rate"),
             corruption_rate=value.get("corruption_rate"),
-            network=value.get(Tc.Param.NETWORK),
+            dst_network=value.get(Tc.Param.DST_NETWORK),
             src_port=value.get("src_port"),
             dst_port=value.get("dst_port"),
         )
@@ -288,7 +298,7 @@ class Test_TrafficControl_ipv4(object):
             pytest.skip("device option is null")
 
         tc_obj = TrafficControl(
-            device=device_option, network=network, is_ipv6=is_ipv6)
+            device=device_option, dst_network=network, is_ipv6=is_ipv6)
 
         assert tc_obj.ip_version == expected_ip_ver
         assert tc_obj.protocol == expected_protocol

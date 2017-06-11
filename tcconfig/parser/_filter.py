@@ -14,15 +14,9 @@ import typepy
 
 import pyparsing as pp
 
-from ._const import Tc
-from ._logger import logger
-
-
-def _to_unicode(text):
-    try:
-        return text.decode("ascii")
-    except AttributeError:
-        return text
+from .._const import Tc
+from .._logger import logger
+from ._common import _to_unicode
 
 
 class TcFilterParser(object):
@@ -164,7 +158,7 @@ class TcFilterParser(object):
     def __get_filter(self):
         return {
             Tc.Param.FLOW_ID: self.__flow_id,
-            Tc.Param.NETWORK: self.__filter_network,
+            Tc.Param.DST_NETWORK: self.__filter_network,
             Tc.Param.SRC_PORT: self.__filter_src_port,
             Tc.Param.DST_PORT: self.__filter_dst_port,
             Tc.Param.PROTOCOL: self.protocol
@@ -188,7 +182,8 @@ class TcFilterParser(object):
         self.__classid = parsed_list[-1]
         self.__handle = int(u"0" + parsed_list[-3], 16)
         logger.debug(
-            "succeed to parse mangle mark: classid={}, handle={}, line={}".format(
+            "succeed to parse mangle mark: "
+            "classid={}, handle={}, line={}".format(
                 self.__classid, self.__handle, line))
 
     def __parse_filter_line(self, line):
@@ -241,7 +236,7 @@ class TcFilterParser(object):
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
-                "network={}".format(self.__filter_network),
+                "dst_network={}".format(self.__filter_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
@@ -301,139 +296,8 @@ class TcFilterParser(object):
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
-                "network={}".format(self.__filter_network),
+                "dst_network={}".format(self.__filter_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
             ]))
-
-
-class TcQdiscParser(object):
-
-    def __init__(self):
-        self.__clear()
-
-    def parse(self, text):
-        if typepy.is_null_string(text):
-            raise ValueError("empty text")
-
-        text = text.strip()
-
-        for line in text.splitlines():
-            if typepy.is_null_string(line):
-                continue
-
-            line = _to_unicode(line.lstrip())
-
-            if re.search("qdisc netem|qdisc tbf", line) is None:
-                continue
-
-            self.__clear()
-
-            if re.search("qdisc netem", line) is not None:
-                self.__parse_netem_param(line, "parent", pp.hexnums + ":")
-
-            self.__parse_netem_param(line, "delay", pp.nums + ".")
-            self.__parse_netem_delay_distro(line)
-            self.__parse_netem_param(line, "loss", pp.nums + ".")
-            self.__parse_netem_param(line, "duplicate", pp.nums + ".")
-            self.__parse_netem_param(line, "corrupt", pp.nums + ".")
-            self.__parse_netem_param(line, "reorder", pp.nums + ".")
-            self.__parse_tbf_rate(line)
-
-            yield self.__parsed_param
-
-    def __clear(self):
-        self.__parsed_param = {}
-
-    def __parse_netem_delay_distro(self, line):
-        parse_param_name = "delay"
-        pattern = (
-            pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.nums + ".") + pp.Literal("ms") +
-            pp.Word(pp.nums + ".") + pp.Literal("ms"))
-
-        try:
-            parsed_list = pattern.parseString(line)
-            self.__parsed_param[parse_param_name] = parsed_list[2]
-            self.__parsed_param["delay-distro"] = parsed_list[4]
-        except pp.ParseException:
-            pass
-
-    def __parse_netem_param(self, line, parse_param_name, word_pattern):
-        pattern = (
-            pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(word_pattern))
-
-        try:
-            result = pattern.parseString(_to_unicode(line))[-1]
-            if typepy.is_not_null_string(result):
-                self.__parsed_param[parse_param_name] = result
-        except pp.ParseException:
-            pass
-
-    def __parse_tbf_rate(self, line):
-        parse_param_name = "rate"
-        pattern = (
-            pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.alphanums + "." + ":"))
-
-        try:
-            result = pattern.parseString(line)[-1]
-            if typepy.is_not_null_string(result):
-                result = result.rstrip("bit")
-                self.__parsed_param[parse_param_name] = result
-        except pp.ParseException:
-            pass
-
-
-class TcClassParser(object):
-
-    class Pattern(object):
-        CLASS_ID = "[0-9a-z:]+"
-        RATE = "[0-9]+[KMGT]?"
-
-    class Key(object):
-        CLASS_ID = "classid"
-        RATE = "rate"
-
-    def __init__(self):
-        self.__clear()
-
-    def parse(self, text):
-        for line in text.splitlines():
-            self.__clear()
-
-            if typepy.is_null_string(line):
-                continue
-
-            line = _to_unicode(line.lstrip())
-
-            self.__parse_classid(line)
-            self.__parse_rate(line)
-
-            yield self.__parsed_param
-
-    def __clear(self):
-        self.__parsed_param = {}
-
-    def __parse_classid(self, line):
-        self.__parsed_param[self.Key.CLASS_ID] = None
-        tag = "class htb "
-
-        match = re.search("{:s}{:s}".format(tag, self.Pattern.CLASS_ID), line)
-        if match is None:
-            return
-
-        self.__parsed_param[self.Key.CLASS_ID] = re.search(
-            self.Pattern.CLASS_ID, match.group().lstrip(tag)).group()
-
-    def __parse_rate(self, line):
-        self.__parsed_param[self.Key.RATE] = None
-
-        match = re.search("rate {:s}".format(self.Pattern.RATE), line)
-        if match is None:
-            return
-
-        self.__parsed_param[self.Key.RATE] = re.search(
-            self.Pattern.RATE, match.group()).group()
