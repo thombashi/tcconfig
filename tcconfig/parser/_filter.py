@@ -236,7 +236,7 @@ class TcFilterParser(object):
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
-                "network={}".format(self.__filter_network),
+                "dst_network={}".format(self.__filter_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
@@ -296,7 +296,7 @@ class TcFilterParser(object):
 
         logger.debug(
             "succeed to parse filter: " + ", ".join([
-                "network={}".format(self.__filter_network),
+                "dst_network={}".format(self.__filter_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)

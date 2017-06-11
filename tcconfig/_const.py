@@ -34,7 +34,7 @@ class Tc(object):
         CLASS_ID = "classid"
         FLOW_ID = "flowid"
         HANDLE = "handle"
-        NETWORK = "network"
+        NETWORK = "dst-network"
         PARENT = "parent"
         SRC_PORT = "src-port"
         DST_PORT = "dst-port"
