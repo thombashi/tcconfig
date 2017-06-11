@@ -65,12 +65,13 @@ class AbstractShaper(ShaperInterface):
         self._tc_obj = tc_obj
 
     def set_netem(self):
+        base_command = "tc qdisc add"
         parent = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
         handle = "{:x}".format(
             self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
         command_item_list = [
-            "tc qdisc add",
+            base_command,
             "dev {:s}".format(self._tc_obj.get_tc_device()),
             "parent {:s}".format(parent),
             "handle {:s}:".format(handle),
@@ -105,9 +106,10 @@ class AbstractShaper(ShaperInterface):
             " ".join(command_item_list),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: netem qdisc already exists "
-                "(dev={:s}, parent={:s}, handle={:s})".format(
-                    self._tc_obj.get_tc_device(), parent, handle)))
+                "failed to '{command:s}': netem qdisc already exists "
+                "(dev={dev:s}, parent={parent:s}, handle={handle:s})".format(
+                    command=base_command, dev=self._tc_obj.get_tc_device(),
+                    parent=parent, handle=handle)))
 
     def add_filter(self):
         command_item_list = [

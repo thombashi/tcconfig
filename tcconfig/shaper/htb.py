@@ -60,19 +60,21 @@ class HtbShaper(AbstractShaper):
         return self.__netem_major_id
 
     def make_qdisc(self):
+        base_command = "tc qdisc add"
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         if self._tc_obj.is_add_shaper:
             message = None
         else:
             message = self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: qdisc already exists "
-                "({:s}, handle={:s}, algo={:s}).".format(
-                    self.dev, handle, self.algorithm_name))
+                "failed to '{command:s}': qdisc already exists "
+                "({dev:s}, handle={handle:s}, algo={algorithm:s}).".format(
+                    command=base_command, dev=self.dev, handle=handle,
+                    algorithm=self.algorithm_name))
 
         run_command_helper(
             " ".join([
-                "tc qdisc add",
+                base_command,
                 self.dev,
                 "root",
                 "handle {:s}".format(handle),
@@ -86,6 +88,7 @@ class HtbShaper(AbstractShaper):
         return self.__add_default_class()
 
     def add_rate(self):
+        base_command = "tc class add"
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
@@ -97,7 +100,7 @@ class HtbShaper(AbstractShaper):
             kbits = no_limit_kbits
 
         command_item_list = [
-            "tc class add",
+            base_command,
             self.dev,
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
@@ -116,9 +119,11 @@ class HtbShaper(AbstractShaper):
             " ".join(command_item_list),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add class: class already exists "
-                "({:s}, parent={:s}, classid={:s}, algo={:s}).".format(
-                    self.dev, parent, classid, self.algorithm_name)),
+                "failed to '{command:s}': class already exists "
+                "({dev:s}, parent={parent:s}, classid={classid:s}, "
+                "algo={algorithm:s}).".format(
+                    command=base_command, dev=self.dev, parent=parent,
+                    classid=classid, algorithm=self.algorithm_name)),
             TcAlreadyExist
         )
 
@@ -204,6 +209,7 @@ class HtbShaper(AbstractShaper):
         return next_netem_major_id
 
     def __add_default_class(self):
+        base_command = "tc class add"
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
@@ -212,13 +218,15 @@ class HtbShaper(AbstractShaper):
             message = None
         else:
             message = self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add default class: class already exists "
-                "({}, parent={:s}, classid={:s}, algo={:s})".format(
-                    self.dev, parent, classid, self.algorithm_name))
+                "failed to default '{command:s}': class already exists "
+                "({dev}, parent={parent:s}, classid={classid:s}, "
+                "algo={algorithm:s})".format(
+                    command=base_command, dev=self.dev, parent=parent,
+                    classid=classid, algorithm=self.algorithm_name))
 
         return run_command_helper(
             " ".join([
-                "tc class add",
+                base_command,
                 self.dev,
                 "parent {:s}".format(parent),
                 "classid {:s}".format(classid),

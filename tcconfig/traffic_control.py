@@ -445,11 +445,13 @@ class TrafficControl(object):
         return_code |= spr.SubprocessRunner(
             "ip link set dev {:s} up".format(self.ifb_device)).run()
 
+        base_command = "tc qdisc add"
         return_code |= run_command_helper(
-            "tc qdisc add dev {:s} ingress".format(self.__device),
+            "{:s} dev {:s} ingress".format(base_command, self.__device),
             self.REGEXP_FILE_EXISTS,
             self.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: ingress qdisc already exists."))
+                "failed to '{:s}': ingress qdisc already exists.".format(
+                    base_command)))
 
         return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",

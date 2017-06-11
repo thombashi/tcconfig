@@ -54,18 +54,20 @@ class TbfShaper(AbstractShaper):
             direction_offset)
 
     def make_qdisc(self):
+        base_command = "tc qdisc add"
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         return run_command_helper(
             " ".join([
-                "tc qdisc add", self.dev, "root",
+                base_command, self.dev, "root",
                 "handle {:s}".format(handle), "prio",
             ]),
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: prio qdisc already exists "
-                "({:s}, algo={:s}, handle={:s}).".format(
-                    self.dev, self.algorithm_name, handle))
+                "failed to '{command:s}': prio qdisc already exists "
+                "({dev:s}, algo={algorithm:s}, handle={handle:s}).".format(
+                    command=base_command, dev=self.dev,
+                    algorithm=self.algorithm_name, handle=handle))
         )
 
     def add_rate(self):
@@ -74,13 +76,14 @@ class TbfShaper(AbstractShaper):
         except InvalidParameterError:
             return 0
 
+        base_command = "tc qdisc add"
         parent = "{:x}:{:d}".format(
             self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
             self.get_qdisc_minor_id())
         handle = "{:d}:".format(20)
 
         command = " ".join([
-            "tc qdisc add",
+            base_command,
             self.dev,
             "parent {:s}".format(parent),
             "handle {:s}".format(handle),
@@ -96,9 +99,12 @@ class TbfShaper(AbstractShaper):
             command,
             self._tc_obj.REGEXP_FILE_EXISTS,
             self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to add qdisc: qdisc already exists "
-                "({:s}, algo={:s}, parent={:s}, handle={:s}).".format(
-                    self.dev, self.algorithm_name, parent, handle))
+                "failed to '{command:s}': qdisc already exists "
+                "({dev:s}, algo={algorithm:s}, parent={parent:s}, "
+                "handle={handle:s}).".format(
+                    command=base_command, dev=self.dev,
+                    algorithm=self.algorithm_name, parent=parent,
+                    handle=handle))
         )
 
         self.__set_pre_network_filter()
