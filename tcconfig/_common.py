@@ -8,6 +8,8 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import contextlib
+import errno
+import sys
 
 import logbook
 import six
@@ -54,6 +56,14 @@ def get_anywhere_network(ip_version):
         return Network.Ipv6.ANYWHERE
 
     raise ValueError("unknown ip version: {}".format(ip_version))
+
+
+def check_tc_command_installation():
+    try:
+        spr.Which("tc").verify()
+    except spr.CommandNotFoundError as e:
+        logger.error(e)
+        sys.exit(errno.ENOENT)
 
 
 def verify_network_interface(device):

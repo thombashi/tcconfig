@@ -21,6 +21,7 @@ import pyparsing as pp
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
+    check_tc_command_installation,
     is_execute_tc_command,
     write_tc_script,
 )
@@ -308,11 +309,7 @@ def main():
     subprocrunner.SubprocessRunner.is_save_history = True
 
     if is_execute_tc_command(options.tc_command_output):
-        try:
-            subprocrunner.Which("tc").verify()
-        except subprocrunner.CommandNotFoundError as e:
-            logger.error(e)
-            return errno.ENOENT
+        check_tc_command_installation()
     else:
         subprocrunner.SubprocessRunner.default_is_dry_run = True
 
