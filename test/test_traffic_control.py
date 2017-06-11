@@ -242,12 +242,12 @@ class Test_TrafficControl_validate(object):
         ],
 
 
-        [{Tc.Param.NETWORK: "192.168.0."}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.256"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.0/0"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.0/33"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.2/24"}, ValueError],
-        [{Tc.Param.NETWORK: "192.168.0.0000/24"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0."}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, ValueError],
 
         [{"src_port": -1}, ValueError],
         [{"src_port": 65536}, ValueError],
@@ -267,7 +267,7 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=value.get("packet_loss_rate"),
             packet_duplicate_rate=value.get("packet_duplicate_rate"),
             corruption_rate=value.get("corruption_rate"),
-            dst_network=value.get(Tc.Param.NETWORK),
+            dst_network=value.get(Tc.Param.DST_NETWORK),
             src_port=value.get("src_port"),
             dst_port=value.get("dst_port"),
         )

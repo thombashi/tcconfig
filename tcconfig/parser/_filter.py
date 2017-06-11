@@ -158,7 +158,7 @@ class TcFilterParser(object):
     def __get_filter(self):
         return {
             Tc.Param.FLOW_ID: self.__flow_id,
-            Tc.Param.NETWORK: self.__filter_network,
+            Tc.Param.DST_NETWORK: self.__filter_network,
             Tc.Param.SRC_PORT: self.__filter_src_port,
             Tc.Param.DST_PORT: self.__filter_dst_port,
             Tc.Param.PROTOCOL: self.protocol

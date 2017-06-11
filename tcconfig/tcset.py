@@ -266,7 +266,7 @@ class TcConfigLoader(object):
     @staticmethod
     def __parse_tc_filter_network(text):
         network_pattern = (
-            pp.SkipTo("{:s}=".format(Tc.Param.NETWORK), include=True) +
+            pp.SkipTo("{:s}=".format(Tc.Param.DST_NETWORK), include=True) +
             pp.Word(pp.alphanums + "." + "/"))
 
         return network_pattern.parseString(text)[-1]

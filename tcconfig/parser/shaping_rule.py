@@ -54,7 +54,7 @@ class TcShapingRuleParser(object):
             filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
-        network_format = Tc.Param.NETWORK + "={:s}"
+        network_format = Tc.Param.DST_NETWORK + "={:s}"
         protocol_format = Tc.Param.PROTOCOL + "={:s}"
         key_item_list = []
 
@@ -77,7 +77,7 @@ class TcShapingRuleParser(object):
             else:
                 raise ValueError("mangle mark not found: {}".format(mangle))
         else:
-            network = filter_param.get(Tc.Param.NETWORK)
+            network = filter_param.get(Tc.Param.DST_NETWORK)
             if typepy.is_not_null_string(network):
                 key_item_list.append(network_format.format(network))
 
