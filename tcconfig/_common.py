@@ -161,21 +161,30 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     if typepy.is_not_null_string(filename_suffix):
         filename_item_list.append(filename_suffix)
 
-    filename = "_".join(filename_item_list) + ".sh"
-    with io.open(filename, "w", encoding="utf8") as fp:
-        fp.write("\n".join([
-            "#!/bin/sh",
-            "",
-            "# tc script file:",
+    script_line_list = [
+        "#!/bin/sh",
+        "",
+        "# tc script file:",
+    ]
+
+    if tcconfig_command != "tcshow":
+        script_line_list.extend([
             "#   the following command sequence lead to equivalent results as",
             "#   '{:s}'.".format(
                 _get_original_tcconfig_command(tcconfig_command)),
-            "#   created by {:s} on {:s}.".format(
-                tcconfig_command,
-                datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
-            "",
-            command_history,
-        ]) + "\n")
+        ])
+
+    script_line_list.extend([
+        "#   created by {:s} on {:s}.".format(
+            tcconfig_command,
+            datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
+        "",
+        command_history,
+    ])
+
+    filename = "_".join(filename_item_list) + ".sh"
+    with io.open(filename, "w", encoding="utf8") as fp:
+        fp.write("\n".join(script_line_list) + "\n")
 
     os.chmod(filename, 0o755)
     logger.info("written a tc script to '{:s}'".format(filename))
