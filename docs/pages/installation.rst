@@ -13,7 +13,7 @@ Installing from PyPI
 
 Installing from files
 ------------------------------
-The following package include ``tcconfig`` and dependency packages.
+The following package includes ``tcconfig`` and dependency packages.
 This package is for environments which cannot access to 
 `PyPI <https://pypi.python.org/pypi>`__ directly.
 
@@ -32,7 +32,7 @@ Dependencies
 
 Linux packages
 --------------
-- ``iproute``/``iproute2`` (mandatory: required for tc command)
+- ``iproute``/``iproute2``/``iproute-tc`` (mandatory: required for tc command)
 - ``iptables`` (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
@@ -56,7 +56,7 @@ Dependency python packages are automatically installed during
 Optional
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `netifaces <https://bitbucket.org/al45tair/netifaces>`__
-    - Suppress excessive error messages if this package is installed
+    - Suppress excessive error messages if this package installed
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

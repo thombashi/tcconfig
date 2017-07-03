@@ -5,7 +5,7 @@ optional arguments:
   -h, --help       show this help message and exit
   --version        show program's version number and exit
   --tc-command     display tc commands to be executed and exit. these commands
-                   are not actually executed.
+                   are not executed.
   --tc-script      generate a script file that described tc commands which
                    equivalent with execution tcconfig command. the script can
                    be execute without tcconfig package installation.

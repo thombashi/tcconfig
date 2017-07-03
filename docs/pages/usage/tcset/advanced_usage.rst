@@ -3,7 +3,6 @@ Advanced usage
 
 Traffic control of incoming packets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 Execute ``tcset`` command with ``--direction incoming`` option to set
 incoming traffic control. Other options are the same as in the case of
 the basic usage.
@@ -16,9 +15,9 @@ e.g. Set traffic control both incoming and outgoing network
     # tcset --device eth0 --direction outgoing --rate 200K --network 192.168.0.0/24
     # tcset --device eth0 --direction incoming --rate 1M --network 192.168.0.0/24
 
+
 Requirements
 ''''''''''''
-
 Incoming packet traffic control requires additional ``ifb`` module, Which
 need to the following conditions:
 
@@ -28,13 +27,11 @@ need to the following conditions:
 
 Set latency distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-Latency setting by ``--delay`` will be uniform-distribution.
-If you using ``--delay-distro`` option, latency will be decided by normal distribution.
+Latency setting by ``--delay`` option is a uniform distribution.
+If you are using ``--delay-distro`` option, latency decided by a normal distribution.
 
 e.g. Set 100ms +- 20ms network latency with normal distribution
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-
 .. code-block:: console
 
     # tcset --device eth0 --delay 100 --delay-distro 20
@@ -78,7 +75,7 @@ You can get ``tc`` commands to be executed by ``tcconfig`` commands by
 executing with ``--tc-command`` option
 (no tc configuration have made to the execution server by this command).
 
-:Examples:
+:Example:
 
     .. code-block:: console
 
@@ -92,14 +89,11 @@ executing with ``--tc-command`` option
 
 Generate a ``tc`` script file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
-``--tc-script`` option will generate a executable script which includes
+``--tc-script`` option generates an executable script which includes
 tc commands to be executed by tcconfig commands.
-The created script can execute at other servers where tcconfig is not installed
-(still, the tc command will be required to execute the script).
+The created script can execute at other servers where tcconfig not installed (however, you need the tc command to run the script).
 
-:Examples:
-
+:Example:
     .. code-block:: console
 
         # tcset --device eth0 --delay 10 --tc-script

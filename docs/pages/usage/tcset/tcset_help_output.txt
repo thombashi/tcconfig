@@ -13,7 +13,7 @@ optional arguments:
   -h, --help            show this help message and exit
   --version             show program's version number and exit
   --tc-command          display tc commands to be executed and exit. these
-                        commands are not actually executed.
+                        commands are not executed.
   --tc-script           generate a script file that described tc commands
                         which equivalent with execution tcconfig command. the
                         script can be execute without tcconfig package
@@ -76,8 +76,8 @@ Traffic Control:
 Routing:
   --iptables            use iptables to traffic shaping.
   --src-network SRC_NETWORK
-                        set traffic shaping rule to a specific packets that
-                        routed from --src-network to --dst-network. This
+                        set traffic shaping rule to specific packets that
+                        routed from --src-network to --dst-network. this
                         option required to execute with the --iptables option.
                         the shaping rule only affect to outgoing packets (no
                         effect to if you execute with "--direction incoming"
