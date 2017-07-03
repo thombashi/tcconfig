@@ -32,7 +32,7 @@ Dependencies
 
 Linux packages
 --------------
-- ``iproute``/``iproute2``/``iproute-tc`` (mandatory: required for tc command)
+- ``iproute``/``iproute2``/``iproute-tc`` (mandatory: required for ``tc`` command)
 - ``iptables`` (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
