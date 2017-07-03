@@ -169,8 +169,8 @@ def parse_option():
     group.add_argument(
         "--src-network",
         help="""
-        set traffic shaping rule to a specific packets that routed from
-        --src-network to --dst-network. This option required to execute with
+        set traffic shaping rule to specific packets that routed from
+        --src-network to --dst-network. this option required to execute with
         the --iptables option.
         the shaping rule only affect to outgoing packets
         (no effect to if you execute with "--direction incoming" option)
