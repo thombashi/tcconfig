@@ -15,28 +15,29 @@ tcconfig
 Summary
 -------
 
-A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet-loss to a network interface.
+A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet loss/packet-corruption to a network interface.
 
 Traffic control features
 ------------------------
 
 Traffic shaping target
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Apply traffic shaping rules to specific targets:
 
-Apply traffic shaping rules to specific target:
-
--  Outgoing/Incoming packets
--  Certain IP address/network or port
+- Outgoing/Incoming packets
+- Source/Destination IP-address/network (IPv4/IPv6)
+- Source/Destination ports
 
 Available parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+The following parameters can set to network interfaces:
 
-The following parameters can be set to network interfaces.
-
--  Network bandwidth rate [G/M/K bps]
--  Network latency [milliseconds]
--  Packet loss rate [%]
--  Packet corruption rate [%]
+- Network bandwidth rate ``[G/M/K bps]``
+- Network latency ``[milliseconds]``
+- Packet loss rate ``[%]``
+- Packet corruption rate ``[%]``
+- Packet duplicate rate ``[%]``
+- Packet reordering rate  ``[%]``
 
 .. image:: docs/gif/tcset_example.gif
 
@@ -50,42 +51,36 @@ Set traffic control (``tcset`` command)
 
 e.g. Set a limit on bandwidth up to 100Kbps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. code:: console
 
     # tcset --device eth0 --rate 100k
 
 e.g. Set 100ms network latency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. code:: console
 
     # tcset --device eth0 --delay 100
 
 e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. code:: console
 
     # tcset --device eth0 --loss 0.1
 
 e.g. All of the above at once
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. code:: console
 
     # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
 
 e.g. Specify the IP address of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. code:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.10
 
 e.g. Specify the IP network and port of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-
 .. code:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.0/24 --port 80
@@ -158,7 +153,7 @@ Installing from PyPI
 
 Installing from files
 ------------------------------
-The following package include ``tcconfig`` and dependency packages.
+The following package includes ``tcconfig`` and dependency packages.
 This package is for environments which cannot access to
 `PyPI <https://pypi.python.org/pypi>`__ directly.
 
@@ -177,7 +172,7 @@ Dependencies
 
 Linux packages
 --------------
-- ``iproute``/``iproute2`` (mandatory: required for tc command)
+- ``iproute``/``iproute2``/``iproute-tc`` (mandatory: required for ``tc`` command)
 - ``iptables`` (optional: required to when you use ``--iptables`` option)
 
 Linux kernel module
@@ -201,7 +196,7 @@ Dependency python packages are automatically installed during
 Optional
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `netifaces <https://bitbucket.org/al45tair/netifaces>`__
-    - Suppress excessive error messages if this package is installed
+    - Suppress excessive error messages if this package installed
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

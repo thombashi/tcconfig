@@ -52,7 +52,7 @@ class ArgparseWrapper(object):
             const=TcCommandOutput.STDOUT, default=TcCommandOutput.NOT_SET,
             help="""
             display tc commands to be executed and exit.
-            these commands are not actually executed.
+            these commands are not executed.
             """)
 
         group.add_argument(
