@@ -165,7 +165,8 @@ class TcShapingRuleParser(object):
 
         return shaping_rule_mapping
 
-    def __parse_tc_qdisc(self, device):
+    @staticmethod
+    def __parse_tc_qdisc(device):
         try:
             param_list = list(TcQdiscParser().parse(
                 run_tc_show(Tc.Subcommand.QDISC, device)))
@@ -183,7 +184,8 @@ class TcShapingRuleParser(object):
 
         return param_list
 
-    def __parse_tc_class(self, device):
+    @staticmethod
+    def __parse_tc_class(device):
         param_list = list(TcClassParser().parse(
             run_tc_show(Tc.Subcommand.CLASS, device)))
         logger.debug("tc class parse result: {}".format(param_list))

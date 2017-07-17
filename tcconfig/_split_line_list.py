@@ -28,7 +28,7 @@ def split_line_list(
         line = strip_func(line)
 
         if re_line_separator.search(line):
-            if len(block) > 0:
+            if block:
                 block_list.append(block)
 
             block = []
@@ -38,7 +38,7 @@ def split_line_list(
 
         block.append(line)
 
-    if len(block) > 0:
+    if block:
         block_list.append(block)
 
     return block_list

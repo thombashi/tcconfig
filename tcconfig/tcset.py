@@ -338,9 +338,9 @@ class TcShapingRuleFinder(object):
 
         for cuurent_tc_filter in current_tc_filter_list:
             if all([
-                cuurent_tc_filter.get(
-                    key_param) == new_tc_filter.get(key_param)
-                for key_param in key_param_list
+                    cuurent_tc_filter.get(
+                        key_param) == new_tc_filter.get(key_param)
+                    for key_param in key_param_list
             ]):
                 logger.debug("existing shaping rule found: {}".format(
                     cuurent_tc_filter))
@@ -443,8 +443,8 @@ def main():
         set_log_level(options.log_level)
 
     if (
-        options.is_add_shaper and
-        TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
+            options.is_add_shaper and
+            TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
     ):
         logger.error(
             "adding a shaping rule failed. a shaping rule for the same "

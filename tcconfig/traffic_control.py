@@ -421,9 +421,9 @@ class TrafficControl(object):
         ]
 
         if all([
-            not RealNumber(netem_param_value).is_type()
-            or netem_param_value <= 0
-            for netem_param_value in netem_param_value_list
+                not RealNumber(netem_param_value).is_type()
+                or netem_param_value <= 0
+                for netem_param_value in netem_param_value_list
         ]):
             raise ValueError(
                 "there is no valid net emulation parameter value. "

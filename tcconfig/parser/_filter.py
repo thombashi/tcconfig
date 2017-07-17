@@ -221,8 +221,8 @@ class TcFilterParser(object):
         value_hex, mask_hex, match_id = self.__parse_filter_line(line)
 
         if match_id in [
-            self.FilterMatchIdIpv4.INCOMING_NETWORK,
-            self.FilterMatchIdIpv4.OUTGOING_NETWORK,
+                self.FilterMatchIdIpv4.INCOMING_NETWORK,
+                self.FilterMatchIdIpv4.OUTGOING_NETWORK,
         ]:
             ipaddr = ".".join([
                 str(int(value_hex[i: i + 2], 16))
@@ -250,8 +250,8 @@ class TcFilterParser(object):
         octet_len = 4
 
         if (
-            match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
-            match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
+                match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
+                match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
         ):
             octet_list.extend([
                 value_hex[i: i + octet_len]
