@@ -419,8 +419,7 @@ def main():
         return errno.EINVAL
     except ipaddress.AddressValueError as e:
         logger.error(
-            "{}. ".format(e) +
-            "--ipv6 option will be required to use IPv6 address.")
+            "{}. ".format(e) + "--ipv6 option required to use IPv6 address.")
         return errno.EINVAL
     except ValueError as e:
         logger.error(e)
