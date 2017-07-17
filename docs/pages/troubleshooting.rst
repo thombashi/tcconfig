@@ -18,7 +18,7 @@ Phenomenon
 
 Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Load ``sch_netem`` module will solves the problem.
+Load ``sch_netem`` module solves the problem.
 
 The cause of the error is ``sch_netem`` kernel module not loaded in your system.
 Execute the following command to load ``sch_netem`` module: 
@@ -104,4 +104,4 @@ If some of the configurations are disabled, you need to:
 
 .. note::
     
-    Name of the kernel configuration file (``/boot/config-3.16.0-4-amd64``) will be different depends on the environment.
+    Name of the kernel configuration file (``/boot/config-3.16.0-4-amd64``) different depends on the environment.
