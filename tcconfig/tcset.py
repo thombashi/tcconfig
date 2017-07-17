@@ -71,11 +71,10 @@ def parse_option():
         "--change", dest="is_change_shaper", action="store_true",
         default=False,
         help="""
-        change existing traffic shaping rules to new one. this option reduce
-        the shaping rule switching side effect (such as traffic spike)
+        change existing traffic shaping rules to the new one. this option
+        reduces the shaping rule switching side effect (such as traffic spike)
         compared to --overwrite option.
-        note: the tcset command will fail when there is no existing shaping
-        rules.
+        note: the tcset command fail when there are no existing shaping rules.
         """)
     group.add_argument(
         "--add", dest="is_add_shaper", action="store_true", default=False,
@@ -109,7 +108,7 @@ def parse_option():
         distribution of network latency becomes X +- Y [ms]
         (normal distribution). Here X is the value of --delay option and
         Y is the value of --delay-dist option).
-        network latency distribution will be uniform without this option.
+        network latency distribution is uniform, without this option.
         """)
     group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
