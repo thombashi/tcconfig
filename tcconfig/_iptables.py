@@ -99,8 +99,8 @@ class IptablesMangleMark(object):
         ]
 
         if any([
-            typepy.is_not_null_string(self.protocol),
-            Integer(self.protocol).is_type(),
+                typepy.is_not_null_string(self.protocol),
+                Integer(self.protocol).is_type(),
         ]):
             command_item_list.append("-p {}".format(self.protocol))
         if self.__is_valid_srcdst(self.source):

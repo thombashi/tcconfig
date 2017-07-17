@@ -243,7 +243,7 @@ class TrafficControl(object):
 
         if not self.is_enable_iptables:
             raise InvalidParameterError(
-                "--iptables option will be required to use --src-network option")
+                "--iptables option required to use --src-network option")
 
     def validate_bandwidth_rate(self):
         if typepy.is_null_string(self.__bandwidth_rate):
@@ -421,9 +421,9 @@ class TrafficControl(object):
         ]
 
         if all([
-            not RealNumber(netem_param_value).is_type()
-            or netem_param_value <= 0
-            for netem_param_value in netem_param_value_list
+                not RealNumber(netem_param_value).is_type()
+                or netem_param_value <= 0
+                for netem_param_value in netem_param_value_list
         ]):
             raise ValueError(
                 "there is no valid net emulation parameter value. "

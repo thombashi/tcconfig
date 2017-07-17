@@ -7,11 +7,11 @@
 from __future__ import division
 from __future__ import unicode_literals
 
+from allpairspy import AllPairs
 import pytest
 from subprocrunner import SubprocessRunner
 import typepy
 
-from allpairspy import AllPairs
 from tcconfig._const import TcCommand
 
 

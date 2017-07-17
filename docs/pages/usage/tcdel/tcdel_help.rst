@@ -1,6 +1,6 @@
     .. note::
 
-        ``tcdel`` will be deleted mangle tables in ``iptables``.
+        ``tcdel`` delete mangle tables in ``iptables``.
         (any other tables are not affected).
 
 

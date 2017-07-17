@@ -71,11 +71,10 @@ def parse_option():
         "--change", dest="is_change_shaper", action="store_true",
         default=False,
         help="""
-        change existing traffic shaping rules to new one. this option reduce
-        the shaping rule switching side effect (such as traffic spike)
+        change existing traffic shaping rules to the new one. this option
+        reduces the shaping rule switching side effect (such as traffic spike)
         compared to --overwrite option.
-        note: the tcset command will fail when there is no existing shaping
-        rules.
+        note: the tcset command fail when there are no existing shaping rules.
         """)
     group.add_argument(
         "--add", dest="is_add_shaper", action="store_true", default=False,
@@ -109,7 +108,7 @@ def parse_option():
         distribution of network latency becomes X +- Y [ms]
         (normal distribution). Here X is the value of --delay option and
         Y is the value of --delay-dist option).
-        network latency distribution will be uniform without this option.
+        network latency distribution is uniform, without this option.
         """)
     group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
@@ -338,9 +337,9 @@ class TcShapingRuleFinder(object):
 
         for cuurent_tc_filter in current_tc_filter_list:
             if all([
-                cuurent_tc_filter.get(
-                    key_param) == new_tc_filter.get(key_param)
-                for key_param in key_param_list
+                    cuurent_tc_filter.get(
+                        key_param) == new_tc_filter.get(key_param)
+                    for key_param in key_param_list
             ]):
                 logger.debug("existing shaping rule found: {}".format(
                     cuurent_tc_filter))
@@ -419,8 +418,7 @@ def main():
         return errno.EINVAL
     except ipaddress.AddressValueError as e:
         logger.error(
-            "{}. ".format(e) +
-            "--ipv6 option will be required to use IPv6 address.")
+            "{}. ".format(e) + "--ipv6 option required to use IPv6 address.")
         return errno.EINVAL
     except ValueError as e:
         logger.error(e)
@@ -444,8 +442,8 @@ def main():
         set_log_level(options.log_level)
 
     if (
-        options.is_add_shaper and
-        TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
+            options.is_add_shaper and
+            TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
     ):
         logger.error(
             "adding a shaping rule failed. a shaping rule for the same "
