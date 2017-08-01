@@ -12,7 +12,7 @@ import pytest
 
 from tcconfig._iptables import (
     IptablesMangleController,
-    IptablesMangleMark,
+    IptablesMangleMarkEntry,
     VALID_CHAIN_LIST,
 )
 
@@ -22,7 +22,7 @@ _DEF_DST = "192.168.100.0/24"
 
 
 prerouting_mangle_mark_list = [
-    IptablesMangleMark(
+    IptablesMangleMarkEntry(
         ip_version=4,
         line_number=1,
         mark_id=1,
@@ -34,7 +34,7 @@ prerouting_mangle_mark_list = [
 ]
 
 input_mangle_mark_list = [
-    IptablesMangleMark(
+    IptablesMangleMarkEntry(
         ip_version=4,
         line_number=1,
         mark_id=1234,
@@ -46,7 +46,7 @@ input_mangle_mark_list = [
 ]
 
 output_mangle_mark_list = [
-    IptablesMangleMark(
+    IptablesMangleMarkEntry(
         ip_version=4,
         line_number=1,
         mark_id=12,
@@ -55,7 +55,7 @@ output_mangle_mark_list = [
         chain="OUTPUT",
         protocol="tcp"
     ),
-    IptablesMangleMark(
+    IptablesMangleMarkEntry(
         ip_version=4,
         line_number=2,
         mark_id=123,
@@ -64,7 +64,7 @@ output_mangle_mark_list = [
         chain="OUTPUT",
         protocol="all"
     ),
-    IptablesMangleMark(
+    IptablesMangleMarkEntry(
         ip_version=4,
         line_number=3,
         mark_id=12345,
@@ -144,7 +144,7 @@ class Test_IptablesMangleMark_to_append_command(object):
     def test_normal(
             self, mark_id, source, destination, chain, protocol, line_number,
             expected):
-        mark = IptablesMangleMark(
+        mark = IptablesMangleMarkEntry(
             ip_version=4,
             mark_id=mark_id, source=source, destination=destination,
             chain=chain, protocol=protocol, line_number=line_number)
@@ -172,7 +172,7 @@ class Test_IptablesMangleMark_to_delete_command(object):
     def test_normal(
             self, mark_id, source, destination, chain, protocol, line_number,
             expected):
-        mark = IptablesMangleMark(
+        mark = IptablesMangleMarkEntry(
             ip_version=4,
             mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
             chain=chain, protocol=protocol, line_number=line_number)
@@ -193,7 +193,7 @@ class Test_IptablesMangleMark_to_delete_command(object):
     def test_exception(
             self, mark_id, source, destination, chain, protocol, line_number,
             expected):
-        mark = IptablesMangleMark(
+        mark = IptablesMangleMarkEntry(
             ip_version=4,
             mark_id=mark_id, source=source, destination=destination,
             chain=chain, protocol=protocol, line_number=line_number)
@@ -212,7 +212,7 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
 
             assert mark_id == (i + 101)
 
-            mangle_mark = IptablesMangleMark(
+            mangle_mark = IptablesMangleMarkEntry(
                 ip_version=4,
                 mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
                 chain=random.choice(VALID_CHAIN_LIST))

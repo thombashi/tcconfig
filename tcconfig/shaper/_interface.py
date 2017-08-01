@@ -21,7 +21,7 @@ from .._const import (
     Tc,
     TrafficDirection,
 )
-from .._iptables import IptablesMangleMark
+from .._iptables import IptablesMangleMarkEntry
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -201,6 +201,6 @@ class AbstractShaper(ShaperInterface):
             src_network = self._tc_obj.dst_network
             chain = "INPUT"
 
-        self._tc_obj.iptables_ctrl.add(IptablesMangleMark(
+        self._tc_obj.iptables_ctrl.add(IptablesMangleMarkEntry(
             ip_version=self._tc_obj.ip_version, mark_id=mark_id,
             source=src_network, destination=dst_network, chain=chain))

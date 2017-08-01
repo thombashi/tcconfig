@@ -25,7 +25,7 @@ from ._split_line_list import split_line_list
 VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
 
 
-class IptablesMangleMark(object):
+class IptablesMangleMarkEntry(object):
 
     @property
     def line_number(self):
@@ -204,7 +204,7 @@ class IptablesMangleController(object):
                 if target != "MARK":
                     continue
 
-                yield IptablesMangleMark(
+                yield IptablesMangleMarkEntry(
                     ip_version=self.__ip_version,
                     mark_id=mark, source=source, destination=destination,
                     chain=chain, protocol=protocol, line_number=line_number)
