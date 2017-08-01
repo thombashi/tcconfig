@@ -56,7 +56,7 @@ def parse_option():
 
     group = parser.parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
-        "--device",
+        "-d", "--device",
         help="network device name (e.g. eth0)")
     group.add_argument(
         "-f", "--config-file",
