@@ -42,7 +42,7 @@ setuptools.setup(
     name="tcconfig",
     version=tcconfig.VERSION,
     author="Tsuyoshi Hombashi",
-    author_email="gogogo.vm@gmail.com",
+    author_email="tsuyoshi.hombashi@gmail.com",
     url="https://github.com/thombashi/tcconfig",
     description=summary,
     keywords=[
