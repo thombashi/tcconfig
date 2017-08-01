@@ -29,12 +29,6 @@ with open(os.path.join("docs", "pages", "introduction", "summary.txt")) as f:
 with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
     install_requires = [line.strip() for line in f if line.strip()]
 
-if any([
-    sys.version_info.major < 3,
-    sys.version_info.major == 3 and sys.version_info.minor < 3,
-]):
-    install_requires.append("ipaddress")
-
 with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
     tests_require = [line.strip() for line in f if line.strip()]
 
