@@ -53,17 +53,22 @@ class Test_tcset_two_network(object):
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
+
       python setup.py test --addopts \
         "--device=<test device> --dst-host=<hostname/IP-addr> --dst-host-ex=<hostname/IP-addr>"
 
-    These tests are expected to execute on following environment:
+    These tests expected to execute in the following environment:
        - Linux w/ iputils-ping package
        - English locale (for parsing ping output)
     """
 
+    @pytest.mark.parametrize(["shaping_algo"], [
+        ["htb"],
+        ["tbf"],
+    ])
     def test_network(
             self, device_option, dst_host_option, dst_host_ex_option,
-            transmitter, pingparser):
+            transmitter, pingparser, shaping_algo):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -81,6 +86,7 @@ class Test_tcset_two_network(object):
             TcCommand.TCSET,
             "--device " + device_option,
             "--delay {:d}".format(delay),
+            "--shaping-algo {:s}".format(shaping_algo),
             "--network " + dst_host_ex_option,
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0

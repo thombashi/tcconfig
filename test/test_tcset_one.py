@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 from __future__ import division
 
+import itertools
 import platform
 
 import pingparsing
@@ -48,22 +49,24 @@ def pingparser():
 
 class Test_tcset_one_network(object):
     """
-    Tests in this class are not executable on Travis .
-    Execute following command at the local environment  when running tests:
-      python setup.py test --addopts \
-          "--device=<test device> --dst-host=<hostname/IP-addr>"
+    Tests in this class are not executable on CI services.
+    Execute the following command at the local environment to running tests:
 
-    These tests are expected to execute on following environment:
+        python setup.py test --addopts \
+            "--device=<test device> --dst-host=<hostname/IP-addr>"
+
+    These tests expected to execute in the following environment:
        - Linux w/ iputils-ping package
        - English locale (for parsing ping output)
     """
 
-    @pytest.mark.parametrize(["delay"], [
-        [100],
+    @pytest.mark.parametrize(["shaping_algo", "delay"], [
+        [params[0], params[1]]
+        for params in itertools.product(["htb", "tbf"], [100])
     ])
     def test_const_latency(
             self, device_option, dst_host_option, transmitter, pingparser,
-            delay):
+            shaping_algo, delay):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -81,7 +84,8 @@ class Test_tcset_one_network(object):
         # w/ latency tc ---
         command_list = [
             TcCommand.TCSET,
-            "--device " + device_option,
+            "--device {:s}".format(device_option),
+            "--shaping-algo {:s}".format(shaping_algo),
             "--delay {:d}".format(delay),
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
