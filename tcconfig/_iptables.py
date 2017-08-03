@@ -174,6 +174,8 @@ class IptablesMangleController(object):
         raise RuntimeError("usable mark id not found")
 
     def parse(self):
+        MANGLE_ITEM_COUNT = 6
+
         for block in split_line_list(self.get_iptables().splitlines()):
             if len(block) <= 1:
                 # skip if no entry exists
@@ -187,7 +189,7 @@ class IptablesMangleController(object):
 
             for line in reversed(block[2:]):
                 item_list = line.split()
-                if len(item_list) < 6:
+                if len(item_list) < MANGLE_ITEM_COUNT:
                     continue
 
                 line_number = int(item_list[0])
