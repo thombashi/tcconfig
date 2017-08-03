@@ -139,7 +139,10 @@ class TcShapingRuleParser(object):
                     continue
 
                 work_qdisc_param = copy.deepcopy(qdisc_param)
-                del work_qdisc_param[Tc.Param.PARENT]
+                try:
+                    del work_qdisc_param[Tc.Param.PARENT]
+                except KeyError:
+                    pass
                 shaping_rule.update(work_qdisc_param)
 
             for class_param in class_param_list:
