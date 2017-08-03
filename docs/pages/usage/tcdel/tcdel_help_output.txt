@@ -1,18 +1,20 @@
 usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-             --device DEVICE
+             -d DEVICE
 
 optional arguments:
-  -h, --help       show this help message and exit
-  --version        show program's version number and exit
-  --tc-command     display tc commands to be executed and exit. these commands
-                   are not executed.
-  --tc-script      generate a script file that described tc commands which
-                   equivalent with execution tcconfig command. the script can
-                   be execute without tcconfig package installation.
-  --debug          for debug print.
-  --quiet          suppress execution log messages.
+  -h, --help            show this help message and exit
+  --version             show program's version number and exit
+  --tc-command          display tc commands to be executed and exit. these
+                        commands are not executed.
+  --tc-script           generate a script file that described tc commands
+                        which equivalent with execution tcconfig command. the
+                        script can be execute without tcconfig package
+                        installation.
+  --debug               for debug print.
+  --quiet               suppress execution log messages.
 
 Traffic Control:
-  --device DEVICE  network device name (e.g. eth0)
+  -d DEVICE, --device DEVICE
+                        network device name (e.g. eth0)
 
 Issue tracker: https://github.com/thombashi/tcconfig/issues

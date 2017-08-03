@@ -1,6 +1,5 @@
 usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-             (--device DEVICE | -f CONFIG_FILE)
-             [--overwrite | --change | --add]
+             (-d DEVICE | -f CONFIG_FILE) [--overwrite | --change | --add]
              [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
              [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
              [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
@@ -20,7 +19,8 @@ optional arguments:
                         installation.
   --debug               for debug print.
   --quiet               suppress execution log messages.
-  --device DEVICE       network device name (e.g. eth0)
+  -d DEVICE, --device DEVICE
+                        network device name (e.g. eth0)
   -f CONFIG_FILE, --config-file CONFIG_FILE
                         setting traffic controls from a configuration file.
                         output file of the tcshow.
