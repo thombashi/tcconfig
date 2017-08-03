@@ -30,14 +30,18 @@ with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
     install_requires = [line.strip() for line in f if line.strip()]
 
 with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
-    tests_require = [line.strip() for line in f if line.strip()]
+    tests_requires = [line.strip() for line in f if line.strip()]
+
+with open(os.path.join(REQUIREMENT_DIR, "docs_requirements.txt")) as f:
+    docs_requires = [line.strip() for line in f if line.strip()]
 
 setuptools.setup(
     name="tcconfig",
     version=tcconfig.VERSION,
+    url="https://github.com/thombashi/tcconfig",
+
     author="Tsuyoshi Hombashi",
     author_email="tsuyoshi.hombashi@gmail.com",
-    url="https://github.com/thombashi/tcconfig",
     description=summary,
     keywords=[
         "traffic control", "tc", "traffic shaping", "bandwidth",
@@ -47,9 +51,16 @@ setuptools.setup(
     license="MIT License",
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
+
     install_requires=install_requires,
     setup_requires=pytest_runner,
-    tests_require=tests_require,
+    tests_require=tests_requires,
+    extras_require={
+        "test": tests_requires,
+        "docs": docs_requires,
+    },
+    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*',
+
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -76,5 +87,4 @@ setuptools.setup(
             "tcdel=tcconfig.tcdel:main",
             "tcshow=tcconfig.tcshow:main",
         ],
-    }
-)
+    })
