@@ -1,9 +1,6 @@
 tcconfig
 ========
 
-.. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
-   :target: https://pypi.python.org/pypi/tcconfig
-
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
    :alt: Linux CI test status
@@ -100,8 +97,7 @@ e.g. Delete traffic control of ``eth0``
 
 Display traffic control configurations (``tcshow`` command)
 -----------------------------------------------------------
-
-``tcshow`` is a command to display traffic control to network interface(s).
+``tcshow`` is a command to display the current traffic control settings for network interface(s).
 
 Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
