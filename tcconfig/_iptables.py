@@ -178,7 +178,7 @@ class IptablesMangleController(object):
 
         for block in split_line_list(self.get_iptables().splitlines()):
             if len(block) <= 1:
-                # skip if no entry exists
+                # skip if there is no mangle table entry exists
                 continue
 
             match = self.__RE_CHAIN.search(block[0])
