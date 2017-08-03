@@ -11,8 +11,9 @@ from subprocrunner import SubprocessRunner
 import typepy
 
 from .._common import (
-    logging_context,
     get_anywhere_network,
+    get_no_limit_kbits,
+    logging_context,
     run_command_helper,
 )
 from .._const import (
@@ -90,6 +91,11 @@ class TbfShaper(AbstractShaper):
             self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
             self.get_qdisc_minor_id())
         handle = "{:d}:".format(20)
+        no_limit_kbits = get_no_limit_kbits(self.tc_device)
+
+        kbits = self._tc_obj.bandwidth_rate
+        if kbits is None:
+            kbits = no_limit_kbits
 
         command = " ".join([
             base_command,
@@ -97,9 +103,9 @@ class TbfShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "handle {:s}".format(handle),
             self.algorithm_name,
-            "rate {:f}kbit".format(self._tc_obj.bandwidth_rate),
+            "rate {}kbit".format(kbits),
             "buffer {:d}".format(
-                max(int(self._tc_obj.bandwidth_rate), self.__MIN_BUFFER_BYTE)
+                max(int(kbits), self.__MIN_BUFFER_BYTE)
             ),  # [byte]
             "limit 10000",
         ])
