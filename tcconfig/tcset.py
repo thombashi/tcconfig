@@ -80,14 +80,7 @@ def parse_option():
         "--add", dest="is_add_shaper", action="store_true", default=False,
         help="add a traffic shaping rule in addition to existing rules.")
 
-    group = parser.parser.add_argument_group("Traffic Control")
-    group.add_argument(
-        "--direction", choices=TrafficDirection.LIST,
-        default=TrafficDirection.OUTGOING,
-        help="""the direction of network communication that impose traffic control.
-        ``incoming`` requires Linux kernel version 2.6.20 or later.
-        (default = ``%(default)s``)
-        """)
+    group = parser.parser.add_argument_group("Traffic Control Parameters")
     group.add_argument(
         "--rate", "--bandwidth-rate", dest="bandwidth_rate",
         help="""
@@ -144,8 +137,34 @@ def parse_option():
             TrafficControl.MIN_REORDERING_RATE,
             TrafficControl.MAX_REORDERING_RATE))
     group.add_argument(
+        "--shaping-algo", dest="shaping_algorithm",
+        choices=["tbf", "htb"], default="htb",
+        help="shaping algorithm. defaults to %(default)s (recommended).")
+
+    group = parser.parser.add_argument_group("Routing")
+    group.add_argument(
+        "--direction", choices=TrafficDirection.LIST,
+        default=TrafficDirection.OUTGOING,
+        help="""the direction of network communication that impose traffic control.
+        ``incoming`` requires Linux kernel version 2.6.20 or later.
+        (default = ``%(default)s``)
+        """)
+    group.add_argument(
+        "--iptables", dest="is_enable_iptables",
+        action="store_true", default=False,
+        help="use iptables to traffic control.")
+    group.add_argument(
         "--network", "--dst-network", dest="dst_network",
         help="target IP address/network to control traffic")
+    group.add_argument(
+        "--src-network",
+        help="""
+        set a traffic shaping rule to specific packets that routed from
+        --src-network to --dst-network. this option required to execute with
+        the --iptables option when you use tbf.
+        the shaping rule only affect to outgoing packets
+        (no effect to if you execute with "--direction incoming" option)
+        """)
     group.add_argument(
         "--port", "--dst-port", dest="dst_port", type=int,
         help="target destination port number to control traffic.")
@@ -155,25 +174,6 @@ def parse_option():
     group.add_argument(
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
         help="apply traffic control to IPv6 packets rather than IPv4.")
-    group.add_argument(
-        "--shaping-algo", dest="shaping_algorithm",
-        choices=["tbf", "htb"], default="htb",
-        help="shaping algorithm. defaults to %(default)s (recommended).")
-
-    group = parser.parser.add_argument_group("Routing")
-    group.add_argument(
-        "--iptables", dest="is_enable_iptables",
-        action="store_true", default=False,
-        help="use iptables to traffic shaping.")
-    group.add_argument(
-        "--src-network",
-        help="""
-        set traffic shaping rule to specific packets that routed from
-        --src-network to --dst-network. this option required to execute with
-        the --iptables option when you use tbf.
-        the shaping rule only affect to outgoing packets
-        (no effect to if you execute with "--direction incoming" option)
-        """)
 
     return parser.parser.parse_args()
 
