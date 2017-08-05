@@ -238,7 +238,10 @@ class TrafficControl(object):
         self.__validate_port()
 
     def __validate_src_network(self):
-        if typepy.is_null_string(self.src_network):
+        if any([
+                typepy.is_null_string(self.src_network),
+                self.__shaper.algorithm_name == "htb",
+        ]):
             return
 
         if not self.is_enable_iptables:

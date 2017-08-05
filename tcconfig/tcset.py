@@ -170,7 +170,7 @@ def parse_option():
         help="""
         set traffic shaping rule to specific packets that routed from
         --src-network to --dst-network. this option required to execute with
-        the --iptables option.
+        the --iptables option when you use tbf.
         the shaping rule only affect to outgoing packets
         (no effect to if you execute with "--direction incoming" option)
         """)
