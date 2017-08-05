@@ -26,28 +26,9 @@ from .._iptables import IptablesMangleMarkEntry
 
 @six.add_metaclass(abc.ABCMeta)
 class ShaperInterface(object):
+
     @abc.abstractproperty
     def algorithm_name(self):  # pragma: no cover
-        pass
-
-    @abc.abstractmethod
-    def get_qdisc_minor_id(self):  # pragma: no cover
-        pass
-
-    @abc.abstractmethod
-    def get_netem_qdisc_major_id(self, base_id):  # pragma: no cover
-        pass
-
-    @abc.abstractmethod
-    def make_qdisc(self):  # pragma: no cover
-        pass
-
-    @abc.abstractmethod
-    def add_rate(self):  # pragma: no cover
-        pass
-
-    @abc.abstractmethod
-    def add_filter(self):  # pragma: no cover
         pass
 
     @abc.abstractmethod
@@ -56,26 +37,27 @@ class ShaperInterface(object):
 
 
 class AbstractShaper(ShaperInterface):
+
     @property
-    def tc_device(self):
+    def _tc_device(self):
         return "{:s}".format(self._tc_obj.get_tc_device())
 
     @property
-    def dev(self):
-        return "dev {:s}".format(self.tc_device)
+    def _dev(self):
+        return "dev {:s}".format(self._tc_device)
 
     def __init__(self, tc_obj):
         self._tc_obj = tc_obj
 
-    def set_netem(self):
+    def _set_netem(self):
         base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
         if base_command is None:
             return 0
 
         parent = "{:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str, self.get_qdisc_minor_id())
+            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
         handle = "{:x}".format(
-            self.get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
+            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
         command_item_list = [
             base_command,
             "dev {:s}".format(self._tc_obj.get_tc_device()),
@@ -117,14 +99,14 @@ class AbstractShaper(ShaperInterface):
                     command=base_command, dev=self._tc_obj.get_tc_device(),
                     parent=parent, handle=handle)))
 
-    def add_filter(self):
+    def _add_filter(self):
         base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
         if base_command is None:
             return 0
 
         command_item_list = [
             base_command,
-            self.dev,
+            self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 1",
@@ -159,7 +141,7 @@ class AbstractShaper(ShaperInterface):
 
         command_item_list.append("flowid {:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
-            self.get_qdisc_minor_id()))
+            self._get_qdisc_minor_id()))
 
         return subprocrunner.SubprocessRunner(
             " ".join(command_item_list)).run()
@@ -169,6 +151,14 @@ class AbstractShaper(ShaperInterface):
             self._tc_obj.is_enable_iptables,
             self._tc_obj.direction == TrafficDirection.OUTGOING,
         ])
+
+    @abc.abstractmethod
+    def _get_qdisc_minor_id(self):  # pragma: no cover
+        pass
+
+    @abc.abstractmethod
+    def _get_netem_qdisc_major_id(self, base_id):  # pragma: no cover
+        pass
 
     def _get_network_direction_str(self):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
@@ -185,6 +175,14 @@ class AbstractShaper(ShaperInterface):
         self.__add_mangle_mark(mark_id)
 
         return mark_id
+
+    @abc.abstractmethod
+    def _make_qdisc(self):  # pragma: no cover
+        pass
+
+    @abc.abstractmethod
+    def _add_rate(self):  # pragma: no cover
+        pass
 
     def __add_mangle_mark(self, mark_id):
         dst_network = None
