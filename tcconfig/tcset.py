@@ -159,6 +159,9 @@ def parse_option():
         "--network", "--dst-network", dest="dst_network",
         help="target IP address/network to control traffic")
     group.add_argument(
+        "--exclude-dst-network",
+        help="exclude a shaping rule to a specific network destination.")
+    group.add_argument(
         "--src-network",
         help="""
         set a traffic shaping rule to specific packets that routed from
@@ -398,6 +401,7 @@ def main():
             corruption_rate=options.corruption_rate,
             reordering_rate=options.reordering_rate,
             dst_network=options.dst_network,
+            exclude_dst_network=options.exclude_dst_network,
             src_network=options.src_network,
             src_port=options.src_port,
             dst_port=options.dst_port,

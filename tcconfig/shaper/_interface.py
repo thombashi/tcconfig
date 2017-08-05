@@ -109,7 +109,7 @@ class AbstractShaper(ShaperInterface):
             self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio 1",
+            "prio 2",
         ]
 
         if self._is_use_iptables():
@@ -151,6 +151,9 @@ class AbstractShaper(ShaperInterface):
 
         return subprocrunner.SubprocessRunner(
             " ".join(command_item_list)).run()
+
+    def _add_exclude_filter(self):
+        pass
 
     def _is_use_iptables(self):
         return all([

@@ -140,6 +140,10 @@ class TrafficControl(object):
         return self.__dst_network
 
     @property
+    def exclude_dst_network(self):
+        return self.__exclude_dst_network
+
+    @property
     def src_network(self):
         return self.__src_network
 
@@ -197,7 +201,8 @@ class TrafficControl(object):
             latency_ms=None, latency_distro_ms=None,
             packet_loss_rate=None, packet_duplicate_rate=None,
             corruption_rate=None, reordering_rate=None,
-            dst_network=None, src_network=None,
+            dst_network=None, exclude_dst_network=None,
+            src_network=None,
             dst_port=None, src_port=None,
             is_ipv6=False, is_change_shaper=False, is_add_shaper=False,
             is_enable_iptables=True,
@@ -215,6 +220,7 @@ class TrafficControl(object):
         self.__corruption_rate = corruption_rate  # [%]
         self.__reordering_rate = reordering_rate
         self.__dst_network = dst_network
+        self.__exclude_dst_network = exclude_dst_network
         self.__src_network = src_network
         self.__src_port = src_port
         self.__dst_port = dst_port

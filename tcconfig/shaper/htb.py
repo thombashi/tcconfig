@@ -46,6 +46,7 @@ class HtbShaper(AbstractShaper):
         self.__qdisc_minor_id = None
         self.__qdisc_minor_id_count = 0
         self.__netem_major_id = None
+        self.__classid_wo_shaping = None
 
     def _get_qdisc_minor_id(self):
         if self.__qdisc_minor_id is None:
@@ -132,6 +133,41 @@ class HtbShaper(AbstractShaper):
             TcAlreadyExist
         )
 
+    def _add_exclude_filter(self):
+        import subprocrunner
+
+        if all([
+                typepy.is_null_string(self._tc_obj.exclude_dst_network),
+        ]):
+            logger.debug("no exclude filter found")
+            return
+
+        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
+        if base_command is None:
+            return 0
+
+        command_item_list = [
+            base_command,
+            self._dev,
+            "protocol {:s}".format(self._tc_obj.protocol),
+            "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
+            "prio 1",
+        ]
+
+        command_item_list.extend([
+            "u32",
+            "match {:s} {:s} {:s}".format(
+                self._tc_obj.protocol_match,
+                self._get_network_direction_str(),
+                self._tc_obj.exclude_dst_network),
+        ])
+
+        command_item_list.append(
+            "flowid {:s}".format(self.__classid_wo_shaping))
+
+        return subprocrunner.SubprocessRunner(
+            " ".join(command_item_list)).run()
+
     def set_shaping(self):
         is_add_shaper = self._tc_obj.is_add_shaper
 
@@ -151,6 +187,9 @@ class HtbShaper(AbstractShaper):
 
         with logging_context("_set_netem"):
             self._set_netem()
+
+        with logging_context("_add_exclude_filter"):
+            self._add_exclude_filter()
 
         with logging_context("_add_filter"):
             self._add_filter()
@@ -222,6 +261,7 @@ class HtbShaper(AbstractShaper):
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
+        self.__classid_wo_shaping = classid
 
         if self._tc_obj.is_add_shaper:
             message = None
