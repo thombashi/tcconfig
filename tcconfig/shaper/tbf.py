@@ -17,6 +17,7 @@ from .._common import (
     run_command_helper,
 )
 from .._const import (
+    ShapingAlgorithm,
     Tc,
     TrafficDirection,
 )
@@ -35,7 +36,7 @@ class TbfShaper(AbstractShaper):
 
     @property
     def algorithm_name(self):
-        return "tbf"
+        return ShapingAlgorithm.TBF
 
     def _get_qdisc_minor_id(self):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:

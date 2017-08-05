@@ -11,6 +11,7 @@ import re
 
 import typepy
 
+from .._const import ShapingAlgorithm
 from ._common import _to_unicode
 
 
@@ -46,7 +47,7 @@ class TcClassParser(object):
 
     def __parse_classid(self, line):
         self.__parsed_param[self.Key.CLASS_ID] = None
-        tag = "class htb "
+        tag = "class {:s} ".format(ShapingAlgorithm.HTB)
 
         match = re.search("{:s}{:s}".format(tag, self.Pattern.CLASS_ID), line)
         if match is None:

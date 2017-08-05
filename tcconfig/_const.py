@@ -22,6 +22,11 @@ class Network(object):
         ANYWHERE = "::0/0"
 
 
+class ShapingAlgorithm(object):
+    HTB = "htb"
+    TBF = "tbf"
+
+
 class Tc(object):
 
     class Subcommand(object):

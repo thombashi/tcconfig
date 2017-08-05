@@ -26,6 +26,7 @@ from ._common import (
 from ._const import (
     KILO_SIZE,
     LIST_MANGLE_TABLE_COMMAND,
+    ShapingAlgorithm,
     Tc,
     TcCommandOutput,
     TrafficDirection,
@@ -239,7 +240,7 @@ class TrafficControl(object):
     def __validate_src_network(self):
         if any([
                 typepy.is_null_string(self.src_network),
-                self.__shaper.algorithm_name == "htb",
+                self.__shaper.algorithm_name == ShapingAlgorithm.HTB,
         ]):
             return
 
@@ -355,11 +356,11 @@ class TrafficControl(object):
             self.__shaper = None
             return
 
-        if shaping_algorithm == "htb":
+        if shaping_algorithm == ShapingAlgorithm.HTB:
             self.__shaper = HtbShaper(self)
             return
 
-        if shaping_algorithm == "tbf":
+        if shaping_algorithm == ShapingAlgorithm.TBF:
             self.__shaper = TbfShaper(self)
             return
 

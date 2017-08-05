@@ -20,6 +20,7 @@ from .._common import (
     run_tc_show,
 )
 from .._const import (
+    ShapingAlgorithm,
     Tc,
     TcCommandOutput,
 )
@@ -37,7 +38,7 @@ class HtbShaper(AbstractShaper):
 
     @property
     def algorithm_name(self):
-        return "htb"
+        return ShapingAlgorithm.HTB
 
     def __init__(self, tc_obj):
         super(HtbShaper, self).__init__(tc_obj)
@@ -164,8 +165,9 @@ class HtbShaper(AbstractShaper):
             return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
 
         exist_class_item_list = re.findall(
-            "class htb {}".format(
-                self._tc_obj.qdisc_major_id_str) + "[\:][0-9]+",
+            "class {algorithm:s} {qdisc_major_id:s}[\:][0-9]+".format(
+                algorithm=ShapingAlgorithm.HTB,
+                qdisc_major_id=self._tc_obj.qdisc_major_id_str),
             run_tc_show(Tc.Subcommand.CLASS, self._tc_device),
             re.MULTILINE)
 

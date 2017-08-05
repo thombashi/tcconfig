@@ -28,6 +28,7 @@ from ._common import (
 from ._const import (
     VERSION,
     Network,
+    ShapingAlgorithm,
     Tc,
     TcCommand,
     TcCommandOutput,
@@ -138,7 +139,8 @@ def parse_option():
             TrafficControl.MAX_REORDERING_RATE))
     group.add_argument(
         "--shaping-algo", dest="shaping_algorithm",
-        choices=["tbf", "htb"], default="htb",
+        choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.HTB],
+        default=ShapingAlgorithm.HTB,
         help="shaping algorithm. defaults to %(default)s (recommended).")
 
     group = parser.parser.add_argument_group("Routing")
