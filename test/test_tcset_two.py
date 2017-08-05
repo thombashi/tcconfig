@@ -70,10 +70,9 @@ class Test_tcset_two_network(object):
             transmitter, pingparser, shaping_algo):
         if device_option is None:
             pytest.skip("device option is null")
-
         if any([
-            typepy.is_null_string(dst_host_option),
-            typepy.is_null_string(dst_host_ex_option),
+                typepy.is_null_string(dst_host_option),
+                typepy.is_null_string(dst_host_ex_option),
         ]):
             pytest.skip("destination host is null")
 
@@ -83,23 +82,21 @@ class Test_tcset_two_network(object):
         # tc to specific network ---
         command_list = [
             TcCommand.TCSET,
-            "--device " + device_option,
+            "--device {:s}".format(device_option),
             "--delay {:d}".format(delay),
+            "--dst-network {:s}".format(dst_host_ex_option),
             "--shaping-algo {:s}".format(shaping_algo),
-            "--network " + dst_host_ex_option,
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         # w/o tc network ---
         transmitter.destination_host = dst_host_option
-        result = transmitter.ping()
-        pingparser.parse(result.stdout)
+        pingparser.parse(transmitter.ping().stdout)
         without_tc_rtt_avg = pingparser.rtt_avg
 
         # w/ tc network ---
         transmitter.destination_host = dst_host_ex_option
-        result = transmitter.ping()
-        pingparser.parse(result.stdout)
+        pingparser.parse(transmitter.ping().stdout)
         with_tc_rtt_avg = pingparser.rtt_avg
 
         # assertion ---
