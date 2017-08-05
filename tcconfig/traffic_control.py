@@ -298,9 +298,6 @@ class TrafficControl(object):
         return "tc {:s} {:s}".format(
             sub_command, "change" if self.is_change_shaper else "add")
 
-    def get_anywhere_network(self):
-        return get_anywhere_network(self, )
-
     def get_command_history(self):
         def tc_filter(command):
             if command == LIST_MANGLE_TABLE_COMMAND:
