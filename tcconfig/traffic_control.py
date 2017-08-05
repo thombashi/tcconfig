@@ -18,7 +18,6 @@ import subprocrunner as spr
 
 from ._common import (
     logging_context,
-    get_anywhere_network,
     get_no_limit_kbits,
     sanitize_network,
     verify_network_interface,
