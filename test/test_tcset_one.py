@@ -8,7 +8,6 @@ from __future__ import absolute_import
 from __future__ import division
 
 import itertools
-import platform
 
 import pingparsing
 import pytest
@@ -101,7 +100,6 @@ class Test_tcset_one_network(object):
         # finalize ---
         execute_tcdel(device_option)
 
-    @pytest.mark.skipif("platform.system() == 'Windows'")
     @pytest.mark.parametrize(["delay", "delay_distro"], [
         [100, 50],
     ])
