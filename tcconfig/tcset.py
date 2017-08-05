@@ -408,7 +408,7 @@ def main():
         )
     except UnitNotFoundError:
         logger.error(
-            "--rate/--bandwidth-rate require unit such as K/M/Kbps/Mbps/etc.")
+            "--rate/--bandwidth-rate require an unit: K/M/Kbps/Mbps/etc.")
         return errno.EINVAL
 
     try:
