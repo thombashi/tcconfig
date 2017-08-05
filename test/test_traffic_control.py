@@ -6,10 +6,11 @@
 
 import itertools
 
+from allpairspy import AllPairs
 import pytest
 
-from allpairspy import AllPairs
 from tcconfig._const import (
+    ShapingAlgorithm,
     Tc,
     TrafficDirection,
 )
@@ -43,7 +44,8 @@ def device_option(request):
 ])
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
     tc_obj = TrafficControl(
-        "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING)
+        "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING,
+        shaping_algorithm=ShapingAlgorithm.HTB)
     tc_obj.validate_bandwidth_rate()
 
 
@@ -63,7 +65,8 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
-            "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING)
+            "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING,
+            shaping_algorithm=ShapingAlgorithm.HTB)
         tc_obj.validate_bandwidth_rate()
 
 
@@ -76,7 +79,9 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
     with pytest.raises(expected):
-        tc_obj = TrafficControl("dummy", bandwidth_rate=value)
+        tc_obj = TrafficControl(
+            "dummy", bandwidth_rate=value,
+            shaping_algorithm=ShapingAlgorithm.HTB)
         tc_obj.validate_bandwidth_rate()
 
 
@@ -85,7 +90,7 @@ class Test_TrafficControl_validate(object):
     @pytest.mark.parametrize(
         [
             "rate", "direction", "delay", "delay_distro", "loss", "duplicate",
-            "corrupt", "network", "src_port", "dst_port",
+            "corrupt", "network", "src_port", "dst_port", "shaping_algorithm",
         ],
         [
             opt_list
@@ -121,11 +126,16 @@ class Test_TrafficControl_validate(object):
                 ],  # network
                 [None, 65535],  # src_port
                 [None, 65535],  # dst_port
+                [
+                    ShapingAlgorithm.HTB,
+                    ShapingAlgorithm.TBF,
+                ],  # shaping_algorithm
             ], n=3)
         ])
     def test_normal(
             self, device_option, rate, direction, delay, delay_distro,
-            loss, duplicate, corrupt, network, src_port, dst_port):
+            loss, duplicate, corrupt, network, src_port, dst_port,
+            shaping_algorithm):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -143,6 +153,7 @@ class Test_TrafficControl_validate(object):
             dst_port=dst_port,
             src_network=None,
             is_enable_iptables=True,
+            shaping_algorithm=shaping_algorithm,
         )
 
         if is_invalid_param(
@@ -178,6 +189,7 @@ class Test_TrafficControl_validate(object):
             direction=direction,
             latency_ms=delay,
             reordering_rate=reordering,
+            shaping_algorithm=ShapingAlgorithm.HTB,
         )
 
         tc_obj.validate()
@@ -243,7 +255,6 @@ class Test_TrafficControl_validate(object):
             ValueError
         ],
 
-
         [{Tc.Param.DST_NETWORK: "192.168.0."}, ValueError],
         [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ValueError],
         [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ValueError],
@@ -272,6 +283,7 @@ class Test_TrafficControl_validate(object):
             dst_network=value.get(Tc.Param.DST_NETWORK),
             src_port=value.get("src_port"),
             dst_port=value.get("dst_port"),
+            shaping_algorithm=ShapingAlgorithm.HTB,
         )
 
         with pytest.raises(expected):
@@ -298,7 +310,9 @@ class Test_TrafficControl_ipv4(object):
             pytest.skip("device option is null")
 
         tc_obj = TrafficControl(
-            device=device_option, dst_network=network, is_ipv6=is_ipv6)
+            device=device_option, dst_network=network, is_ipv6=is_ipv6,
+            shaping_algorithm=ShapingAlgorithm.HTB,
+        )
 
         assert tc_obj.ip_version == expected_ip_ver
         assert tc_obj.protocol == expected_protocol

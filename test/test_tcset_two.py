@@ -64,7 +64,6 @@ class Test_tcset_two_network(object):
 
     @pytest.mark.parametrize(["shaping_algo"], [
         ["htb"],
-        ["tbf"],
     ])
     def test_network(
             self, device_option, dst_host_option, dst_host_ex_option,
