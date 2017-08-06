@@ -16,9 +16,6 @@ import tcconfig
 
 REQUIREMENT_DIR = "requirements"
 
-needs_pytest = set(["pytest", "test", "ptr"]).intersection(sys.argv)
-pytest_runner = ["pytest-runner"] if needs_pytest else []
-
 
 with open("README.rst") as fp:
     long_description = fp.read()
@@ -34,6 +31,10 @@ with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
 
 with open(os.path.join(REQUIREMENT_DIR, "docs_requirements.txt")) as f:
     docs_requires = [line.strip() for line in f if line.strip()]
+
+setuptools_require = ["setuptools>=20.2.2"]
+needs_pytest = set(["pytest", "test", "ptr"]).intersection(sys.argv)
+pytest_runner = ["pytest-runner"] if needs_pytest else []
 
 setuptools.setup(
     name="tcconfig",
@@ -52,8 +53,8 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
 
-    install_requires=install_requires,
-    setup_requires=pytest_runner,
+    install_requires=setuptools_require + install_requires,
+    setup_requires=setuptools_require + pytest_runner,
     tests_require=tests_requires,
     extras_require={
         "test": tests_requires,
