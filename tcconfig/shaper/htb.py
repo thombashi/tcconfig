@@ -139,6 +139,7 @@ class HtbShaper(AbstractShaper):
         if all([
                 typepy.is_null_string(self._tc_obj.exclude_dst_network),
                 typepy.is_null_string(self._tc_obj.exclude_src_network),
+                typepy.is_null_string(self._tc_obj.exclude_dst_port),
         ]):
             logger.debug("no exclude filter found")
             return
@@ -165,6 +166,11 @@ class HtbShaper(AbstractShaper):
             command_item_list.append("match {:s} {:s} {:s}".format(
                 self._tc_obj.protocol_match,
                 "src", self._tc_obj.exclude_src_network))
+
+        if typepy.is_not_null_string(self._tc_obj.exclude_dst_port):
+            command_item_list.append("match {:s} {:s} {:s} 0xffff".format(
+                self._tc_obj.protocol_match,
+                "dport", self._tc_obj.exclude_dst_port))
 
         command_item_list.append(
             "flowid {:s}".format(self.__classid_wo_shaping))

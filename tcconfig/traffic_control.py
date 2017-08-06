@@ -160,6 +160,10 @@ class TrafficControl(object):
         return self.__dst_port
 
     @property
+    def exclude_dst_port(self):
+        return self.__exclude_dst_port
+
+    @property
     def is_change_shaper(self):
         return self.__is_change_shaper
 
@@ -207,7 +211,8 @@ class TrafficControl(object):
             corruption_rate=None, reordering_rate=None,
             dst_network=None, exclude_dst_network=None,
             src_network=None, exclude_src_network=None,
-            dst_port=None, src_port=None,
+            dst_port=None, exclude_dst_port=None,
+            src_port=None,
             is_ipv6=False, is_change_shaper=False, is_add_shaper=False,
             is_enable_iptables=True,
             shaping_algorithm=None,
@@ -229,6 +234,7 @@ class TrafficControl(object):
         self.__exclude_src_network = exclude_src_network
         self.__src_port = src_port
         self.__dst_port = dst_port
+        self.__exclude_dst_port = exclude_dst_port
         self.__is_ipv6 = is_ipv6
         self.__is_change_shaper = is_change_shaper
         self.__is_add_shaper = is_add_shaper

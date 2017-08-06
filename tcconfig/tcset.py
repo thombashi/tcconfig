@@ -173,6 +173,9 @@ def parse_option():
         "--port", "--dst-port", dest="dst_port", type=int,
         help="target destination port number to control traffic.")
     group.add_argument(
+        "--exclude-dst-port",
+        help="exclude a shaping rule for a specific destination port.")
+    group.add_argument(
         "--src-port", type=int,
         help="target source port number to control traffic.")
     group.add_argument(
@@ -405,6 +408,7 @@ def main():
             exclude_src_network=options.exclude_src_network,
             src_port=options.src_port,
             dst_port=options.dst_port,
+            exclude_dst_port=options.exclude_dst_port,
             is_ipv6=options.is_ipv6,
             is_change_shaper=options.is_change_shaper,
             is_add_shaper=options.is_add_shaper,
