@@ -25,6 +25,11 @@ Apply traffic shaping rules to specific targets:
 - Source/Destination IP-address/network (IPv4/IPv6)
 - Source/Destination ports
 
+Moreover, exclude from shaping rules from specific targets:
+
+- Source/Destination IP-address/network (IPv4/IPv6)
+- Source/Destination ports
+
 Available parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The following parameters can set to network interfaces:
