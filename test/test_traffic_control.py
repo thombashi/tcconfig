@@ -90,7 +90,12 @@ class Test_TrafficControl_validate(object):
     @pytest.mark.parametrize(
         [
             "rate", "direction", "delay", "delay_distro", "loss", "duplicate",
-            "corrupt", "network", "src_port", "dst_port", "shaping_algorithm",
+            "corrupt",
+            "src_network", "exclude_src_network",
+            "dst_network", "exclude_dst_network",
+            "src_port", "exclude_src_port",
+            "dst_port", "exclude_dst_port",
+            "shaping_algorithm",
         ],
         [
             opt_list
@@ -118,23 +123,31 @@ class Test_TrafficControl_validate(object):
                     None, TrafficControl.MIN_CORRUPTION_RATE,
                     TrafficControl.MAX_CORRUPTION_RATE,
                 ],  # corrupt
+                [None, "192.168.0.1", "192.168.0.0/24"],  # src_network
+                [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_src_network
                 [
                     None,
                     "",
                     "192.168.0.1", "192.168.0.254",
                     "192.168.0.1/32", "192.168.0.0/24"
-                ],  # network
+                ],  # dst_network
+                [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_dst_network
                 [None, 65535],  # src_port
+                [None, 22],  # exclude_src_port
                 [None, 65535],  # dst_port
+                [None, 22],  # exclude_dst_port
                 [
-                    ShapingAlgorithm.HTB,
-                    ShapingAlgorithm.TBF,
+                    ShapingAlgorithm.HTB, ShapingAlgorithm.TBF,
                 ],  # shaping_algorithm
             ], n=3)
         ])
     def test_normal(
             self, device_option, rate, direction, delay, delay_distro,
-            loss, duplicate, corrupt, network, src_port, dst_port,
+            loss, duplicate, corrupt,
+            src_network, exclude_src_network,
+            dst_network, exclude_dst_network,
+            src_port, exclude_src_port,
+            dst_port, exclude_dst_port,
             shaping_algorithm):
         if device_option is None:
             pytest.skip("device option is null")
@@ -148,10 +161,14 @@ class Test_TrafficControl_validate(object):
             packet_loss_rate=loss,
             packet_duplicate_rate=duplicate,
             corruption_rate=corrupt,
-            dst_network=network,
+            src_network=src_network,
+            exclude_src_network=exclude_src_network,
+            dst_network=dst_network,
+            exclude_dst_network=exclude_dst_network,
             src_port=src_port,
+            exclude_src_port=exclude_src_port,
             dst_port=dst_port,
-            src_network=None,
+            exclude_dst_port=exclude_dst_port,
             is_enable_iptables=True,
             shaping_algorithm=shaping_algorithm,
         )
