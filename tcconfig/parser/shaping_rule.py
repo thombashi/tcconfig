@@ -13,7 +13,10 @@ import subprocrunner
 import typepy
 from typepy.type import Integer
 
-from .._common import run_tc_show
+from .._common import (
+    is_anywhere_network,
+    run_tc_show,
+)
 from .._const import (
     Tc,
     TrafficDirection,
@@ -66,7 +69,8 @@ class TcShapingRuleParser(object):
             filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
-        network_format = Tc.Param.DST_NETWORK + "={:s}"
+        src_network_format = Tc.Param.SRC_NETWORK + "={:s}"
+        dst_network_format = Tc.Param.DST_NETWORK + "={:s}"
         protocol_format = Tc.Param.PROTOCOL + "={:s}"
         key_item_list = []
 
@@ -79,7 +83,8 @@ class TcShapingRuleParser(object):
                 if mangle.mark_id != handle:
                     continue
 
-                key_item_list.append(network_format.format(mangle.destination))
+                key_item_list.append(
+                    dst_network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
                     key_item_list.append("{:s}={:s}".format(
                         Tc.Param.SRC_NETWORK, mangle.source))
@@ -89,9 +94,14 @@ class TcShapingRuleParser(object):
             else:
                 raise ValueError("mangle mark not found: {}".format(mangle))
         else:
-            network = filter_param.get(Tc.Param.DST_NETWORK)
-            if typepy.is_not_null_string(network):
-                key_item_list.append(network_format.format(network))
+            src_network = filter_param.get(Tc.Param.SRC_NETWORK)
+            if (typepy.is_not_null_string(src_network) and
+                    not is_anywhere_network(src_network, self.__ip_version)):
+                key_item_list.append(src_network_format.format(src_network))
+
+            dst_network = filter_param.get(Tc.Param.DST_NETWORK)
+            if typepy.is_not_null_string(dst_network):
+                key_item_list.append(dst_network_format.format(dst_network))
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
             if Integer(src_port).is_type():

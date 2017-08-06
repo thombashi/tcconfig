@@ -148,6 +148,7 @@ class TcFilterParser(object):
 
     def __clear(self):
         self.__flow_id = None
+        self.__filter_src_network = None
         self.__filter_dst_network = None
         self.__filter_src_port = None
         self.__filter_dst_port = None
@@ -158,6 +159,7 @@ class TcFilterParser(object):
     def __get_filter(self):
         return {
             Tc.Param.FLOW_ID: self.__flow_id,
+            Tc.Param.SRC_NETWORK: self.__filter_src_network,
             Tc.Param.DST_NETWORK: self.__filter_dst_network,
             Tc.Param.SRC_PORT: self.__filter_src_port,
             Tc.Param.DST_PORT: self.__filter_dst_port,
@@ -194,6 +196,91 @@ class TcFilterParser(object):
 
         return (value_hex, mask_hex, match_id)
 
+    def __parse_filter_ipv4_network(self, value_hex, mask_hex, match_id):
+        ipaddr = ".".join([
+            str(int(value_hex[i: i + 2], 16))
+            for i in range(0, len(value_hex), 2)
+        ])
+        netmask = bin(int(mask_hex, 16)).count("1")
+        network = "{:s}/{:d}".format(ipaddr, netmask)
+
+        if match_id == self.FilterMatchIdIpv4.INCOMING_NETWORK:
+            self.__filter_src_network = network
+        elif match_id == self.FilterMatchIdIpv4.OUTGOING_NETWORK:
+            self.__filter_dst_network = network
+        else:
+            logger.warn("unknown match id: {}".format(match_id))
+
+    def __parse_filter_ipv6_network(self, value_hex, mask_hex, match_id):
+        from collections import namedtuple
+
+        Ipv6Entry = namedtuple("Ipv6Entry", "match_id octet_list mask_hex")
+
+        OCTET_LEN = 4
+        ipv6_entry_list = [
+            Ipv6Entry(
+                match_id=match_id,
+                octet_list=[
+                    value_hex[i: i + OCTET_LEN]
+                    for i in range(0, len(value_hex), OCTET_LEN)
+                ],
+                mask_hex=mask_hex),
+        ]
+
+        while True:
+
+            try:
+                line = self.__buffer[self.__parse_idx].strip()
+            except IndexError:
+                break
+
+            try:
+                value_hex, mask_hex, match_id = self.__parse_filter_line(
+                    line)
+            except pp.ParseException:
+                break
+
+            if (match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
+                    match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST):
+                ipv6_entry_list.append(
+                    Ipv6Entry(
+                        match_id=match_id,
+                        octet_list=[
+                            value_hex[i: i + OCTET_LEN]
+                            for i in range(0, len(value_hex), OCTET_LEN)
+                        ],
+                        mask_hex=mask_hex))
+            else:
+                break
+
+            self.__parse_idx += 1
+
+        src_octet_list = []
+        dst_octet_list = []
+        src_netmask = 0
+        dst_netmask = 0
+
+        for ipv6_entry in ipv6_entry_list:
+            if ipv6_entry.match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST:
+                src_octet_list.extend(ipv6_entry.octet_list)
+                src_netmask += bin(int(ipv6_entry.mask_hex, 16)).count("1")
+            elif ipv6_entry.match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST:
+                dst_octet_list.extend(ipv6_entry.octet_list)
+                dst_netmask += bin(int(ipv6_entry.mask_hex, 16)).count("1")
+            else:
+                raise ValueError(
+                    "unexpected ipv6 entry: {}".format(ipv6_entry))
+
+        while len(src_octet_list) < 8:
+            src_octet_list.append("0000")
+        while len(dst_octet_list) < 8:
+            dst_octet_list.append("0000")
+
+        self.__filter_dst_network = ipaddress.IPv6Network("{:s}/{:d}".format(
+            ":".join(dst_octet_list), dst_netmask)).compressed
+        self.__filter_src_network = ipaddress.IPv6Network("{:s}/{:d}".format(
+            ":".join(src_octet_list), src_netmask)).compressed
+
     def __parse_filter_port(self, value_hex):
         # Port filter consists eight hex digits.
         # The upper-half represents source port filter and
@@ -224,18 +311,13 @@ class TcFilterParser(object):
                 self.FilterMatchIdIpv4.INCOMING_NETWORK,
                 self.FilterMatchIdIpv4.OUTGOING_NETWORK,
         ]:
-            ipaddr = ".".join([
-                str(int(value_hex[i: i + 2], 16))
-                for i in range(0, len(value_hex), 2)
-            ])
-            netmask = bin(int(mask_hex, 16)).count("1")
-
-            self.__filter_dst_network = "{:s}/{:d}".format(ipaddr, netmask)
+            self.__parse_filter_ipv4_network(value_hex, mask_hex, match_id)
         elif match_id == self.FilterMatchIdIpv4.PORT:
             self.__parse_filter_port(value_hex)
 
         logger.debug(
             "succeed to parse ipv4 filter: " + ", ".join([
+                "src_network={}".format(self.__filter_src_network),
                 "dst_network={}".format(self.__filter_dst_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
@@ -243,59 +325,17 @@ class TcFilterParser(object):
             ]))
 
     def __parse_filter_ipv6(self, line):
-        netmask = 0
         value_hex, mask_hex, match_id = self.__parse_filter_line(line)
 
-        octet_list = []
-        octet_len = 4
-
-        if (
-                match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
-                match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
-        ):
-            octet_list.extend([
-                value_hex[i: i + octet_len]
-                for i in range(0, len(value_hex), octet_len)
-            ])
-            netmask += bin(int(mask_hex, 16)).count("1")
-
-            while True:
-                try:
-                    line = self.__buffer[self.__parse_idx].strip()
-                except IndexError:
-                    break
-
-                try:
-                    value_hex, mask_hex, match_id = self.__parse_filter_line(
-                        line)
-                except pp.ParseException:
-                    break
-
-                if (
-                    match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
-                    match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
-                ):
-                    octet_list.extend([
-                        value_hex[i: i + octet_len]
-                        for i in range(0, len(value_hex), octet_len)
-                    ])
-                    netmask += bin(int(mask_hex, 16)).count("1")
-                else:
-                    break
-
-                self.__parse_idx += 1
-
-            while len(octet_list) < 8:
-                octet_list.append("0000")
-
-            self.__filter_dst_network = ipaddress.IPv6Network("{:s}/{:d}".format(
-                ":".join(octet_list), netmask)).compressed
-
+        if (match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
+                match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST):
+            self.__parse_filter_ipv6_network(value_hex, mask_hex, match_id)
         elif match_id == self.FilterMatchIdIpv6.PORT:
             self.__parse_filter_port(value_hex)
 
         logger.debug(
             "succeed to parse ipv6 filter: " + ", ".join([
+                "src_network={}".format(self.__filter_src_network),
                 "dst_network={}".format(self.__filter_dst_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),

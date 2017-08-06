@@ -125,15 +125,13 @@ class AbstractShaper(ShaperInterface):
                 "u32",
                 "match {:s} {:s} {:s}".format(
                     self._tc_obj.protocol_match,
-                    self._get_network_direction_str(),
-                    dst_network),
+                    "dst", dst_network),
             ])
 
             if typepy.is_not_null_string(self._tc_obj.src_network):
                 command_item_list.append("match {:s} {:s} {:s}".format(
                     self._tc_obj.protocol_match,
-                    self._get_network_direction_str(),
-                    self._tc_obj.src_network))
+                    "src", self._tc_obj.src_network))
 
             if self._tc_obj.src_port:
                 command_item_list.append(
