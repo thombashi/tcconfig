@@ -153,7 +153,7 @@ def parse_option():
         help="target IP-address/network to control traffic")
     group.add_argument(
         "--exclude-dst-network",
-        help="""exclude a shaping rule to a specific destination
+        help="""exclude a shaping rule for a specific destination
         IP-address/network.
         """)
     group.add_argument(
@@ -166,8 +166,9 @@ def parse_option():
         """)
     group.add_argument(
         "--exclude-src-network",
-        help="""exclude a shaping rule to a specific source.
-        IP-address/network.""")
+        help="""exclude a shaping rule for a specific source
+        IP-address/network.
+        """)
     group.add_argument(
         "--port", "--dst-port", dest="dst_port", type=int,
         help="target destination port number to control traffic.")
