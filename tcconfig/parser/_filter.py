@@ -235,7 +235,7 @@ class TcFilterParser(object):
             self.__parse_filter_port(value_hex)
 
         logger.debug(
-            "succeed to parse filter: " + ", ".join([
+            "succeed to parse ipv4 filter: " + ", ".join([
                 "dst_network={}".format(self.__filter_dst_network),
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
@@ -295,8 +295,8 @@ class TcFilterParser(object):
             self.__parse_filter_port(value_hex)
 
         logger.debug(
-            "succeed to parse filter: " + ", ".join([
                 "dst_network={}".format(self.__filter_network),
+            "succeed to parse ipv6 filter: " + ", ".join([
                 "src_port={}".format(self.__filter_src_port),
                 "dst_port={}".format(self.__filter_dst_port),
                 "line={}".format(line)
