@@ -19,7 +19,7 @@ class Network(object):
         ANYWHERE = "0.0.0.0/0"
 
     class Ipv6(object):
-        ANYWHERE = "::0/0"
+        ANYWHERE = "::/0"
 
 
 class ShapingAlgorithm(object):

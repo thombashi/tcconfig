@@ -18,7 +18,7 @@ class Test_is_anywhere_network(object):
     @pytest.mark.parametrize(["network", "ip_version", "expected"], [
         ["0.0.0.0/0", 4, True],
         ["192.168.0.0/0", 4, False],
-        ["::0/0", 6, True],
+        ["::/0", 6, True],
         ["2001:db00::0/24", 6, False],
     ])
     def test_normal(self, network, ip_version, expected):
@@ -38,8 +38,8 @@ class Test_get_anywhere_network(object):
     @pytest.mark.parametrize(["value", "expected"], [
         [4, "0.0.0.0/0"],
         ["4", "0.0.0.0/0"],
-        [6, "::0/0"],
-        ["6", "::0/0"],
+        [6, "::/0"],
+        ["6", "::/0"],
     ])
     def test_normal(self, value, expected):
         assert get_anywhere_network(value) == expected
@@ -63,12 +63,12 @@ class Test_sanitize_network(object):
         ["2001:db00::0/24", 6, "2001:db00::/24"],
         ["anywhere", 4, "0.0.0.0/0"],
         ["ANYWHERE", 4, "0.0.0.0/0"],
-        ["anywhere", 6, "::0/0"],
-        ["ANYWHERE", 6, "::0/0"],
+        ["anywhere", 6, "::/0"],
+        ["ANYWHERE", 6, "::/0"],
         ["", 4, "0.0.0.0/0"],
         [None, 4, "0.0.0.0/0"],
-        ["", 6, "::0/0"],
-        [None, 6, "::0/0"],
+        ["", 6, "::/0"],
+        [None, 6, "::/0"],
     ])
     def test_normal(self, value, ip_version, expected):
         assert sanitize_network(value, ip_version) == expected

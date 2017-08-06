@@ -38,9 +38,18 @@ def logging_context(name):
 
 def is_anywhere_network(network, ip_version):
     try:
-        return network.strip() == get_anywhere_network(ip_version)
+        network = network.strip()
     except AttributeError as e:
         raise ValueError(e)
+
+    if ip_version == 4:
+        return network == get_anywhere_network(ip_version)
+
+    if ip_version == 6:
+        return network in (
+            get_anywhere_network(ip_version), "0:0:0:0:0:0:0:0/0")
+
+    raise ValueError("invalid ip version: {}".format(ip_version))
 
 
 def is_execute_tc_command(tc_command_output):
