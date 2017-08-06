@@ -62,7 +62,8 @@ def parse_option():
     group.add_argument(
         "-f", "--config-file",
         help="""setting traffic controls from a configuration file.
-        output file of the tcshow.""")
+        output file of the tcshow.
+        """)
 
     group = parser.parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -71,10 +72,9 @@ def parse_option():
     group.add_argument(
         "--change", dest="is_change_shaper", action="store_true",
         default=False,
-        help="""
-        change existing traffic shaping rules to the new one. this option
-        reduces the shaping rule switching side effect (such as traffic spike)
-        compared to --overwrite option.
+        help="""change existing traffic shaping rules to the new one.
+        this option reduces the shaping rule switching side effect
+        (such as traffic spike) compared to --overwrite option.
         note: the tcset command fail when there are no existing shaping rules.
         """)
     group.add_argument(
@@ -84,46 +84,40 @@ def parse_option():
     group = parser.parser.add_argument_group("Traffic Control Parameters")
     group.add_argument(
         "--rate", "--bandwidth-rate", dest="bandwidth_rate",
-        help="""
-        network bandwidth rate [bit per second].
+        help="""network bandwidth rate [bit per second].
         valid units are either: K/M/G/Kbps/Mbps/Gbps
         e.g. --rate 10Mbps
         """)
     group.add_argument(
         "--delay", dest="network_latency", type=float, default=0,
-        help="""
-        round trip network delay [ms]. the valid range is {:d} to {:d}.
+        help="""round trip network delay [ms]. the valid range is {:d} to {:d}.
         (default=%(default)s)
         """.format(
             TrafficControl.MIN_LATENCY_MS, TrafficControl.MAX_LATENCY_MS))
     group.add_argument(
         "--delay-distro", dest="latency_distro_ms", type=float, default=0,
-        help="""
-        distribution of network latency becomes X +- Y [ms]
+        help="""distribution of network latency becomes X +- Y [ms]
         (normal distribution). Here X is the value of --delay option and
         Y is the value of --delay-dist option).
         network latency distribution is uniform, without this option.
         """)
     group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
-        help="""
-        round trip packet loss rate [%%]. the valid range is {:d} to {:d}.
+        help="""round trip packet loss rate [%%]. the valid range is {:d} to {:d}.
         (default=%(default)s)
         """.format(
             TrafficControl.MIN_PACKET_LOSS_RATE,
             TrafficControl.MAX_PACKET_LOSS_RATE))
     group.add_argument(
         "--duplicate", dest="packet_duplicate_rate", type=float, default=0,
-        help="""
-        round trip packet duplicate rate [%%]. the valid range is {:d} to {:d}.
+        help="""round trip packet duplicate rate [%%]. the valid range is {:d} to {:d}.
         (default=%(default)s)
         """.format(
             TrafficControl.MIN_PACKET_DUPLICATE_RATE,
             TrafficControl.MAX_PACKET_DUPLICATE_RATE))
     group.add_argument(
         "--corrupt", dest="corruption_rate", type=float, default=0,
-        help="""
-        packet corruption rate [%%]. the valid range is {:d} to {:d}.
+        help="""packet corruption rate [%%]. the valid range is {:d} to {:d}.
         packet corruption means single bit error at a random offset in
         the packet. (default=%(default)s)
         """.format(
@@ -131,8 +125,7 @@ def parse_option():
             TrafficControl.MAX_CORRUPTION_RATE))
     group.add_argument(
         "--reordering", dest="reordering_rate", type=float, default=0,
-        help="""
-        packet reordering rate [%%]. the valid range is {:d} to {:d}.
+        help="""packet reordering rate [%%]. the valid range is {:d} to {:d}.
         (default=%(default)s)
         """.format(
             TrafficControl.MIN_REORDERING_RATE,
@@ -157,14 +150,15 @@ def parse_option():
         help="use iptables to traffic control.")
     group.add_argument(
         "--network", "--dst-network", dest="dst_network",
-        help="target IP address/network to control traffic")
+        help="target IP-address/network to control traffic")
     group.add_argument(
         "--exclude-dst-network",
-        help="exclude a shaping rule to a specific network destination.")
+        help="""exclude a shaping rule to a specific destination
+        IP-address/network.
+        """)
     group.add_argument(
         "--src-network",
-        help="""
-        set a traffic shaping rule to specific packets that routed from
+        help="""set a traffic shaping rule to specific packets that routed from
         --src-network to --dst-network. this option required to execute with
         the --iptables option when you use tbf.
         the shaping rule only affect to outgoing packets
