@@ -19,6 +19,7 @@ class Test_is_anywhere_network(object):
         ["0.0.0.0/0", 4, True],
         ["192.168.0.0/0", 4, False],
         ["::/0", 6, True],
+        ["0:0:0:0:0:0:0:0/0", 6, True],
         ["2001:db00::0/24", 6, False],
     ])
     def test_normal(self, network, ip_version, expected):
@@ -26,6 +27,7 @@ class Test_is_anywhere_network(object):
 
     @pytest.mark.parametrize(["network", "ip_version",  "expected"], [
         [None, 4, ValueError],
+        ["0.0.0.0/0", 5, ValueError],
         ["0.0.0.0/0", None, ValueError],
     ])
     def test_exception(self, network, ip_version, expected):
