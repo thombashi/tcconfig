@@ -179,6 +179,9 @@ def parse_option():
         "--src-port", type=int,
         help="target source port number to control traffic.")
     group.add_argument(
+        "--exclude-src-port",
+        help="exclude a shaping rule for a specific source port.")
+    group.add_argument(
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
         help="apply traffic control to IPv6 packets rather than IPv4.")
 
@@ -407,6 +410,7 @@ def main():
             src_network=options.src_network,
             exclude_src_network=options.exclude_src_network,
             src_port=options.src_port,
+            exclude_src_port=options.exclude_src_port,
             dst_port=options.dst_port,
             exclude_dst_port=options.exclude_dst_port,
             is_ipv6=options.is_ipv6,
