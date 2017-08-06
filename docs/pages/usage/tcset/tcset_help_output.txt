@@ -1,12 +1,16 @@
 usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
              (-d DEVICE | -f CONFIG_FILE) [--overwrite | --change | --add]
-             [--direction {outgoing,incoming}] [--rate BANDWIDTH_RATE]
-             [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
-             [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
-             [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE]
-             [--network DST_NETWORK] [--port DST_PORT] [--src-port SRC_PORT]
-             [--ipv6] [--shaping-algo {tbf,htb}] [--iptables]
+             [--rate BANDWIDTH_RATE] [--delay NETWORK_LATENCY]
+             [--delay-distro LATENCY_DISTRO_MS] [--loss PACKET_LOSS_RATE]
+             [--duplicate PACKET_DUPLICATE_RATE] [--corrupt CORRUPTION_RATE]
+             [--reordering REORDERING_RATE] [--shaping-algo {htb,htb}]
+             [--direction {outgoing,incoming}] [--iptables]
+             [--network DST_NETWORK]
+             [--exclude-dst-network EXCLUDE_DST_NETWORK]
              [--src-network SRC_NETWORK]
+             [--exclude-src-network EXCLUDE_SRC_NETWORK] [--port DST_PORT]
+             [--exclude-dst-port EXCLUDE_DST_PORT] [--src-port SRC_PORT]
+             [--exclude-src-port EXCLUDE_SRC_PORT] [--ipv6]
 
 optional arguments:
   -h, --help            show this help message and exit
@@ -33,11 +37,7 @@ optional arguments:
   --add                 add a traffic shaping rule in addition to existing
                         rules.
 
-Traffic Control:
-  --direction {outgoing,incoming}
-                        the direction of network communication that impose
-                        traffic control. ``incoming`` requires Linux kernel
-                        version 2.6.20 or later. (default = ``outgoing``)
+Traffic Control Parameters:
   --rate BANDWIDTH_RATE, --bandwidth-rate BANDWIDTH_RATE
                         network bandwidth rate [bit per second]. valid units
                         are either: K/M/G/Kbps/Mbps/Gbps e.g. --rate 10Mbps
@@ -63,24 +63,39 @@ Traffic Control:
   --reordering REORDERING_RATE
                         packet reordering rate [%]. the valid range is 0 to
                         100. (default=0)
-  --network DST_NETWORK, --dst-network DST_NETWORK
-                        target IP address/network to control traffic
-  --port DST_PORT, --dst-port DST_PORT
-                        target destination port number to control traffic.
-  --src-port SRC_PORT   target source port number to control traffic.
-  --ipv6                apply traffic control to IPv6 packets rather than
-                        IPv4.
-  --shaping-algo {tbf,htb}
+  --shaping-algo {htb,htb}
                         shaping algorithm. defaults to htb (recommended).
 
 Routing:
-  --iptables            use iptables to traffic shaping.
+  --direction {outgoing,incoming}
+                        the direction of network communication that impose
+                        traffic control. ``incoming`` requires Linux kernel
+                        version 2.6.20 or later. (default = ``outgoing``)
+  --iptables            use iptables to traffic control.
+  --network DST_NETWORK, --dst-network DST_NETWORK
+                        target IP-address/network to control traffic
+  --exclude-dst-network EXCLUDE_DST_NETWORK
+                        exclude a shaping rule for a specific destination IP-
+                        address/network.
   --src-network SRC_NETWORK
-                        set traffic shaping rule to specific packets that
+                        set a traffic shaping rule to specific packets that
                         routed from --src-network to --dst-network. this
-                        option required to execute with the --iptables option.
-                        the shaping rule only affect to outgoing packets (no
-                        effect to if you execute with "--direction incoming"
-                        option)
+                        option required to execute with the --iptables option
+                        when you use tbf. the shaping rule only affect to
+                        outgoing packets (no effect to if you execute with "--
+                        direction incoming" option)
+  --exclude-src-network EXCLUDE_SRC_NETWORK
+                        exclude a shaping rule for a specific source IP-
+                        address/network.
+  --port DST_PORT, --dst-port DST_PORT
+                        target destination port number to control traffic.
+  --exclude-dst-port EXCLUDE_DST_PORT
+                        exclude a shaping rule for a specific destination
+                        port.
+  --src-port SRC_PORT   target source port number to control traffic.
+  --exclude-src-port EXCLUDE_SRC_PORT
+                        exclude a shaping rule for a specific source port.
+  --ipv6                apply traffic control to IPv6 packets rather than
+                        IPv4.
 
 Issue tracker: https://github.com/thombashi/tcconfig/issues
