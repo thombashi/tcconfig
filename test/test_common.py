@@ -9,8 +9,15 @@ import pytest
 from tcconfig._common import (
     is_anywhere_network,
     get_anywhere_network,
+    get_iproute2_upper_limite_rate,
+    get_no_limit_kbits,
     sanitize_network,
 )
+
+
+@pytest.fixture
+def device_option(request):
+    return request.config.getoption("--device")
 
 
 class Test_is_anywhere_network(object):
@@ -35,6 +42,12 @@ class Test_is_anywhere_network(object):
             is_anywhere_network(network, ip_version)
 
 
+class Test_get_iproute2_upper_limite_rate(object):
+
+    def test_normal(self):
+        assert get_iproute2_upper_limite_rate() == 32000000
+
+
 class Test_get_anywhere_network(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
@@ -53,6 +66,50 @@ class Test_get_anywhere_network(object):
     def test_exception(self, value, expected):
         with pytest.raises(expected):
             get_anywhere_network(value)
+
+
+class Test_get_no_limit_kbits(object):
+
+    @pytest.mark.parametrize(["speed", "expected"], [
+        [1, 1000],
+        [0, 0],
+    ])
+    def test_normal(self, monkeypatch, device_option, speed, expected):
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        monkeypatch.setattr(
+            "tcconfig._common.read_iface_speed", lambda x: speed)
+
+        assert get_no_limit_kbits(device_option) == expected
+
+    @pytest.mark.parametrize(["speed", "expected"], [
+        [-1, get_iproute2_upper_limite_rate()],
+    ])
+    def test_normal_paravirt(
+            self, monkeypatch, device_option, speed, expected):
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        monkeypatch.setattr(
+            "tcconfig._common.read_iface_speed", lambda x: speed)
+
+        assert get_no_limit_kbits(device_option) == expected
+
+    @staticmethod
+    def raise_ioerror(tc_device):
+        raise IOError()
+
+    def test_exception(
+            self, monkeypatch, device_option):
+        if device_option is None:
+            pytest.skip("device option is null")
+
+        monkeypatch.setattr(
+            "tcconfig._common.read_iface_speed", self.raise_ioerror)
+
+        assert get_no_limit_kbits(
+            device_option) == get_iproute2_upper_limite_rate()
 
 
 class Test_sanitize_network(object):
