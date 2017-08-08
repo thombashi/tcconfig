@@ -216,19 +216,24 @@ def get_iproute2_upper_limite_rate():
         "32G", kilo_size=KILO_SIZE).to_kilo_bit()
 
 
+def read_iface_speed(tc_device):
+    with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
+        return int(f.read().strip())
+
+
 def get_no_limit_kbits(tc_device):
     if typepy.is_null_string(tc_device):
         return get_iproute2_upper_limite_rate()
 
     try:
-        with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
-            speed_value = int(f.read().strip())
-            if speed_value < 0:
-                # default to the iproute2 upper limit when speed value is -1 in
-                # paravirtualized network interfaces
-                return get_iproute2_upper_limite_rate()
-            return min(
-                speed_value * KILO_SIZE,
-                get_iproute2_upper_limite_rate())
+        speed_value = read_iface_speed(tc_device)
     except IOError:
         return get_iproute2_upper_limite_rate()
+
+    if speed_value < 0:
+        # default to the iproute2 upper limit when speed value is -1 in
+        # paravirtualized network interfaces
+        return get_iproute2_upper_limite_rate()
+    return min(
+        speed_value * KILO_SIZE,
+        get_iproute2_upper_limite_rate())
