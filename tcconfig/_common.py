@@ -201,6 +201,11 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
 
 
 def get_iproute2_upper_limite_rate():
+    """
+    :return: Upper bandwidth rate limit of iproute2 [Kbps].
+    :rtype: int
+    """
+
     from ._converter import Humanreadable
 
     # upper bandwidth rate limit of iproute2 was 34,359,738,360
