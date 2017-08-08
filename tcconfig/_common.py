@@ -217,8 +217,13 @@ def get_no_limit_kbits(tc_device):
 
     try:
         with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
+            speed_value = int(f.read().strip())
+            if speed_value < 0:
+                # default to the iproute2 upper limit when speed value is -1 in
+                # paravirtualized network interfaces
+                return get_iproute2_upper_limite_rate()
             return min(
-                int(f.read().strip()) * KILO_SIZE,
+                speed_value * KILO_SIZE,
                 get_iproute2_upper_limite_rate())
     except IOError:
         return get_iproute2_upper_limite_rate()
