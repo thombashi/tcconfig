@@ -47,7 +47,7 @@ class TcQdiscParser(object):
             self.__parse_netem_param(line, "duplicate", pp.nums + ".")
             self.__parse_netem_param(line, "corrupt", pp.nums + ".")
             self.__parse_netem_param(line, "reorder", pp.nums + ".")
-            self.__parse_tbf_rate(line)
+            self.__parse_bandwidth_rate(line)
 
             yield self.__parsed_param
 
@@ -80,7 +80,7 @@ class TcQdiscParser(object):
         except pp.ParseException:
             pass
 
-    def __parse_tbf_rate(self, line):
+    def __parse_bandwidth_rate(self, line):
         parse_param_name = "rate"
         pattern = (
             pp.SkipTo(parse_param_name, include=True) +
