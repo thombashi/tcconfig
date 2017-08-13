@@ -56,7 +56,8 @@ class Humanreadable(object):
         :raises InvalidParameterError:
         """
 
-        logger.debug("readable_size: {}".format(self.__readable_size))
+        logger.debug("human readable size to bit: {}".format(
+            self.__readable_size))
 
         if not typepy.is_not_null_string(self.__readable_size):
             raise TypeError(
