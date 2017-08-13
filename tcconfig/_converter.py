@@ -53,7 +53,7 @@ class Humanreadable(object):
 
     def to_bit(self):
         """
-        :raises ValueError:
+        :raises InvalidParameterError:
         """
 
         logger.debug("readable_size: {}".format(self.__readable_size))
@@ -69,11 +69,11 @@ class Humanreadable(object):
             size = self.__RE_NUMBER.search(self.__readable_size).group()
         except AttributeError:
             raise InvalidParameterError(
-                "invalid value: {}".format(self.__readable_size))
+                "invalid value", value=self.__readable_size)
         size = float(size)
         if size < 0:
             raise InvalidParameterError(
-                "size must be greater or equals to zero")
+                "size must be greater or equals to zero", value=size)
 
         unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
@@ -88,8 +88,12 @@ class Humanreadable(object):
         return self.to_bit() / self.kilo_size
 
     def __validate_kilo_size(self):
-        if self.kilo_size not in [1000, 1024]:
-            raise ValueError("invalid kilo size: {}".format(self.kilo_size))
+        VALID_KILLO_SIZE = [1000, 1024]
+
+        if self.kilo_size not in VALID_KILLO_SIZE:
+            raise InvalidParameterError(
+                "invalid kilo size",
+                expected=VALID_KILLO_SIZE, value=self.kilo_size)
 
     def __get_coefficient(self, unit_str):
         self.__validate_kilo_size()

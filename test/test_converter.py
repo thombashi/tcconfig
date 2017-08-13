@@ -9,7 +9,10 @@ from __future__ import division
 import pytest
 
 from tcconfig._converter import Humanreadable
-from tcconfig._error import UnitNotFoundError
+from tcconfig._error import (
+    InvalidParameterError,
+    UnitNotFoundError,
+)
 
 
 class Test_to_bit(object):
@@ -65,12 +68,12 @@ class Test_to_bit(object):
         [None, 1000, TypeError],
         [True, 1000, TypeError],
         [float("nan"), 1000, TypeError],
-        ["a", 1000, ValueError],
-        ["1k0 ", 1000, ValueError],
-        ["10kb", 1000, ValueError],
-        ["-2m", 1000, ValueError],
-        ["2m", None, ValueError],
-        ["2m", 1001, ValueError],
+        ["a", 1000, InvalidParameterError],
+        ["1k0 ", 1000, InvalidParameterError],
+        ["10kb", 1000, InvalidParameterError],
+        ["-2m", 1000, InvalidParameterError],
+        ["2m", None, InvalidParameterError],
+        ["2m", 1001, InvalidParameterError],
     ])
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):

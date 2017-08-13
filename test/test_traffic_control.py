@@ -175,7 +175,7 @@ class Test_TrafficControl_validate(object):
 
         if is_invalid_param(
                 rate, delay, loss, duplicate, corrupt, reordering=None):
-            with pytest.raises(ValueError):
+            with pytest.raises(InvalidParameterError):
                 tc_obj.validate()
         else:
             tc_obj.validate()
@@ -212,31 +212,37 @@ class Test_TrafficControl_validate(object):
         tc_obj.validate()
 
     @pytest.mark.parametrize(["value", "expected"], [
-        [{"latency_ms": TrafficControl.MIN_LATENCY_MS - 1}, ValueError],
-        [{"latency_ms": TrafficControl.MAX_LATENCY_MS + 1}, ValueError],
+        [
+            {"latency_ms": TrafficControl.MIN_LATENCY_MS - 1},
+            InvalidParameterError,
+        ],
+        [
+            {"latency_ms": TrafficControl.MAX_LATENCY_MS + 1},
+            InvalidParameterError,
+        ],
 
         [
             {
                 "latency_ms": 100,
                 "latency_distro_ms": TrafficControl.MIN_LATENCY_MS - 1,
             },
-            ValueError
+            InvalidParameterError,
         ],
         [
             {
                 "latency_ms": 100,
                 "latency_distro_ms": TrafficControl.MAX_LATENCY_MS + 1,
             },
-            ValueError
+            InvalidParameterError,
         ],
 
         [
             {"packet_loss_rate": TrafficControl.MIN_PACKET_LOSS_RATE - 0.1},
-            ValueError
+            InvalidParameterError,
         ],
         [
             {"packet_loss_rate": TrafficControl.MAX_PACKET_LOSS_RATE + 0.1},
-            ValueError
+            InvalidParameterError,
         ],
 
         [
@@ -244,46 +250,46 @@ class Test_TrafficControl_validate(object):
                 "latency_ms": 100,
                 "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
             },
-            ValueError
+            InvalidParameterError,
         ],
         [
             {
                 "latency_ms": 100,
                 "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
             },
-            ValueError
+            InvalidParameterError,
         ],
 
         [
             {"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1},
-            ValueError
+            InvalidParameterError,
         ],
         [
             {"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1},
-            ValueError
+            InvalidParameterError,
         ],
 
         [
             {"reordering_rate": TrafficControl.MIN_REORDERING_RATE - 0.1},
-            ValueError
+            InvalidParameterError,
         ],
         [
             {"reordering_rate": TrafficControl.MAX_REORDERING_RATE + 0.1},
-            ValueError
+            InvalidParameterError,
         ],
 
-        [{Tc.Param.DST_NETWORK: "192.168.0."}, ValueError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ValueError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ValueError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, ValueError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, ValueError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, ValueError],
+        [{Tc.Param.DST_NETWORK: "192.168.0."}, InvalidParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, InvalidParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, InvalidParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, InvalidParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, InvalidParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, InvalidParameterError],
 
-        [{"src_port": -1}, ValueError],
-        [{"src_port": 65536}, ValueError],
+        [{"src_port": -1}, InvalidParameterError],
+        [{"src_port": 65536}, InvalidParameterError],
 
-        [{"dst_port": -1}, ValueError],
-        [{"dst_port": 65536}, ValueError],
+        [{"dst_port": -1}, InvalidParameterError],
+        [{"dst_port": 65536}, InvalidParameterError],
     ])
     def test_exception(self, device_option, value, expected):
         if device_option is None:

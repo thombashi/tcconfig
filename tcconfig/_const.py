@@ -25,6 +25,7 @@ class Network(object):
 class ShapingAlgorithm(object):
     HTB = "htb"
     TBF = "tbf"
+    LIST = [HTB, TBF]
 
 
 class Tc(object):

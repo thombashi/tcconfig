@@ -21,6 +21,7 @@ from .._const import (
     Tc,
     TrafficDirection,
 )
+from .._error import InvalidParameterError
 from .._iptables import IptablesMangleMarkEntry
 
 
@@ -174,7 +175,9 @@ class AbstractShaper(ShaperInterface):
         if self._tc_obj.direction == TrafficDirection.INCOMING:
             return "src"
 
-        raise ValueError("unknown direction: {}".format(self.direction))
+        raise InvalidParameterError(
+            "unknown direction",
+            expected=TrafficDirection.LIST, value=self.direction)
 
     def _get_unique_mangle_mark_id(self):
         mark_id = self._tc_obj.iptables_ctrl.get_unique_mark_id()

@@ -35,6 +35,7 @@ from ._const import (
     TrafficDirection,
 )
 from ._error import (
+    InvalidParameterError,
     ModuleNotFoundError,
     NetworkInterfaceNotFoundError,
     UnitNotFoundError,
@@ -434,7 +435,7 @@ def main():
         logger.error(
             "{}. ".format(e) + "--ipv6 option required to use IPv6 address.")
         return errno.EINVAL
-    except ValueError as e:
+    except InvalidParameterError as e:
         logger.error(e)
         return errno.EINVAL
 

@@ -45,7 +45,9 @@ class TbfShaper(AbstractShaper):
         if self._tc_obj.direction == TrafficDirection.INCOMING:
             return self.__IN_DEVICE_QDISC_MINOR_ID
 
-        raise ValueError("unknown direction: {}".format(self.direction))
+        raise InvalidParameterError(
+            "unknown direction",
+            expected=TrafficDirection.LIST, value=self.direction)
 
     def _get_netem_qdisc_major_id(self, base_id):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:

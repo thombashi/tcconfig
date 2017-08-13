@@ -53,16 +53,19 @@ def _validate_within_min_max(param_name, value, min_value, max_value, unit):
         unit = "[{:s}]".format(unit)
 
     if value > max_value:
-        raise ValueError(
-            "'{0:s}' is too high: expected<={1:s}{3:s}, actual={2:s}{3:s}".format(
-                param_name, DataProperty(max_value).to_str(),
+        raise InvalidParameterError(
+            "'{:s}' is too high".format(param_name),
+            expected="<={:s}{:s}".format(
+                DataProperty(max_value).to_str(), unit),
+            value="{:s}{:s}".format(
                 DataProperty(value).to_str(), unit))
 
     if value < min_value:
-        raise ValueError(
-            "'{0:s}' is too low: expected>={1:s}{3:s}, actual={2:s}{3:s}".format(
-                param_name, DataProperty(min_value).to_str(),
-                DataProperty(value).to_str(), unit))
+        raise InvalidParameterError(
+            "'{:s}' is too low".format(param_name),
+            expected=">={:s}{:s}".format(
+                DataProperty(min_value).to_str(), unit),
+            value="{:s}{:s}".format(DataProperty(value).to_str(), unit))
 
 
 class TrafficControl(object):
@@ -108,7 +111,7 @@ class TrafficControl(object):
         try:
             return Humanreadable(
                 self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
-        except (InvalidParameterError, UnitNotFoundError, TypeError, ValueError):
+        except (InvalidParameterError, UnitNotFoundError, TypeError):
             return None
 
     @property
@@ -268,7 +271,8 @@ class TrafficControl(object):
 
         if not self.is_enable_iptables:
             raise InvalidParameterError(
-                "--iptables option required to use --src-network option")
+                "--iptables option required to use --src-network option",
+                value=self.is_enable_iptables)
 
     def validate_bandwidth_rate(self):
         if typepy.is_null_string(self.__bandwidth_rate):
@@ -280,13 +284,12 @@ class TrafficControl(object):
 
         if not RealNumber(bandwidth_rate).is_type():
             raise InvalidParameterError(
-                "bandwidth_rate must be number: actual={}".format(
-                    bandwidth_rate))
+                "bandwidth_rate must be number", value=bandwidth_rate)
 
         if bandwidth_rate <= 0:
             raise InvalidParameterError(
-                "bandwidth_rate must be greater than zero: actual={}".format(
-                    bandwidth_rate))
+                "bandwidth_rate must be greater than zero",
+                value=bandwidth_rate)
 
         no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
         if bandwidth_rate > no_limit_kbits:
@@ -307,13 +310,17 @@ class TrafficControl(object):
         if self.direction == TrafficDirection.INCOMING:
             return self.ifb_device
 
-        raise ValueError("unknown direction: {}".format(self.direction))
+        raise InvalidParameterError(
+            "unknown direction",
+            expected=TrafficDirection.LIST, value=self.direction)
 
     def get_tc_command(self, sub_command):
         valid_sub_command_list = (
             Tc.Subcommand.CLASS, Tc.Subcommand.FILTER, Tc.Subcommand.QDISC)
         if sub_command not in valid_sub_command_list:
-            raise ValueError("unknown sub command: {}".format(sub_command))
+            raise InvalidParameterError(
+                "unknown sub command",
+                expected=valid_sub_command_list, value=sub_command)
 
         if (self.is_change_shaper and
                 sub_command in (Tc.Subcommand.QDISC, Tc.Subcommand.FILTER)):
@@ -386,8 +393,9 @@ class TrafficControl(object):
             self.__shaper = TbfShaper(self)
             return
 
-        raise ValueError(
-            "unknown shaping algorithm: {}".format(shaping_algorithm))
+        raise InvalidParameterError(
+            "unknown shaping algorithm",
+            expected=ShapingAlgorithm.LIST, value=shaping_algorithm)
 
     def __validate_network_delay(self):
         _validate_within_min_max(
@@ -421,7 +429,7 @@ class TrafficControl(object):
 
     def __validate_reordering_and_delay(self):
         if self.reordering_rate and not self.latency_ms:
-            raise ValueError(
+            raise InvalidParameterError(
                 'reordering needs latency to be specified: set latency > 0')
 
     def __validate_netem_parameter(self):
@@ -447,7 +455,7 @@ class TrafficControl(object):
                 or netem_param_value <= 0
                 for netem_param_value in netem_param_value_list
         ]):
-            raise ValueError(
+            raise InvalidParameterError(
                 "there is no valid net emulation parameter value. "
                 "at least one or more following parameters are required: "
                 "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
