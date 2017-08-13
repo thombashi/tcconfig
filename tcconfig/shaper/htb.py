@@ -214,7 +214,7 @@ class HtbShaper(AbstractShaper):
 
     def __get_unique_qdisc_minor_id(self):
         if (self._tc_obj.tc_command_output != TcCommandOutput.NOT_SET or
-                self._tc_obj.is_change_shaper):
+                self._tc_obj.is_change_shaping_rule):
             self.__qdisc_minor_id_count += 1
 
             return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count

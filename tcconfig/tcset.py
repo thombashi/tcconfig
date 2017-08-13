@@ -71,7 +71,7 @@ def parse_option():
         "--overwrite", action="store_true", default=False,
         help="overwrite existing traffic shaping rules.")
     group.add_argument(
-        "--change", dest="is_change_shaper", action="store_true",
+        "--change", dest="is_change_shaping_rule", action="store_true",
         default=False,
         help="""change existing traffic shaping rules to the new one.
         this option reduces the shaping rule switching side effect
@@ -79,7 +79,8 @@ def parse_option():
         note: the tcset command fail when there are no existing shaping rules.
         """)
     group.add_argument(
-        "--add", dest="is_add_shaping_rule", action="store_true", default=False,
+        "--add", dest="is_add_shaping_rule", action="store_true",
+        default=False,
         help="add a traffic shaping rule in addition to existing rules.")
 
     group = parser.parser.add_argument_group("Traffic Control Parameters")
@@ -415,7 +416,7 @@ def main():
             dst_port=options.dst_port,
             exclude_dst_port=options.exclude_dst_port,
             is_ipv6=options.is_ipv6,
-            is_change_shaper=options.is_change_shaper,
+            is_change_shaping_rule=options.is_change_shaping_rule,
             is_add_shaping_rule=options.is_add_shaping_rule,
             is_enable_iptables=options.is_enable_iptables,
             shaping_algorithm=options.shaping_algorithm,

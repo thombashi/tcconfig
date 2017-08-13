@@ -171,8 +171,8 @@ class TrafficControl(object):
         return self.__exclude_dst_port
 
     @property
-    def is_change_shaper(self):
-        return self.__is_change_shaper
+    def is_change_shaping_rule(self):
+        return self.__is_change_shaping_rule
 
     @property
     def is_add_shaping_rule(self):
@@ -220,7 +220,8 @@ class TrafficControl(object):
             src_network=None, exclude_src_network=None,
             dst_port=None, exclude_dst_port=None,
             src_port=None, exclude_src_port=None,
-            is_ipv6=False, is_change_shaper=False, is_add_shaping_rule=False,
+            is_ipv6=False,
+            is_change_shaping_rule=False, is_add_shaping_rule=False,
             is_enable_iptables=True,
             shaping_algorithm=None,
             tc_command_output=TcCommandOutput.NOT_SET,
@@ -244,7 +245,7 @@ class TrafficControl(object):
         self.__dst_port = dst_port
         self.__exclude_dst_port = exclude_dst_port
         self.__is_ipv6 = is_ipv6
-        self.__is_change_shaper = is_change_shaper
+        self.__is_change_shaping_rule = is_change_shaping_rule
         self.__is_add_shaping_rule = is_add_shaping_rule
         self.__is_enable_iptables = is_enable_iptables
         self.__tc_command_output = tc_command_output
@@ -322,13 +323,13 @@ class TrafficControl(object):
                 "unknown sub command",
                 expected=valid_sub_command_list, value=sub_command)
 
-        if (self.is_change_shaper and
+        if (self.is_change_shaping_rule and
                 sub_command in (Tc.Subcommand.QDISC, Tc.Subcommand.FILTER)):
             # no need to execute
             return None
 
         return "tc {:s} {:s}".format(
-            sub_command, "change" if self.is_change_shaper else "add")
+            sub_command, "change" if self.is_change_shaping_rule else "add")
 
     def get_command_history(self):
         def tc_filter(command):
