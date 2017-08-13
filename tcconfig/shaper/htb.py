@@ -69,7 +69,7 @@ class HtbShaper(AbstractShaper):
 
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
-        if self._tc_obj.is_add_shaper:
+        if self._tc_obj.is_add_shaping_rule:
             message = None
         else:
             message = self._tc_obj.EXISTS_MSG_TEMPLATE.format(
@@ -185,20 +185,20 @@ class HtbShaper(AbstractShaper):
             " ".join(command_item_list)).run()
 
     def set_shaping(self):
-        is_add_shaper = self._tc_obj.is_add_shaper
+        is_add_shaping_rule = self._tc_obj.is_add_shaping_rule
 
         with logging_context("_make_qdisc"):
             try:
                 self._make_qdisc()
             except TcAlreadyExist:
-                if not is_add_shaper:
+                if not is_add_shaping_rule:
                     return errno.EINVAL
 
         with logging_context("_add_rate"):
             try:
                 self._add_rate()
             except TcAlreadyExist:
-                if not is_add_shaper:
+                if not is_add_shaping_rule:
                     return errno.EINVAL
 
         with logging_context("_set_netem"):
@@ -279,7 +279,7 @@ class HtbShaper(AbstractShaper):
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
         self.__classid_wo_shaping = classid
 
-        if self._tc_obj.is_add_shaper:
+        if self._tc_obj.is_add_shaping_rule:
             message = None
         else:
             message = self._tc_obj.EXISTS_MSG_TEMPLATE.format(

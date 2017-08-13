@@ -79,7 +79,7 @@ def parse_option():
         note: the tcset command fail when there are no existing shaping rules.
         """)
     group.add_argument(
-        "--add", dest="is_add_shaper", action="store_true", default=False,
+        "--add", dest="is_add_shaping_rule", action="store_true", default=False,
         help="add a traffic shaping rule in addition to existing rules.")
 
     group = parser.parser.add_argument_group("Traffic Control Parameters")
@@ -416,7 +416,7 @@ def main():
             exclude_dst_port=options.exclude_dst_port,
             is_ipv6=options.is_ipv6,
             is_change_shaper=options.is_change_shaper,
-            is_add_shaper=options.is_add_shaper,
+            is_add_shaping_rule=options.is_add_shaping_rule,
             is_enable_iptables=options.is_enable_iptables,
             shaping_algorithm=options.shaping_algorithm,
             tc_command_output=options.tc_command_output,
@@ -457,7 +457,7 @@ def main():
         set_log_level(options.log_level)
 
     if (
-            options.is_add_shaper and
+            options.is_add_shaping_rule and
             TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
     ):
         logger.error(

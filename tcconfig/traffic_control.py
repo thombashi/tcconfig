@@ -175,8 +175,8 @@ class TrafficControl(object):
         return self.__is_change_shaper
 
     @property
-    def is_add_shaper(self):
-        return self.__is_add_shaper
+    def is_add_shaping_rule(self):
+        return self.__is_add_shaping_rule
 
     @property
     def is_enable_iptables(self):
@@ -220,7 +220,7 @@ class TrafficControl(object):
             src_network=None, exclude_src_network=None,
             dst_port=None, exclude_dst_port=None,
             src_port=None, exclude_src_port=None,
-            is_ipv6=False, is_change_shaper=False, is_add_shaper=False,
+            is_ipv6=False, is_change_shaper=False, is_add_shaping_rule=False,
             is_enable_iptables=True,
             shaping_algorithm=None,
             tc_command_output=TcCommandOutput.NOT_SET,
@@ -245,7 +245,7 @@ class TrafficControl(object):
         self.__exclude_dst_port = exclude_dst_port
         self.__is_ipv6 = is_ipv6
         self.__is_change_shaper = is_change_shaper
-        self.__is_add_shaper = is_add_shaper
+        self.__is_add_shaping_rule = is_add_shaping_rule
         self.__is_enable_iptables = is_enable_iptables
         self.__tc_command_output = tc_command_output
 
