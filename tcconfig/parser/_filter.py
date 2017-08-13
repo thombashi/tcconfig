@@ -79,7 +79,7 @@ class TcFilterParser(AbstractParser):
         self.__parse_idx = 0
 
         while self.__parse_idx < len(self.__buffer):
-            line = self.__buffer[self.__parse_idx].strip()
+            line = self._to_unicode(self.__buffer[self.__parse_idx].strip())
             self.__parse_idx += 1
 
             if typepy.is_null_string(line):
@@ -167,20 +167,17 @@ class TcFilterParser(AbstractParser):
         }
 
     def __parse_flow_id(self, line):
-        parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
-            self._to_unicode(line.lstrip()))
+        parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(line)
         self.__flow_id = parsed_list[-1]
         logger.debug("succeed to parse flow id: flow-id={}, line={}".format(
             self.__flow_id, line))
 
     def __parse_protocol(self, line):
-        parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(
-            self._to_unicode(line.lstrip()))
+        parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(line)
         self.__protocol = parsed_list[-1]
 
     def __parse_mangle_mark(self, line):
-        parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(
-            self._to_unicode(line.lstrip()))
+        parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(line)
         self.__classid = parsed_list[-1]
         self.__handle = int("0" + parsed_list[-3], 16)
         logger.debug(
@@ -189,8 +186,7 @@ class TcFilterParser(AbstractParser):
                 self.__classid, self.__handle, line))
 
     def __parse_filter_line(self, line):
-        parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
-            self._to_unicode(line))
+        parsed_list = self.__FILTER_MATCH_PATTERN.parseString(line)
         value_hex, mask_hex = parsed_list[1].split("/")
         match_id = int(parsed_list[3])
 

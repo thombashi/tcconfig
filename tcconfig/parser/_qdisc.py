@@ -71,7 +71,7 @@ class TcQdiscParser(AbstractParser):
             pp.Word(word_pattern))
 
         try:
-            result = pattern.parseString(self._to_unicode(line))[-1]
+            result = pattern.parseString(line)[-1]
             if typepy.is_not_null_string(result):
                 self.__parsed_param[parse_param_name] = result
         except pp.ParseException:
