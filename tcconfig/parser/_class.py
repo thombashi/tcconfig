@@ -12,10 +12,10 @@ import re
 import typepy
 
 from .._const import ShapingAlgorithm
-from ._common import _to_unicode
+from ._interface import AbstractParser
 
 
-class TcClassParser(object):
+class TcClassParser(AbstractParser):
 
     class Pattern(object):
         CLASS_ID = "[0-9a-z:]+"
@@ -25,24 +25,21 @@ class TcClassParser(object):
         CLASS_ID = "classid"
         RATE = "rate"
 
-    def __init__(self):
-        self.__clear()
-
     def parse(self, text):
         for line in text.splitlines():
-            self.__clear()
+            self._clear()
 
             if typepy.is_null_string(line):
                 continue
 
-            line = _to_unicode(line.lstrip())
+            line = self._to_unicode(line.lstrip())
 
             self.__parse_classid(line)
             self.__parse_rate(line)
 
             yield self.__parsed_param
 
-    def __clear(self):
+    def _clear(self):
         self.__parsed_param = {}
 
     def __parse_classid(self, line):

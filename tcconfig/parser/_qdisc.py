@@ -13,13 +13,10 @@ import typepy
 
 import pyparsing as pp
 
-from ._common import _to_unicode
+from ._interface import AbstractParser
 
 
-class TcQdiscParser(object):
-
-    def __init__(self):
-        self.__clear()
+class TcQdiscParser(AbstractParser):
 
     def parse(self, text):
         if typepy.is_null_string(text):
@@ -31,12 +28,12 @@ class TcQdiscParser(object):
             if typepy.is_null_string(line):
                 continue
 
-            line = _to_unicode(line.lstrip())
+            line = self._to_unicode(line.lstrip())
 
             if re.search("qdisc netem|qdisc tbf", line) is None:
                 continue
 
-            self.__clear()
+            self._clear()
 
             if re.search("qdisc netem", line) is not None:
                 self.__parse_netem_param(line, "parent", pp.hexnums + ":")
@@ -51,7 +48,7 @@ class TcQdiscParser(object):
 
             yield self.__parsed_param
 
-    def __clear(self):
+    def _clear(self):
         self.__parsed_param = {}
 
     def __parse_netem_delay_distro(self, line):
@@ -74,7 +71,7 @@ class TcQdiscParser(object):
             pp.Word(word_pattern))
 
         try:
-            result = pattern.parseString(_to_unicode(line))[-1]
+            result = pattern.parseString(self._to_unicode(line))[-1]
             if typepy.is_not_null_string(result):
                 self.__parsed_param[parse_param_name] = result
         except pp.ParseException:

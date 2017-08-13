@@ -16,10 +16,10 @@ import pyparsing as pp
 
 from .._const import Tc
 from .._logger import logger
-from ._common import _to_unicode
+from ._interface import AbstractParser
 
 
-class TcFilterParser(object):
+class TcFilterParser(AbstractParser):
 
     class FilterMatchIdIpv4(object):
         INCOMING_NETWORK = 12
@@ -60,16 +60,16 @@ class TcFilterParser(object):
         return self.__protocol
 
     def __init__(self, ip_version):
-        self.__ip_version = ip_version
-        self.__clear()
+        super(TcFilterParser, self).__init__()
 
+        self.__ip_version = ip_version
         self.__buffer = None
         self.__parse_idx = 0
 
         self.__protocol = None
 
     def parse(self, text):
-        self.__clear()
+        self._clear()
 
         if typepy.is_null_string(text):
             return []
@@ -94,7 +94,7 @@ class TcFilterParser(object):
                     Tc.Param.CLASS_ID: self.__classid,
                     Tc.Param.HANDLE: self.__handle,
                 })
-                self.__clear()
+                self._clear()
                 continue
 
             tc_filter = self.__get_filter()
@@ -105,7 +105,7 @@ class TcFilterParser(object):
                 if tc_filter.get(Tc.Param.FLOW_ID):
                     logger.debug("store filter: {}".format(tc_filter))
                     filter_data_matrix.append(tc_filter)
-                    self.__clear()
+                    self._clear()
                     self.__parse_flow_id(line)
 
                 continue
@@ -140,13 +140,13 @@ class TcFilterParser(object):
 
         match = re.search(
             "Egress Redirect to device ifb[\d]+",
-            _to_unicode(text), re.MULTILINE)
+            self._to_unicode(text), re.MULTILINE)
         if match is None:
             return None
 
         return re.search("ifb[\d]+", match.group()).group()
 
-    def __clear(self):
+    def _clear(self):
         self.__flow_id = None
         self.__filter_src_network = None
         self.__filter_dst_network = None
@@ -168,19 +168,19 @@ class TcFilterParser(object):
 
     def __parse_flow_id(self, line):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(
-            _to_unicode(line.lstrip()))
+            self._to_unicode(line.lstrip()))
         self.__flow_id = parsed_list[-1]
         logger.debug("succeed to parse flow id: flow-id={}, line={}".format(
             self.__flow_id, line))
 
     def __parse_protocol(self, line):
         parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(
-            _to_unicode(line.lstrip()))
+            self._to_unicode(line.lstrip()))
         self.__protocol = parsed_list[-1]
 
     def __parse_mangle_mark(self, line):
         parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(
-            _to_unicode(line.lstrip()))
+            self._to_unicode(line.lstrip()))
         self.__classid = parsed_list[-1]
         self.__handle = int("0" + parsed_list[-3], 16)
         logger.debug(
@@ -190,7 +190,7 @@ class TcFilterParser(object):
 
     def __parse_filter_line(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(
-            _to_unicode(line))
+            self._to_unicode(line))
         value_hex, mask_hex = parsed_list[1].split("/")
         match_id = int(parsed_list[3])
 
