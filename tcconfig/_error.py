@@ -43,6 +43,30 @@ class InvalidParameterError(ValueError):
     a traffic shaping rule.
     """
 
+    def __init__(self, *args, **kwargs):
+        self.__value = kwargs.pop("value", None)
+        self.__expected = kwargs.pop("expected", None)
+
+        super(ValueError, self).__init__(*args)
+
+    def __str__(self, *args, **kwargs):
+        item_list = [ValueError.__str__(self, *args, **kwargs)]
+        extra_item_list = []
+
+        if self.__expected:
+            extra_item_list.append("expected={}".format(self.__expected))
+
+        if self.__value:
+            extra_item_list.append("value={}".format(self.__value))
+
+        if extra_item_list:
+            item_list.extend([":", ", ".join(extra_item_list)])
+
+        return " ".join(item_list)
+
+    def __repr__(self, *args, **kwargs):
+        return self.__str__(*args, **kwargs)
+
 
 class UnitNotFoundError(InvalidParameterError):
     """
