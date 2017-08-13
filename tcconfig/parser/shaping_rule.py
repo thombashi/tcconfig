@@ -22,7 +22,6 @@ from .._const import (
     TrafficDirection,
 )
 from .._iptables import IptablesMangleController
-from .._logger import logger
 from ._class import TcClassParser
 from ._filter import TcFilterParser
 from ._qdisc import TcQdiscParser
@@ -130,17 +129,18 @@ class TcShapingRuleParser(object):
         shaping_rule_mapping = {}
 
         for filter_param in filter_param_list:
-            logger.debug(
+            self.__logger.debug(
                 "{:s} param: {}".format(Tc.Subcommand.FILTER, filter_param))
             shaping_rule = {}
 
             filter_key = self.__get_filter_key(filter_param)
             if typepy.is_null_string(filter_key):
-                logger.debug("empty filter key: {}".format(filter_param))
+                self.__logger.debug(
+                    "empty filter key: {}".format(filter_param))
                 continue
 
             for qdisc_param in qdisc_param_list:
-                logger.debug(
+                self.__logger.debug(
                     "{:s} param: {}".format(Tc.Subcommand.QDISC, qdisc_param))
 
                 if qdisc_param.get(Tc.Param.PARENT) not in (
@@ -156,7 +156,7 @@ class TcShapingRuleParser(object):
                 shaping_rule.update(work_qdisc_param)
 
             for class_param in class_param_list:
-                logger.debug(
+                self.__logger.debug(
                     "{:s} param: {}".format(Tc.Subcommand.CLASS, class_param))
 
                 if class_param.get(Tc.Param.CLASS_ID) not in (
@@ -171,36 +171,34 @@ class TcShapingRuleParser(object):
             if not shaping_rule:
                 continue
 
-            logger.debug(
+            self.__logger.debug(
                 "shaping rule found: {} {}".format(filter_key, shaping_rule))
 
             shaping_rule_mapping[filter_key] = shaping_rule
 
         return shaping_rule_mapping
 
-    @staticmethod
-    def __parse_tc_qdisc(device):
+    def __parse_tc_qdisc(self, device):
         try:
             param_list = list(TcQdiscParser().parse(
                 run_tc_show(Tc.Subcommand.QDISC, device)))
         except ValueError:
             return []
 
-        logger.debug("tc qdisc parse result: {}".format(param_list))
+        self.__logger.debug("tc qdisc parse result: {}".format(param_list))
 
         return param_list
 
     def __parse_tc_filter(self, device):
         param_list = list(TcFilterParser(self.__ip_version).parse(
             run_tc_show(Tc.Subcommand.FILTER, device)))
-        logger.debug("tc filter parse result: {}".format(param_list))
+        self.__logger.debug("tc filter parse result: {}".format(param_list))
 
         return param_list
 
-    @staticmethod
-    def __parse_tc_class(device):
+    def __parse_tc_class(self, device):
         param_list = list(TcClassParser().parse(
             run_tc_show(Tc.Subcommand.CLASS, device)))
-        logger.debug("tc class parse result: {}".format(param_list))
+        self.__logger.debug("tc class parse result: {}".format(param_list))
 
         return param_list
