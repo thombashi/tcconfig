@@ -172,7 +172,7 @@ class TcShapingRuleParser(object):
                 continue
 
             logger.debug(
-                "rule found: {} {}".format(filter_key, shaping_rule))
+                "shaping rule found: {} {}".format(filter_key, shaping_rule))
 
             shaping_rule_mapping[filter_key] = shaping_rule
 
