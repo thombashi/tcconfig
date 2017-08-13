@@ -149,7 +149,7 @@ filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""),
         ],
     ])
     def test_normal(self, filter_parser_ipv4, value, expected):
-        actual = filter_parser_ipv4.parse_filter(value)
+        actual = filter_parser_ipv4.parse(value)
 
         print("[expected]\n{}".format(expected))
         print("\n[actual]\n{}".format(actual))
@@ -257,7 +257,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
         ],
     ])
     def test_normal(self, filter_parser_ipv6, value, expected):
-        actual = filter_parser_ipv6.parse_filter(value)
+        actual = filter_parser_ipv6.parse(value)
 
         print("[expected]\n{}".format(expected))
         print("\n[actual]\n{}".format(actual))

@@ -191,7 +191,7 @@ class TcShapingRuleParser(object):
         return param_list
 
     def __parse_tc_filter(self, device):
-        param_list = list(TcFilterParser(self.__ip_version).parse_filter(
+        param_list = list(TcFilterParser(self.__ip_version).parse(
             run_tc_show(Tc.Subcommand.FILTER, device)))
         logger.debug("tc filter parse result: {}".format(param_list))
 

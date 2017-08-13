@@ -68,7 +68,7 @@ class TcFilterParser(object):
 
         self.__protocol = None
 
-    def parse_filter(self, text):
+    def parse(self, text):
         self.__clear()
 
         if typepy.is_null_string(text):
