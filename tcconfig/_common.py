@@ -151,6 +151,9 @@ def run_tc_show(subcommand, device):
     if subcommand not in Tc.Subcommand.LIST:
         raise ValueError("unexpected tc sub command: {}".format(subcommand))
 
+    if typepy.is_null_string(device):
+        raise ValueError("device must be a string: {}".format(device))
+
     runner = spr.SubprocessRunner(
         "tc {:s} show dev {:s}".format(subcommand, device))
     runner.run()
