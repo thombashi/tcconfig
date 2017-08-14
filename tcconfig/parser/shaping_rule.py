@@ -40,6 +40,7 @@ class TcShapingRuleParser(object):
         self.__logger = logger
 
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
+        self.__ifb_device = self.__get_ifb_from_device()
 
         self.__iptables_ctrl = IptablesMangleController(True, ip_version)
 
@@ -49,7 +50,7 @@ class TcShapingRuleParser(object):
                 TrafficDirection.OUTGOING: self.__get_shaping_rule(
                     self.device),
                 TrafficDirection.INCOMING: self.__get_shaping_rule(
-                    self.__get_ifb_from_device()),
+                    self.__ifb_device),
             },
         }
 
@@ -57,11 +58,10 @@ class TcShapingRuleParser(object):
         return self.__parse_tc_filter(self.device)
 
     def get_incoming_tc_filter(self):
-        ifb_device = self.__get_ifb_from_device()
-        if ifb_device is None:
+        if not self.__ifb_device:
             return []
 
-        return self.__parse_tc_filter(ifb_device)
+        return self.__parse_tc_filter(self.__ifb_device)
 
     def __get_ifb_from_device(self):
         filter_runner = subprocrunner.SubprocessRunner(
