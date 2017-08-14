@@ -12,7 +12,7 @@ import json
 import pytest
 from subprocrunner import SubprocessRunner
 
-from tcconfig._const import TcCommand
+from tcconfig._const import Tc
 
 
 @pytest.fixture
@@ -59,13 +59,13 @@ class Test_tcconfig(object):
         device_option = "--device {:s}".format(device_value)
 
         SubprocessRunner("{:s} {:s}".format(
-            TcCommand.TCDEL, device_option)).run()
+            Tc.Command.TCDEL, device_option)).run()
         command = " ".join(
-            ["{:s} -f ".format(TcCommand.TCSET), str(p), overwrite])
+            ["{:s} -f ".format(Tc.Command.TCSET), str(p), overwrite])
         SubprocessRunner(command).run()
 
         runner = SubprocessRunner("{:s} {:s}".format(
-            TcCommand.TCSHOW, device_option))
+            Tc.Command.TCSHOW, device_option))
         runner.run()
 
         print("[expected]\n{}\n".format(config))
@@ -75,4 +75,4 @@ class Test_tcconfig(object):
         assert json.loads(runner.stdout) == json.loads(config)
 
         SubprocessRunner("{:s} {:s}".format(
-            TcCommand.TCDEL, device_option)).run()
+            Tc.Command.TCDEL, device_option)).run()

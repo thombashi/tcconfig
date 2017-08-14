@@ -30,7 +30,6 @@ from ._const import (
     Network,
     ShapingAlgorithm,
     Tc,
-    TcCommand,
     TcCommandOutput,
     TrafficDirection,
 )
@@ -236,7 +235,7 @@ class TcConfigLoader(object):
 
             if self.is_overwrite:
                 command_list.append("{:s} {:s}".format(
-                    TcCommand.TCDEL, device_option))
+                    Tc.Command.TCDEL, device_option))
 
             for direction, direction_table in six.iteritems(device_table):
                 is_first_set = True
@@ -284,7 +283,7 @@ class TcConfigLoader(object):
                     is_first_set = False
 
                     command_list.append(
-                        " ".join([TcCommand.TCSET] + option_list))
+                        " ".join([Tc.Command.TCSET] + option_list))
 
         return command_list
 
@@ -429,7 +428,7 @@ def main():
 
     if options.tc_command_output == TcCommandOutput.SCRIPT:
         write_tc_script(
-            TcCommand.TCSET, command_history, filename_suffix=options.device)
+            Tc.Command.TCSET, command_history, filename_suffix=options.device)
         return 0
 
     logger.debug("command history\n{}".format(command_history))

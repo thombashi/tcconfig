@@ -21,7 +21,6 @@ from ._const import (
     KILO_SIZE,
     Network,
     Tc,
-    TcCommand,
     TcCommandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
@@ -181,7 +180,7 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
         "# tc script file:",
     ]
 
-    if tcconfig_command != TcCommand.TCSHOW:
+    if tcconfig_command != Tc.Command.TCSHOW:
         script_line_list.extend([
             "#   the following command sequence lead to equivalent results as",
             "#   '{:s}'.".format(

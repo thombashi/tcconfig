@@ -9,7 +9,7 @@ import json
 import pytest
 from subprocrunner import SubprocessRunner
 
-from tcconfig._const import TcCommand
+from tcconfig._const import Tc
 
 
 @pytest.fixture
@@ -30,10 +30,10 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         device_option = "--device {:s}".format(device_value)
-        tcdel_command = "{:s} {:s}".format(TcCommand.TCDEL, device_option)
+        tcdel_command = "{:s} {:s}".format(Tc.Command.TCDEL, device_option)
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "10",
             "--delay-distro", "2",
@@ -47,7 +47,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "1",
             "--loss", "1",
@@ -57,7 +57,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "10",
             "--delay-distro", "2",
@@ -66,7 +66,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "1",
             "--loss", "0.02",
@@ -80,7 +80,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         runner = SubprocessRunner("{:s} {:s}".format(
-            TcCommand.TCSHOW, device_option))
+            Tc.Command.TCSHOW, device_option))
         runner.run()
 
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
@@ -129,10 +129,10 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         device_option = "--device {:s}".format(device_value)
-        tcdel_command = "{:s} {:s}".format(TcCommand.TCDEL, device_option)
+        tcdel_command = "{:s} {:s}".format(Tc.Command.TCDEL, device_option)
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "10",
             "--delay-distro", "2",
@@ -147,7 +147,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "1",
             "--loss", "1",
@@ -158,7 +158,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "10",
             "--delay-distro", "2",
@@ -168,7 +168,7 @@ class Test_tcshow(object):
         ])).run() == 0
 
         assert SubprocessRunner(" ".join([
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             device_option,
             "--delay", "1",
             "--loss", "0.02",

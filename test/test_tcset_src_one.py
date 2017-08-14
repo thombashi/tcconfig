@@ -16,7 +16,7 @@ from subprocrunner import SubprocessRunner
 import typepy
 
 from tcconfig._const import (
-    TcCommand,
+    Tc,
     TrafficDirection,
 )
 from .common import execute_tcdel
@@ -90,7 +90,7 @@ class Test_tcset_one_network(object):
 
         # w/ latency tc ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--src-network {:s}".format(local_host_option),
             "--delay {:d}".format(delay),
@@ -149,7 +149,7 @@ class Test_tcset_exclude(object):
 
         # w/o latency tc (exclude network) ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--direction {:s}".format(TrafficDirection.INCOMING),
             "--exclude-dst-network {:s}".format(local_host_option),

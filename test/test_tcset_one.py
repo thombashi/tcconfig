@@ -14,7 +14,7 @@ import pytest
 from subprocrunner import SubprocessRunner
 import typepy
 
-from tcconfig._const import TcCommand
+from tcconfig._const import Tc
 
 from .common import execute_tcdel
 
@@ -80,7 +80,7 @@ class Test_tcset_one_network(object):
 
         # w/ latency tc ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--delay {:d}".format(delay),
             "--shaping-algo {:s}".format(shaping_algo),
@@ -117,7 +117,7 @@ class Test_tcset_one_network(object):
 
         # w/ latency tc ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--delay {:d}".format(delay),
             "--delay-distro {:d}".format(delay_distro),
@@ -159,7 +159,7 @@ class Test_tcset_one_network(object):
 
         # w/ packet loss tc ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "{:s} {:f}".format(option, value),
         ]
@@ -194,7 +194,7 @@ class Test_tcset_one_network(object):
 
         # w/ packet duplicate tc ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "{:s} {:f}".format(option, value),
         ]
@@ -225,7 +225,7 @@ class Test_tcset_one_network(object):
 
         # w/ latency tc ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--delay {:d}".format(100),
         ]
@@ -236,7 +236,7 @@ class Test_tcset_one_network(object):
 
         # exclude certain network ---
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--exclude-dst-network {:s}/24".format(
                 ".".join(dst_host_option.split(".")[:3] + ["0"])),

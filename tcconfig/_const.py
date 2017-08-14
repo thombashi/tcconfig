@@ -30,6 +30,11 @@ class ShapingAlgorithm(object):
 
 class Tc(object):
 
+    class Command(object):
+        TCSET = "tcset"
+        TCDEL = "tcdel"
+        TCSHOW = "tcshow"
+
     class Subcommand(object):
         CLASS = "class"
         FILTER = "filter"
@@ -48,12 +53,6 @@ class Tc(object):
         PROTOCOL = "protocol"
         SRC_NETWORK = "src-network"
         SRC_PORT = "src-port"
-
-
-class TcCommand(object):
-    TCSET = "tcset"
-    TCDEL = "tcdel"
-    TCSHOW = "tcshow"
 
 
 class TcCommandOutput(object):

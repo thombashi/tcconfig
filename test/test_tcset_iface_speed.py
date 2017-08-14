@@ -9,7 +9,7 @@ from __future__ import absolute_import
 import pytest
 from subprocrunner import SubprocessRunner
 
-from tcconfig._const import TcCommand
+from tcconfig._const import Tc
 
 from .common import execute_tcdel
 
@@ -34,7 +34,7 @@ class Test_tcset_iface_speed(object):
             "tcconfig._common.read_iface_speed", lambda x: speed)
 
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--rate {:s}".format("1kbps"),
         ]
@@ -56,7 +56,7 @@ class Test_tcset_iface_speed(object):
             "tcconfig._common.read_iface_speed", lambda x: "1")
 
         command_list = [
-            TcCommand.TCSET,
+            Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--rate {:s}".format(rate),
         ]
