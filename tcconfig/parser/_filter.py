@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 from collections import OrderedDict
 import ipaddress
+import json
 import re
 
 import typepy
@@ -132,6 +133,10 @@ class TcFilterParser(AbstractParser):
 
         if self.__flow_id:
             filter_data_matrix.append(self.__get_filter())
+
+        logger.debug("{}: {}".format(
+            Tc.Subcommand.FILTER,
+            json.dumps(filter_data_matrix, indent=4)))
 
         return filter_data_matrix
 
