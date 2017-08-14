@@ -188,20 +188,16 @@ class TcShapingRuleParser(object):
         except ValueError:
             return []
 
-        self.__logger.debug("tc qdisc parse result: {}".format(param_list))
-
         return param_list
 
     def __parse_tc_filter(self, device):
         param_list = self.__filter_parser.parse(
             run_tc_show(Tc.Subcommand.FILTER, device))
-        self.__logger.debug("tc filter parse result: {}".format(param_list))
 
         return param_list
 
     def __parse_tc_class(self, device):
         param_list = TcClassParser(self.__con).parse(
             run_tc_show(Tc.Subcommand.CLASS, device))
-        self.__logger.debug("tc class parse result: {}".format(param_list))
 
         return param_list

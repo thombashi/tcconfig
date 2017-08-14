@@ -140,7 +140,7 @@ class TcFilterParser(AbstractParser):
             attr_name_list=list(self.__get_filter()),
             data_matrix=filter_data_matrix)
 
-        logger.debug("{}: {}".format(
+        logger.debug("tc {:s} parse result: {}".format(
             Tc.Subcommand.FILTER,
             json.dumps(filter_data_matrix, indent=4)))
 

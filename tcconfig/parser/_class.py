@@ -57,7 +57,7 @@ class TcClassParser(AbstractParser):
             attr_name_list=[self.Key.CLASS_ID, self.Key.RATE],
             data_matrix=entry_list)
 
-        logger.debug("{}: {}".format(
+        logger.debug("tc {:s} parse result: {}".format(
             Tc.Subcommand.CLASS,
             json.dumps(entry_list, indent=4)))
 

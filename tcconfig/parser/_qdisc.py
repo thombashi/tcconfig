@@ -67,7 +67,7 @@ class TcQdiscParser(AbstractParser):
             ],
             data_matrix=entry_list)
 
-        logger.debug("{}: {}".format(
+        logger.debug("tc {:s} parse result: {}".format(
             Tc.Subcommand.QDISC,
             json.dumps(entry_list, indent=4)))
 
