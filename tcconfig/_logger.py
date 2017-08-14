@@ -8,6 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 import logbook
+import simplesqlite
 import subprocrunner
 
 
@@ -40,11 +41,11 @@ def set_log_level(log_level):
     # validate log level
     logbook.get_level_name(log_level)
 
-    subprocrunner.set_log_level(log_level)
-
     if log_level == logbook.NOTSET:
         set_logger(is_enable=False)
     else:
         set_logger(is_enable=True)
 
     logger.level = log_level
+    simplesqlite.set_log_level(log_level)
+    subprocrunner.set_log_level(log_level)
