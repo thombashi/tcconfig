@@ -98,6 +98,10 @@ class TrafficControl(object):
     )
 
     @property
+    def device(self):
+        return self.__device
+
+    @property
     def ifb_device(self):
         return "ifb{:d}".format(self.__qdisc_major_id)
 
@@ -258,7 +262,7 @@ class TrafficControl(object):
         self.__init_shaper(shaping_algorithm)
 
     def validate(self):
-        verify_network_interface(self.__device)
+        verify_network_interface(self.device)
         self.__validate_netem_parameter()
         self.__validate_src_network()
         self.__validate_port()
@@ -306,7 +310,7 @@ class TrafficControl(object):
 
     def get_tc_device(self):
         if self.direction == TrafficDirection.OUTGOING:
-            return self.__device
+            return self.device
 
         if self.direction == TrafficDirection.INCOMING:
             return self.ifb_device
@@ -353,14 +357,14 @@ class TrafficControl(object):
 
         with logging_context("delete qdisc"):
             returncode = run_command_helper(
-                "tc qdisc del dev {:s} root".format(self.__device),
+                "tc qdisc del dev {:s} root".format(self.device),
                 re.compile("RTNETLINK answers: No such file or directory"),
                 "failed to delete qdisc: no qdisc for outgoing packets")
             result_list.append(returncode == 0)
 
         with logging_context("delete ingress qdisc"):
             returncode = run_command_helper(
-                "tc qdisc del dev {:s} ingress".format(self.__device),
+                "tc qdisc del dev {:s} ingress".format(self.device),
                 re.compile("|".join([
                     "RTNETLINK answers: Invalid argument",
                     "RTNETLINK answers: No such file or directory",
@@ -473,7 +477,7 @@ class TrafficControl(object):
 
     def __get_device_qdisc_major_id(self):
         import hashlib
-        base_device_hash = hashlib.md5(six.b(self.__device)).hexdigest()[:3]
+        base_device_hash = hashlib.md5(six.b(self.device)).hexdigest()[:3]
         device_hash_prefix = "1"
 
         return int(device_hash_prefix + base_device_hash, 16)
@@ -500,7 +504,7 @@ class TrafficControl(object):
 
         base_command = "tc qdisc add"
         return_code |= run_command_helper(
-            "{:s} dev {:s} ingress".format(base_command, self.__device),
+            "{:s} dev {:s} ingress".format(base_command, self.device),
             self.REGEXP_FILE_EXISTS,
             self.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{:s}': ingress qdisc already exists.".format(
@@ -508,7 +512,7 @@ class TrafficControl(object):
 
         return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",
-            "dev {:s}".format(self.__device),
+            "dev {:s}".format(self.device),
             "parent ffff: protocol {:s} u32 match u32 0 0".format(
                 self.protocol),
             "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
