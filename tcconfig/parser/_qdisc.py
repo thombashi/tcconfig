@@ -42,6 +42,7 @@ class TcQdiscParser(AbstractParser):
             if re.search("qdisc netem", line) is not None:
                 self.__parse_netem_param(line, "parent", pp.hexnums + ":")
 
+            self.__parse_netem_param(line, "netem", pp.nums + ":", "handle")
             self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
             self.__parse_netem_param(line, "loss", pp.nums + ".")
@@ -76,15 +77,18 @@ class TcQdiscParser(AbstractParser):
         except pp.ParseException:
             pass
 
-    def __parse_netem_param(self, line, parse_param_name, word_pattern):
+    def __parse_netem_param(
+            self, line, parse_param_name, word_pattern, key_name=None):
         pattern = (
             pp.SkipTo(parse_param_name, include=True) +
             pp.Word(word_pattern))
+        if not key_name:
+            key_name = parse_param_name
 
         try:
             result = pattern.parseString(line)[-1]
             if typepy.is_not_null_string(result):
-                self.__parsed_param[parse_param_name] = result
+                self.__parsed_param[key_name] = result
         except pp.ParseException:
             pass
 
