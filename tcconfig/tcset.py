@@ -344,7 +344,8 @@ class TcShapingRuleFinder(object):
             current_filter_list = parser.get_incoming_tc_filter()
 
         logger.debug(
-            "is_exist_rule: direction={}, new-filter={} current-filters={}".format(
+            "is_exist_rule: direction={}, search-filter={}, "
+            "current-filters={}".format(
                 self.tc.direction, search_filter, current_filter_list))
 
         for cuurent_filter in current_filter_list:
