@@ -151,12 +151,7 @@ class TcShapingRuleParser(object):
                         filter_param.get(Tc.Param.CLASS_ID)):
                     continue
 
-                work_qdisc_param = copy.deepcopy(qdisc_param)
-                try:
-                    del work_qdisc_param[Tc.Param.PARENT]
-                except KeyError:
-                    pass
-                shaping_rule.update(work_qdisc_param)
+                shaping_rule.update(self.__strip_qdisc_param(qdisc_param))
 
             for class_param in class_param_list:
                 self.__logger.debug(
@@ -201,3 +196,19 @@ class TcShapingRuleParser(object):
             run_tc_show(Tc.Subcommand.CLASS, device))
 
         return param_list
+
+    @staticmethod
+    def __strip_qdisc_param(qdisc_param):
+        work_qdisc_param = copy.deepcopy(qdisc_param)
+
+        try:
+            del work_qdisc_param[Tc.Param.PARENT]
+        except KeyError:
+            pass
+
+        try:
+            del work_qdisc_param[Tc.Param.HANDLE]
+        except KeyError:
+            pass
+
+        return work_qdisc_param
