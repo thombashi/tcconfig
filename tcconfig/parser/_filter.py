@@ -240,7 +240,6 @@ class TcFilterParser(AbstractParser):
         ]
 
         while True:
-
             try:
                 line = self.__buffer[self.__parse_idx].strip()
             except IndexError:

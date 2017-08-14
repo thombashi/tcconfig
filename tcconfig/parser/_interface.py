@@ -23,12 +23,6 @@ class ParserInterface(object):
 @six.add_metaclass(abc.ABCMeta)
 class AbstractParser(ParserInterface):
 
-    """
-    @abc.abstractclassmethod
-    def _parse_line(self, line):  # pragma: no cover
-        pass
-    """
-
     def __init__(self):
         self._clear()
 
