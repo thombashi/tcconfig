@@ -31,8 +31,10 @@ class TcQdiscParser(AbstractParser):
         self.__con = con
 
     def parse(self, text):
+        self._clear()
+
         if typepy.is_null_string(text):
-            raise ValueError("empty text")
+            return []
 
         text = text.strip()
         entry_list = []
