@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+from collections import OrderedDict
 import ipaddress
 import re
 
@@ -157,14 +158,15 @@ class TcFilterParser(AbstractParser):
         self.__classid = None
 
     def __get_filter(self):
-        return {
-            Tc.Param.FLOW_ID: self.__flow_id,
-            Tc.Param.SRC_NETWORK: self.__filter_src_network,
-            Tc.Param.DST_NETWORK: self.__filter_dst_network,
-            Tc.Param.SRC_PORT: self.__filter_src_port,
-            Tc.Param.DST_PORT: self.__filter_dst_port,
-            Tc.Param.PROTOCOL: self.protocol
-        }
+        tc_filter = OrderedDict()
+        tc_filter[Tc.Param.FLOW_ID] = self.__flow_id
+        tc_filter[Tc.Param.PROTOCOL] = self.protocol
+        tc_filter[Tc.Param.SRC_NETWORK] = self.__filter_src_network
+        tc_filter[Tc.Param.DST_NETWORK] = self.__filter_dst_network
+        tc_filter[Tc.Param.SRC_PORT] = self.__filter_src_port
+        tc_filter[Tc.Param.DST_PORT] = self.__filter_dst_port
+
+        return tc_filter
 
     def __parse_flow_id(self, line):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(line)
