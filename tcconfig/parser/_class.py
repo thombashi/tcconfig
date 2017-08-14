@@ -7,11 +7,16 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import json
 import re
 
 import typepy
 
-from .._const import ShapingAlgorithm
+from .._const import (
+    ShapingAlgorithm,
+    Tc,
+)
+from .._logger import logger
 from ._interface import AbstractParser
 
 
@@ -26,6 +31,8 @@ class TcClassParser(AbstractParser):
         RATE = "rate"
 
     def parse(self, text):
+        entry_list = []
+
         for line in text.splitlines():
             self._clear()
 
@@ -37,7 +44,14 @@ class TcClassParser(AbstractParser):
             self.__parse_classid(line)
             self.__parse_rate(line)
 
-            yield self.__parsed_param
+            logger.debug("parse a class entry: {}".format(self.__parsed_param))
+            entry_list.append(self.__parsed_param)
+
+        logger.debug("{}: {}".format(
+            Tc.Subcommand.CLASS,
+            json.dumps(entry_list, indent=4)))
+
+        return entry_list
 
     def _clear(self):
         self.__parsed_param = {}

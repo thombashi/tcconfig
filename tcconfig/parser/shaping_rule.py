@@ -180,8 +180,8 @@ class TcShapingRuleParser(object):
 
     def __parse_tc_qdisc(self, device):
         try:
-            param_list = list(TcQdiscParser().parse(
-                run_tc_show(Tc.Subcommand.QDISC, device)))
+            param_list = TcQdiscParser().parse(
+                run_tc_show(Tc.Subcommand.QDISC, device))
         except ValueError:
             return []
 
@@ -190,15 +190,15 @@ class TcShapingRuleParser(object):
         return param_list
 
     def __parse_tc_filter(self, device):
-        param_list = list(TcFilterParser(self.__ip_version).parse(
-            run_tc_show(Tc.Subcommand.FILTER, device)))
+        param_list = self.__filter_parser.parse(
+            run_tc_show(Tc.Subcommand.FILTER, device))
         self.__logger.debug("tc filter parse result: {}".format(param_list))
 
         return param_list
 
     def __parse_tc_class(self, device):
-        param_list = list(TcClassParser().parse(
-            run_tc_show(Tc.Subcommand.CLASS, device)))
+        param_list = TcClassParser().parse(
+            run_tc_show(Tc.Subcommand.CLASS, device))
         self.__logger.debug("tc class parse result: {}".format(param_list))
 
         return param_list

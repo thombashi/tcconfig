@@ -7,12 +7,15 @@
 from __future__ import absolute_import
 from __future__ import unicode_literals
 
+import json
 import re
 
 import typepy
 
 import pyparsing as pp
 
+from .._const import Tc
+from .._logger import logger
 from ._interface import AbstractParser
 
 
@@ -23,6 +26,7 @@ class TcQdiscParser(AbstractParser):
             raise ValueError("empty text")
 
         text = text.strip()
+        entry_list = []
 
         for line in text.splitlines():
             if typepy.is_null_string(line):
@@ -46,7 +50,14 @@ class TcQdiscParser(AbstractParser):
             self.__parse_netem_param(line, "reorder", pp.nums + ".")
             self.__parse_bandwidth_rate(line)
 
-            yield self.__parsed_param
+            logger.debug("parse a qdisc entry: {}".format(self.__parsed_param))
+            entry_list.append(self.__parsed_param)
+
+        logger.debug("{}: {}".format(
+            Tc.Subcommand.QDISC,
+            json.dumps(entry_list, indent=4)))
+
+        return entry_list
 
     def _clear(self):
         self.__parsed_param = {}
