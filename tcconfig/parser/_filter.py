@@ -61,9 +61,10 @@ class TcFilterParser(AbstractParser):
     def protocol(self):
         return self.__protocol
 
-    def __init__(self, ip_version):
+    def __init__(self, con, ip_version):
         super(TcFilterParser, self).__init__()
 
+        self.__con = con
         self.__ip_version = ip_version
         self.__buffer = None
         self.__parse_idx = 0
@@ -133,6 +134,11 @@ class TcFilterParser(AbstractParser):
 
         if self.__flow_id:
             filter_data_matrix.append(self.__get_filter())
+
+        self.__con.create_table_from_data_matrix(
+            table_name=Tc.Subcommand.FILTER,
+            attr_name_list=list(self.__get_filter()),
+            data_matrix=filter_data_matrix)
 
         logger.debug("{}: {}".format(
             Tc.Subcommand.FILTER,

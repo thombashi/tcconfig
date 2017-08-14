@@ -21,6 +21,11 @@ from ._interface import AbstractParser
 
 class TcQdiscParser(AbstractParser):
 
+    def __init__(self, con):
+        super(TcQdiscParser, self).__init__()
+
+        self.__con = con
+
     def parse(self, text):
         if typepy.is_null_string(text):
             raise ValueError("empty text")
@@ -53,6 +58,14 @@ class TcQdiscParser(AbstractParser):
 
             logger.debug("parse a qdisc entry: {}".format(self.__parsed_param))
             entry_list.append(self.__parsed_param)
+
+        self.__con.create_table_from_data_matrix(
+            table_name=Tc.Subcommand.QDISC,
+            attr_name_list=[
+                "parent", "handle", "delay", "delay-distro", "loss",
+                "duplicate", "corrupt", "reorder", "rate",
+            ],
+            data_matrix=entry_list)
 
         logger.debug("{}: {}".format(
             Tc.Subcommand.QDISC,

@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 import copy
 
+import simplesqlite
 import subprocrunner
 import typepy
 from typepy.type import Integer
@@ -33,9 +34,12 @@ class TcShapingRuleParser(object):
         return self.__device
 
     def __init__(self, device, ip_version, logger):
+        self.__con = simplesqlite.connect_sqlite_memdb()
         self.__device = device
         self.__ip_version = ip_version
         self.__logger = logger
+
+        self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
 
         self.__iptables_ctrl = IptablesMangleController(True, ip_version)
 
@@ -64,8 +68,7 @@ class TcShapingRuleParser(object):
             "tc filter show dev {:s} root".format(self.device), dry_run=False)
         filter_runner.run()
 
-        return TcFilterParser(self.__ip_version).parse_incoming_device(
-            filter_runner.stdout)
+        return self.__filter_parser.parse_incoming_device(filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
         src_network_format = Tc.Param.SRC_NETWORK + "={:s}"
@@ -180,7 +183,7 @@ class TcShapingRuleParser(object):
 
     def __parse_tc_qdisc(self, device):
         try:
-            param_list = TcQdiscParser().parse(
+            param_list = TcQdiscParser(self.__con).parse(
                 run_tc_show(Tc.Subcommand.QDISC, device))
         except ValueError:
             return []
@@ -197,7 +200,7 @@ class TcShapingRuleParser(object):
         return param_list
 
     def __parse_tc_class(self, device):
-        param_list = TcClassParser().parse(
+        param_list = TcClassParser(self.__con).parse(
             run_tc_show(Tc.Subcommand.CLASS, device))
         self.__logger.debug("tc class parse result: {}".format(param_list))
 
