@@ -322,7 +322,7 @@ class TcShapingRuleFinder(object):
         self.__device = device
         self.__tc = tc
 
-    def exist_rule(self):
+    def is_exist_rule(self):
         parser = TcShapingRuleParser(
             self.__device, self.tc.ip_version, logger)
 
@@ -344,7 +344,7 @@ class TcShapingRuleFinder(object):
             current_tc_filter_list = parser.get_incoming_tc_filter()
 
         logger.debug(
-            "exist_rule: direction={}, new-filter={} current-filters={}".format(
+            "is_exist_rule: direction={}, new-filter={} current-filters={}".format(
                 self.tc.direction, new_tc_filter, current_tc_filter_list))
 
         for cuurent_tc_filter in current_tc_filter_list:
@@ -459,7 +459,7 @@ def main():
 
     if (
             options.is_add_shaping_rule and
-            TcShapingRuleFinder(device=options.device, tc=tc).exist_rule()
+            TcShapingRuleFinder(device=options.device, tc=tc).is_exist_rule()
     ):
         logger.error(
             "adding a shaping rule failed. a shaping rule for the same "
