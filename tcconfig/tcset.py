@@ -412,7 +412,7 @@ def main():
 
     if (
             options.is_add_shaping_rule and
-            TcShapingRuleFinder(device=options.device, tc=tc).is_exist_rule()
+            TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()
     ):
         logger.error(
             "adding a shaping rule failed. a shaping rule for the same "

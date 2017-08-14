@@ -12,22 +12,19 @@ from ._const import (
     Tc,
     TrafficDirection,
 )
-from ._logger import logger
 from .parser.shaping_rule import TcShapingRuleParser
 
 
 class TcShapingRuleFinder(object):
-    @property
-    def tc(self):
-        return self.__tc
 
-    def __init__(self, device, tc):
-        self.__device = device
+    def __init__(self, logger, tc):
+        self.__logger = logger
         self.__tc = tc
 
     def is_exist_rule(self):
         parser = TcShapingRuleParser(
-            self.__device, self.tc.ip_version, logger)
+            device=self.__tc.device, ip_version=self.__tc.ip_version,
+            logger=self.__logger)
 
         key_param_list = (
             Tc.Param.DST_NETWORK, Tc.Param.SRC_NETWORK,
@@ -35,21 +32,21 @@ class TcShapingRuleFinder(object):
         )
 
         search_filter = {
-            Tc.Param.DST_NETWORK: self.tc.dst_network,
-            Tc.Param.SRC_NETWORK: self.tc.src_network,
-            Tc.Param.DST_PORT: self.tc.dst_port,
-            Tc.Param.SRC_NETWORK: self.tc.src_port,
+            Tc.Param.DST_NETWORK: self.__tc.dst_network,
+            Tc.Param.SRC_NETWORK: self.__tc.src_network,
+            Tc.Param.DST_PORT: self.__tc.dst_port,
+            Tc.Param.SRC_NETWORK: self.__tc.src_port,
         }
 
-        if self.tc.direction == TrafficDirection.OUTGOING:
+        if self.__tc.direction == TrafficDirection.OUTGOING:
             current_filter_list = parser.get_outgoing_tc_filter()
-        elif self.tc.direction == TrafficDirection.INCOMING:
+        elif self.__tc.direction == TrafficDirection.INCOMING:
             current_filter_list = parser.get_incoming_tc_filter()
 
-        logger.debug(
+        self.__logger.debug(
             "is_exist_rule: direction={}, search-filter={}, "
             "current-filters={}".format(
-                self.tc.direction, search_filter, current_filter_list))
+                self.__tc.direction, search_filter, current_filter_list))
 
         for cuurent_filter in current_filter_list:
             if all([
@@ -57,7 +54,7 @@ class TcShapingRuleFinder(object):
                         key_param) == search_filter.get(key_param)
                     for key_param in key_param_list
             ]):
-                logger.debug("existing shaping rule found: {}".format(
+                self.__logger.debug("existing shaping rule found: {}".format(
                     cuurent_filter))
                 return True
 
