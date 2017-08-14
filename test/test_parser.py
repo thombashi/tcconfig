@@ -8,6 +8,7 @@ from __future__ import print_function
 from __future__ import unicode_literals
 
 import pytest
+from simplesqlite import connect_sqlite_memdb
 import six
 
 from tcconfig._const import Tc
@@ -18,17 +19,20 @@ import tcconfig.parser.shaping_rule
 
 @pytest.fixture
 def filter_parser_ipv4():
-    return tcconfig.parser._filter.TcFilterParser(ip_version=4)
+    return tcconfig.parser._filter.TcFilterParser(
+        connect_sqlite_memdb(), ip_version=4)
 
 
 @pytest.fixture
 def filter_parser_ipv6():
-    return tcconfig.parser._filter.TcFilterParser(ip_version=6)
+    return tcconfig.parser._filter.TcFilterParser(
+        connect_sqlite_memdb(), ip_version=6)
 
 
 @pytest.fixture
 def qdisc_parser():
-    return tcconfig.parser._qdisc.TcQdiscParser()
+    return tcconfig.parser._qdisc.TcQdiscParser(
+        connect_sqlite_memdb())
 
 
 class Test_TcFilterParser_parse_filter_ipv4(object):
@@ -300,7 +304,13 @@ class Test_TcQdiscParser_parse(object):
             six.b("""qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 1 direct_qlen 1000
 qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
 """),
-            [{'delay': '1.0', 'loss': '0.01', Tc.Param.PARENT: '1f87:2'}],
+            [
+                {
+                    'delay': '1.0', 'loss': '0.01',
+                    Tc.Param.HANDLE: '2007:',
+                    Tc.Param.PARENT: '1f87:2',
+                },
+            ],
         ],
         [
             six.b("""
@@ -309,10 +319,16 @@ qdisc netem 2007: parent 1f87:2 limit 1000 delay 5.0ms
 qdisc netem 2008: parent 1f87:3 limit 1000 delay 50.0ms  1.0ms loss 5%
 """),
             [
-                {'delay': '5.0', Tc.Param.PARENT: '1f87:2'},
+                {
+                    'delay': '5.0',
+                    Tc.Param.HANDLE: '2007:',
+                    Tc.Param.PARENT: '1f87:2',
+                },
                 {
                     'delay': '50.0', 'loss': '5',
-                    'delay-distro': '1.0', Tc.Param.PARENT: '1f87:3',
+                    'delay-distro': '1.0',
+                    Tc.Param.HANDLE: '2008:',
+                    Tc.Param.PARENT: '1f87:3',
                 },
             ],
         ],
