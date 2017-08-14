@@ -30,6 +30,10 @@ class TcClassParser(AbstractParser):
         CLASS_ID = "classid"
         RATE = "rate"
 
+    @property
+    def _tc_subcommand(self):
+        return Tc.Subcommand.CLASS
+
     def __init__(self, con):
         super(TcClassParser, self).__init__()
 
@@ -53,13 +57,12 @@ class TcClassParser(AbstractParser):
             entry_list.append(self.__parsed_param)
 
         self.__con.create_table_from_data_matrix(
-            table_name=Tc.Subcommand.CLASS,
+            table_name=self._tc_subcommand,
             attr_name_list=[self.Key.CLASS_ID, self.Key.RATE],
             data_matrix=entry_list)
 
         logger.debug("tc {:s} parse result: {}".format(
-            Tc.Subcommand.CLASS,
-            json.dumps(entry_list, indent=4)))
+            self._tc_subcommand, json.dumps(entry_list, indent=4)))
 
         return entry_list
 

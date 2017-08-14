@@ -32,6 +32,10 @@ class AbstractParser(ParserInterface):
     def __init__(self):
         self._clear()
 
+    @abc.abstractproperty
+    def _tc_subcommand(self):  # pragma: no cover
+        pass
+
     @abc.abstractmethod
     def _clear(self):  # pragma: no cover
         pass

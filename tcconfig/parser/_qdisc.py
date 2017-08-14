@@ -21,6 +21,10 @@ from ._interface import AbstractParser
 
 class TcQdiscParser(AbstractParser):
 
+    @property
+    def _tc_subcommand(self):
+        return Tc.Subcommand.QDISC
+
     def __init__(self, con):
         super(TcQdiscParser, self).__init__()
 
@@ -60,7 +64,7 @@ class TcQdiscParser(AbstractParser):
             entry_list.append(self.__parsed_param)
 
         self.__con.create_table_from_data_matrix(
-            table_name=Tc.Subcommand.QDISC,
+            table_name=self._tc_subcommand,
             attr_name_list=[
                 "parent", "handle", "delay", "delay-distro", "loss",
                 "duplicate", "corrupt", "reorder", "rate",
@@ -68,8 +72,7 @@ class TcQdiscParser(AbstractParser):
             data_matrix=entry_list)
 
         logger.debug("tc {:s} parse result: {}".format(
-            Tc.Subcommand.QDISC,
-            json.dumps(entry_list, indent=4)))
+            self._tc_subcommand, json.dumps(entry_list, indent=4)))
 
         return entry_list
 
