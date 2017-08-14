@@ -331,7 +331,7 @@ class TcShapingRuleFinder(object):
             Tc.Param.DST_PORT, Tc.Param.SRC_NETWORK,
         )
 
-        new_tc_filter = {
+        search_filter = {
             Tc.Param.DST_NETWORK: self.tc.dst_network,
             Tc.Param.SRC_NETWORK: self.tc.src_network,
             Tc.Param.DST_PORT: self.tc.dst_port,
@@ -339,22 +339,22 @@ class TcShapingRuleFinder(object):
         }
 
         if self.tc.direction == TrafficDirection.OUTGOING:
-            current_tc_filter_list = parser.get_outgoing_tc_filter()
+            current_filter_list = parser.get_outgoing_tc_filter()
         elif self.tc.direction == TrafficDirection.INCOMING:
-            current_tc_filter_list = parser.get_incoming_tc_filter()
+            current_filter_list = parser.get_incoming_tc_filter()
 
         logger.debug(
             "is_exist_rule: direction={}, new-filter={} current-filters={}".format(
-                self.tc.direction, new_tc_filter, current_tc_filter_list))
+                self.tc.direction, search_filter, current_filter_list))
 
-        for cuurent_tc_filter in current_tc_filter_list:
+        for cuurent_filter in current_filter_list:
             if all([
-                    cuurent_tc_filter.get(
-                        key_param) == new_tc_filter.get(key_param)
+                    cuurent_filter.get(
+                        key_param) == search_filter.get(key_param)
                     for key_param in key_param_list
             ]):
                 logger.debug("existing shaping rule found: {}".format(
-                    cuurent_tc_filter))
+                    cuurent_filter))
                 return True
 
         return False
