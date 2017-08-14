@@ -285,7 +285,7 @@ class TrafficControl(object):
 
         if not RealNumber(bandwidth_rate).is_type():
             raise InvalidParameterError(
-                "bandwidth_rate must be number", value=bandwidth_rate)
+                "bandwidth_rate must be a number", value=bandwidth_rate)
 
         if bandwidth_rate <= 0:
             raise InvalidParameterError(
@@ -295,8 +295,8 @@ class TrafficControl(object):
         no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
         if bandwidth_rate > no_limit_kbits:
             raise InvalidParameterError(
-                "bandwidth_rate must be less than {}: actual={}".format(
-                    no_limit_kbits, bandwidth_rate))
+                "bandwidth_rate must be less than {}".format(no_limit_kbits),
+                value=bandwidth_rate)
 
     def sanitize(self):
         self.__dst_network = sanitize_network(
