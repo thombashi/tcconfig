@@ -63,13 +63,14 @@ class TcQdiscParser(AbstractParser):
             logger.debug("parse a qdisc entry: {}".format(self.__parsed_param))
             entry_list.append(self.__parsed_param)
 
-        self.__con.create_table_from_data_matrix(
-            table_name=self._tc_subcommand,
-            attr_name_list=[
-                "parent", "handle", "delay", "delay-distro", "loss",
-                "duplicate", "corrupt", "reorder", "rate",
-            ],
-            data_matrix=entry_list)
+        if entry_list:
+            self.__con.create_table_from_data_matrix(
+                table_name=self._tc_subcommand,
+                attr_name_list=[
+                    "parent", "handle", "delay", "delay-distro", "loss",
+                    "duplicate", "corrupt", "reorder", "rate",
+                ],
+                data_matrix=entry_list)
 
         logger.debug("tc {:s} parse result: {}".format(
             self._tc_subcommand, json.dumps(entry_list, indent=4)))

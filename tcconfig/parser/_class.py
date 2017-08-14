@@ -56,10 +56,11 @@ class TcClassParser(AbstractParser):
             logger.debug("parse a class entry: {}".format(self.__parsed_param))
             entry_list.append(self.__parsed_param)
 
-        self.__con.create_table_from_data_matrix(
-            table_name=self._tc_subcommand,
-            attr_name_list=[self.Key.CLASS_ID, self.Key.RATE],
-            data_matrix=entry_list)
+        if entry_list:
+            self.__con.create_table_from_data_matrix(
+                table_name=self._tc_subcommand,
+                attr_name_list=[self.Key.CLASS_ID, self.Key.RATE],
+                data_matrix=entry_list)
 
         logger.debug("tc {:s} parse result: {}".format(
             self._tc_subcommand, json.dumps(entry_list, indent=4)))
