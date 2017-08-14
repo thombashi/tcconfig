@@ -20,6 +20,7 @@ import subprocrunner as spr
 from ._const import (
     KILO_SIZE,
     Network,
+    Tc,
     TcCommand,
     TcCommandOutput,
 )
@@ -148,6 +149,9 @@ def run_command_helper(command, error_regexp, message, exception=None):
 
 
 def run_tc_show(subcommand, device):
+    if subcommand not in Tc.Subcommand.LIST:
+        raise ValueError("unexpected tc sub command: {}".format(subcommand))
+
     runner = spr.SubprocessRunner(
         "tc {:s} show dev {:s}".format(subcommand, device))
     runner.run()

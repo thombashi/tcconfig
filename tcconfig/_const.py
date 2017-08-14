@@ -36,6 +36,8 @@ class Tc(object):
         QDISC = "qdisc"
         SHOW = "show"
 
+        LIST = (CLASS, FILTER, QDISC, SHOW)
+
     class Param(object):
         CLASS_ID = "classid"
         DST_NETWORK = "dst-network"
