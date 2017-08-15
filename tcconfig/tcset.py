@@ -379,14 +379,15 @@ def main():
             "--rate/--bandwidth-rate require an unit: K/M/Kbps/Mbps/etc.")
         return errno.EINVAL
 
+    IPV6_ERROR_MSG_FORMAT = "{}. --ipv6 option required to use IPv6 address."
+
     try:
         tc.validate()
     except (NetworkInterfaceNotFoundError) as e:
         logger.error(str(e))
         return errno.EINVAL
     except ipaddress.AddressValueError as e:
-        logger.error(
-            "{}. ".format(e) + "--ipv6 option required to use IPv6 address.")
+        logger.error(IPV6_ERROR_MSG_FORMAT.format(e))
         return errno.EINVAL
     except InvalidParameterError as e:
         logger.error(e)
@@ -394,6 +395,9 @@ def main():
 
     try:
         tc.sanitize()
+    except ipaddress.AddressValueError as e:
+        logger.error(IPV6_ERROR_MSG_FORMAT.format(e))
+        return errno.EINVAL
     except ValueError as e:
         logger.error(e)
         return errno.EINVAL
