@@ -139,17 +139,28 @@ class TcShapingRuleParser(object):
             return {}
 
         self.parse(device)
-
         where_query = SqlQuery.make_where(Tc.Param.DEVICE, device)
-        class_param_list = self.__con.select_as_dict(
-            table_name=Tc.Subcommand.CLASS, where=where_query
-        ).get(Tc.Subcommand.CLASS)
-        filter_param_list = self.__con.select_as_dict(
-            table_name=Tc.Subcommand.FILTER, where=where_query
-        ).get(Tc.Subcommand.FILTER)
-        qdisc_param_list = self.__con.select_as_dict(
-            table_name=Tc.Subcommand.QDISC, where=where_query
-        ).get(Tc.Subcommand.QDISC)
+
+        try:
+            class_param_list = self.__con.select_as_dict(
+                table_name=Tc.Subcommand.CLASS, where=where_query
+            ).get(Tc.Subcommand.CLASS)
+        except simplesqlite.TableNotFoundError:
+            class_param_list = []
+
+        try:
+            filter_param_list = self.__con.select_as_dict(
+                table_name=Tc.Subcommand.FILTER, where=where_query
+            ).get(Tc.Subcommand.FILTER)
+        except simplesqlite.TableNotFoundError:
+            filter_param_list = []
+
+        try:
+            qdisc_param_list = self.__con.select_as_dict(
+                table_name=Tc.Subcommand.QDISC, where=where_query
+            ).get(Tc.Subcommand.QDISC)
+        except simplesqlite.TableNotFoundError:
+            qdisc_param_list = []
 
         shaping_rule_mapping = {}
 

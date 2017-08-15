@@ -23,8 +23,32 @@ class Test_tcshow(object):
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
-      python setup.py test --addopts "--runxfail --device=<test device>"
+
+        python setup.py test --addopts "--runxfail --device=<test device>"
     """
+
+    @pytest.mark.xfail
+    def test_normal_empty(self, device_value):
+        if device_value is None:
+            pytest.skip("device option is null")
+
+        execute_tcdel(device_value)
+
+        runner = SubprocessRunner("{:s} --device {:s}".format(
+            Tc.Command.TCSHOW, device_value))
+
+        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        "outgoing": {
+        },
+        "incoming": {
+        }
+    }
+}"""
+        print("[expected]\n{}\n".format(expected))
+        print("[actual]\n{}\n".format(runner.stdout))
+
+        assert runner.run() == 0
+        assert json.loads(runner.stdout) == json.loads(expected)
 
     @pytest.mark.xfail
     def test_normal_ipv4(self, device_value):
