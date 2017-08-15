@@ -27,8 +27,11 @@ class TcClassParser(AbstractParser):
         RATE = "[0-9]+[KMGT]?"
 
     class Key(object):
-        CLASS_ID = "classid"
+        DEVICE = Tc.Param.DEVICE
+        CLASS_ID = Tc.Param.CLASS_ID
         RATE = "rate"
+
+        LIST = (DEVICE, CLASS_ID, RATE)
 
     @property
     def _tc_subcommand(self):
@@ -39,7 +42,7 @@ class TcClassParser(AbstractParser):
 
         self.__con = con
 
-    def parse(self, text):
+    def parse(self, device, text):
         entry_list = []
 
         for line in text.splitlines():
@@ -50,6 +53,7 @@ class TcClassParser(AbstractParser):
 
             line = self._to_unicode(line.lstrip())
 
+            self.__parsed_param[self.Key.DEVICE] = device
             self.__parse_classid(line)
             self.__parse_rate(line)
 
@@ -59,7 +63,7 @@ class TcClassParser(AbstractParser):
         if entry_list:
             self.__con.create_table_from_data_matrix(
                 table_name=self._tc_subcommand,
-                attr_name_list=[self.Key.CLASS_ID, self.Key.RATE],
+                attr_name_list=self.Key.LIST,
                 data_matrix=entry_list)
 
         logger.debug("tc {:s} parse result: {}".format(

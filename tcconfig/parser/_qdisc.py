@@ -30,7 +30,7 @@ class TcQdiscParser(AbstractParser):
 
         self.__con = con
 
-    def parse(self, text):
+    def parse(self, device, text):
         self._clear()
 
         if typepy.is_null_string(text):
@@ -53,6 +53,7 @@ class TcQdiscParser(AbstractParser):
             if re.search("qdisc netem", line) is not None:
                 self.__parse_netem_param(line, "parent", pp.hexnums + ":")
 
+            self.__parsed_param[Tc.Param.DEVICE] = device
             self.__parse_netem_param(line, "netem", pp.nums + ":", "handle")
             self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
@@ -69,8 +70,9 @@ class TcQdiscParser(AbstractParser):
             self.__con.create_table_from_data_matrix(
                 table_name=self._tc_subcommand,
                 attr_name_list=[
-                    "parent", "handle", "delay", "delay-distro", "loss",
-                    "duplicate", "corrupt", "reorder", "rate",
+                    Tc.Param.DEVICE, "parent", "handle", "delay",
+                    "delay-distro", "loss", "duplicate", "corrupt", "reorder",
+                    "rate",
                 ],
                 data_matrix=entry_list)
 

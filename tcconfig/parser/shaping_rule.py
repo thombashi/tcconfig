@@ -178,15 +178,15 @@ class TcShapingRuleParser(object):
 
     def __parse_tc_qdisc(self, device):
         return TcQdiscParser(self.__con).parse(
-            run_tc_show(Tc.Subcommand.QDISC, device))
+            device, run_tc_show(Tc.Subcommand.QDISC, device))
 
     def __parse_tc_filter(self, device):
         return self.__filter_parser.parse(
-            run_tc_show(Tc.Subcommand.FILTER, device))
+            device, run_tc_show(Tc.Subcommand.FILTER, device))
 
     def __parse_tc_class(self, device):
         return TcClassParser(self.__con).parse(
-            run_tc_show(Tc.Subcommand.CLASS, device))
+            device, run_tc_show(Tc.Subcommand.CLASS, device))
 
     @staticmethod
     def __strip_qdisc_param(qdisc_param):

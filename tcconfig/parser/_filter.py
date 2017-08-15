@@ -75,7 +75,9 @@ class TcFilterParser(AbstractParser):
 
         self.__protocol = None
 
-    def parse(self, text):
+        self._clear()
+
+    def parse(self, device, text):
         self._clear()
 
         if typepy.is_null_string(text):
@@ -92,12 +94,15 @@ class TcFilterParser(AbstractParser):
             if typepy.is_null_string(line):
                 continue
 
+            self.__device = device
+
             try:
                 self.__parse_mangle_mark(line)
             except pp.ParseException:
                 logger.debug("failed to parse mangle: {}".format(line))
             else:
                 filter_data_matrix.append({
+                    Tc.Param.DEVICE: self.__device,
                     Tc.Param.CLASS_ID: self.__classid,
                     Tc.Param.HANDLE: self.__handle,
                 })
@@ -163,6 +168,7 @@ class TcFilterParser(AbstractParser):
         return re.search("ifb[\d]+", match.group()).group()
 
     def _clear(self):
+        self.__device = None
         self.__flow_id = None
         self.__filter_src_network = None
         self.__filter_dst_network = None
@@ -174,6 +180,7 @@ class TcFilterParser(AbstractParser):
 
     def __get_filter(self):
         tc_filter = OrderedDict()
+        tc_filter[Tc.Param.DEVICE] = self.__device
         tc_filter[Tc.Param.FLOW_ID] = self.__flow_id
         tc_filter[Tc.Param.PROTOCOL] = self.protocol
         tc_filter[Tc.Param.SRC_NETWORK] = self.__filter_src_network

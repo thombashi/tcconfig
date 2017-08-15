@@ -44,6 +44,7 @@ class Tc(object):
         LIST = (CLASS, FILTER, QDISC, SHOW)
 
     class Param(object):
+        DEVICE = "device"
         CLASS_ID = "classid"
         DST_NETWORK = "dst-network"
         DST_PORT = "dst-port"
