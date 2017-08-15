@@ -317,7 +317,12 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
     loader = TcConfigLoader(logger)
     loader.is_overwrite = is_overwrite
-    loader.load_tcconfig(config_file_path)
+
+    try:
+        loader.load_tcconfig(config_file_path)
+    except IOError as e:
+        logger.error(e)
+        return errno.EIO
 
     for tcconfig_command in loader.get_tcconfig_command_list():
         return_code |= subprocrunner.SubprocessRunner(
