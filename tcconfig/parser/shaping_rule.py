@@ -73,6 +73,10 @@ class TcShapingRuleParser(object):
 
         return self.__parse_tc_filter(self.ifb_device)
 
+    def parse(self):
+        self.__parse_device(self.device)
+        self.__parse_device(self.ifb_device)
+
     def __parse_device(self, device):
         if not device:
             return
