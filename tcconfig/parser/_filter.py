@@ -209,7 +209,7 @@ class TcFilterParser(AbstractParser):
             "classid={}, handle={}, line={}".format(
                 self.__classid, self.__handle, line))
 
-    def __parse_filter_line(self, line):
+    def __parse_filter_ip_line(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(line)
         value_hex, mask_hex = parsed_list[1].split("/")
         match_id = int(parsed_list[3])
@@ -254,7 +254,7 @@ class TcFilterParser(AbstractParser):
                 break
 
             try:
-                value_hex, mask_hex, match_id = self.__parse_filter_line(
+                value_hex, mask_hex, match_id = self.__parse_filter_ip_line(
                     line)
             except pp.ParseException:
                 break
@@ -324,7 +324,7 @@ class TcFilterParser(AbstractParser):
             dst_port_decimal if dst_port_decimal != 0 else None)
 
     def __parse_filter_ipv4(self, line):
-        value_hex, mask_hex, match_id = self.__parse_filter_line(line)
+        value_hex, mask_hex, match_id = self.__parse_filter_ip_line(line)
 
         if match_id in [
                 self.FilterMatchIdIpv4.INCOMING_NETWORK,
@@ -344,7 +344,7 @@ class TcFilterParser(AbstractParser):
             ]))
 
     def __parse_filter_ipv6(self, line):
-        value_hex, mask_hex, match_id = self.__parse_filter_line(line)
+        value_hex, mask_hex, match_id = self.__parse_filter_ip_line(line)
 
         if (match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST or
                 match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST):
