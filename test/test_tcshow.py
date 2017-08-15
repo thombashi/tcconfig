@@ -11,6 +11,8 @@ from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
 
+from .common import execute_tcdel
+
 
 @pytest.fixture
 def device_value(request):
@@ -30,7 +32,6 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         device_option = "--device {:s}".format(device_value)
-        tcdel_command = "{:s} {:s}".format(Tc.Command.TCDEL, device_option)
 
         assert SubprocessRunner(" ".join([
             Tc.Command.TCSET,
@@ -121,7 +122,7 @@ class Test_tcshow(object):
 
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        SubprocessRunner(tcdel_command).run()
+        execute_tcdel(device_value)
 
     @pytest.mark.xfail
     def test_normal_ipv6(self, device_value):
@@ -129,7 +130,6 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         device_option = "--device {:s}".format(device_value)
-        tcdel_command = "{:s} {:s}".format(Tc.Command.TCDEL, device_option)
 
         assert SubprocessRunner(" ".join([
             Tc.Command.TCSET,
@@ -223,4 +223,4 @@ class Test_tcshow(object):
 
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        SubprocessRunner(tcdel_command).run()
+        execute_tcdel(device_value)

@@ -14,6 +14,8 @@ import typepy
 
 from tcconfig._const import Tc
 
+from .common import execute_tcdel
+
 
 SKIP_TEST = False
 
@@ -134,8 +136,7 @@ class Test_tcconfig(object):
 
         device_option = "--device {}".format(device_value)
 
-        SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCDEL, device_option)).run()
+        execute_tcdel(device_value)
 
         tcset_proc = SubprocessRunner(" ".join([
             Tc.Command.TCSET,

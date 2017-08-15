@@ -14,6 +14,8 @@ from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
 
+from .common import execute_tcdel
+
 
 @pytest.fixture
 def device_value(request):
@@ -59,8 +61,7 @@ class Test_tcconfig(object):
 
         device_option = "--device {:s}".format(device_value)
 
-        SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCDEL, device_option)).run()
+        execute_tcdel(device_value)
         command = " ".join(
             ["{:s} -f ".format(Tc.Command.TCSET), str(p), overwrite])
         SubprocessRunner(command).run()
@@ -75,5 +76,4 @@ class Test_tcconfig(object):
 
         assert json.loads(runner.stdout) == json.loads(config)
 
-        SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCDEL, device_option)).run()
+        execute_tcdel(device_value)
