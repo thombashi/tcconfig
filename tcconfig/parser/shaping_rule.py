@@ -29,9 +29,18 @@ from ._qdisc import TcQdiscParser
 
 
 class TcShapingRuleParser(object):
+
+    @property
+    def con(self):
+        return self.__con
+
     @property
     def device(self):
         return self.__device
+
+    @property
+    def ifb_device(self):
+        return self.__ifb_device
 
     def __init__(self, device, ip_version, logger):
         self.__con = simplesqlite.connect_sqlite_memdb()
@@ -51,7 +60,7 @@ class TcShapingRuleParser(object):
                 TrafficDirection.OUTGOING: self.__get_shaping_rule(
                     self.device),
                 TrafficDirection.INCOMING: self.__get_shaping_rule(
-                    self.__ifb_device),
+                    self.ifb_device),
             },
         }
 
@@ -59,10 +68,10 @@ class TcShapingRuleParser(object):
         return self.__parse_tc_filter(self.device)
 
     def get_incoming_tc_filter(self):
-        if not self.__ifb_device:
+        if not self.ifb_device:
             return []
 
-        return self.__parse_tc_filter(self.__ifb_device)
+        return self.__parse_tc_filter(self.ifb_device)
 
     def __parse_device(self, device):
         if not device:
