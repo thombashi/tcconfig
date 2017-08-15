@@ -167,6 +167,8 @@ class TcShapingRuleParser(object):
                 shaping_rule.update(work_class_param)
 
             if not shaping_rule:
+                self.__logger.debug(
+                    "shaping rule not found for '{}'".format(filter_param))
                 continue
 
             self.__logger.debug(
