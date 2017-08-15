@@ -64,7 +64,7 @@ class TcShapingRuleParser(object):
 
         return self.__parse_tc_filter(self.__ifb_device)
 
-    def parse(self, device):
+    def __parse_device(self, device):
         if self.__parsed_mappings.get(device):
             return
 
@@ -138,7 +138,7 @@ class TcShapingRuleParser(object):
         if typepy.is_null_string(device):
             return {}
 
-        self.parse(device)
+        self.__parse_device(device)
         where_query = SqlQuery.make_where(Tc.Param.DEVICE, device)
 
         try:
