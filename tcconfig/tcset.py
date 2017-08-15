@@ -214,7 +214,7 @@ class TcConfigLoader(object):
             Required(six.text_type): {
                 Any(*TrafficDirection.LIST): {
                     six.text_type: {
-                        six.text_type: six.text_type,
+                        six.text_type: Any(six.text_type, int, float)
                     },
                 }
             },
@@ -252,7 +252,7 @@ class TcConfigLoader(object):
                         device_option,
                         "--direction={:s}".format(direction),
                     ] + [
-                        "--{:s}={:s}".format(k, v)
+                        "--{:s}={}".format(k, v)
                         for k, v in six.iteritems(filter_table)
                     ]
 

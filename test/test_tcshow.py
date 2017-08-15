@@ -86,30 +86,30 @@ class Test_tcshow(object):
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
            "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
-                "delay": "10.0",
-                "loss": "0.01",
-                "duplicate": "0.5",
-                "reorder": "0.2",
-                "rate": "248",
-                "delay-distro": "2.0"
+                "delay": 10,
+                "loss": 0.01,
+                "duplicate": 0.5,
+                "reorder": 0.2,
+                "rate": 248,
+                "delay-distro": 2
             },
             "dst-network=192.168.1.0/24, protocol=ip": {
-                "delay": "1.0",
-                "loss": "1",
+                "delay": 1,
+                "loss": 1,
                 "rate": "100M"
             }
         },
         "incoming": {
             "dst-network=192.168.11.0/24, dst-port=80, protocol=ip": {
-                "delay": "1.0",
-                "loss": "0.02",
-                "duplicate": "0.5",
-                "reorder": "0.2",
+                "delay": 1,
+                "loss": 0.02,
+                "duplicate": 0.5,
+                "reorder": 0.2,
                 "rate": "100K"
             },
             "dst-network=0.0.0.0/0, protocol=ip": {
-                "delay": "10.0",
-                "delay-distro": "2.0",
+                "delay": 10,
+                "delay-distro": 2,
                 "rate": "500K"
             }
         }
@@ -188,31 +188,31 @@ class Test_tcshow(object):
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
             "dst-network=::1/128, dst-port=8080, protocol=ipv6": {
-                "delay": "10.0",
-                "loss": "0.01",
-                "duplicate": "5",
-                "reorder": "2",
-                "rate": "248",
-                "delay-distro": "2.0"
+                "delay": 10,
+                "loss": 0.01,
+                "duplicate": 5,
+                "reorder": 2,
+                "rate": 248,
+                "delay-distro": 2
             },
             "dst-network=2001:db00::/24, protocol=ipv6": {
-                "delay": "1.0",
-                "loss": "1",
+                "delay": 1,
+                "loss": 1,
                 "rate": "100M"
             }
         },
         "incoming": {
             "dst-network=2001:db00::/25, dst-port=80, protocol=ipv6": {
-                "delay": "1.0",
-                "loss": "0.02",
-                "duplicate": "5",
-                "reorder": "2",
+                "delay": 1,
+                "loss": 0.02,
+                "duplicate": 5,
+                "reorder": 2,
                 "rate": "100K"
             },
             "protocol=ipv6": {
-                "delay": "10.0",
+                "delay": 10,
                 "rate": "500K",
-                "delay-distro": "2.0"
+                "delay-distro": 2
             }
         }
     }

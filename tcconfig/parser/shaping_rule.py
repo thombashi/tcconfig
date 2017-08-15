@@ -39,6 +39,7 @@ class TcShapingRuleParser(object):
         self.__ip_version = ip_version
         self.__logger = logger
 
+        self.__parsed_mappings = {}
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__ifb_device = self.__get_ifb_from_device()
 
@@ -62,6 +63,16 @@ class TcShapingRuleParser(object):
             return []
 
         return self.__parse_tc_filter(self.__ifb_device)
+
+    def parse(self, device):
+        if self.__parsed_mappings.get(device):
+            return
+
+        self.__parse_tc_class(device)
+        self.__parse_tc_filter(device)
+        self.__parse_tc_qdisc(device)
+
+        self.__parsed_mappings[device] = True
 
     def __get_ifb_from_device(self):
         filter_runner = subprocrunner.SubprocessRunner(
@@ -122,12 +133,23 @@ class TcShapingRuleParser(object):
         return ", ".join(key_item_list)
 
     def __get_shaping_rule(self, device):
+        from simplesqlite.sqlquery import SqlQuery
+
         if typepy.is_null_string(device):
             return {}
 
-        class_param_list = self.__parse_tc_class(device)
-        filter_param_list = self.__parse_tc_filter(device)
-        qdisc_param_list = self.__parse_tc_qdisc(device)
+        self.parse(device)
+
+        where_query = SqlQuery.make_where(Tc.Param.DEVICE, device)
+        class_param_list = self.__con.select_as_dict(
+            table_name=Tc.Subcommand.CLASS, where=where_query
+        ).get(Tc.Subcommand.CLASS)
+        filter_param_list = self.__con.select_as_dict(
+            table_name=Tc.Subcommand.FILTER, where=where_query
+        ).get(Tc.Subcommand.FILTER)
+        qdisc_param_list = self.__con.select_as_dict(
+            table_name=Tc.Subcommand.QDISC, where=where_query
+        ).get(Tc.Subcommand.QDISC)
 
         shaping_rule_mapping = {}
 
@@ -151,7 +173,9 @@ class TcShapingRuleParser(object):
                         filter_param.get(Tc.Param.CLASS_ID)):
                     continue
 
-                shaping_rule.update(self.__strip_qdisc_param(qdisc_param))
+                shaping_rule.update(self.__strip_param(
+                    qdisc_param,
+                    [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]))
 
             for class_param in class_param_list:
                 self.__logger.debug(
@@ -162,9 +186,8 @@ class TcShapingRuleParser(object):
                         filter_param.get(Tc.Param.CLASS_ID)):
                     continue
 
-                work_class_param = copy.deepcopy(class_param)
-                del work_class_param[Tc.Param.CLASS_ID]
-                shaping_rule.update(work_class_param)
+                shaping_rule.update(self.__strip_param(
+                    class_param, [Tc.Param.DEVICE, Tc.Param.CLASS_ID]))
 
             if not shaping_rule:
                 self.__logger.debug(
@@ -191,17 +214,13 @@ class TcShapingRuleParser(object):
             device, run_tc_show(Tc.Subcommand.CLASS, device))
 
     @staticmethod
-    def __strip_qdisc_param(qdisc_param):
-        work_qdisc_param = copy.deepcopy(qdisc_param)
+    def __strip_param(params, strip_param_list):
+        work_params = copy.deepcopy(params)
 
-        try:
-            del work_qdisc_param[Tc.Param.PARENT]
-        except KeyError:
-            pass
+        for strip_param in strip_param_list:
+            try:
+                del work_params[strip_param]
+            except KeyError:
+                pass
 
-        try:
-            del work_qdisc_param[Tc.Param.HANDLE]
-        except KeyError:
-            pass
-
-        return work_qdisc_param
+        return work_params
