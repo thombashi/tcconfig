@@ -296,12 +296,14 @@ class TcFilterParser(AbstractParser):
         dst_netmask = 0
 
         for ipv6_entry in ipv6_entry_list:
+            part_netmask = bin(int(ipv6_entry.mask_hex, 16)).count("1")
+
             if ipv6_entry.match_id in self.FilterMatchIdIpv6.INCOMING_NETWORK_LIST:
                 src_octet_list.extend(ipv6_entry.octet_list)
-                src_netmask += bin(int(ipv6_entry.mask_hex, 16)).count("1")
+                src_netmask += part_netmask
             elif ipv6_entry.match_id in self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST:
                 dst_octet_list.extend(ipv6_entry.octet_list)
-                dst_netmask += bin(int(ipv6_entry.mask_hex, 16)).count("1")
+                dst_netmask += part_netmask
             else:
                 raise ValueError(
                     "unexpected ipv6 entry: {}".format(ipv6_entry))
