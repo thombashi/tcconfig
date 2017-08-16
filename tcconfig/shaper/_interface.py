@@ -23,6 +23,8 @@ from .._const import (
 )
 from .._error import InvalidParameterError
 from .._iptables import IptablesMangleMarkEntry
+from .._logger import logger
+from .._shaping_rule_finder import TcShapingRuleFinder
 
 
 @six.add_metaclass(abc.ABCMeta)
@@ -47,18 +49,41 @@ class AbstractShaper(ShaperInterface):
     def _dev(self):
         return "dev {:s}".format(self._tc_device)
 
+    @property
+    def _existing_parent(self):
+        if self.__existing_parent:
+            return self.__existing_parent
+
+        self.__existing_parent = self._shaping_rule_finder.find_parent()
+
+        return self.__existing_parent
+
+    @property
+    def _shaping_rule_finder(self):
+        if self.__shaping_rule_finder:
+            return self.__shaping_rule_finder
+
+        self.__shaping_rule_finder = TcShapingRuleFinder(
+            logger=logger, tc=self._tc_obj)
+
+        return self.__shaping_rule_finder
+
     def __init__(self, tc_obj):
         self._tc_obj = tc_obj
+
+        self.__shaping_rule_finder = None
+        self.__existing_parent = None
 
     def _set_netem(self):
         base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
         if base_command is None:
             return 0
 
-        parent = "{:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
-        handle = "{:x}".format(
-            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
+        parent = self._get_tc_parent("{:s}:{:d}".format(
+            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id()))
+        handle = self._get_tc_handle("{:x}".format(
+            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id)))
+
         command_item_list = [
             base_command,
             "dev {:s}".format(self._tc_obj.get_tc_device()),
@@ -103,6 +128,9 @@ class AbstractShaper(ShaperInterface):
     def _add_filter(self):
         base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
         if base_command is None:
+            return 0
+
+        if self._tc_obj.is_change_shaping_rule:
             return 0
 
         command_item_list = [
@@ -178,6 +206,27 @@ class AbstractShaper(ShaperInterface):
         raise InvalidParameterError(
             "unknown direction",
             expected=TrafficDirection.LIST, value=self.direction)
+
+    def _get_tc_handle(self, default_handle):
+        handle = None
+        if self._tc_obj.is_change_shaping_rule:
+            handle = self._shaping_rule_finder.find_handle(
+                self._get_tc_parent(None))
+
+        if not handle:
+            handle = default_handle
+
+        return handle
+
+    def _get_tc_parent(self, default_parent):
+        parent = None
+        if self._tc_obj.is_change_shaping_rule:
+            parent = self._existing_parent
+
+        if not parent:
+            parent = default_parent
+
+        return parent
 
     def _get_unique_mangle_mark_id(self):
         mark_id = self._tc_obj.iptables_ctrl.get_unique_mark_id()

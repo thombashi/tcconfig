@@ -327,11 +327,6 @@ class TrafficControl(object):
                 "unknown sub command",
                 expected=valid_sub_command_list, value=sub_command)
 
-        if (self.is_change_shaping_rule and
-                sub_command in (Tc.Subcommand.QDISC, Tc.Subcommand.FILTER)):
-            # no need to execute
-            return None
-
         return "tc {:s} {:s}".format(
             sub_command, "change" if self.is_change_shaping_rule else "add")
 

@@ -67,6 +67,9 @@ class HtbShaper(AbstractShaper):
         if base_command is None:
             return 0
 
+        if self._tc_obj.is_change_shaping_rule:
+            return 0
+
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         if self._tc_obj.is_add_shaping_rule:
@@ -95,10 +98,13 @@ class HtbShaper(AbstractShaper):
 
     def _add_rate(self):
         base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
-        parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
-        classid = "{:s}:{:d}".format(
+
+        parent = "{:s}:".format(self._get_tc_parent(
+            "{:s}:".format(self._tc_obj.qdisc_major_id_str)).split(":")[0])
+        classid = self._get_tc_parent("{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str,
-            self._get_qdisc_minor_id())
+            self._get_qdisc_minor_id()))
+
         no_limit_kbits = get_no_limit_kbits(self._tc_device)
 
         kbits = self._tc_obj.bandwidth_rate
