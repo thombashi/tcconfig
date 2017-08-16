@@ -43,6 +43,10 @@ def initialize(options):
     set_log_level(options.log_level)
     subprocrunner.SubprocessRunner.is_save_history = True
 
+    if options.is_output_stacktrace:
+        subprocrunner.SubprocessRunner.is_output_stacktrace = (
+            options.is_output_stacktrace)
+
 
 def is_anywhere_network(network, ip_version):
     try:

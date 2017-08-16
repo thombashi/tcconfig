@@ -30,6 +30,14 @@ class ArgparseWrapper(object):
         self._add_tc_command_arg_group()
         self._add_log_level_argument_group()
 
+        group = self.parser.add_argument_group("Debug")
+        group.add_argument(
+            "--stacktrace", dest="is_output_stacktrace",
+            action="store_true", default=False,
+            help="""print stack trace for debug information.
+            --debug option required to see the debug print.
+            """)
+
     def _add_log_level_argument_group(self):
         dest = "log_level"
 
