@@ -18,6 +18,7 @@ import subprocrunner
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
+    check_tc_command_installation,
     verify_network_interface,
     write_tc_script,
 )
@@ -62,11 +63,7 @@ def main():
 
     set_log_level(options.log_level)
 
-    try:
-        subprocrunner.Which("tc").verify()
-    except subprocrunner.CommandNotFoundError as e:
-        logger.error(e)
-        return errno.ENOENT
+    check_tc_command_installation()
 
     subprocrunner.SubprocessRunner.is_save_history = True
     if options.tc_command_output != TcCommandOutput.NOT_SET:
