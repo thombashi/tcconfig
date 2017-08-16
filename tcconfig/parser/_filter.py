@@ -43,6 +43,11 @@ class TcFilterParser(AbstractParser):
         pp.SkipTo("protocol", include=True) +
         pp.Word(pp.alphanums)
     )
+    __FILTER_ID_PATTERN = (
+        pp.Literal("filter parent") +
+        pp.SkipTo("fh", include=True) +
+        pp.Word(pp.hexnums + ":")
+    )
     __FILTER_MATCH_PATTERN = (
         pp.Literal("match") +
         pp.Word(pp.alphanums + "/") +
@@ -113,6 +118,8 @@ class TcFilterParser(AbstractParser):
 
             try:
                 self.__parse_flow_id(line)
+                self.__parse_protocol(line)
+                self.__parse_filter_id(line)
 
                 if tc_filter.get(Tc.Param.FLOW_ID):
                     logger.debug("store filter: {}".format(tc_filter))
@@ -120,15 +127,12 @@ class TcFilterParser(AbstractParser):
                     self._clear()
                     self.__parse_flow_id(line)
 
+                    self.__parse_protocol(line)
+                    self.__parse_filter_id(line)
+
                 continue
             except pp.ParseException:
                 logger.debug("failed to parse flow id: {}".format(line))
-
-            try:
-                self.__parse_protocol(line)
-                continue
-            except pp.ParseException:
-                logger.debug("failed to parse protocol: {}".format(line))
 
             try:
                 if self.__ip_version == 4:
@@ -169,11 +173,14 @@ class TcFilterParser(AbstractParser):
 
     def _clear(self):
         self.__device = None
+        self.__filter_id = None
         self.__flow_id = None
         self.__filter_src_network = None
         self.__filter_dst_network = None
         self.__filter_src_port = None
         self.__filter_dst_port = None
+
+        self.__protocol = None
 
         self.__handle = None
         self.__classid = None
@@ -181,6 +188,7 @@ class TcFilterParser(AbstractParser):
     def __get_filter(self):
         tc_filter = OrderedDict()
         tc_filter[Tc.Param.DEVICE] = self.__device
+        tc_filter[Tc.Param.FILTER_ID] = self.__filter_id
         tc_filter[Tc.Param.FLOW_ID] = self.__flow_id
         tc_filter[Tc.Param.PROTOCOL] = self.protocol
         tc_filter[Tc.Param.SRC_NETWORK] = self.__filter_src_network
@@ -199,6 +207,14 @@ class TcFilterParser(AbstractParser):
     def __parse_protocol(self, line):
         parsed_list = self.__FILTER_PROTOCOL_PATTERN.parseString(line)
         self.__protocol = parsed_list[-1]
+        logger.debug("succeed to parse protocol: protocol={}, line={}".format(
+            self.__protocol, line))
+
+    def __parse_filter_id(self, line):
+        parsed_list = self.__FILTER_ID_PATTERN.parseString(line)
+        self.__filter_id = parsed_list[-1]
+        logger.debug("succeed to parse filter id: filter-id={}, line={}".format(
+            self.__filter_id, line))
 
     def __parse_mangle_mark(self, line):
         parsed_list = self.__FILTER_MANGLE_MARK_PATTERN.parseString(line)

@@ -55,6 +55,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '801::800',
                     Tc.Param.FLOW_ID: '1:1',
                     Tc.Param.SRC_NETWORK: None,
                     Tc.Param.DST_NETWORK: '192.168.0.10/32',
@@ -64,6 +65,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 },
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.SRC_NETWORK: None,
                     Tc.Param.DST_NETWORK: '0.0.0.0/0',
@@ -87,6 +89,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '801::800',
                     Tc.Param.FLOW_ID: '1:1',
                     Tc.Param.SRC_NETWORK: None,
                     Tc.Param.DST_NETWORK: '192.168.0.0/24',
@@ -96,6 +99,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 },
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.SRC_NETWORK: None,
                     Tc.Param.DST_NETWORK: '0.0.0.0/0',
@@ -118,6 +122,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '801::800',
                     Tc.Param.FLOW_ID: '1:3',
                     Tc.Param.SRC_NETWORK: '192.168.0.10/32',
                     Tc.Param.DST_NETWORK: None,
@@ -127,6 +132,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 },
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1:2',
                     Tc.Param.SRC_NETWORK: '0.0.0.0/0',
                     Tc.Param.DST_NETWORK: None,
@@ -145,6 +151,7 @@ filter parent 1a1a: protocol ip pref 1 u32 fh 800::800 order 2048 key ht 800 bkt
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1a1a:2',
                     Tc.Param.SRC_NETWORK: None,
                     Tc.Param.DST_NETWORK: '0.0.0.0/0',
@@ -190,6 +197,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1f87:2',
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.SRC_NETWORK: '::/0',
@@ -210,6 +218,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1f87:2',
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.SRC_NETWORK: '2001:db00::1/128',
@@ -234,6 +243,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::800',
                     Tc.Param.FLOW_ID: '1f87:2',
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.SRC_NETWORK: '::/0',
@@ -243,6 +253,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
                 },
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::801',
                     Tc.Param.FLOW_ID: '1f87:3',
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.SRC_NETWORK: '::/0',
@@ -252,6 +263,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
                 },
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::802',
                     Tc.Param.FLOW_ID: '1f87:4',
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.SRC_NETWORK: None,
@@ -269,6 +281,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.FILTER_ID: '800::802',
                     Tc.Param.FLOW_ID: '1f87:4',
                     Tc.Param.PROTOCOL: 'ipv6',
                     Tc.Param.SRC_NETWORK: None,

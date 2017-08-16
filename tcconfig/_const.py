@@ -45,6 +45,7 @@ class Tc(object):
 
     class Param(object):
         DEVICE = "device"
+        FILTER_ID = "filter_id"
         CLASS_ID = "classid"
         DST_NETWORK = "dst-network"
         DST_PORT = "dst-port"
