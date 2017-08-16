@@ -17,6 +17,7 @@ import subprocrunner
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_tc_command_installation,
+    initialize,
     is_execute_tc_command,
     verify_network_interface,
     write_tc_script,
@@ -54,7 +55,7 @@ def parse_option():
 def main():
     options = parse_option()
 
-    set_log_level(options.log_level)
+    initialize(options)
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
@@ -68,7 +69,7 @@ def main():
         logger.error(e)
         return errno.EINVAL
 
-    subprocrunner.SubprocessRunner.is_save_history = True
+    subprocrunner.SubprocessRunner.clear_history()
 
     tc = TrafficControl(options.device)
     if options.log_level == logbook.INFO:

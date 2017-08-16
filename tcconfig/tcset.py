@@ -22,6 +22,7 @@ import pyparsing as pp
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_tc_command_installation,
+    initialize,
     is_execute_tc_command,
     write_tc_script,
 )
@@ -334,7 +335,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 def main():
     options = parse_option()
 
-    set_log_level(options.log_level)
+    initialize(options)
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
@@ -351,7 +352,7 @@ def main():
     if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
 
-    subprocrunner.SubprocessRunner.is_save_history = True
+    subprocrunner.SubprocessRunner.clear_history()
 
     try:
         tc = TrafficControl(

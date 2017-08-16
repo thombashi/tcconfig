@@ -36,6 +36,14 @@ def logging_context(name):
         logger.debug("----- {:s}: {:s} ----|".format("complete", name))
 
 
+def initialize(options):
+    import subprocrunner
+    from ._logger import set_log_level
+
+    set_log_level(options.log_level)
+    subprocrunner.SubprocessRunner.is_save_history = True
+
+
 def is_anywhere_network(network, ip_version):
     try:
         network = network.strip()
