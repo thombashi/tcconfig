@@ -48,11 +48,15 @@ class TcShapingRuleFinder(object):
             SqlQuery.make_where(Tc.Param.DST_PORT, self.__tc.dst_port),
             SqlQuery.make_where(Tc.Param.SRC_PORT, self.__tc.src_port),
         ]
-
-        return self.__parser.con.get_value(
+        parent = self.__parser.con.get_value(
             select=Tc.Param.FLOW_ID,
             table_name=Tc.Subcommand.FILTER,
             where=" AND ".join(where_list))
+
+        self.__logger.debug(
+            "find parent: result={}, where{}".format(parent, where_list))
+
+        return parent
 
     def is_exist_rule(self):
         key_param_list = (
