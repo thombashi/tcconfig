@@ -81,14 +81,14 @@ class AbstractShaper(ShaperInterface):
 
         parent = self._get_tc_parent("{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id()))
-        handle = self._get_tc_handle("{:x}".format(
+        handle = self._get_tc_handle("{:x}:".format(
             self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id)))
 
         command_item_list = [
             base_command,
             "dev {:s}".format(self._tc_obj.get_tc_device()),
             "parent {:s}".format(parent),
-            "handle {:s}:".format(handle),
+            "handle {:s}".format(handle),
             "netem",
         ]
 
