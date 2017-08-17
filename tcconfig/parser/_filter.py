@@ -21,13 +21,6 @@ from .._logger import logger
 from ._interface import AbstractParser
 
 
-def to_unicode(text):
-    try:
-        return text.decode("ascii")
-    except AttributeError:
-        return text
-
-
 class TcFilterParser(AbstractParser):
 
     class FilterMatchIdIpv4(object):
@@ -96,7 +89,7 @@ class TcFilterParser(AbstractParser):
             return []
 
         filter_data_matrix = []
-        self.__buffer = to_unicode(text).splitlines()
+        self.__buffer = self._to_unicode(text).splitlines()
         self.__parse_idx = 0
 
         while self.__parse_idx < len(self.__buffer):
