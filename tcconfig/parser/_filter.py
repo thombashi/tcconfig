@@ -355,8 +355,9 @@ class TcFilterParser(AbstractParser):
                           self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST +
                           [self.FilterMatchIdIpv6.PORT]):
             logger.warn(
-                "unknown match id for a IPv4 filter, "
-                "might be a IPv6 filter: id={}".format(match_id))
+                "unknown match id for an IPv4 filter: "
+                "might be an IPv6 filter. try to use --ipv6 option. "
+                "(id={})".format(match_id))
             return
         else:
             logger.debug("unknown match id: {}".format(match_id))
