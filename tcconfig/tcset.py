@@ -53,7 +53,7 @@ logbook.StderrHandler(
     level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
-def parse_option():
+def get_arg_parser():
     parser = ArgparseWrapper(VERSION)
 
     group = parser.parser.add_mutually_exclusive_group(required=True)
@@ -187,7 +187,7 @@ def parse_option():
         "--ipv6", dest="is_ipv6", action="store_true", default=False,
         help="apply traffic control to IPv6 packets rather than IPv4.")
 
-    return parser.parser.parse_args()
+    return parser.parser
 
 
 def verify_netem_module():
@@ -252,10 +252,19 @@ class TcConfigLoader(object):
                     option_list = [
                         device_option,
                         "--direction={:s}".format(direction),
-                    ] + [
-                        "--{:s}={}".format(k, v)
-                        for k, v in six.iteritems(filter_table)
                     ]
+                    for key, value in six.iteritems(filter_table):
+                        arg_item = "--{:s}={}".format(key, value)
+
+                        parse_result = get_arg_parser().parse_known_args(
+                            ["--device", "dummy", arg_item])
+                        if parse_result[1]:
+                            self.__logger.debug(
+                                "unknown parameter: key={}, value={}".format(
+                                    key, value))
+                            continue
+
+                        option_list.append(arg_item)
 
                     try:
                         dst_network = self.__parse_tc_filter_network(tc_filter)
@@ -333,7 +342,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
 
 def main():
-    options = parse_option()
+    options = get_arg_parser().parse_args()
 
     initialize(options)
 
