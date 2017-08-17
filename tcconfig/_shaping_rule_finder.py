@@ -35,19 +35,7 @@ class TcShapingRuleFinder(object):
     def find_parent(self):
         self.__parser.parse()
 
-        if self.__tc.direction == TrafficDirection.OUTGOING:
-            device = self.__parser.device
-        elif self.__tc.direction == TrafficDirection.INCOMING:
-            device = self.__parser.ifb_device
-
-        where_list = [
-            SqlQuery.make_where(Tc.Param.DEVICE, device),
-            SqlQuery.make_where(Tc.Param.PROTOCOL, self.__tc.protocol),
-            SqlQuery.make_where(Tc.Param.DST_NETWORK, self.__tc.dst_network),
-            SqlQuery.make_where(Tc.Param.SRC_NETWORK, self.__tc.src_network),
-            SqlQuery.make_where(Tc.Param.DST_PORT, self.__tc.dst_port),
-            SqlQuery.make_where(Tc.Param.SRC_PORT, self.__tc.src_port),
-        ]
+        where_list = self.__get_filter_where_condition_list()
         parent = self.__parser.con.get_value(
             select=Tc.Param.FLOW_ID,
             table_name=Tc.Subcommand.FILTER,
@@ -60,3 +48,18 @@ class TcShapingRuleFinder(object):
 
     def is_exist_rule(self):
         return self.find_parent() is not None
+
+    def __get_filter_where_condition_list(self):
+        if self.__tc.direction == TrafficDirection.OUTGOING:
+            device = self.__parser.device
+        elif self.__tc.direction == TrafficDirection.INCOMING:
+            device = self.__parser.ifb_device
+
+        return [
+            SqlQuery.make_where(Tc.Param.DEVICE, device),
+            SqlQuery.make_where(Tc.Param.PROTOCOL, self.__tc.protocol),
+            SqlQuery.make_where(Tc.Param.DST_NETWORK, self.__tc.dst_network),
+            SqlQuery.make_where(Tc.Param.SRC_NETWORK, self.__tc.src_network),
+            SqlQuery.make_where(Tc.Param.DST_PORT, self.__tc.dst_port),
+            SqlQuery.make_where(Tc.Param.SRC_PORT, self.__tc.src_port),
+        ]
