@@ -219,7 +219,7 @@ class TcFilterParser(AbstractParser):
 
     def __parse_priority(self, line):
         parsed_list = self.__FILTER_PRIORITY_PATTERN.parseString(line)
-        self.__priority = parsed_list[-1]
+        self.__priority = int(parsed_list[-1])
         logger.debug("succeed to parse priority: priority={}, line={}".format(
             self.__priority, line))
 
