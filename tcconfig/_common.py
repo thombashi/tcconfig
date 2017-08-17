@@ -36,6 +36,60 @@ def logging_context(name):
         logger.debug("----- {:s}: {:s} ----|".format("complete", name))
 
 
+def check_tc_command_installation():
+    try:
+        spr.Which("tc").verify()
+    except spr.CommandNotFoundError as e:
+        logger.error(e)
+        sys.exit(errno.ENOENT)
+
+
+def get_anywhere_network(ip_version):
+    ip_version_n = typepy.type.Integer(ip_version).try_convert()
+
+    if ip_version_n == 4:
+        return Network.Ipv4.ANYWHERE
+
+    if ip_version_n == 6:
+        return Network.Ipv6.ANYWHERE
+
+    raise ValueError("unknown ip version: {}".format(ip_version))
+
+
+def get_iproute2_upper_limite_rate():
+    """
+    :return: Upper bandwidth rate limit of iproute2 [Kbps].
+    :rtype: int
+    """
+
+    from ._converter import Humanreadable
+
+    # upper bandwidth rate limit of iproute2 was 34,359,738,360
+    # bits per second older than 3.14.0
+    # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
+
+    return Humanreadable(
+        "32G", kilo_size=KILO_SIZE).to_kilo_bit()
+
+
+def get_no_limit_kbits(tc_device):
+    if typepy.is_null_string(tc_device):
+        return get_iproute2_upper_limite_rate()
+
+    try:
+        speed_value = read_iface_speed(tc_device)
+    except IOError:
+        return get_iproute2_upper_limite_rate()
+
+    if speed_value < 0:
+        # default to the iproute2 upper limit when speed value is -1 in
+        # paravirtualized network interfaces
+        return get_iproute2_upper_limite_rate()
+    return min(
+        speed_value * KILO_SIZE,
+        get_iproute2_upper_limite_rate())
+
+
 def initialize(options):
     import subprocrunner
     from ._logger import set_log_level
@@ -68,68 +122,9 @@ def is_execute_tc_command(tc_command_output):
     return tc_command_output == TcCommandOutput.NOT_SET
 
 
-def get_anywhere_network(ip_version):
-    ip_version_n = typepy.type.Integer(ip_version).try_convert()
-
-    if ip_version_n == 4:
-        return Network.Ipv4.ANYWHERE
-
-    if ip_version_n == 6:
-        return Network.Ipv6.ANYWHERE
-
-    raise ValueError("unknown ip version: {}".format(ip_version))
-
-
-def check_tc_command_installation():
-    try:
-        spr.Which("tc").verify()
-    except spr.CommandNotFoundError as e:
-        logger.error(e)
-        sys.exit(errno.ENOENT)
-
-
-def verify_network_interface(device):
-    try:
-        import netifaces
-    except ImportError:
-        return
-
-    if device not in netifaces.interfaces():
-        raise NetworkInterfaceNotFoundError(
-            "network interface not found: {}".format(device))
-
-
-def sanitize_network(network, ip_version):
-    """
-    :return: Network string
-    :rtype: str
-    :raises ValueError: if the network string is invalid.
-    """
-
-    import ipaddress
-
-    if typepy.is_null_string(network) or network.lower() == "anywhere":
-        return get_anywhere_network(ip_version)
-
-    try:
-        if ip_version == 4:
-            ipaddress.IPv4Address(network)
-            return network + "/32"
-
-        if ip_version == 6:
-            return ipaddress.IPv6Address(network).compressed
-    except ipaddress.AddressValueError:
-        pass
-
-    # validate network str ---
-
-    if ip_version == 4:
-        return ipaddress.IPv4Network(six.text_type(network)).compressed
-
-    if ip_version == 6:
-        return ipaddress.IPv6Network(six.text_type(network)).compressed
-
-    raise ValueError("unexpected ip version: {}".format(ip_version))
+def read_iface_speed(tc_device):
+    with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
+        return int(f.read().strip())
 
 
 def run_command_helper(command, error_regexp, message, exception=None):
@@ -172,11 +167,48 @@ def run_tc_show(subcommand, device):
     return runner.stdout
 
 
-def _get_original_tcconfig_command(tcconfig_command):
-    return " ".join([tcconfig_command] + [
-        command_item for command_item in sys.argv[1:]
-        if command_item != "--tc-script"
-    ])
+def sanitize_network(network, ip_version):
+    """
+    :return: Network string
+    :rtype: str
+    :raises ValueError: if the network string is invalid.
+    """
+
+    import ipaddress
+
+    if typepy.is_null_string(network) or network.lower() == "anywhere":
+        return get_anywhere_network(ip_version)
+
+    try:
+        if ip_version == 4:
+            ipaddress.IPv4Address(network)
+            return network + "/32"
+
+        if ip_version == 6:
+            return ipaddress.IPv6Address(network).compressed
+    except ipaddress.AddressValueError:
+        pass
+
+    # validate network str ---
+
+    if ip_version == 4:
+        return ipaddress.IPv4Network(six.text_type(network)).compressed
+
+    if ip_version == 6:
+        return ipaddress.IPv6Network(six.text_type(network)).compressed
+
+    raise ValueError("unexpected ip version: {}".format(ip_version))
+
+
+def verify_network_interface(device):
+    try:
+        import netifaces
+    except ImportError:
+        return
+
+    if device not in netifaces.interfaces():
+        raise NetworkInterfaceNotFoundError(
+            "network interface not found: {}".format(device))
 
 
 def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
@@ -217,40 +249,8 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     logger.info("written a tc script to '{:s}'".format(filename))
 
 
-def get_iproute2_upper_limite_rate():
-    """
-    :return: Upper bandwidth rate limit of iproute2 [Kbps].
-    :rtype: int
-    """
-
-    from ._converter import Humanreadable
-
-    # upper bandwidth rate limit of iproute2 was 34,359,738,360
-    # bits per second older than 3.14.0
-    # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
-
-    return Humanreadable(
-        "32G", kilo_size=KILO_SIZE).to_kilo_bit()
-
-
-def read_iface_speed(tc_device):
-    with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
-        return int(f.read().strip())
-
-
-def get_no_limit_kbits(tc_device):
-    if typepy.is_null_string(tc_device):
-        return get_iproute2_upper_limite_rate()
-
-    try:
-        speed_value = read_iface_speed(tc_device)
-    except IOError:
-        return get_iproute2_upper_limite_rate()
-
-    if speed_value < 0:
-        # default to the iproute2 upper limit when speed value is -1 in
-        # paravirtualized network interfaces
-        return get_iproute2_upper_limite_rate()
-    return min(
-        speed_value * KILO_SIZE,
-        get_iproute2_upper_limite_rate())
+def _get_original_tcconfig_command(tcconfig_command):
+    return " ".join([tcconfig_command] + [
+        command_item for command_item in sys.argv[1:]
+        if command_item != "--tc-script"
+    ])
