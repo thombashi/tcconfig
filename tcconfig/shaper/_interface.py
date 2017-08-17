@@ -210,7 +210,7 @@ class AbstractShaper(ShaperInterface):
     def _get_tc_handle(self, default_handle):
         handle = None
         if self._tc_obj.is_change_shaping_rule:
-            handle = self._shaping_rule_finder.find_handle(
+            handle = self._shaping_rule_finder.find_qdisc_handle(
                 self._get_tc_parent(None))
 
         if not handle:

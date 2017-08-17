@@ -26,7 +26,7 @@ class TcShapingRuleFinder(object):
             device=self.__tc.device, ip_version=self.__tc.ip_version,
             logger=self.__logger)
 
-    def find_handle(self, parent):
+    def find_qdisc_handle(self, parent):
         return self.__parser.con.get_value(
             select=Tc.Param.HANDLE,
             table_name=Tc.Subcommand.QDISC,
