@@ -66,10 +66,12 @@ class Test_tcset_change(object):
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
             "dst-network=192.168.1.2/32, protocol=ip": {
+                "filter_id": "800::800",
                 "delay": 100,
                 "rate": "50K"
             },
             "dst-network=192.168.1.3/32, protocol=ip": {
+                "filter_id": "800::801",
                 "delay": 200,
                 "loss": 0.01,
                 "duplicate": 5,
@@ -106,10 +108,12 @@ class Test_tcset_change(object):
         expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
             "dst-network=192.168.1.2/32, protocol=ip": {
+                "filter_id": "800::800",
                 "delay": 100,
                 "rate": "50K"
             },
             "dst-network=192.168.1.3/32, protocol=ip": {
+                "filter_id": "800::801",
                 "delay": 300,
                 "loss": 0.02,
                 "duplicate": 5.5,

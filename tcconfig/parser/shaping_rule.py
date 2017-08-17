@@ -200,6 +200,8 @@ class TcShapingRuleParser(object):
                         filter_param.get(Tc.Param.CLASS_ID)):
                     continue
 
+                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(
+                    Tc.Param.FILTER_ID)
                 shaping_rule.update(self.__strip_param(
                     qdisc_param,
                     [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]))

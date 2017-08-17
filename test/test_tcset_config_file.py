@@ -37,18 +37,21 @@ class Test_tcconfig(object):
         config = "{" + '"{:s}"'.format(device_value) + ": {" + """
         "outgoing": {
             "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
+                "filter_id": "800::801",
                 "delay": 10,
                 "loss": 0.01,
                 "rate": "250K",
                 "delay-distro": 2
             },
             "dst-network=0.0.0.0/0, src-port=1234, protocol=ip": {
+                "filter_id": "800::800",
                 "delay": 50,
                 "rate": "1G"
             }
         },
         "incoming": {
             "dst-network=192.168.10.0/24, protocol=ip": {
+                "filter_id": "800::800",
                 "corrupt": 0.02,
                 "rate": "1500K"
             }
