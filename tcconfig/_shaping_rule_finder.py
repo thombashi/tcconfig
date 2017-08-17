@@ -36,13 +36,15 @@ class TcShapingRuleFinder(object):
         self.__parser.parse()
 
         where_list = self.__get_filter_where_condition_list()
+        table_name = Tc.Subcommand.FILTER
         parent = self.__parser.con.get_value(
             select=Tc.Param.FLOW_ID,
-            table_name=Tc.Subcommand.FILTER,
+            table_name=table_name,
             where=" AND ".join(where_list))
 
         self.__logger.debug(
-            "find parent: result={}, where{}".format(parent, where_list))
+            "find parent: result={}, table={}, where={}".format(
+                parent, table_name, where_list))
 
         return parent
 
