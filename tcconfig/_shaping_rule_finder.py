@@ -32,6 +32,22 @@ class TcShapingRuleFinder(object):
             table_name=Tc.Subcommand.QDISC,
             where=SqlQuery.make_where(Tc.Param.PARENT, parent))
 
+    def find_filter_id(self):
+        self.__parser.parse()
+
+        where_list = self.__get_filter_where_condition_list()
+        table_name = Tc.Subcommand.FILTER
+        filter_id = self.__parser.con.get_value(
+            select=Tc.Param.FILTER_ID,
+            table_name=table_name,
+            where=" AND ".join(where_list))
+
+        self.__logger.debug(
+            "find parent: result={}, table={}, where={}".format(
+                filter_id, table_name, where_list))
+
+        return filter_id
+
     def find_parent(self):
         self.__parser.parse()
 
