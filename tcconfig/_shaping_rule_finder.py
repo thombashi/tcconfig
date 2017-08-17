@@ -19,25 +19,29 @@ from .parser.shaping_rule import TcShapingRuleParser
 
 class TcShapingRuleFinder(object):
 
+    @property
+    def _parser(self):
+        self.__shaping_rule_parser.parse()
+
+        return self.__shaping_rule_parser
+
     def __init__(self, logger, tc):
         self.__logger = logger
         self.__tc = tc
-        self.__parser = TcShapingRuleParser(
+        self.__shaping_rule_parser = TcShapingRuleParser(
             device=self.__tc.device, ip_version=self.__tc.ip_version,
             logger=self.__logger)
 
     def find_qdisc_handle(self, parent):
-        return self.__parser.con.get_value(
+        return self._parser.con.get_value(
             select=Tc.Param.HANDLE,
             table_name=Tc.Subcommand.QDISC,
             where=SqlQuery.make_where(Tc.Param.PARENT, parent))
 
     def find_filter_id(self):
-        self.__parser.parse()
-
         where_list = self.__get_filter_where_condition_list()
         table_name = Tc.Subcommand.FILTER
-        filter_id = self.__parser.con.get_value(
+        filter_id = self._parser.con.get_value(
             select=Tc.Param.FILTER_ID,
             table_name=table_name,
             where=" AND ".join(where_list))
@@ -49,11 +53,9 @@ class TcShapingRuleFinder(object):
         return filter_id
 
     def find_parent(self):
-        self.__parser.parse()
-
         where_list = self.__get_filter_where_condition_list()
         table_name = Tc.Subcommand.FILTER
-        parent = self.__parser.con.get_value(
+        parent = self._parser.con.get_value(
             select=Tc.Param.FLOW_ID,
             table_name=table_name,
             where=" AND ".join(where_list))
@@ -69,9 +71,9 @@ class TcShapingRuleFinder(object):
 
     def __get_filter_where_condition_list(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:
-            device = self.__parser.device
+            device = self._parser.device
         elif self.__tc.direction == TrafficDirection.INCOMING:
-            device = self.__parser.ifb_device
+            device = self._parser.ifb_device
 
         return [
             SqlQuery.make_where(Tc.Param.DEVICE, device),
