@@ -137,55 +137,12 @@ def get_arg_parser():
         choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.HTB],
         default=ShapingAlgorithm.HTB,
         help="shaping algorithm. defaults to %(default)s (recommended).")
-
-    group = parser.parser.add_argument_group("Routing")
-    group.add_argument(
-        "--direction", choices=TrafficDirection.LIST,
-        default=TrafficDirection.OUTGOING,
-        help="""the direction of network communication that impose traffic control.
-        'incoming' requires Linux kernel version 2.6.20 or later.
-        (default = %(default)s)
-        """)
     group.add_argument(
         "--iptables", dest="is_enable_iptables",
         action="store_true", default=False,
         help="use iptables to traffic control.")
-    group.add_argument(
-        "--network", "--dst-network", dest="dst_network",
-        help="target IP-address/network to control traffic")
-    group.add_argument(
-        "--exclude-dst-network",
-        help="""exclude a shaping rule for a specific destination
-        IP-address/network.
-        """)
-    group.add_argument(
-        "--src-network",
-        help="""set a traffic shaping rule to specific packets that routed from
-        --src-network to --dst-network. this option required to execute with
-        the --iptables option when you use tbf.
-        the shaping rule only affect to outgoing packets
-        (no effect to if you execute with "--direction incoming" option)
-        """)
-    group.add_argument(
-        "--exclude-src-network",
-        help="""exclude a shaping rule for a specific source
-        IP-address/network.
-        """)
-    group.add_argument(
-        "--port", "--dst-port", dest="dst_port", type=int,
-        help="target destination port number to control traffic.")
-    group.add_argument(
-        "--exclude-dst-port",
-        help="exclude a shaping rule for a specific destination port.")
-    group.add_argument(
-        "--src-port", type=int,
-        help="target source port number to control traffic.")
-    group.add_argument(
-        "--exclude-src-port",
-        help="exclude a shaping rule for a specific source port.")
-    group.add_argument(
-        "--ipv6", dest="is_ipv6", action="store_true", default=False,
-        help="apply traffic control to IPv6 packets rather than IPv4.")
+
+    parser.add_routing_group()
 
     return parser.parser
 
