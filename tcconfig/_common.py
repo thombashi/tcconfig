@@ -18,6 +18,7 @@ import typepy
 import subprocrunner as spr
 
 from ._const import (
+    IPV6_OPTION_ERROR_MSG_FORMAT,
     KILO_SIZE,
     Network,
     Tc,
@@ -120,6 +121,19 @@ def is_anywhere_network(network, ip_version):
 
 def is_execute_tc_command(tc_command_output):
     return tc_command_output == TcCommandOutput.NOT_SET
+
+
+def normalize_tc_value(tc_obj):
+    import ipaddress
+
+    try:
+        tc_obj.sanitize()
+    except ipaddress.AddressValueError as e:
+        logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
+        sys.exit(errno.EINVAL)
+    except ValueError as e:
+        logger.error(e)
+        sys.exit(errno.EINVAL)
 
 
 def read_iface_speed(tc_device):

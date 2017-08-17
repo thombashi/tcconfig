@@ -24,6 +24,7 @@ from ._common import (
     check_tc_command_installation,
     initialize,
     is_execute_tc_command,
+    normalize_tc_value,
     write_tc_script,
 )
 from ._const import (
@@ -364,14 +365,7 @@ def main():
         logger.error(e)
         return errno.EINVAL
 
-    try:
-        tc.sanitize()
-    except ipaddress.AddressValueError as e:
-        logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
-        return errno.EINVAL
-    except ValueError as e:
-        logger.error(e)
-        return errno.EINVAL
+    normalize_tc_value(tc)
 
     if options.overwrite:
         if options.log_level == logbook.INFO:
