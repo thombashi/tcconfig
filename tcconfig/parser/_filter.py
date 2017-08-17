@@ -358,6 +358,9 @@ class TcFilterParser(AbstractParser):
                 "unknown match id for a IPv4 filter, "
                 "might be a IPv6 filter: id={}".format(match_id))
             return
+        else:
+            logger.debug("unknown match id: {}".format(match_id))
+            return
 
         logger.debug(
             "succeed to parse ipv4 filter: " + ", ".join([
@@ -376,6 +379,9 @@ class TcFilterParser(AbstractParser):
             self.__parse_filter_ipv6_network(value_hex, mask_hex, match_id)
         elif match_id == self.FilterMatchIdIpv6.PORT:
             self.__parse_filter_port(value_hex)
+        else:
+            logger.debug("unknown match id: {}".format(match_id))
+            return
 
         logger.debug(
             "succeed to parse ipv6 filter: " + ", ".join([
