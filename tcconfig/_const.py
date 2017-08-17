@@ -53,6 +53,7 @@ class Tc(object):
         FLOW_ID = "flowid"
         HANDLE = "handle"
         PARENT = "parent"
+        PRIORITY = "priority"
         PROTOCOL = "protocol"
         SRC_NETWORK = "src-network"
         SRC_PORT = "src-port"

@@ -43,6 +43,10 @@ class TcFilterParser(AbstractParser):
         pp.SkipTo("protocol", include=True) +
         pp.Word(pp.alphanums)
     )
+    __FILTER_PRIORITY_PATTERN = (
+        pp.Literal("filter parent") +
+        pp.SkipTo("pref", include=True) +
+        pp.Word(pp.nums))
     __FILTER_ID_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("fh", include=True) +
@@ -119,15 +123,17 @@ class TcFilterParser(AbstractParser):
             try:
                 self.__parse_flow_id(line)
                 self.__parse_protocol(line)
+                self.__parse_priority(line)
                 self.__parse_filter_id(line)
 
                 if tc_filter.get(Tc.Param.FLOW_ID):
                     logger.debug("store filter: {}".format(tc_filter))
                     filter_data_matrix.append(tc_filter)
                     self._clear()
-                    self.__parse_flow_id(line)
 
+                    self.__parse_flow_id(line)
                     self.__parse_protocol(line)
+                    self.__parse_priority(line)
                     self.__parse_filter_id(line)
 
                 continue
@@ -175,12 +181,12 @@ class TcFilterParser(AbstractParser):
         self.__device = None
         self.__filter_id = None
         self.__flow_id = None
+        self.__protocol = None
+        self.__priority = None
         self.__filter_src_network = None
         self.__filter_dst_network = None
         self.__filter_src_port = None
         self.__filter_dst_port = None
-
-        self.__protocol = None
 
         self.__handle = None
         self.__classid = None
@@ -191,6 +197,7 @@ class TcFilterParser(AbstractParser):
         tc_filter[Tc.Param.FILTER_ID] = self.__filter_id
         tc_filter[Tc.Param.FLOW_ID] = self.__flow_id
         tc_filter[Tc.Param.PROTOCOL] = self.protocol
+        tc_filter[Tc.Param.PRIORITY] = self.__priority
         tc_filter[Tc.Param.SRC_NETWORK] = self.__filter_src_network
         tc_filter[Tc.Param.DST_NETWORK] = self.__filter_dst_network
         tc_filter[Tc.Param.SRC_PORT] = self.__filter_src_port
@@ -209,6 +216,12 @@ class TcFilterParser(AbstractParser):
         self.__protocol = parsed_list[-1]
         logger.debug("succeed to parse protocol: protocol={}, line={}".format(
             self.__protocol, line))
+
+    def __parse_priority(self, line):
+        parsed_list = self.__FILTER_PRIORITY_PATTERN.parseString(line)
+        self.__priority = parsed_list[-1]
+        logger.debug("succeed to parse priority: priority={}, line={}".format(
+            self.__priority, line))
 
     def __parse_filter_id(self, line):
         parsed_list = self.__FILTER_ID_PATTERN.parseString(line)
