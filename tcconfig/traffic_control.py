@@ -309,6 +309,10 @@ class TrafficControl(object):
             self.src_network, self.ip_version)
 
     def get_tc_device(self):
+        """
+        Return a device name that associated network communication direction.
+        """
+
         if self.direction == TrafficDirection.OUTGOING:
             return self.device
 
