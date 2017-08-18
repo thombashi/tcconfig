@@ -9,7 +9,6 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import errno
 import json
 import sys
 
@@ -32,7 +31,6 @@ from ._error import NetworkInterfaceNotFoundError
 from ._logger import (
     LOG_FORMAT_STRING,
     logger,
-    set_log_level,
 )
 from .parser.shaping_rule import TcShapingRuleParser
 

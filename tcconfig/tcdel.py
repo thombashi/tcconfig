@@ -33,7 +33,6 @@ from ._logger import (
     LOG_FORMAT_STRING,
     logger,
     set_logger,
-    set_log_level,
 )
 from .traffic_control import TrafficControl
 
