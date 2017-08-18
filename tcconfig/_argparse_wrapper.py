@@ -54,11 +54,6 @@ class ArgparseWrapper(object):
             "--network", "--dst-network", dest="dst_network",
             help="target IP-address/network to control traffic")
         group.add_argument(
-            "--exclude-dst-network",
-            help="""exclude a shaping rule for a specific destination
-            IP-address/network.
-            """)
-        group.add_argument(
             "--src-network",
             help="""set a traffic shaping rule to specific packets that routed from
             --src-network to --dst-network. this option required to execute
@@ -67,25 +62,16 @@ class ArgparseWrapper(object):
             (no effect to if you execute with "--direction incoming" option)
             """)
         group.add_argument(
-            "--exclude-src-network",
-            help="""exclude a shaping rule for a specific source
-            IP-address/network.
-            """)
-        group.add_argument(
             "--port", "--dst-port", dest="dst_port", type=int,
             help="target destination port number to control traffic.")
-        group.add_argument(
-            "--exclude-dst-port",
-            help="exclude a shaping rule for a specific destination port.")
         group.add_argument(
             "--src-port", type=int,
             help="target source port number to control traffic.")
         group.add_argument(
-            "--exclude-src-port",
-            help="exclude a shaping rule for a specific source port.")
-        group.add_argument(
             "--ipv6", dest="is_ipv6", action="store_true", default=False,
             help="apply traffic control to IPv6 packets rather than IPv4.")
+
+        return group
 
     def _add_log_level_argument_group(self):
         dest = "log_level"

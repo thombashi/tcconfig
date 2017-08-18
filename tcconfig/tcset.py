@@ -144,7 +144,23 @@ def get_arg_parser():
         action="store_true", default=False,
         help="use iptables to traffic control.")
 
-    parser.add_routing_group()
+    group = parser.add_routing_group()
+    group.add_argument(
+        "--exclude-dst-network",
+        help="""exclude a shaping rule for a specific destination
+        IP-address/network.
+        """)
+    group.add_argument(
+        "--exclude-src-network",
+        help="""exclude a shaping rule for a specific source
+        IP-address/network.
+        """)
+    group.add_argument(
+        "--exclude-dst-port",
+        help="exclude a shaping rule for a specific destination port.")
+    group.add_argument(
+        "--exclude-src-port",
+        help="exclude a shaping rule for a specific source port.")
 
     return parser.parser
 
