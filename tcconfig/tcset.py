@@ -372,7 +372,7 @@ def main():
             set_log_level(logbook.ERROR)
 
         try:
-            tc.delete_tc()
+            tc.delete_all_tc()
         except NetworkInterfaceNotFoundError:
             pass
 

@@ -351,7 +351,7 @@ class TrafficControl(object):
 
         return self.__shaper.set_shaping()
 
-    def delete_tc(self):
+    def delete_all_tc(self):
         result_list = []
 
         with logging_context("delete qdisc"):
