@@ -384,6 +384,44 @@ class TrafficControl(object):
 
         return any(result_list)
 
+    def delete_tc(self):
+        """
+        Delete a specific shaping rule.
+        """
+
+        from ._shaping_rule_finder import TcShapingRuleFinder
+
+        rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
+
+        parent = rule_finder.find_parent()
+        filter_param = rule_finder.find_filter_param()
+
+        logger.debug("delete_tc: pram={}".format(filter_param))
+
+        if not filter_param:
+            logger.warn("shaping rule not found.")
+            return 1
+
+        filter_del_command = (
+            "tc filter del dev {dev:s} protocol {protocol:s} "
+            "parent {parent:} handle {handle:s} prio {prio:} u32".format(
+                dev=rule_finder.get_parsed_device(),
+                protocol=filter_param.get(Tc.Param.PROTOCOL),
+                parent="{:s}:".format(parent.split(":")[0]),
+                handle=filter_param.get(Tc.Param.FILTER_ID),
+                prio=filter_param.get(Tc.Param.PRIORITY),
+            ))
+
+        result = run_command_helper(
+            command=filter_del_command, error_regexp=None, message=None)
+
+        rule_finder.clear()
+        if not rule_finder.is_any_filter():
+            logger.debug("there are no filters remain. delete qdiscs.")
+            self.delete_all_tc()
+
+        return result
+
     def __init_shaper(self, shaping_algorithm):
         if shaping_algorithm is None:
             self.__shaper = None

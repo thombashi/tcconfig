@@ -19,6 +19,7 @@ from ._common import (
     check_tc_command_installation,
     initialize,
     is_execute_tc_command,
+    normalize_tc_value,
     verify_network_interface,
     write_tc_script,
 )
@@ -52,6 +53,8 @@ def parse_option():
         "-a", "--all", dest="is_delete_all", action="store_true",
         help="delete all of the shaping rules.")
 
+    parser.add_routing_group()
+
     return parser.parser.parse_args()
 
 
@@ -74,13 +77,25 @@ def main():
 
     subprocrunner.SubprocessRunner.clear_history()
 
-    tc = TrafficControl(options.device)
+    tc = TrafficControl(
+        options.device,
+        direction=options.direction,
+        dst_network=options.dst_network,
+        src_network=options.src_network,
+        dst_port=options.dst_port,
+        src_port=options.src_port,
+        is_ipv6=options.is_ipv6,
+    )
     if options.log_level == logbook.INFO:
         subprocrunner.set_log_level(logbook.ERROR)
+
+    normalize_tc_value(tc)
 
     return_code = 0
     if options.is_delete_all:
         return_code = tc.delete_all_tc()
+    else:
+        return_code = tc.delete_tc()
 
     command_history = "\n".join(tc.get_command_history())
 

@@ -41,19 +41,30 @@ class TcShapingRuleFinder(object):
             table_name=Tc.Subcommand.QDISC,
             where=SqlQuery.make_where(Tc.Param.PARENT, parent))
 
-    def find_filter_id(self):
+    def find_filter_param(self):
+        import simplesqlite
+
         where_list = self.__get_filter_where_condition_list()
         table_name = Tc.Subcommand.FILTER
-        filter_id = self._parser.con.get_value(
-            select=Tc.Param.FILTER_ID,
-            table_name=table_name,
-            where=" AND ".join(where_list))
 
+        try:
+            result = self._parser.con.select_as_dict(
+                column_list=[
+                    Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
+                table_name=table_name,
+                where=" AND ".join(where_list))
+        except simplesqlite.TableNotFoundError:
+            return None
+
+        if not result:
+            return None
+
+        param = result[0]
         self.__logger.debug(
-            "find parent: result={}, table={}, where={}".format(
-                filter_id, table_name, where_list))
+            "find filter param: result={}, table={}, where={}".format(
+                param, table_name, where_list))
 
-        return filter_id
+        return param
 
     def find_parent(self):
         where_list = self.__get_filter_where_condition_list()
@@ -71,6 +82,18 @@ class TcShapingRuleFinder(object):
 
     def is_exist_rule(self):
         return self.find_parent() is not None
+
+    def is_any_filter(self):
+        return self._parser.con.get_num_records(
+            table_name=Tc.Subcommand.FILTER) > 0
+
+    def get_parsed_device(self):
+        if self.__tc.direction == TrafficDirection.OUTGOING:
+            device = self._parser.device
+        elif self.__tc.direction == TrafficDirection.INCOMING:
+            device = self._parser.ifb_device
+
+        return device
 
     def __get_filter_where_condition_list(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:
