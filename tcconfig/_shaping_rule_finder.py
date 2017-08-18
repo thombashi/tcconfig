@@ -33,7 +33,7 @@ class TcShapingRuleFinder(object):
             logger=self.__logger)
 
     def clear(self):
-        self._parser.clear()
+        self.__shaping_rule_parser.clear()
 
     def find_qdisc_handle(self, parent):
         return self._parser.con.get_value(
