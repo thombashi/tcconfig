@@ -1,20 +1,53 @@
-usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-             -d DEVICE
+.. code-block:: console
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program's version number and exit
-  --tc-command          display tc commands to be executed and exit. these
-                        commands are not executed.
-  --tc-script           generate a script file that described tc commands
-                        which equivalent with execution tcconfig command. the
-                        script can be execute without tcconfig package
-                        installation.
-  --debug               for debug print.
-  --quiet               suppress execution log messages.
+    usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
+                 [--stacktrace] -d DEVICE [-a] [--id FILTER_ID]
+                 [--direction {outgoing,incoming}] [--network DST_NETWORK]
+                 [--src-network SRC_NETWORK] [--port DST_PORT]
+                 [--src-port SRC_PORT] [--ipv6]
 
-Traffic Control:
-  -d DEVICE, --device DEVICE
-                        network device name (e.g. eth0)
+    optional arguments:
+      -h, --help            show this help message and exit
+      --version             show program's version number and exit
+      --tc-command          display tc commands to be executed and exit. these
+                            commands are not executed.
+      --tc-script           generate a script file that described tc commands
+                            which equivalent with execution tcconfig command. the
+                            script can be execute without tcconfig package
+                            installation.
+      --debug               for debug print.
+      --quiet               suppress execution log messages.
 
-Issue tracker: https://github.com/thombashi/tcconfig/issues
+    Debug:
+      --stacktrace          print stack trace for debug information. --debug
+                            option required to see the debug print.
+
+    Traffic Control:
+      -d DEVICE, --device DEVICE
+                            network device name (e.g. eth0)
+      -a, --all             delete all of the shaping rules.
+      --id FILTER_ID        delete a shaping rule which has a specific id. you can
+                            get an id (filter_id) by tcshow command output. e.g.
+                            "filter_id": "800::801"
+
+    Routing:
+      --direction {outgoing,incoming}
+                            the direction of network communication that impose
+                            traffic control. 'incoming' requires Linux kernel
+                            version 2.6.20 or later. (default = outgoing)
+      --network DST_NETWORK, --dst-network DST_NETWORK
+                            target IP-address/network to control traffic
+      --src-network SRC_NETWORK
+                            set a traffic shaping rule to specific packets that
+                            routed from --src-network to --dst-network. this
+                            option required to execute with the --iptables option
+                            when you use tbf. the shaping rule only affect to
+                            outgoing packets (no effect to if you execute with "--
+                            direction incoming" option)
+      --port DST_PORT, --dst-port DST_PORT
+                            target destination port number to control traffic.
+      --src-port SRC_PORT   target source port number to control traffic.
+      --ipv6                apply traffic control to IPv6 packets rather than
+                            IPv4.
+
+    Issue tracker: https://github.com/thombashi/tcconfig/issues

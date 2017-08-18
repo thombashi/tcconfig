@@ -1,22 +1,28 @@
-usage: tcshow [-h] [--version] [--tc-command | --tc-script]
-              [--debug | --quiet] -d DEVICE [--ipv6]
+.. code-block:: console
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program's version number and exit
-  --tc-command          display tc commands to be executed and exit. these
-                        commands are not executed.
-  --tc-script           generate a script file that described tc commands
-                        which equivalent with execution tcconfig command. the
-                        script can be execute without tcconfig package
-                        installation.
-  --debug               for debug print.
-  --quiet               suppress execution log messages.
+    usage: tcshow [-h] [--version] [--tc-command | --tc-script]
+                  [--debug | --quiet] [--stacktrace] -d DEVICE [--ipv6]
 
-Traffic Control:
-  -d DEVICE, --device DEVICE
-                        network device name (e.g. eth0)
-  --ipv6                Display IPv6 shaping rules. Defaults to show IPv4
-                        shaping rules.
+    optional arguments:
+      -h, --help            show this help message and exit
+      --version             show program's version number and exit
+      --tc-command          display tc commands to be executed and exit. these
+                            commands are not executed.
+      --tc-script           generate a script file that described tc commands
+                            which equivalent with execution tcconfig command. the
+                            script can be execute without tcconfig package
+                            installation.
+      --debug               for debug print.
+      --quiet               suppress execution log messages.
 
-Issue tracker: https://github.com/thombashi/tcconfig/issues
+    Debug:
+      --stacktrace          print stack trace for debug information. --debug
+                            option required to see the debug print.
+
+    Traffic Control:
+      -d DEVICE, --device DEVICE
+                            network device name (e.g. eth0)
+      --ipv6                Display IPv6 shaping rules. Defaults to show IPv4
+                            shaping rules.
+
+    Issue tracker: https://github.com/thombashi/tcconfig/issues

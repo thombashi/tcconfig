@@ -1,101 +1,108 @@
-usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-             (-d DEVICE | -f CONFIG_FILE) [--overwrite | --change | --add]
-             [--rate BANDWIDTH_RATE] [--delay NETWORK_LATENCY]
-             [--delay-distro LATENCY_DISTRO_MS] [--loss PACKET_LOSS_RATE]
-             [--duplicate PACKET_DUPLICATE_RATE] [--corrupt CORRUPTION_RATE]
-             [--reordering REORDERING_RATE] [--shaping-algo {htb,htb}]
-             [--direction {outgoing,incoming}] [--iptables]
-             [--network DST_NETWORK]
-             [--exclude-dst-network EXCLUDE_DST_NETWORK]
-             [--src-network SRC_NETWORK]
-             [--exclude-src-network EXCLUDE_SRC_NETWORK] [--port DST_PORT]
-             [--exclude-dst-port EXCLUDE_DST_PORT] [--src-port SRC_PORT]
-             [--exclude-src-port EXCLUDE_SRC_PORT] [--ipv6]
+.. code-block:: console
 
-optional arguments:
-  -h, --help            show this help message and exit
-  --version             show program's version number and exit
-  --tc-command          display tc commands to be executed and exit. these
-                        commands are not executed.
-  --tc-script           generate a script file that described tc commands
-                        which equivalent with execution tcconfig command. the
-                        script can be execute without tcconfig package
-                        installation.
-  --debug               for debug print.
-  --quiet               suppress execution log messages.
-  -d DEVICE, --device DEVICE
-                        network device name (e.g. eth0)
-  -f CONFIG_FILE, --config-file CONFIG_FILE
-                        setting traffic controls from a configuration file.
-                        output file of the tcshow.
-  --overwrite           overwrite existing traffic shaping rules.
-  --change              change existing traffic shaping rules to the new one.
-                        this option reduces the shaping rule switching side
-                        effect (such as traffic spike) compared to --overwrite
-                        option. note: the tcset command fail when there are no
-                        existing shaping rules.
-  --add                 add a traffic shaping rule in addition to existing
-                        rules.
+    usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
+                 [--stacktrace] (-d DEVICE | -f CONFIG_FILE)
+                 [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
+                 [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_MS]
+                 [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
+                 [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE]
+                 [--shaping-algo {htb,htb}] [--iptables]
+                 [--direction {outgoing,incoming}] [--network DST_NETWORK]
+                 [--src-network SRC_NETWORK] [--port DST_PORT]
+                 [--src-port SRC_PORT] [--ipv6]
+                 [--exclude-dst-network EXCLUDE_DST_NETWORK]
+                 [--exclude-src-network EXCLUDE_SRC_NETWORK]
+                 [--exclude-dst-port EXCLUDE_DST_PORT]
+                 [--exclude-src-port EXCLUDE_SRC_PORT]
 
-Traffic Control Parameters:
-  --rate BANDWIDTH_RATE, --bandwidth-rate BANDWIDTH_RATE
-                        network bandwidth rate [bit per second]. valid units
-                        are either: K/M/G/Kbps/Mbps/Gbps e.g. --rate 10Mbps
-  --delay NETWORK_LATENCY
-                        round trip network delay [ms]. the valid range is 0 to
-                        3600000. (default=0)
-  --delay-distro LATENCY_DISTRO_MS
-                        distribution of network latency becomes X +- Y [ms]
-                        (normal distribution). Here X is the value of --delay
-                        option and Y is the value of --delay-dist option).
-                        network latency distribution is uniform, without this
-                        option.
-  --loss PACKET_LOSS_RATE
-                        round trip packet loss rate [%]. the valid range is 0
-                        to 100. (default=0)
-  --duplicate PACKET_DUPLICATE_RATE
-                        round trip packet duplicate rate [%]. the valid range
-                        is 0 to 100. (default=0)
-  --corrupt CORRUPTION_RATE
-                        packet corruption rate [%]. the valid range is 0 to
-                        100. packet corruption means single bit error at a
-                        random offset in the packet. (default=0)
-  --reordering REORDERING_RATE
-                        packet reordering rate [%]. the valid range is 0 to
-                        100. (default=0)
-  --shaping-algo {htb,htb}
-                        shaping algorithm. defaults to htb (recommended).
+    optional arguments:
+      -h, --help            show this help message and exit
+      --version             show program's version number and exit
+      --tc-command          display tc commands to be executed and exit. these
+                            commands are not executed.
+      --tc-script           generate a script file that described tc commands
+                            which equivalent with execution tcconfig command. the
+                            script can be execute without tcconfig package
+                            installation.
+      --debug               for debug print.
+      --quiet               suppress execution log messages.
+      -d DEVICE, --device DEVICE
+                            network device name (e.g. eth0)
+      -f CONFIG_FILE, --config-file CONFIG_FILE
+                            setting traffic controls from a configuration file.
+                            output file of the tcshow.
+      --overwrite           overwrite existing traffic shaping rules.
+      --change              change existing traffic shaping rules to the new one.
+                            this option reduces the shaping rule switching side
+                            effect (such as traffic spike) compared to --overwrite
+                            option. note: the tcset command fail when there are no
+                            existing shaping rules.
+      --add                 add a traffic shaping rule in addition to existing
+                            rules.
 
-Routing:
-  --direction {outgoing,incoming}
-                        the direction of network communication that impose
-                        traffic control. ``incoming`` requires Linux kernel
-                        version 2.6.20 or later. (default = ``outgoing``)
-  --iptables            use iptables to traffic control.
-  --network DST_NETWORK, --dst-network DST_NETWORK
-                        target IP-address/network to control traffic
-  --exclude-dst-network EXCLUDE_DST_NETWORK
-                        exclude a shaping rule for a specific destination IP-
-                        address/network.
-  --src-network SRC_NETWORK
-                        set a traffic shaping rule to specific packets that
-                        routed from --src-network to --dst-network. this
-                        option required to execute with the --iptables option
-                        when you use tbf. the shaping rule only affect to
-                        outgoing packets (no effect to if you execute with "--
-                        direction incoming" option)
-  --exclude-src-network EXCLUDE_SRC_NETWORK
-                        exclude a shaping rule for a specific source IP-
-                        address/network.
-  --port DST_PORT, --dst-port DST_PORT
-                        target destination port number to control traffic.
-  --exclude-dst-port EXCLUDE_DST_PORT
-                        exclude a shaping rule for a specific destination
-                        port.
-  --src-port SRC_PORT   target source port number to control traffic.
-  --exclude-src-port EXCLUDE_SRC_PORT
-                        exclude a shaping rule for a specific source port.
-  --ipv6                apply traffic control to IPv6 packets rather than
-                        IPv4.
+    Debug:
+      --stacktrace          print stack trace for debug information. --debug
+                            option required to see the debug print.
 
-Issue tracker: https://github.com/thombashi/tcconfig/issues
+    Traffic Control Parameters:
+      --rate BANDWIDTH_RATE, --bandwidth-rate BANDWIDTH_RATE
+                            network bandwidth rate [bit per second]. valid units
+                            are either: K/M/G/Kbps/Mbps/Gbps e.g. --rate 10Mbps
+      --delay NETWORK_LATENCY
+                            round trip network delay [ms]. the valid range is from
+                            0 to 3600000. (default=0)
+      --delay-distro LATENCY_DISTRO_MS
+                            distribution of network latency becomes X +- Y [ms]
+                            (normal distribution). Here X is the value of --delay
+                            option and Y is the value of --delay-dist option).
+                            network latency distribution is uniform, without this
+                            option.
+      --loss PACKET_LOSS_RATE
+                            round trip packet loss rate [%]. the valid range is
+                            from 0 to 100. (default=0)
+      --duplicate PACKET_DUPLICATE_RATE
+                            round trip packet duplicate rate [%]. the valid range
+                            is from 0 to 100. (default=0)
+      --corrupt CORRUPTION_RATE
+                            packet corruption rate [%]. the valid range is from 0
+                            to 100. packet corruption means single bit error at a
+                            random offset in the packet. (default=0)
+      --reordering REORDERING_RATE
+                            packet reordering rate [%]. the valid range is from 0
+                            to 100. (default=0)
+      --shaping-algo {htb,htb}
+                            shaping algorithm. defaults to htb (recommended).
+      --iptables            use iptables to traffic control.
+
+    Routing:
+      --direction {outgoing,incoming}
+                            the direction of network communication that impose
+                            traffic control. 'incoming' requires Linux kernel
+                            version 2.6.20 or later. (default = outgoing)
+      --network DST_NETWORK, --dst-network DST_NETWORK
+                            target IP-address/network to control traffic
+      --src-network SRC_NETWORK
+                            set a traffic shaping rule to specific packets that
+                            routed from --src-network to --dst-network. this
+                            option required to execute with the --iptables option
+                            when you use tbf. the shaping rule only affect to
+                            outgoing packets (no effect to if you execute with "--
+                            direction incoming" option)
+      --port DST_PORT, --dst-port DST_PORT
+                            target destination port number to control traffic.
+      --src-port SRC_PORT   target source port number to control traffic.
+      --ipv6                apply traffic control to IPv6 packets rather than
+                            IPv4.
+      --exclude-dst-network EXCLUDE_DST_NETWORK
+                            exclude a shaping rule for a specific destination IP-
+                            address/network.
+      --exclude-src-network EXCLUDE_SRC_NETWORK
+                            exclude a shaping rule for a specific source IP-
+                            address/network.
+      --exclude-dst-port EXCLUDE_DST_PORT
+                            exclude a shaping rule for a specific destination
+                            port.
+      --exclude-src-port EXCLUDE_SRC_PORT
+                            exclude a shaping rule for a specific source port.
+
+    Issue tracker: https://github.com/thombashi/tcconfig/issues
