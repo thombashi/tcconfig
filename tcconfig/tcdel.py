@@ -75,11 +75,7 @@ def main():
     if options.log_level == logbook.INFO:
         subprocrunner.set_log_level(logbook.ERROR)
 
-    try:
-        return_code = tc.delete_all_tc()
-    except NetworkInterfaceNotFoundError as e:
-        logger.debug(e)
-        return 0
+    return_code = tc.delete_all_tc()
 
     command_history = "\n".join(tc.get_command_history())
 
