@@ -16,6 +16,7 @@ import typepy
 
 import pyparsing as pp
 
+from .._common import sanitize_network
 from .._const import Tc
 from .._logger import logger
 from ._interface import AbstractParser
@@ -198,8 +199,10 @@ class TcFilterParser(AbstractParser):
         tc_filter[Tc.Param.FLOW_ID] = self.__flow_id
         tc_filter[Tc.Param.PROTOCOL] = self.protocol
         tc_filter[Tc.Param.PRIORITY] = self.__priority
-        tc_filter[Tc.Param.SRC_NETWORK] = self.__filter_src_network
-        tc_filter[Tc.Param.DST_NETWORK] = self.__filter_dst_network
+        tc_filter[Tc.Param.SRC_NETWORK] = sanitize_network(
+            self.__filter_src_network, self.__ip_version)
+        tc_filter[Tc.Param.DST_NETWORK] = sanitize_network(
+            self.__filter_dst_network, self.__ip_version)
         tc_filter[Tc.Param.SRC_PORT] = self.__filter_src_port
         tc_filter[Tc.Param.DST_PORT] = self.__filter_dst_port
 
