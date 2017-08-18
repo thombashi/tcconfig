@@ -27,7 +27,6 @@ class Test_tcshow(object):
         python setup.py test --addopts "--runxfail --device=<test device>"
     """
 
-    @pytest.mark.xfail
     def test_normal_empty(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
@@ -50,7 +49,6 @@ class Test_tcshow(object):
         assert runner.run() == 0
         assert json.loads(runner.stdout) == json.loads(expected)
 
-    @pytest.mark.xfail
     def test_normal_ipv4(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
@@ -58,8 +56,7 @@ class Test_tcshow(object):
         device_option = "--device {:s}".format(device_value)
 
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "10",
             "--delay-distro", "2",
             "--loss", "0.01",
@@ -70,29 +67,23 @@ class Test_tcshow(object):
             "--port", "8080",
             "--overwrite",
         ])).run() == 0
-
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "1",
             "--loss", "1",
             "--rate", "100M",
             "--network", "192.168.1.0/24",
             "--add",
         ])).run() == 0
-
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "10",
             "--delay-distro", "2",
             "--rate", "500K",
             "--direction", "incoming",
         ])).run() == 0
-
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "1",
             "--loss", "0.02",
             "--duplicate", "0.5",
@@ -152,7 +143,6 @@ class Test_tcshow(object):
 
         execute_tcdel(device_value)
 
-    @pytest.mark.xfail
     def test_normal_ipv6(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
@@ -160,8 +150,7 @@ class Test_tcshow(object):
         device_option = "--device {:s}".format(device_value)
 
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "10",
             "--delay-distro", "2",
             "--loss", "0.01",
@@ -173,10 +162,8 @@ class Test_tcshow(object):
             "--overwrite",
             "--ipv6",
         ])).run() == 0
-
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "1",
             "--loss", "1",
             "--rate", "100M",
@@ -184,20 +171,16 @@ class Test_tcshow(object):
             "--add",
             "--ipv6",
         ])).run() == 0
-
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "10",
             "--delay-distro", "2",
             "--rate", "500K",
             "--direction", "incoming",
             "--ipv6",
         ])).run() == 0
-
         assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             "--delay", "1",
             "--loss", "0.02",
             "--duplicate", "5",
