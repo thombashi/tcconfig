@@ -1,6 +1,6 @@
-tcconfig
-========
 
+tcconfig
+==========
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
    :alt: Linux CI test status
@@ -9,9 +9,9 @@ tcconfig
    :target: https://github.com/thombashi/tcconfig
    :alt: GitHub repository
 
-Summary
--------
 
+Summary
+---------
 A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet loss/packet-corruption to a network interface.
 
 Traffic control features
@@ -44,46 +44,45 @@ The following parameters can set to network interfaces:
 .. image:: docs/gif/tcset_example.gif
 
 Usage
-=====
+=======
 
 Set traffic control (``tcset`` command)
----------------------------------------
-
+-----------------------------------------
 ``tcset`` is a command to add traffic control rule to a network interface (device).
 
 e.g. Set a limit on bandwidth up to 100Kbps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --rate 100k
 
 e.g. Set 100ms network latency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --delay 100
 
 e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --loss 0.1
 
 e.g. All of the above at once
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
 
 e.g. Specify the IP address of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.10
 
 e.g. Specify the IP network and port of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --delay 100 --network 192.168.0.0/24 --port 80
 
@@ -94,11 +93,11 @@ Delete traffic control (``tcdel`` command)
 
 e.g. Delete traffic control of ``eth0``
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+Youcan delete all of the shaping rules for the ``eth0`` with ``-a``/``--all` option:
 
-.. code:: console
+.. code-block:: console
 
-    # tcdel --device eth0
-
+    # tcdel --device eth0 --all
 
 Display traffic control configurations (``tcshow`` command)
 -----------------------------------------------------------
@@ -107,7 +106,7 @@ Display traffic control configurations (``tcshow`` command)
 Example
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
-.. code:: console
+.. code-block:: console
 
     # tcset --device eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
     # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
@@ -133,12 +132,11 @@ Example
         }
     }
 
-For more information
---------------------
 
+For more information
+----------------------
 More examples are available at 
 http://tcconfig.rtfd.io/en/latest/pages/usage/index.html
-
 Installation
 ============
 
@@ -207,13 +205,11 @@ Test dependencies
 - `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
 - `tox <https://testrun.org/tox/latest/>`__
 
-Documentation
-=============
 
+Documentation
+===============
 http://tcconfig.rtfd.io/
 
 Troubleshooting
-===============
-
+=================
 http://tcconfig.readthedocs.io/en/latest/pages/troubleshooting.html
-
