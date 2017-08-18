@@ -43,18 +43,18 @@ class TcShapingRuleParser(object):
         return self.__ifb_device
 
     def __init__(self, device, ip_version, logger):
-        self.__con = simplesqlite.connect_sqlite_memdb()
         self.__device = device
         self.__ip_version = ip_version
         self.__logger = logger
 
         self.clear()
-        self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__ifb_device = self.__get_ifb_from_device()
 
         self.__iptables_ctrl = IptablesMangleController(True, ip_version)
 
     def clear(self):
+        self.__con = simplesqlite.connect_sqlite_memdb()
+        self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__parsed_mappings = {}
 
     def get_tc_parameter(self):
