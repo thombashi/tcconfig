@@ -492,22 +492,28 @@ class TrafficControl(object):
 
         return_code |= spr.SubprocessRunner("modprobe ifb").run()
 
+        if self.is_add_shaping_rule or self.is_change_shaping_rule:
+            notice_message = None
+        else:
+            notice_message = self.EXISTS_MSG_TEMPLATE.format(
+                "failed to add ip link: ip link already exists.")
         return_code |= run_command_helper(
             "ip link add {:s} type ifb".format(self.ifb_device),
-            self.REGEXP_FILE_EXISTS,
-            self.EXISTS_MSG_TEMPLATE.format(
-                "failed to add ip link: ip link already exists."))
+            self.REGEXP_FILE_EXISTS, notice_message)
 
         return_code |= spr.SubprocessRunner(
             "ip link set dev {:s} up".format(self.ifb_device)).run()
 
         base_command = "tc qdisc add"
+        if self.is_add_shaping_rule or self.is_change_shaping_rule:
+            notice_message = None
+        else:
+            notice_message = self.EXISTS_MSG_TEMPLATE.format(
+                "failed to '{:s}': ingress qdisc already exists.".format(
+                    base_command))
         return_code |= run_command_helper(
             "{:s} dev {:s} ingress".format(base_command, self.device),
-            self.REGEXP_FILE_EXISTS,
-            self.EXISTS_MSG_TEMPLATE.format(
-                "failed to '{:s}': ingress qdisc already exists.".format(
-                    base_command)))
+            self.REGEXP_FILE_EXISTS, notice_message)
 
         return_code |= spr.SubprocessRunner(" ".join([
             "tc filter add",
