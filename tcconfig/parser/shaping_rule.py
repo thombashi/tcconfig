@@ -48,11 +48,14 @@ class TcShapingRuleParser(object):
         self.__ip_version = ip_version
         self.__logger = logger
 
-        self.__parsed_mappings = {}
+        self.clear()
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__ifb_device = self.__get_ifb_from_device()
 
         self.__iptables_ctrl = IptablesMangleController(True, ip_version)
+
+    def clear(self):
+        self.__parsed_mappings = {}
 
     def get_tc_parameter(self):
         return {
