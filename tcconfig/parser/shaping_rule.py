@@ -129,7 +129,8 @@ class TcShapingRuleParser(object):
                 key_item_list.append(src_network_format.format(src_network))
 
             dst_network = filter_param.get(Tc.Param.DST_NETWORK)
-            if typepy.is_not_null_string(dst_network):
+            if (typepy.is_not_null_string(dst_network) and
+                    not is_anywhere_network(dst_network, self.__ip_version)):
                 key_item_list.append(dst_network_format.format(dst_network))
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)

@@ -135,7 +135,7 @@ class Test_tcshow(object):
                 "reorder": 0.2,
                 "rate": "100K"
             },
-            "dst-network=0.0.0.0/0, protocol=ip": {
+            "protocol=ip": {
                 "filter_id": "800::800",
                 "delay": 10,
                 "delay-distro": 2,

@@ -43,7 +43,7 @@ class Test_tcconfig(object):
                 "rate": "250K",
                 "delay-distro": 2
             },
-            "dst-network=0.0.0.0/0, src-port=1234, protocol=ip": {
+            "src-port=1234, protocol=ip": {
                 "filter_id": "800::800",
                 "delay": 50,
                 "rate": "1G"
