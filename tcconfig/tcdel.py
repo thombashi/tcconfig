@@ -48,6 +48,9 @@ def parse_option():
     group.add_argument(
         "-d", "--device", required=True,
         help="network device name (e.g. eth0)")
+    group.add_argument(
+        "-a", "--all", dest="is_delete_all", action="store_true",
+        help="delete all of the shaping rules.")
 
     return parser.parser.parse_args()
 
@@ -75,7 +78,9 @@ def main():
     if options.log_level == logbook.INFO:
         subprocrunner.set_log_level(logbook.ERROR)
 
-    return_code = tc.delete_all_tc()
+    return_code = 0
+    if options.is_delete_all:
+        return_code = tc.delete_all_tc()
 
     command_history = "\n".join(tc.get_command_history())
 
