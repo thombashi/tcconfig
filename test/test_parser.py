@@ -360,6 +360,18 @@ qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
             ],
         ],
         [
+            six.b("""qdisc htb 1a1a: root refcnt 2 r2q 10 default 1 direct_packets_stat 4 direct_qlen 1000
+qdisc netem 1a9a: parent 1a1a:2 limit 1000
+"""),
+            [
+                {
+                    Tc.Param.DEVICE: DEVICE,
+                    Tc.Param.HANDLE: '1a9a:',
+                    Tc.Param.PARENT: '1a1a:2',
+                },
+            ],
+        ],
+        [
             six.b("""
 qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 0 direct_qlen 1000
 qdisc netem 2007: parent 1f87:2 limit 1000 delay 5.0ms

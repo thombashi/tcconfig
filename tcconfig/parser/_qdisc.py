@@ -54,7 +54,7 @@ class TcQdiscParser(AbstractParser):
                 self.__parse_netem_param(line, "parent", pp.hexnums + ":")
 
             self.__parsed_param[Tc.Param.DEVICE] = device
-            self.__parse_netem_param(line, "netem", pp.nums + ":", "handle")
+            self.__parse_netem_param(line, "netem", pp.hexnums + ":", "handle")
             self.__parse_netem_param(line, "delay", pp.nums + ".")
             self.__parse_netem_delay_distro(line)
             self.__parse_netem_param(line, "loss", pp.nums + ".")
