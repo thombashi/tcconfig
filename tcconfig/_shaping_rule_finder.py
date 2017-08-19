@@ -84,8 +84,10 @@ class TcShapingRuleFinder(object):
         return self.find_parent() is not None
 
     def is_any_filter(self):
-        return self._parser.con.get_num_records(
-            table_name=Tc.Subcommand.FILTER) > 0
+        num_records = self._parser.con.get_num_records(
+            table_name=Tc.Subcommand.FILTER)
+
+        return num_records and num_records > 0
 
     def get_parsed_device(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:
