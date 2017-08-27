@@ -18,7 +18,7 @@ from ._const import (
 
 class ArgparseWrapper(object):
     """
-    wrapper class of argparse
+    Wrapper class for argparse
     """
 
     def __init__(self, version, description=""):

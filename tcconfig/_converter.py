@@ -40,7 +40,7 @@ class Humanreadable(object):
 
     def __init__(self, readable_size, kilo_size=1024):
         """
-        String converter that humanreadable byte size to a number.
+        String converter that human-readable byte size to a number.
 
         :param str readable_size: human readable size (bytes). e.g. 256 M
         :param int kilo_size: size of ``kilo``. 1024 or 1000
