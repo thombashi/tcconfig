@@ -133,6 +133,7 @@ class Test_HumanReadableTime_get_value(object):
     ])
     def test_normal(self, value, expected):
         assert HumanReadableTime(value).get_value() == expected
+        assert str(HumanReadableTime(value)) == expected
 
     @pytest.mark.parametrize(["value", "exception"], [
         ["10", UnitNotFoundError],

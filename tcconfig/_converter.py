@@ -125,6 +125,9 @@ class HumanReadableTime(object):
         self.__validate()
         self.__normalize()
 
+    def __repr__(self):
+        return self.get_value()
+
     def get_value(self):
         return "{:f}{:s}".format(self.__number, self.__unit)
 
