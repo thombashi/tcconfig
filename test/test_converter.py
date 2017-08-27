@@ -148,3 +148,15 @@ class Test_HumanReadableTime_get_value(object):
     def test_exception(self, value, exception):
         with pytest.raises(exception):
             HumanReadableTime(value)
+
+
+class Test_HumanReadableTime_get_msec(object):
+
+    @pytest.mark.parametrize(["value", "expected"], [
+        ["1s", 1000],
+        ["1ms", 1],
+        ["1000us", 1],
+        ["1m", 60000],
+    ])
+    def test_normal(self, value, expected):
+        assert HumanReadableTime(value).get_msec() == expected

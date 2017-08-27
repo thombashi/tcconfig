@@ -131,6 +131,15 @@ class HumanReadableTime(object):
     def get_value(self):
         return "{:f}{:s}".format(self.__number, self.__unit)
 
+    def get_msec(self):
+        coef = 1
+        if self.__unit == "sec":
+            coef = 1000
+        elif self.__unit == "us":
+            coef = .001
+
+        return self.__number * coef
+
     def __normalize(self):
         if self.__unit in self.__VALID_SEC_UNIT_LIST:
             self.__unit = "sec"
