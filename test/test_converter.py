@@ -160,3 +160,29 @@ class Test_HumanReadableTime_get_msec(object):
     ])
     def test_normal(self, value, expected):
         assert HumanReadableTime(value).get_msec() == expected
+
+
+class Test_HumanReadableTime_validate(object):
+
+    @pytest.mark.parametrize(["value", "min_value", "max_value"], [
+        ["1s", "0s", "60m"],
+        ["1s", "1s", "60m"],
+        ["10ms", "0s", "60m"],
+        ["100us", "0s", "60m"],
+    ])
+    def test_normal(self, value, min_value, max_value):
+        HumanReadableTime(value).validate(
+            min_value=min_value, max_value=max_value)
+
+    @pytest.mark.parametrize(["value", "min_value", "max_value", "expected"], [
+        ["1s", "0s", "1ms", InvalidParameterError],
+        ["-1s", "0s", "60m", InvalidParameterError],
+        ["10ms", "0s", "1ms", InvalidParameterError],
+        ["-10ms", "0s", "60m", InvalidParameterError],
+        ["100us", "0s", "60us", InvalidParameterError],
+        ["-100us", "0s", "60m", InvalidParameterError],
+    ])
+    def test_exception(self, value, min_value, max_value, expected):
+        with pytest.raises(expected):
+            HumanReadableTime(value).validate(
+                min_value=min_value, max_value=max_value)

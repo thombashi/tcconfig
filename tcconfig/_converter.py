@@ -122,7 +122,7 @@ class HumanReadableTime(object):
         self.__readable_time = readable_time
         self.__number = self.__get_number()
         self.__unit = self.__get_unit()
-        self.__validate()
+        self.validate()
         self.__normalize()
 
     def __repr__(self):
@@ -139,6 +139,23 @@ class HumanReadableTime(object):
             coef = .001
 
         return self.__number * coef
+
+    def validate(self, min_value=None, max_value=None):
+        if min_value is not None:
+            min_value = HumanReadableTime(min_value)
+            if self.get_msec() < min_value.get_msec():
+                raise InvalidParameterError(
+                    "time must be greater than {}", min_value)
+
+        if max_value is not None:
+            max_value = HumanReadableTime(max_value)
+            if self.get_msec() > max_value.get_msec():
+                raise InvalidParameterError(
+                    "time must be less than {}", max_value)
+
+        if self.__unit not in self.__VALID_UNIT_LIST:
+            raise UnitNotFoundError(
+                "unknown unit".format(self.__readable_time))
 
     def __normalize(self):
         if self.__unit in self.__VALID_SEC_UNIT_LIST:
@@ -162,12 +179,3 @@ class HumanReadableTime(object):
 
     def __get_unit(self):
         return _RE_NUMBER.sub("", self.__readable_time).strip().lower()
-
-    def __validate(self):
-        if self.__number <= 0:
-            raise InvalidParameterError(
-                "time must be greater than zero", value=self.__number)
-
-        if self.__unit not in self.__VALID_UNIT_LIST:
-            raise UnitNotFoundError(
-                "unknown unit".format(self.__readable_time))
