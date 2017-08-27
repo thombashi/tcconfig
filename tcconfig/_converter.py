@@ -108,14 +108,15 @@ class Humanreadable(object):
 
 
 class HumanReadableTime(object):
-    __VALID_MINUTE_UNIT_LIST = [
-        "m", "min", "mins", "minute", "minutes",
-    ]
-    __VALID_UNIT_LIST = [
-        "s", "sec", "secs", "second", "seconds",
-        "ms", "msec", "msecs",  "millisecond", "milliseconds",
-        "us", "usec", "usecs", "microsecond", "microseconds",
-    ] + __VALID_MINUTE_UNIT_LIST
+    __VALID_MINUTE_UNIT_LIST = ["m", "min", "mins", "minute", "minutes"]
+    __VALID_SEC_UNIT_LIST = ["s", "sec", "secs", "second", "seconds"]
+    __VALID_MSEC_UNIT_LIST = [
+        "ms", "msec", "msecs",  "millisecond", "milliseconds"]
+    __VALID_USEC_UNIT_LIST = [
+        "us", "usec", "usecs", "microsecond", "microseconds"]
+    __VALID_UNIT_LIST = (
+        __VALID_MINUTE_UNIT_LIST + __VALID_SEC_UNIT_LIST +
+        __VALID_MSEC_UNIT_LIST + __VALID_USEC_UNIT_LIST)
 
     def __init__(self, readable_time):
         self.__readable_time = readable_time
@@ -128,12 +129,12 @@ class HumanReadableTime(object):
         return "{:f}{:s}".format(self.__number, self.__unit)
 
     def __normalize(self):
-        if self.__unit in ("second", "seconds"):
+        if self.__unit in self.__VALID_SEC_UNIT_LIST:
             self.__unit = "sec"
-        elif self.__unit in ("millisecond", "milliseconds"):
-            self.__unit = "msec"
-        elif self.__unit in ("microsecond", "microseconds"):
-            self.__unit = "usec"
+        elif self.__unit in self.__VALID_MSEC_UNIT_LIST:
+            self.__unit = "ms"
+        elif self.__unit in self.__VALID_USEC_UNIT_LIST:
+            self.__unit = "us"
         elif self.__unit in self.__VALID_MINUTE_UNIT_LIST:
             self.__number *= 60
             self.__unit = "sec"
