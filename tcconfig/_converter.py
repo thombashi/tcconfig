@@ -165,14 +165,18 @@ class HumanReadableTime(object):
                 min_value = HumanReadableTime(min_value)
             if self < min_value:
                 raise InvalidParameterError(
-                    "time must be greater than {}", min_value)
+                    "time value is too low",
+                    expected="greater than or equal to {}".format(min_value),
+                    value=self)
 
         if max_value is not None:
             if not isinstance(max_value, HumanReadableTime):
                 max_value = HumanReadableTime(max_value)
             if self > max_value:
                 raise InvalidParameterError(
-                    "time must be less than {}", max_value)
+                    "time value is too high",
+                    expected="less than or equal to {}".format(max_value),
+                    value=self)
 
         if self.__unit not in self.__VALID_UNIT_LIST:
             raise UnitNotFoundError(
