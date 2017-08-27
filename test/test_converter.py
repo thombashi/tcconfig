@@ -8,7 +8,10 @@ from __future__ import division
 
 import pytest
 
-from tcconfig._converter import Humanreadable
+from tcconfig._converter import (
+    Humanreadable,
+    HumanReadableTime,
+)
 from tcconfig._error import (
     InvalidParameterError,
     UnitNotFoundError,
@@ -98,3 +101,49 @@ class Test_to_kilo_bit(object):
     ])
     def test_normal(self, value, kilo_size, expected):
         assert Humanreadable(value, kilo_size).to_kilo_bit() == expected
+
+
+class Test_HumanReadableTime_get_value(object):
+
+    @pytest.mark.parametrize(["value", "expected"], [
+        ["1s", "1.000000s"],
+        ["1S", "1.000000s"],
+        ["1sec", "1.000000sec"],
+        ["1secs", "1.000000secs"],
+        ["1second", "1.000000sec"],
+        ["1Seconds", "1.000000sec"],
+        ["11ms", "11.000000ms"],
+        ["11MS", "11.000000ms"],
+        ["11msec", "11.000000msec"],
+        ["11Msecs", "11.000000msecs"],
+        ["11millisecond", "11.000000msec"],
+        ["11milliseconds", "11.000000msec"],
+        ["123us", "123.000000us"],
+        ["123US", "123.000000us"],
+        ["123usec", "123.000000usec"],
+        ["123Usecs", "123.000000usecs"],
+        ["123microsecond", "123.000000usec"],
+        ["123microseconds", "123.000000usec"],
+        ["0.1m", "6.000000sec"],
+        ["0.1M", "6.000000sec"],
+        ["0.1min", "6.000000sec"],
+        ["0.1Mins", "6.000000sec"],
+        ["0.1minute", "6.000000sec"],
+        ["0.1Minutes", "6.000000sec"],
+    ])
+    def test_normal(self, value, expected):
+        assert HumanReadableTime(value).get_value() == expected
+
+    @pytest.mark.parametrize(["value", "exception"], [
+        ["10", UnitNotFoundError],
+        ["", InvalidParameterError],
+        [None, TypeError],
+        [True, TypeError],
+        [float("nan"), TypeError],
+        ["a", InvalidParameterError],
+        ["1k0 ", InvalidParameterError],
+        ["10kb", InvalidParameterError],
+    ])
+    def test_exception(self, value, exception):
+        with pytest.raises(exception):
+            HumanReadableTime(value)

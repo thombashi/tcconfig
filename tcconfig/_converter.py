@@ -105,3 +105,56 @@ class Humanreadable(object):
                 return self.kilo_size ** unit.factor
 
         raise UnitNotFoundError("unit not found: value={}".format(unit_str))
+
+
+class HumanReadableTime(object):
+    __VALID_MINUTE_UNIT_LIST = [
+        "m", "min", "mins", "minute", "minutes",
+    ]
+    __VALID_UNIT_LIST = [
+        "s", "sec", "secs", "second", "seconds",
+        "ms", "msec", "msecs",  "millisecond", "milliseconds",
+        "us", "usec", "usecs", "microsecond", "microseconds",
+    ] + __VALID_MINUTE_UNIT_LIST
+
+    def __init__(self, readable_time):
+        self.__readable_time = readable_time
+        self.__number = self.__get_number()
+        self.__unit = self.__get_unit()
+        self.__validate()
+        self.__normalize()
+
+    def get_value(self):
+        return "{:f}{:s}".format(self.__number, self.__unit)
+
+    def __normalize(self):
+        if self.__unit in ("second", "seconds"):
+            self.__unit = "sec"
+        elif self.__unit in ("millisecond", "milliseconds"):
+            self.__unit = "msec"
+        elif self.__unit in ("microsecond", "microseconds"):
+            self.__unit = "usec"
+        elif self.__unit in self.__VALID_MINUTE_UNIT_LIST:
+            self.__number *= 60
+            self.__unit = "sec"
+
+    def __get_number(self):
+        match = _RE_NUMBER.search(self.__readable_time)
+        if not match:
+            raise InvalidParameterError(
+                "human-readable time must be include a number",
+                value=self.__readable_time)
+
+        return float(match.group())
+
+    def __get_unit(self):
+        return _RE_NUMBER.sub("", self.__readable_time).strip().lower()
+
+    def __validate(self):
+        if self.__number <= 0:
+            raise InvalidParameterError(
+                "time must be greater than zero", value=self.__number)
+
+        if self.__unit not in self.__VALID_UNIT_LIST:
+            raise UnitNotFoundError(
+                "unknown unit".format(self.__readable_time))
