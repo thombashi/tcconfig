@@ -21,6 +21,8 @@ from ._logger import logger
 
 ByteUnit = namedtuple("ByteUnit", "regexp factor")
 
+_RE_NUMBER = re.compile("^[\-\+]?[0-9\.]+")
+
 
 class Humanreadable(object):
     __UNIT_LIST = [
@@ -36,7 +38,6 @@ class Humanreadable(object):
         ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
         ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
-    __RE_NUMBER = re.compile("^[\-\+]?[0-9\.]+")
 
     def __init__(self, readable_size, kilo_size=1024):
         """
@@ -67,7 +68,7 @@ class Humanreadable(object):
         self.__readable_size = self.__readable_size.strip()
 
         try:
-            size = self.__RE_NUMBER.search(self.__readable_size).group()
+            size = _RE_NUMBER.search(self.__readable_size).group()
         except AttributeError:
             raise InvalidParameterError(
                 "invalid value", value=self.__readable_size)
@@ -76,7 +77,7 @@ class Humanreadable(object):
             raise InvalidParameterError(
                 "size must be greater or equals to zero", value=size)
 
-        unit = self.__RE_NUMBER.sub("", self.__readable_size).strip().lower()
+        unit = _RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
         return size * self.__get_coefficient(unit)
 
