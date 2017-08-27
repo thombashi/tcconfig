@@ -166,6 +166,7 @@ class Test_HumanReadableTime_validate(object):
 
     @pytest.mark.parametrize(["value", "min_value", "max_value"], [
         ["1s", "0s", "60m"],
+        ["1s", HumanReadableTime("0s"), HumanReadableTime("60m")],
         ["1s", "1s", "60m"],
         ["10ms", "0s", "60m"],
         ["100us", "0s", "60m"],

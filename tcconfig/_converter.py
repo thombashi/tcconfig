@@ -19,6 +19,7 @@ from ._error import (
 )
 from ._logger import logger
 
+
 ByteUnit = namedtuple("ByteUnit", "regexp factor")
 
 _RE_NUMBER = re.compile("^[\-\+]?[0-9\.]+")
@@ -160,14 +161,16 @@ class HumanReadableTime(object):
 
     def validate(self, min_value=None, max_value=None):
         if min_value is not None:
-            min_value = HumanReadableTime(min_value)
-            if self.get_msec() < min_value.get_msec():
+            if not isinstance(min_value, HumanReadableTime):
+                min_value = HumanReadableTime(min_value)
+            if self < min_value:
                 raise InvalidParameterError(
                     "time must be greater than {}", min_value)
 
         if max_value is not None:
-            max_value = HumanReadableTime(max_value)
-            if self.get_msec() > max_value.get_msec():
+            if not isinstance(max_value, HumanReadableTime):
+                max_value = HumanReadableTime(max_value)
+            if self > max_value:
                 raise InvalidParameterError(
                     "time must be less than {}", max_value)
 
