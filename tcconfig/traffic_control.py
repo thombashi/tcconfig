@@ -90,11 +90,13 @@ class TrafficControl(object):
     REGEXP_FILE_EXISTS = re.compile("RTNETLINK answers: File exists")
 
     EXISTS_MSG_TEMPLATE = (
-        "{:s} "
-        "execute with --overwrite option if you want to overwrite "
-        "the existing rules. "
-        "execute with --add option if you want to add a new rule in addition "
-        "to the existing rules."
+        "{:s} try to execute with: "
+        "(a) --overwrite option if you want to overwrite "
+        "the existing rule. "
+        "(b) --add option if you want to add a new rule in addition "
+        "to the existing rules. "
+        "(c) --change option if you want to change the existing "
+        "rule parameter."
     )
 
     @property

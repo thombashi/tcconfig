@@ -400,8 +400,11 @@ def main():
     ):
         logger.error(
             "adding a shaping rule failed. a shaping rule for the same "
-            "network/port already exist. try --overwrite option if you want "
-            "to overwrite the existing rule.")
+            "network/port already exist. try to execute with: "
+            "(a) --overwrite option if you want to overwrite "
+            "the existing rules. "
+            "(b) --change option if you want to change the existing "
+            "rule parameter.")
         return errno.EINVAL
 
     return_code = tc.set_tc()
