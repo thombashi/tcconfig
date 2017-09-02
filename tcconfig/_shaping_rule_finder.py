@@ -10,6 +10,7 @@ from __future__ import print_function
 
 from simplesqlite.sqlquery import SqlQuery
 
+from ._common import is_anywhere_network
 from ._const import (
     Tc,
     TrafficDirection,
@@ -88,6 +89,16 @@ class TcShapingRuleFinder(object):
             table_name=Tc.Subcommand.FILTER)
 
         return num_records and num_records > 0
+
+    def is_empty_filter_condition(self):
+        from typepy import is_empty_string
+
+        return all([
+            is_anywhere_network(self.__tc.dst_network, self.__tc.ip_version),
+            is_anywhere_network(self.__tc.src_network, self.__tc.ip_version),
+            is_empty_string(self.__tc.dst_port),
+            is_empty_string(self.__tc.src_port),
+        ])
 
     def get_parsed_device(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:
