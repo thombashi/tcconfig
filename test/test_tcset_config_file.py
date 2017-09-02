@@ -24,7 +24,6 @@ def device_value(request):
 
 class Test_tcconfig(object):
 
-    @pytest.mark.xfail
     @pytest.mark.parametrize(["overwrite"], [
         [""],
         ["--overwrite"],
