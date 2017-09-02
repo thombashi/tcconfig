@@ -401,7 +401,13 @@ class TrafficControl(object):
         logger.debug("delete_tc: pram={}".format(filter_param))
 
         if not filter_param:
-            logger.error("shaping rule not found.")
+            message = "shaping rule not found."
+            if rule_finder.is_empty_filter_condition():
+                message += (
+                    " you can delete all of the shaping rules "
+                    "with --all option.")
+            logger.error(message)
+
             return 1
 
         filter_del_command = (
