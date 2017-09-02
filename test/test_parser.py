@@ -353,7 +353,7 @@ qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
-                    'delay': '1.0', 'loss': '0.01',
+                    'delay': '1.0ms', 'loss': '0.01',
                     Tc.Param.HANDLE: '2007:',
                     Tc.Param.PARENT: '1f87:2',
                 },
@@ -380,14 +380,36 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 50.0ms  1.0ms loss 5%
             [
                 {
                     Tc.Param.DEVICE: DEVICE,
-                    'delay': '5.0',
+                    'delay': '5.0ms',
                     Tc.Param.HANDLE: '2007:',
                     Tc.Param.PARENT: '1f87:2',
                 },
                 {
                     Tc.Param.DEVICE: DEVICE,
-                    'delay': '50.0', 'loss': '5',
-                    'delay-distro': '1.0',
+                    'delay': '50.0ms', 'loss': '5',
+                    'delay-distro': '1.0ms',
+                    Tc.Param.HANDLE: '2008:',
+                    Tc.Param.PARENT: '1f87:3',
+                },
+            ],
+        ],
+        [
+            six.b("""
+qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 0 direct_qlen 1000
+qdisc netem 2007: parent 1f87:2 limit 1000 delay 2.5s
+qdisc netem 2008: parent 1f87:3 limit 1000 delay 0.5s  1.0ms loss 5%
+"""),
+            [
+                {
+                    Tc.Param.DEVICE: DEVICE,
+                    'delay': '2.5s',
+                    Tc.Param.HANDLE: '2007:',
+                    Tc.Param.PARENT: '1f87:2',
+                },
+                {
+                    Tc.Param.DEVICE: DEVICE,
+                    'delay': '0.5s', 'loss': '5',
+                    'delay-distro': '1.0ms',
                     Tc.Param.HANDLE: '2008:',
                     Tc.Param.PARENT: '1f87:3',
                 },

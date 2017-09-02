@@ -66,6 +66,8 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
             "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING,
+            latency_time=Tc.ValueRange.LatencyTime.MIN,
+            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             shaping_algorithm=ShapingAlgorithm.HTB)
         tc_obj.validate_bandwidth_rate()
 
@@ -81,6 +83,8 @@ def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
             "dummy", bandwidth_rate=value,
+            latency_time=Tc.ValueRange.LatencyTime.MIN,
+            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             shaping_algorithm=ShapingAlgorithm.HTB)
         tc_obj.validate_bandwidth_rate()
 
@@ -103,12 +107,12 @@ class Test_TrafficControl_validate(object):
                 [None, "", "100K", "0.5M", "0.1G"],  # rate
                 [TrafficDirection.OUTGOING],
                 [
-                    None, TrafficControl.MIN_LATENCY_MS,
-                    TrafficControl.MAX_LATENCY_MS,
+                    Tc.ValueRange.LatencyTime.MIN,
+                    Tc.ValueRange.LatencyTime.MAX,
                 ],  # delay
                 [
-                    None, TrafficControl.MIN_LATENCY_MS,
-                    TrafficControl.MAX_LATENCY_MS,
+                    Tc.ValueRange.LatencyTime.MIN,
+                    Tc.ValueRange.LatencyTime.MAX,
                 ],  # delay_distro
                 [
                     None,
@@ -156,8 +160,8 @@ class Test_TrafficControl_validate(object):
             device=device_option,
             direction=direction,
             bandwidth_rate=rate,
-            latency_ms=delay,
-            latency_distro_ms=delay_distro,
+            latency_time=delay,
+            latency_distro_time=delay_distro,
             packet_loss_rate=loss,
             packet_duplicate_rate=duplicate,
             corruption_rate=corrupt,
@@ -187,8 +191,8 @@ class Test_TrafficControl_validate(object):
             for opt_list in AllPairs([
                 [TrafficDirection.OUTGOING],
                 [
-                    TrafficControl.MIN_LATENCY_MS + 0.1,
-                    TrafficControl.MAX_LATENCY_MS,
+                    "0.1ms",
+                    Tc.ValueRange.LatencyTime.MAX,
                 ],  # delay
                 [
                     TrafficControl.MIN_REORDERING_RATE,
@@ -204,7 +208,8 @@ class Test_TrafficControl_validate(object):
         tc_obj = TrafficControl(
             device=device_option,
             direction=direction,
-            latency_ms=delay,
+            latency_time=delay,
+            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             reordering_rate=reordering,
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
@@ -213,25 +218,25 @@ class Test_TrafficControl_validate(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
         [
-            {"latency_ms": TrafficControl.MIN_LATENCY_MS - 1},
+            {"latency_time": "-1ms"},
             InvalidParameterError,
         ],
         [
-            {"latency_ms": TrafficControl.MAX_LATENCY_MS + 1},
+            {"latency_time": "61min"},
             InvalidParameterError,
         ],
 
         [
             {
-                "latency_ms": 100,
-                "latency_distro_ms": TrafficControl.MIN_LATENCY_MS - 1,
+                "latency_time": "100ms",
+                "latency_distro_time": "-1ms",
             },
             InvalidParameterError,
         ],
         [
             {
-                "latency_ms": 100,
-                "latency_distro_ms": TrafficControl.MAX_LATENCY_MS + 1,
+                "latency_time": "100ms",
+                "latency_distro_time": "61min",
             },
             InvalidParameterError,
         ],
@@ -247,14 +252,14 @@ class Test_TrafficControl_validate(object):
 
         [
             {
-                "latency_ms": 100,
+                "latency_time": "100ms",
                 "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
             },
             InvalidParameterError,
         ],
         [
             {
-                "latency_ms": 100,
+                "latency_time": "100ms",
                 "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
             },
             InvalidParameterError,
@@ -298,8 +303,9 @@ class Test_TrafficControl_validate(object):
         tc_obj = TrafficControl(
             device=device_option,
             bandwidth_rate=value.get("bandwidth_rate"),
-            latency_ms=value.get("latency_ms"),
-            latency_distro_ms=value.get("latency_distro_ms"),
+            latency_time=value.get("latency_time", Tc.ValueRange.LatencyTime.MIN),
+            latency_distro_time=value.get(
+                "latency_distro_time", Tc.ValueRange.LatencyTime.MIN),
             packet_loss_rate=value.get("packet_loss_rate"),
             packet_duplicate_rate=value.get("packet_duplicate_rate"),
             corruption_rate=value.get("corruption_rate"),
@@ -334,6 +340,8 @@ class Test_TrafficControl_ipv4(object):
 
         tc_obj = TrafficControl(
             device=device_option, dst_network=network, is_ipv6=is_ipv6,
+            latency_time=Tc.ValueRange.LatencyTime.MIN,
+            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
 

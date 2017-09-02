@@ -21,6 +21,7 @@ from .._const import (
     Tc,
     TrafficDirection,
 )
+from .._converter import HumanReadableTime
 from .._error import InvalidParameterError
 from .._iptables import IptablesMangleMarkEntry
 from .._logger import logger
@@ -100,13 +101,15 @@ class AbstractShaper(ShaperInterface):
             command_item_list.append(
                 "duplicate {:f}%".format(self._tc_obj.packet_duplicate_rate))
 
-        if self._tc_obj.latency_ms > 0:
+        if self._tc_obj.latency_time > HumanReadableTime(
+                Tc.ValueRange.LatencyTime.MIN):
             command_item_list.append(
-                "delay {}ms".format(self._tc_obj.latency_ms))
+                "delay {}".format(self._tc_obj.latency_time))
 
-            if self._tc_obj.latency_distro_ms > 0:
-                command_item_list.append("{}ms distribution normal".format(
-                    self._tc_obj.latency_distro_ms))
+            if self._tc_obj.latency_distro_time > HumanReadableTime(
+                    Tc.ValueRange.LatencyTime.MIN):
+                command_item_list.append("{} distribution normal".format(
+                    self._tc_obj.latency_distro_time))
 
         if self._tc_obj.corruption_rate > 0:
             command_item_list.append(

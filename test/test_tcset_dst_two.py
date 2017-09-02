@@ -83,7 +83,7 @@ class Test_tcset_two_network(object):
         command_list = [
             Tc.Command.TCSET,
             "--device {:s}".format(device_option),
-            "--delay {:d}".format(delay),
+            "--delay {:d}ms".format(delay),
             "--dst-network {:s}".format(dst_host_ex_option),
             "--shaping-algo {:s}".format(shaping_algo),
         ]

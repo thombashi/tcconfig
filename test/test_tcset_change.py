@@ -41,13 +41,13 @@ class Test_tcset_change(object):
 
         command_list = [
             Tc.Command.TCSET, device_option,
-            "--delay 100 --rate 50k --network 192.168.1.2 --overwrite",
+            "--delay 100ms --rate 50k --network 192.168.1.2 --overwrite",
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         command_list = [
             Tc.Command.TCSET, device_option,
-            "--delay 200",
+            "--delay 200.0ms",
             "--delay-distro 20",
             "--rate 100k",
             "--loss 0.01",
@@ -66,15 +66,15 @@ class Test_tcset_change(object):
         "outgoing": {
             "dst-network=192.168.1.2/32, protocol=ip": {
                 "filter_id": "800::800",
-                "delay": 100,
+                "delay": "100.0ms",
                 "rate": "50K"
             },
             "dst-network=192.168.1.3/32, protocol=ip": {
                 "filter_id": "800::801",
-                "delay": 200,
+                "delay": "200.0ms",
                 "loss": 0.01,
                 "duplicate": 5,
-                "delay-distro": 20,
+                "delay-distro": "20.0ms",
                 "rate": "100K",
                 "reorder": 2
             }
@@ -89,7 +89,7 @@ class Test_tcset_change(object):
 
         command_list = [
             Tc.Command.TCSET, device_option,
-            "--delay 300",
+            "--delay 300ms",
             "--delay-distro 30",
             "--rate 200k",
             "--loss 0.02",
@@ -108,15 +108,15 @@ class Test_tcset_change(object):
         "outgoing": {
             "dst-network=192.168.1.2/32, protocol=ip": {
                 "filter_id": "800::800",
-                "delay": 100,
+                "delay": "100.0ms",
                 "rate": "50K"
             },
             "dst-network=192.168.1.3/32, protocol=ip": {
                 "filter_id": "800::801",
-                "delay": 300,
+                "delay": "300.0ms",
                 "loss": 0.02,
                 "duplicate": 5.5,
-                "delay-distro": 30,
+                "delay-distro": "30.0ms",
                 "rate": "200K",
                 "reorder": 0.2
             }

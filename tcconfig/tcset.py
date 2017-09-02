@@ -36,6 +36,7 @@ from ._const import (
     TcCommandOutput,
     TrafficDirection,
 )
+from ._converter import HumanReadableTime
 from ._error import (
     InvalidParameterError,
     ModuleNotFoundError,
@@ -93,18 +94,27 @@ def get_arg_parser():
         e.g. --rate 10Mbps
         """)
     group.add_argument(
-        "--delay", dest="network_latency", type=float, default=0,
-        help="""round trip network delay [ms]. the valid range is from {:d}
-        to {:d}. (default=%(default)s)
+        "--delay", dest="network_latency",
+        default=Tc.ValueRange.LatencyTime.MIN,
+        help="""round trip network delay. the valid range is
+        from {min_value:} to {max_value:}.
+        valid time units are: {unit}.
+        if no unit string found, considered milliseconds as the time unit.
+        (default=%(default)s)
         """.format(
-            TrafficControl.MIN_LATENCY_MS, TrafficControl.MAX_LATENCY_MS))
+            min_value=Tc.ValueRange.LatencyTime.MIN,
+            max_value=Tc.ValueRange.LatencyTime.MAX,
+            unit="/".join(HumanReadableTime.get_valid_unit_list())))
     group.add_argument(
-        "--delay-distro", dest="latency_distro_ms", type=float, default=0,
-        help="""distribution of network latency becomes X +- Y [ms]
+        "--delay-distro", dest="latency_distro_time",
+        default=Tc.ValueRange.LatencyTime.MIN,
+        help="""distribution of network latency becomes X +- Y
         (normal distribution). Here X is the value of --delay option and
         Y is the value of --delay-dist option).
         network latency distribution is uniform, without this option.
-        """)
+        valid time units are: {unit}.
+        if no unit string found, considered milliseconds as the time unit.
+        """.format(unit="/".join(HumanReadableTime.get_valid_unit_list())))
     group.add_argument(
         "--loss", dest="packet_loss_rate", type=float, default=0,
         help="""round trip packet loss rate [%%]. the valid range is from {:d}
@@ -343,8 +353,8 @@ def main():
             options.device,
             direction=options.direction,
             bandwidth_rate=options.bandwidth_rate,
-            latency_ms=options.network_latency,
-            latency_distro_ms=options.latency_distro_ms,
+            latency_time=options.network_latency,
+            latency_distro_time=options.latency_distro_time,
             packet_loss_rate=options.packet_loss_rate,
             packet_duplicate_rate=options.packet_duplicate_rate,
             corruption_rate=options.corruption_rate,

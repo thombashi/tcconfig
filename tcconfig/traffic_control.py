@@ -31,7 +31,10 @@ from ._const import (
     TcCommandOutput,
     TrafficDirection,
 )
-from ._converter import Humanreadable
+from ._converter import (
+    Humanreadable,
+    HumanReadableTime,
+)
 from ._error import (
     NetworkInterfaceNotFoundError,
     InvalidParameterError,
@@ -74,9 +77,6 @@ class TrafficControl(object):
 
     MIN_PACKET_DUPLICATE_RATE = 0  # [%]
     MAX_PACKET_DUPLICATE_RATE = 100  # [%]
-
-    MIN_LATENCY_MS = 0  # [millisecond]
-    MAX_LATENCY_MS = 3600000  # [millisecond] (60 minutes)
 
     MIN_CORRUPTION_RATE = 0  # [%]
     MAX_CORRUPTION_RATE = 100  # [%]
@@ -121,12 +121,12 @@ class TrafficControl(object):
             return None
 
     @property
-    def latency_ms(self):
-        return self.__latency_ms
+    def latency_time(self):
+        return self.__latency_time
 
     @property
-    def latency_distro_ms(self):
-        return self.__latency_distro_ms
+    def latency_distro_time(self):
+        return self.__latency_distro_time
 
     @property
     def packet_loss_rate(self):
@@ -219,7 +219,7 @@ class TrafficControl(object):
     def __init__(
             self, device,
             direction=None, bandwidth_rate=None,
-            latency_ms=None, latency_distro_ms=None,
+            latency_time=None, latency_distro_time=None,
             packet_loss_rate=None, packet_duplicate_rate=None,
             corruption_rate=None, reordering_rate=None,
             dst_network=None, exclude_dst_network=None,
@@ -236,8 +236,8 @@ class TrafficControl(object):
 
         self.__direction = direction
         self.__bandwidth_rate = bandwidth_rate
-        self.__latency_ms = latency_ms  # [milliseconds]
-        self.__latency_distro_ms = latency_distro_ms  # [milliseconds]
+        self.__latency_time = HumanReadableTime(latency_time)
+        self.__latency_distro_time = HumanReadableTime(latency_distro_time)
         self.__packet_loss_rate = packet_loss_rate  # [%]
         self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
         self.__corruption_rate = corruption_rate  # [%]
@@ -448,13 +448,19 @@ class TrafficControl(object):
             expected=ShapingAlgorithm.LIST, value=shaping_algorithm)
 
     def __validate_network_delay(self):
-        _validate_within_min_max(
-            "delay", self.latency_ms,
-            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS, unit="ms")
+        try:
+            self.latency_time.validate(
+                min_value=Tc.ValueRange.LatencyTime.MIN,
+                max_value=Tc.ValueRange.LatencyTime.MAX)
+        except InvalidParameterError as e:
+            raise InvalidParameterError("delay {}".format(str(e)))
 
-        _validate_within_min_max(
-            "delay-distro", self.latency_distro_ms,
-            self.MIN_LATENCY_MS, self.MAX_LATENCY_MS, unit="ms")
+        try:
+            self.latency_distro_time.validate(
+                min_value=Tc.ValueRange.LatencyTime.MIN,
+                max_value=Tc.ValueRange.LatencyTime.MAX)
+        except InvalidParameterError as e:
+            raise InvalidParameterError("delay-distro {}".format(str(e)))
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
@@ -478,7 +484,7 @@ class TrafficControl(object):
             self.MIN_REORDERING_RATE, self.MAX_REORDERING_RATE, unit="%")
 
     def __validate_reordering_and_delay(self):
-        if self.reordering_rate and not self.latency_ms:
+        if self.reordering_rate and not self.latency_time:
             raise InvalidParameterError(
                 'reordering needs latency to be specified: set latency > 0')
 
@@ -493,7 +499,6 @@ class TrafficControl(object):
 
         netem_param_value_list = [
             self.bandwidth_rate,
-            self.latency_ms,
             self.packet_loss_rate,
             self.packet_duplicate_rate,
             self.corruption_rate,
@@ -504,6 +509,9 @@ class TrafficControl(object):
                 not RealNumber(netem_param_value).is_type()
                 or netem_param_value <= 0
                 for netem_param_value in netem_param_value_list
+        ] + [
+            self.latency_time <= HumanReadableTime(
+                Tc.ValueRange.LatencyTime.MIN)
         ]):
             raise InvalidParameterError(
                 "there is no valid net emulation parameter value. "

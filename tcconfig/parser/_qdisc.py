@@ -55,7 +55,7 @@ class TcQdiscParser(AbstractParser):
 
             self.__parsed_param[Tc.Param.DEVICE] = device
             self.__parse_netem_param(line, "netem", pp.hexnums + ":", "handle")
-            self.__parse_netem_param(line, "delay", pp.nums + ".")
+            self.__parse_netem_param(line, "delay", pp.nums + ".msu")
             self.__parse_netem_delay_distro(line)
             self.__parse_netem_param(line, "loss", pp.nums + ".")
             self.__parse_netem_param(line, "duplicate", pp.nums + ".")
@@ -88,13 +88,13 @@ class TcQdiscParser(AbstractParser):
         parse_param_name = "delay"
         pattern = (
             pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.nums + ".") + pp.Literal("ms") +
-            pp.Word(pp.nums + ".") + pp.Literal("ms"))
+            pp.Word(pp.nums + ".msu") +
+            pp.Word(pp.nums + ".msu"))
 
         try:
             parsed_list = pattern.parseString(line)
             self.__parsed_param[parse_param_name] = parsed_list[2]
-            self.__parsed_param["delay-distro"] = parsed_list[4]
+            self.__parsed_param["delay-distro"] = parsed_list[3]
         except pp.ParseException:
             pass
 

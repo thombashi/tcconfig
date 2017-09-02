@@ -93,7 +93,7 @@ class Test_tcset_one_network(object):
             Tc.Command.TCSET,
             "--device {:s}".format(device_option),
             "--src-network {:s}".format(local_host_option),
-            "--delay {:d}".format(delay),
+            "--delay {:d}ms".format(delay),
             "--shaping-algo {:s}".format(shaping_algo),
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
@@ -154,7 +154,7 @@ class Test_tcset_exclude(object):
             "--direction {:s}".format(TrafficDirection.INCOMING),
             "--exclude-dst-network {:s}".format(local_host_option),
             "--exclude-src-network {:s}".format(dst_host_option),
-            "--delay {:d}".format(delay),
+            "--delay {:d}ms".format(delay),
             "--shaping-algo {:s}".format(shaping_algo),
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0

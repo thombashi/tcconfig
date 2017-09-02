@@ -5,6 +5,7 @@
 """
 
 from __future__ import division
+from __future__ import print_function
 from __future__ import unicode_literals
 
 from allpairspy import AllPairs
@@ -53,11 +54,11 @@ class NormalTestValue(object):
     ]
     DELAY_LIST = [
         "",
-        "--delay 100",
+        "--delay 100ms",
     ]
     DELAY_DISTRO_LIST = [
         "",
-        "--delay-distro 20",
+        "--delay-distro 20ms",
     ]
     PACKET_LOSS_RATE_LIST = [
         "",
@@ -107,7 +108,8 @@ class Test_tcconfig(object):
     @pytest.mark.parametrize(
         [
             "rate", "delay", "delay_distro", "loss", "corrupt",
-            "direction", "network", "port", "overwrite", "is_enable_iptables",
+            "direction", "network", "port", "overwrite",
+            # "is_enable_iptables",
         ],
         [
             opt_list
@@ -121,12 +123,13 @@ class Test_tcconfig(object):
                 NormalTestValue.NETWORK_LIST,
                 NormalTestValue.PORT_LIST,
                 NormalTestValue.OVERWRITE_LIST,
-                NormalTestValue.IPTABLES_LIST,
+                # NormalTestValue.IPTABLES_LIST,
             ], n=3, filter_func=is_valid_combination)
         ])
     def test_smoke(
             self, device_value, rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite, is_enable_iptables):
+            direction, network, port, overwrite,  # is_enable_iptables
+    ):
 
         if device_value is None:
             pytest.skip("device is empty")
@@ -138,12 +141,15 @@ class Test_tcconfig(object):
 
         execute_tcdel(device_value)
 
-        tcset_proc = SubprocessRunner(" ".join([
+        command = " ".join([
             Tc.Command.TCSET,
             device_option,
             rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite, is_enable_iptables,
-        ]))
+            direction, network, port, overwrite,
+            # is_enable_iptables,
+        ])
+        print("command: {}".format(command))
+        tcset_proc = SubprocessRunner(command)
         assert tcset_proc.run() == 0, tcset_proc.stderr
 
-        SubprocessRunner("tcdel {:s}".format(device_option)).run()
+        execute_tcdel(device_value)

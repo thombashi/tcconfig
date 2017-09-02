@@ -58,6 +58,17 @@ class Tc(object):
         SRC_NETWORK = "src-network"
         SRC_PORT = "src-port"
 
+    class ValueRange(object):
+        class LatencyTime(object):
+            MIN = "0ms"
+            MAX = "60min"
+
+    class Min(object):
+        LATENCY_TIME = "0ms"
+
+    class Max(object):
+        LATENCY_TIME = "60min"
+
 
 class TcCommandOutput(object):
     NOT_SET = None
