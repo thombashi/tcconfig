@@ -26,8 +26,7 @@ class Test_tcset_change(object):
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
 
-        python setup.py test --addopts \
-            "--device=<test device> --dst-host=<IP address>"
+        python setup.py test --addopts "--device=<test device>"
 
     These tests expected to execute in the following environment:
        - Linux w/ iputils-ping package
