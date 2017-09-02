@@ -121,10 +121,6 @@ class HumanReadableTime(object):
 
     def __init__(self, readable_time):
         self.__readable_time = readable_time
-        self.__number = self.__get_number()
-        self.__unit = self.__get_unit()
-        self.validate()
-        self.__normalize()
 
     def __eq__(self, other):
         return self.get_msec() == other.get_msec()
@@ -148,9 +144,13 @@ class HumanReadableTime(object):
         return self.get_value()
 
     def get_value(self):
+        self.__preprocess()
+
         return "{:f}{:s}".format(self.__number, self.__unit)
 
     def get_msec(self):
+        self.__preprocess()
+
         coef = 1
         if self.__unit == "sec":
             coef = 1000
@@ -163,6 +163,7 @@ class HumanReadableTime(object):
         if min_value is not None:
             if not isinstance(min_value, HumanReadableTime):
                 min_value = HumanReadableTime(min_value)
+
             if self < min_value:
                 raise InvalidParameterError(
                     "time value is too low",
@@ -172,6 +173,7 @@ class HumanReadableTime(object):
         if max_value is not None:
             if not isinstance(max_value, HumanReadableTime):
                 max_value = HumanReadableTime(max_value)
+
             if self > max_value:
                 raise InvalidParameterError(
                     "time value is too high",
@@ -204,3 +206,9 @@ class HumanReadableTime(object):
 
     def __get_unit(self):
         return _RE_NUMBER.sub("", self.__readable_time).strip().lower()
+
+    def __preprocess(self):
+        self.__number = self.__get_number()
+        self.__unit = self.__get_unit()
+        self.validate()
+        self.__normalize()

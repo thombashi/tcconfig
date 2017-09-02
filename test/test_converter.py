@@ -147,7 +147,7 @@ class Test_HumanReadableTime_get_value(object):
     ])
     def test_exception(self, value, exception):
         with pytest.raises(exception):
-            HumanReadableTime(value)
+            HumanReadableTime(value).get_value()
 
 
 class Test_HumanReadableTime_get_msec(object):
