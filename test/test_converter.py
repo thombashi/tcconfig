@@ -106,6 +106,7 @@ class Test_to_kilo_bit(object):
 class Test_HumanReadableTime_get_value(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
+        ["10", "10.000000ms"],
         ["1s", "1.000000sec"],
         ["1S", "1.000000sec"],
         ["1sec", "1.000000sec"],
@@ -136,7 +137,6 @@ class Test_HumanReadableTime_get_value(object):
         assert str(HumanReadableTime(value)) == expected
 
     @pytest.mark.parametrize(["value", "exception"], [
-        ["10", UnitNotFoundError],
         ["", InvalidParameterError],
         [None, TypeError],
         [True, TypeError],
@@ -153,6 +153,7 @@ class Test_HumanReadableTime_get_value(object):
 class Test_HumanReadableTime_get_msec(object):
 
     @pytest.mark.parametrize(["value", "expected"], [
+        ["10", 10],
         ["1s", 1000],
         ["1ms", 1],
         ["1000us", 1],
@@ -165,6 +166,7 @@ class Test_HumanReadableTime_get_msec(object):
 class Test_HumanReadableTime_validate(object):
 
     @pytest.mark.parametrize(["value", "min_value", "max_value"], [
+        ["1", "0", "60m"],
         ["1s", "0s", "60m"],
         ["1s", HumanReadableTime("0s"), HumanReadableTime("60m")],
         ["1s", "1s", "60m"],

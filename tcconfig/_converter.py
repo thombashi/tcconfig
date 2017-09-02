@@ -205,6 +205,10 @@ class HumanReadableTime(object):
         return float(match.group())
 
     def __get_unit(self):
+        if typepy.type.RealNumber(self.__readable_time).is_type():
+            # if the input value is real numbers consider unit as milliseconds.
+            return "ms"
+
         return _RE_NUMBER.sub("", self.__readable_time).strip().lower()
 
     def __preprocess(self):
