@@ -4,6 +4,6 @@ logbook
 pyparsing>=2.2.0
 SimpleSQLite>=0.15.0
 six
-subprocrunner>=0.8.7
+subprocrunner>=0.9.0
 typepy>=0.0.20
 voluptuous
