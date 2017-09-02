@@ -1,4 +1,4 @@
-.. code-block:: console
+::
 
     usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
                  [--stacktrace] -d DEVICE [-a] [--id FILTER_ID]
@@ -51,3 +51,4 @@
                             IPv4.
 
     Issue tracker: https://github.com/thombashi/tcconfig/issues
+

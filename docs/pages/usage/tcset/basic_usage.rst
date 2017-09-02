@@ -4,11 +4,28 @@ e.g. Set a limit on bandwidth up to 100Kbps
 
     # tcset --device eth0 --rate 100k
 
-e.g. Set 100ms network latency
+e.g. Set network latency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+You can use time units (such as us/sec/min/etc.) to designate delay time.
+
+Set 100 milliseconds network latency
+'''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
-    # tcset --device eth0 --delay 100
+    # tcset --device eth0 --delay 100ms
+
+
+Set 10 seconds network latency
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+.. code-block:: console
+
+    # tcset --device eth0 --delay 10sec
+
+Set 0.5 minutes (30 seconds) network latency
+'''''''''''''''''''''''''''''''''''''''''''''''''''
+.. code-block:: console
+
+    # tcset --device eth0 --delay 0.5min
 
 e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^

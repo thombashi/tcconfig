@@ -1,4 +1,4 @@
-.. code-block:: console
+::
 
     usage: tcshow [-h] [--version] [--tc-command | --tc-script]
                   [--debug | --quiet] [--stacktrace] -d DEVICE [--ipv6]
