@@ -36,7 +36,7 @@ class Humanreadable(object):
         ByteUnit(regexp=re.compile("^g$", re.IGNORECASE), factor=3),
         ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
         ByteUnit(regexp=re.compile("^t$", re.IGNORECASE), factor=4),
-        ByteUnit(regexp=re.compile("^gbps$", re.IGNORECASE), factor=3),
+        ByteUnit(regexp=re.compile("^tbps$", re.IGNORECASE), factor=4),
         ByteUnit(regexp=re.compile("^p$", re.IGNORECASE), factor=5),
     ]
 
