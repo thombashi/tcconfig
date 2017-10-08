@@ -92,14 +92,13 @@ def get_no_limit_kbits(tc_device):
 
 
 def initialize(options):
-    import subprocrunner
     from ._logger import set_log_level
 
     set_log_level(options.log_level)
-    subprocrunner.SubprocessRunner.is_save_history = True
+    spr.SubprocessRunner.is_save_history = True
 
     if options.is_output_stacktrace:
-        subprocrunner.SubprocessRunner.is_output_stacktrace = (
+        spr.SubprocessRunner.is_output_stacktrace = (
             options.is_output_stacktrace)
 
 
