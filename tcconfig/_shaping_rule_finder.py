@@ -47,6 +47,9 @@ class TcShapingRuleFinder(object):
 
         where_list = self.__get_filter_where_condition_list()
         table_name = Tc.Subcommand.FILTER
+        self.__logger.debug(
+            "find filter param: table={}, where={}".format(
+                table_name, where_list))
 
         try:
             result = self._parser.con.select_as_dict(
