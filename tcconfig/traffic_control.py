@@ -42,6 +42,7 @@ from ._error import (
 )
 from ._iptables import IptablesMangleController
 from ._logger import logger
+from ._shaping_rule_finder import TcShapingRuleFinder
 from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
@@ -349,6 +350,11 @@ class TrafficControl(object):
         return filter(tc_filter, spr.SubprocessRunner.get_history())
 
     def set_tc(self):
+        rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
+        self.__is_change_shaping_rule = (
+            self.__is_change_shaping_rule and
+            rule_finder.find_filter_param() is not None)
+
         self.__setup_ifb()
 
         return self.__shaper.set_shaping()
@@ -390,8 +396,6 @@ class TrafficControl(object):
         """
         Delete a specific shaping rule.
         """
-
-        from ._shaping_rule_finder import TcShapingRuleFinder
 
         rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
 
