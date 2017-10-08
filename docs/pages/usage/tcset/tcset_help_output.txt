@@ -35,8 +35,8 @@
       --change              change existing traffic shaping rules to the new one.
                             this option reduces the shaping rule switching side
                             effect (such as traffic spike) compared to --overwrite
-                            option. note: the tcset command fail when there are no
-                            existing shaping rules.
+                            option. note: the tcset command adds a shaping rule if
+                            there are no existing shaping rules.
       --add                 add a traffic shaping rule in addition to existing
                             rules.
 

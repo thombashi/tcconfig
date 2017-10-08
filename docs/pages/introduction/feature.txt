@@ -19,7 +19,7 @@ Available parameters
 The following parameters can set to network interfaces:
 
 - Network bandwidth rate ``[G/M/K bps]``
-- Network latency ``[milliseconds]``
+- Network latency ``[microseconds/milliseconds/seconds/minutes]``
 - Packet loss rate ``[%]``
 - Packet corruption rate ``[%]``
 - Packet duplicate rate ``[%]``
