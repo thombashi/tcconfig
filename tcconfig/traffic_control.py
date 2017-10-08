@@ -397,7 +397,6 @@ class TrafficControl(object):
 
         parent = rule_finder.find_parent()
         filter_param = rule_finder.find_filter_param()
-
         logger.debug("delete_tc: pram={}".format(filter_param))
 
         if not filter_param:

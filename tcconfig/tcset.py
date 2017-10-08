@@ -404,10 +404,8 @@ def main():
 
         set_log_level(options.log_level)
 
-    if (
-            options.is_add_shaping_rule and
-            TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()
-    ):
+    if (options.is_add_shaping_rule and
+            TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()):
         logger.error(
             "adding a shaping rule failed. a shaping rule for the same "
             "network/port already exist. try to execute with: "
