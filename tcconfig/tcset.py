@@ -41,7 +41,6 @@ from ._error import (
     InvalidParameterError,
     ModuleNotFoundError,
     NetworkInterfaceNotFoundError,
-    UnitNotFoundError,
 )
 from ._logger import (
     LOG_FORMAT_STRING,
@@ -349,36 +348,31 @@ def main():
 
     subprocrunner.SubprocessRunner.clear_history()
 
-    try:
-        tc = TrafficControl(
-            options.device,
-            direction=options.direction,
-            bandwidth_rate=options.bandwidth_rate,
-            latency_time=options.network_latency,
-            latency_distro_time=options.latency_distro_time,
-            packet_loss_rate=options.packet_loss_rate,
-            packet_duplicate_rate=options.packet_duplicate_rate,
-            corruption_rate=options.corruption_rate,
-            reordering_rate=options.reordering_rate,
-            dst_network=options.dst_network,
-            exclude_dst_network=options.exclude_dst_network,
-            src_network=options.src_network,
-            exclude_src_network=options.exclude_src_network,
-            src_port=options.src_port,
-            exclude_src_port=options.exclude_src_port,
-            dst_port=options.dst_port,
-            exclude_dst_port=options.exclude_dst_port,
-            is_ipv6=options.is_ipv6,
-            is_change_shaping_rule=options.is_change_shaping_rule,
-            is_add_shaping_rule=options.is_add_shaping_rule,
-            is_enable_iptables=options.is_enable_iptables,
-            shaping_algorithm=options.shaping_algorithm,
-            tc_command_output=options.tc_command_output,
-        )
-    except UnitNotFoundError:
-        logger.error(
-            "--rate/--bandwidth-rate require an unit: K/M/Kbps/Mbps/etc.")
-        return errno.EINVAL
+    tc = TrafficControl(
+        options.device,
+        direction=options.direction,
+        bandwidth_rate=options.bandwidth_rate,
+        latency_time=options.network_latency,
+        latency_distro_time=options.latency_distro_time,
+        packet_loss_rate=options.packet_loss_rate,
+        packet_duplicate_rate=options.packet_duplicate_rate,
+        corruption_rate=options.corruption_rate,
+        reordering_rate=options.reordering_rate,
+        dst_network=options.dst_network,
+        exclude_dst_network=options.exclude_dst_network,
+        src_network=options.src_network,
+        exclude_src_network=options.exclude_src_network,
+        src_port=options.src_port,
+        exclude_src_port=options.exclude_src_port,
+        dst_port=options.dst_port,
+        exclude_dst_port=options.exclude_dst_port,
+        is_ipv6=options.is_ipv6,
+        is_change_shaping_rule=options.is_change_shaping_rule,
+        is_add_shaping_rule=options.is_add_shaping_rule,
+        is_enable_iptables=options.is_enable_iptables,
+        shaping_algorithm=options.shaping_algorithm,
+        tc_command_output=options.tc_command_output,
+    )
 
     try:
         tc.validate()
