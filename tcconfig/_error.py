@@ -76,3 +76,19 @@ class InvalidParameterError(ValueError):
 class UnitNotFoundError(InvalidParameterError):
     """
     """
+
+    def __init__(self, *args, **kwargs):
+        self.__available_unit = kwargs.pop("available_unit", None)
+
+        super(UnitNotFoundError, self).__init__(*args, **kwargs)
+
+    def _get_extra_msg_list(self):
+        extra_msg_list = []
+
+        if self.__available_unit:
+            extra_msg_list.append(
+                "available-units={}".format(self.__available_unit))
+
+        return (
+            super(UnitNotFoundError, self)._get_extra_msg_list() +
+            extra_msg_list)
