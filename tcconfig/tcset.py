@@ -381,7 +381,7 @@ def main():
 
     try:
         tc.validate()
-    except (NetworkInterfaceNotFoundError) as e:
+    except NetworkInterfaceNotFoundError as e:
         logger.error(str(e))
         return errno.EINVAL
     except ipaddress.AddressValueError as e:
