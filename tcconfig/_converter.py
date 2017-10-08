@@ -104,7 +104,9 @@ class Humanreadable(object):
             if unit.regexp.search(unit_str):
                 return self.kilo_size ** unit.factor
 
-        raise UnitNotFoundError("unit not found: value={}".format(unit_str))
+        raise UnitNotFoundError(
+            "unit not found", value=unit_str,
+            available_unit="b/bps/k/kbps/m/mbps/g/gbps/t/tbps")
 
 
 class HumanReadableTime(object):
@@ -185,7 +187,8 @@ class HumanReadableTime(object):
 
         if self.__unit not in self.__VALID_UNIT_LIST:
             raise UnitNotFoundError(
-                "unknown unit".format(self.__readable_time))
+                "unknown unit", value=self.__readable_time,
+                available_unit="/".join(self.__VALID_UNIT_LIST))
 
     def __normalize(self):
         if self.__unit in self.__VALID_SEC_UNIT_LIST:
