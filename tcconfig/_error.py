@@ -51,21 +51,26 @@ class InvalidParameterError(ValueError):
 
     def __str__(self, *args, **kwargs):
         item_list = [ValueError.__str__(self, *args, **kwargs)]
-        extra_item_list = []
+        extra_msg_list = self._get_extra_msg_list()
 
-        if self.__expected:
-            extra_item_list.append("expected={}".format(self.__expected))
-
-        if self.__value:
-            extra_item_list.append("value={}".format(self.__value))
-
-        if extra_item_list:
-            item_list.extend([":", ", ".join(extra_item_list)])
+        if extra_msg_list:
+            item_list.extend([":", ", ".join(extra_msg_list)])
 
         return " ".join(item_list)
 
     def __repr__(self, *args, **kwargs):
         return self.__str__(*args, **kwargs)
+
+    def _get_extra_msg_list(self):
+        extra_msg_list = []
+
+        if self.__expected:
+            extra_msg_list.append("expected={}".format(self.__expected))
+
+        if self.__value:
+            extra_msg_list.append("value={}".format(self.__value))
+
+        return extra_msg_list
 
 
 class UnitNotFoundError(InvalidParameterError):
