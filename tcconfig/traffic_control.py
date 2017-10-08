@@ -395,7 +395,6 @@ class TrafficControl(object):
 
         rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
 
-        parent = rule_finder.find_parent()
         filter_param = rule_finder.find_filter_param()
         logger.debug("delete_tc: pram={}".format(filter_param))
 
@@ -414,7 +413,7 @@ class TrafficControl(object):
             "parent {parent:} handle {handle:s} prio {prio:} u32".format(
                 dev=rule_finder.get_parsed_device(),
                 protocol=filter_param.get(Tc.Param.PROTOCOL),
-                parent="{:s}:".format(parent.split(":")[0]),
+                parent="{:s}:".format(rule_finder.find_parent().split(":")[0]),
                 handle=filter_param.get(Tc.Param.FILTER_ID),
                 prio=filter_param.get(Tc.Param.PRIORITY),
             ))
