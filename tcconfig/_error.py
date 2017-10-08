@@ -47,7 +47,7 @@ class InvalidParameterError(ValueError):
         self.__value = kwargs.pop("value", None)
         self.__expected = kwargs.pop("expected", None)
 
-        super(ValueError, self).__init__(*args)
+        super(InvalidParameterError, self).__init__(*args, **kwargs)
 
     def __str__(self, *args, **kwargs):
         item_list = [ValueError.__str__(self, *args, **kwargs)]
