@@ -50,7 +50,7 @@ class TcShapingRuleFinder(object):
         table_name = Tc.Subcommand.FILTER
         self.__logger.debug(
             "find filter param: table={}, where={}".format(
-                table_name, where_list))
+                table_name, where_query))
 
         try:
             result = self._parser.con.select_as_dict(
@@ -67,7 +67,7 @@ class TcShapingRuleFinder(object):
         param = result[0]
         self.__logger.debug(
             "find filter param: result={}, table={}, where={}".format(
-                param, table_name, where_list))
+                param, table_name, where_query))
 
         return param
 
