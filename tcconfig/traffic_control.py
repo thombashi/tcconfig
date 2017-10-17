@@ -302,8 +302,9 @@ class TrafficControl(object):
         no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
         if bandwidth_rate > no_limit_kbits:
             raise InvalidParameterError(
-                "bandwidth_rate must be less than {}".format(no_limit_kbits),
-                value=bandwidth_rate)
+                "exceed bandwidth rate limit",
+                value="{} kbps".format(bandwidth_rate),
+                expected="less than {} kbps".format(no_limit_kbits))
 
     def sanitize(self):
         self.__dst_network = sanitize_network(
