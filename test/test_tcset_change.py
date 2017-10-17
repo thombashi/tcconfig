@@ -33,6 +33,22 @@ class Test_tcset_change(object):
        - English locale (for parsing ping output)
     """
 
+    def test_smoke_multiple(self, device_value):
+        device_option = "--device {:s}".format(device_value)
+        execute_tcdel(device_option)
+
+        assert SubprocessRunner([
+            Tc.Command.TCSET, device_option,
+            "--delay 100ms --rate 50k --network 192.168.1.2 --change",
+        ]).run() == 0
+
+        assert SubprocessRunner([
+            Tc.Command.TCSET, device_option,
+            "--delay 100ms --rate 50k --network 192.168.1.3 --change",
+        ]).run() == 0
+
+        execute_tcdel(device_option)
+
     def test_normal(self, device_value):
         if device_value is None:
             pytest.skip("device is null")
