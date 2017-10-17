@@ -62,6 +62,9 @@ class TcShapingRuleFinder(object):
             return None
 
         if not result:
+            self.__logger.debug(
+                "find filter param: emptry result (table={}, where={})".format(
+                    table_name, where_query))
             return None
 
         param = result[0]
