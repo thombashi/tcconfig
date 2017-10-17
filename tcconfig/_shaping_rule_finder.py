@@ -46,6 +46,7 @@ class TcShapingRuleFinder(object):
         import simplesqlite
 
         where_list = self.__get_filter_where_condition_list()
+        where_query = " AND ".join(where_list)
         table_name = Tc.Subcommand.FILTER
         self.__logger.debug(
             "find filter param: table={}, where={}".format(
@@ -56,7 +57,7 @@ class TcShapingRuleFinder(object):
                 column_list=[
                     Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
                 table_name=table_name,
-                where=" AND ".join(where_list))
+                where=where_query)
         except simplesqlite.TableNotFoundError:
             return None
 
