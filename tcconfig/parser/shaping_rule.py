@@ -42,9 +42,10 @@ class TcShapingRuleParser(object):
     def ifb_device(self):
         return self.__ifb_device
 
-    def __init__(self, device, ip_version, logger):
+    def __init__(self, device, ip_version, tc_command_output, logger):
         self.__device = device
         self.__ip_version = ip_version
+        self.__tc_command_output = tc_command_output
         self.__logger = logger
 
         self.clear()
@@ -94,6 +95,11 @@ class TcShapingRuleParser(object):
         self.__parsed_mappings[device] = True
 
     def __get_ifb_from_device(self):
+        from .._const import TcCommandOutput
+
+        if self.__tc_command_output != TcCommandOutput.NOT_SET:
+            return None
+
         filter_runner = subprocrunner.SubprocessRunner(
             "tc filter show dev {:s} root".format(self.device), dry_run=False)
         filter_runner.run()

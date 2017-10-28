@@ -74,8 +74,9 @@ def main():
             logger.debug(str(e))
             continue
 
-        tc_param.update(TcShapingRuleParser(device, options.ip_version,
-                                            logger).get_tc_parameter())
+        tc_param.update(TcShapingRuleParser(
+            device, options.ip_version, options.tc_command_output, logger
+        ).get_tc_parameter())
 
     command_history = "\n".join(subprocrunner.SubprocessRunner.get_history())
 

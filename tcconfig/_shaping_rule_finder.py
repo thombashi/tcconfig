@@ -31,6 +31,7 @@ class TcShapingRuleFinder(object):
         self.__tc = tc
         self.__shaping_rule_parser = TcShapingRuleParser(
             device=self.__tc.device, ip_version=self.__tc.ip_version,
+            tc_command_output=self.__tc.tc_command_output,
             logger=self.__logger)
 
     def clear(self):

@@ -71,7 +71,9 @@ def create_tc_obj(options):
     if options.filter_id:
         ip_version = 6 if options.is_ipv6 else 4
         shaping_rule_parser = TcShapingRuleParser(
-            device=options.device, ip_version=ip_version, logger=logger)
+            device=options.device, ip_version=ip_version,
+            tc_command_output=options.tc_command_output,
+            logger=logger)
         shaping_rule_parser.parse()
         result = shaping_rule_parser.con.select_as_dict(
             table_name=Tc.Subcommand.FILTER,
