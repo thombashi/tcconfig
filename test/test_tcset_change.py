@@ -34,6 +34,9 @@ class Test_tcset_change(object):
     """
 
     def test_smoke_multiple(self, device_value):
+        if device_value is None:
+            pytest.skip("device is null")
+
         device_option = "--device {:s}".format(device_value)
         execute_tcdel(device_option)
 
