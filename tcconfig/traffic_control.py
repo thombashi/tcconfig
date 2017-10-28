@@ -520,7 +520,7 @@ class TrafficControl(object):
                 Tc.ValueRange.LatencyTime.MIN)
         ]):
             raise InvalidParameterError(
-                "there is no valid net emulation parameter value. "
+                "there are no valid net emulation parameters found. "
                 "at least one or more following parameters are required: "
                 "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
             )
