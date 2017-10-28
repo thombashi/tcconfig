@@ -112,8 +112,10 @@ def main():
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
+        is_delete_all = options.is_delete_all
     else:
         subprocrunner.SubprocessRunner.default_is_dry_run = True
+        is_delete_all = True
         set_logger(False)
 
     try:
@@ -129,7 +131,7 @@ def main():
     normalize_tc_value(tc)
 
     return_code = 0
-    if options.is_delete_all:
+    if is_delete_all:
         return_code = tc.delete_all_tc()
     else:
         return_code = tc.delete_tc()
