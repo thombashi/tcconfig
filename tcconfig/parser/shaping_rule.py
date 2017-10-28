@@ -16,6 +16,7 @@ from typepy.type import Integer
 
 from .._common import (
     is_anywhere_network,
+    is_execute_tc_command,
     run_tc_show,
 )
 from .._const import (
@@ -95,9 +96,7 @@ class TcShapingRuleParser(object):
         self.__parsed_mappings[device] = True
 
     def __get_ifb_from_device(self):
-        from .._const import TcCommandOutput
-
-        if self.__tc_command_output != TcCommandOutput.NOT_SET:
+        if not is_execute_tc_command(self.__tc_command_output):
             return None
 
         filter_runner = subprocrunner.SubprocessRunner(
