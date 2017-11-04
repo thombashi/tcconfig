@@ -1,8 +1,8 @@
-DataProperty>=0.25.6
+DataProperty>=0.26.1
 ipaddress;python_version<"3.3"
 logbook
 pyparsing>=2.2.0
-SimpleSQLite>=0.16.0
+SimpleSQLite>=0.17.0
 six
 subprocrunner>=0.9.0
 typepy>=0.0.20
