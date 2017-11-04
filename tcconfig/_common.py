@@ -91,7 +91,7 @@ def get_no_limit_kbits(tc_device):
         get_iproute2_upper_limite_rate())
 
 
-def initialize(options):
+def initialize_cli(options):
     from ._logger import set_log_level
 
     set_log_level(options.log_level)

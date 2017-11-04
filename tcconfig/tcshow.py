@@ -18,7 +18,7 @@ import subprocrunner
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_tc_command_installation,
-    initialize,
+    initialize_cli,
     verify_network_interface,
     write_tc_script,
 )
@@ -60,7 +60,7 @@ def parse_option():
 def main():
     options = parse_option()
 
-    initialize(options)
+    initialize_cli(options)
     check_tc_command_installation()
 
     if options.tc_command_output != TcCommandOutput.NOT_SET:

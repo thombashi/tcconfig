@@ -22,7 +22,7 @@ import pyparsing as pp
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_tc_command_installation,
-    initialize,
+    initialize_cli,
     is_execute_tc_command,
     normalize_tc_value,
     write_tc_script,
@@ -329,7 +329,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 def main():
     options = get_arg_parser().parse_args()
 
-    initialize(options)
+    initialize_cli(options)
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()

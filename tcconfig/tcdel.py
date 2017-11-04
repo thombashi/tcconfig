@@ -17,7 +17,7 @@ import subprocrunner
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_tc_command_installation,
-    initialize,
+    initialize_cli,
     is_execute_tc_command,
     normalize_tc_value,
     verify_network_interface,
@@ -108,7 +108,7 @@ def create_tc_obj(options):
 def main():
     options = parse_option()
 
-    initialize(options)
+    initialize_cli(options)
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
