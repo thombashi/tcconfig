@@ -1,6 +1,5 @@
 Installation
 ============
-
 Installing from PyPI
 ------------------------------
 ``tcconfig`` can be installed from `PyPI <https://pypi.python.org/pypi>`__ via
@@ -29,6 +28,7 @@ How to install:
 
 Dependencies
 ============
+Python 2.7+ or 3.4+
 
 Linux packages
 --------------

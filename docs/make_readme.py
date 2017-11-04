@@ -57,6 +57,7 @@ def main():
 
     write_examples(maker)
 
+    maker.write_line_list([])
     maker.write_file(
         maker.doc_page_root_dir_path.joinpath("installation.rst"))
 
