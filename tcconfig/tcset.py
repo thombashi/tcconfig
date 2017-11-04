@@ -316,7 +316,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
     try:
         loader.load_tcconfig(config_file_path)
     except IOError as e:
-        logger.error(e)
+        logger.error("{:s}: {}".format(e.__class__.__name__, e))
         return errno.EIO
 
     for tcconfig_command in loader.get_tcconfig_command_list():
@@ -383,7 +383,7 @@ def main():
         logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
         return errno.EINVAL
     except InvalidParameterError as e:
-        logger.error(e)
+        logger.error("{:s}: {}".format(e.__class__.__name__, e))
         return errno.EINVAL
 
     normalize_tc_value(tc)

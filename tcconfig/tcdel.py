@@ -121,7 +121,7 @@ def main():
     try:
         verify_network_interface(options.device)
     except NetworkInterfaceNotFoundError as e:
-        logger.error(e)
+        logger.error("{:s}: {}".format(e.__class__.__name__, e))
         return errno.EINVAL
 
     subprocrunner.SubprocessRunner.clear_history()

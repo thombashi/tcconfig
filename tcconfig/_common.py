@@ -41,7 +41,7 @@ def check_tc_command_installation():
     try:
         spr.Which("tc").verify()
     except spr.CommandNotFoundError as e:
-        logger.error(e)
+        logger.error("{:s}: {}".format(e.__class__.__name__, e))
         sys.exit(errno.ENOENT)
 
 
@@ -131,7 +131,7 @@ def normalize_tc_value(tc_obj):
         logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
         sys.exit(errno.EINVAL)
     except ValueError as e:
-        logger.error(e)
+        logger.error("{:s}: {}".format(e.__class__.__name__, e))
         sys.exit(errno.EINVAL)
 
 

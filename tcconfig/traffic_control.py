@@ -387,7 +387,7 @@ class TrafficControl(object):
             try:
                 result_list.append(self.__delete_ifb_device() == 0)
             except NetworkInterfaceNotFoundError as e:
-                logger.debug(e)
+                logger.debug("{:s}: {}".format(e.__class__.__name__, e))
                 result_list.append(False)
 
         with logging_context("delete iptables mangle table entries"):
