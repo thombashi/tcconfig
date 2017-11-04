@@ -28,15 +28,8 @@ from ._const import (
     TcCommandOutput,
 )
 from ._error import NetworkInterfaceNotFoundError
-from ._logger import (
-    LOG_FORMAT_STRING,
-    logger,
-)
+from ._logger import logger
 from .parser.shaping_rule import TcShapingRuleParser
-
-
-logbook.StderrHandler(
-    level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
 def parse_option():

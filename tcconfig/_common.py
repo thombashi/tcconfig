@@ -94,6 +94,22 @@ def get_no_limit_kbits(tc_device):
 def initialize_cli(options):
     from ._logger import set_log_level
 
+    debug_format_str = (
+        "[{record.level_name}] {record.channel} {record.func_name} "
+        "({record.lineno}): {record.message}")
+    if options.log_level == logbook.DEBUG:
+        info_format_str = debug_format_str
+    else:
+        info_format_str = (
+            "[{record.level_name}] {record.channel}: {record.message}")
+
+    logbook.StderrHandler(
+        level=logbook.DEBUG, format_string=debug_format_str
+    ).push_application()
+    logbook.StderrHandler(
+        level=logbook.INFO, format_string=info_format_str
+    ).push_application()
+
     set_log_level(options.log_level)
     spr.SubprocessRunner.is_save_history = True
 

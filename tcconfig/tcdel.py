@@ -30,15 +30,10 @@ from ._const import (
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import (
-    LOG_FORMAT_STRING,
     logger,
     set_logger,
 )
 from .traffic_control import TrafficControl
-
-
-logbook.StderrHandler(
-    level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
 def parse_option():

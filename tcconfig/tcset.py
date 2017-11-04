@@ -43,16 +43,11 @@ from ._error import (
     NetworkInterfaceNotFoundError,
 )
 from ._logger import (
-    LOG_FORMAT_STRING,
     logger,
     set_log_level,
 )
 from ._shaping_rule_finder import TcShapingRuleFinder
 from .traffic_control import TrafficControl
-
-
-logbook.StderrHandler(
-    level=logbook.DEBUG, format_string=LOG_FORMAT_STRING).push_application()
 
 
 def get_arg_parser():
