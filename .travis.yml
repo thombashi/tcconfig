@@ -15,7 +15,7 @@ os:
   - linux
 
 install:
-  - pip install tox pip setuptools wheel --upgrade
+  - pip install tox pip setuptools wheel
 
 script: 
   - tox
