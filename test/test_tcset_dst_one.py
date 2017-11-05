@@ -16,10 +16,10 @@ import typepy
 
 from tcconfig._const import Tc
 
-from .common import execute_tcdel
-
-
-WAIT_TIME = 3  # [sec]
+from .common import (
+    DEADLINE_TIME,
+    execute_tcdel,
+)
 
 
 @pytest.fixture
@@ -36,7 +36,7 @@ def dst_host_option(request):
 def transmitter():
     transmitter = pingparsing.PingTransmitter()
     transmitter.ping_option = "-f -q"
-    transmitter.waittime = WAIT_TIME
+    transmitter.deadline = DEADLINE_TIME
 
     return transmitter
 

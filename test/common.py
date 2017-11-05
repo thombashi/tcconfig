@@ -17,6 +17,9 @@ from tcconfig._converter import (
 )
 
 
+DEADLINE_TIME = 3  # [sec]
+
+
 def is_invalid_param(
         rate, delay, packet_loss, packet_duplicate, corrupt, reordering):
     param_value_list = [
