@@ -46,6 +46,7 @@ def main():
     maker.examples_dir_name = "usage"
 
     maker.write_introduction_file("badges.txt")
+    maker.write_toc()
 
     maker.inc_indent_level()
     maker.write_chapter("Summary")

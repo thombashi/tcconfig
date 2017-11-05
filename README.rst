@@ -9,6 +9,8 @@ tcconfig
    :target: https://github.com/thombashi/tcconfig
    :alt: GitHub repository
 
+.. contents:: Table of Contents
+   :depth: 2
 
 Summary
 ---------
