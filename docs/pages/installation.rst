@@ -1,6 +1,6 @@
 Installation
 ============
-Installing from PyPI
+Install via pip (recommended)
 ------------------------------
 ``tcconfig`` can be installed from `PyPI <https://pypi.python.org/pypi>`__ via
 `pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package manager) command.
@@ -8,6 +8,18 @@ Installing from PyPI
 .. code:: console
 
     sudo pip install tcconfig
+
+
+Install in Debian/Ubuntu from a deb package
+--------------------------------------------
+#. ``wget https://github.com/thombashi/tcconfig/releases/download/<version>/tcconfig_<version>_amd64.deb``
+#. ``dpkg -iv sqlitebiter_<version>_amd64.deb``
+
+:Example:
+    .. code:: console
+
+        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.17.1/tcconfig_0.17.1_amd64.deb
+        $ sudo dpkg -i tcconfig_0.17.1_amd64.deb
 
 
 Installing from files
