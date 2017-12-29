@@ -1,4 +1,3 @@
-
 tcconfig
 ==========
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
@@ -47,7 +46,6 @@ The following parameters can set to network interfaces:
 
 Usage
 =======
-
 Set traffic control (``tcset`` command)
 -----------------------------------------
 ``tcset`` is a command to add traffic control rule to a network interface (device).
@@ -151,15 +149,16 @@ Example
         }
     }
 
-
 For more information
 ----------------------
 More examples are available at 
 http://tcconfig.rtfd.io/en/latest/pages/usage/index.html
 
+
+
 Installation
 ============
-Installing from PyPI
+Install via pip (recommended)
 ------------------------------
 ``tcconfig`` can be installed from `PyPI <https://pypi.python.org/pypi>`__ via
 `pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package manager) command.
@@ -167,6 +166,18 @@ Installing from PyPI
 .. code:: console
 
     sudo pip install tcconfig
+
+
+Install in Debian/Ubuntu from a deb package
+--------------------------------------------
+#. ``wget https://github.com/thombashi/tcconfig/releases/download/<version>/tcconfig_<version>_amd64.deb``
+#. ``dpkg -iv sqlitebiter_<version>_amd64.deb``
+
+:Example:
+    .. code:: console
+
+        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.17.1/tcconfig_0.17.1_amd64.deb
+        $ sudo dpkg -i tcconfig_0.17.1_amd64.deb
 
 
 Installing from files
@@ -225,7 +236,6 @@ Test dependencies
 - `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
 - `tox <https://testrun.org/tox/latest/>`__
 
-
 Documentation
 ===============
 http://tcconfig.rtfd.io/
@@ -233,3 +243,4 @@ http://tcconfig.rtfd.io/
 Troubleshooting
 =================
 http://tcconfig.readthedocs.io/en/latest/pages/troubleshooting.html
+
