@@ -13,7 +13,7 @@ Install via pip (recommended)
 Install in Debian/Ubuntu from a deb package
 --------------------------------------------
 #. ``wget https://github.com/thombashi/tcconfig/releases/download/<version>/tcconfig_<version>_amd64.deb``
-#. ``dpkg -iv sqlitebiter_<version>_amd64.deb``
+#. ``dpkg -iv tcconfig_<version>_amd64.deb``
 
 :Example:
     .. code:: console
