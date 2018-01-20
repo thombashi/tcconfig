@@ -9,11 +9,12 @@ from __future__ import absolute_import
 from __future__ import print_function
 from __future__ import unicode_literals
 
-import json
 import sys
 
 import logbook
 import subprocrunner
+
+import simplejson as json
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
