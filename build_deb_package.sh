@@ -8,6 +8,14 @@ INSTALL_DIR_PATH="/usr/bin"
 DIST_DIR_PATH="./${DIST_DIR_NAME}/${INSTALL_DIR_PATH}"
 PKG_NAME="tcconfig"
 
+have_pyinstaller=0
+if type pyinstaller > /dev/null 2>&1; then
+    have_pyinstaller=1
+fi
+
+if [ ${have_pyinstaller} -eq 0 ];then
+    exit 2
+fi
 
 # initialize
 rm -rf $DIST_DIR_NAME
