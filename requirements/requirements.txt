@@ -1,9 +1,9 @@
-DataProperty>=0.29.1
+DataProperty>=0.30.0
 ipaddress;python_version<"3.3"
 logbook
 pyparsing>=2.2.0
 SimpleSQLite>=0.19.0
 six
 subprocrunner>=0.10.0
-typepy>=0.0.20
+typepy>=0.0.21
 voluptuous
