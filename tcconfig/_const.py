@@ -8,7 +8,7 @@ from __future__ import absolute_import
 from __future__ import unicode_literals
 
 
-VERSION = "0.17.1"
+VERSION = "0.17.2"
 
 KILO_SIZE = 1000
 LIST_MANGLE_TABLE_COMMAND = "iptables -t mangle --line-numbers -L"
