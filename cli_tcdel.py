@@ -7,7 +7,7 @@
 
 import sys
 
-from tcconfig.tcshow import main
+from tcconfig.tcdel import main
 
 
 if __name__ == '__main__':
