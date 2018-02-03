@@ -12,6 +12,21 @@ class NetworkInterfaceNotFoundError(Exception):
     Exception raised when network interface not found.
     """
 
+    def __init__(self, *args, **kwargs):
+        self.__device = kwargs.pop("device", None)
+
+        super(NetworkInterfaceNotFoundError, self).__init__(*args, **kwargs)
+
+    def __str__(self, *args, **kwargs):
+        item_list = [ValueError.__str__(self, *args, **kwargs)]
+        item_list.append(
+            "network interface not found: {}".format(self.__device))
+
+        return " ".join(item_list)
+
+    def __repr__(self, *args, **kwargs):
+        return self.__str__(*args, **kwargs)
+
 
 class ModuleNotFoundError(Exception):
     """

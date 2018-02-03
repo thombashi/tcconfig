@@ -236,8 +236,7 @@ def verify_network_interface(device):
         return
 
     if device not in netifaces.interfaces():
-        raise NetworkInterfaceNotFoundError(
-            "network interface not found: {}".format(device))
+        raise NetworkInterfaceNotFoundError(device=device)
 
 
 def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
