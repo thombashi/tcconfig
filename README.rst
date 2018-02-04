@@ -223,7 +223,7 @@ Dependency python packages are automatically installed during
 - `typepy <https://github.com/thombashi/typepy>`__
 - `voluptuous <https://github.com/alecthomas/voluptuous>`__
 
-Optional
+Optional Python packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `netifaces <https://bitbucket.org/al45tair/netifaces>`__
     - Suppress excessive error messages if this package installed
