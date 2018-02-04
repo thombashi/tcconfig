@@ -22,7 +22,7 @@ class NetworkInterfaceNotFoundError(Exception):
         item_list.append(
             "network interface not found: {}".format(self.__device))
 
-        return " ".join(item_list)
+        return " ".join(item_list).strip()
 
     def __repr__(self, *args, **kwargs):
         return self.__str__(*args, **kwargs)
