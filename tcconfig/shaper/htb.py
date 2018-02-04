@@ -136,18 +136,16 @@ class HtbShaper(AbstractShaper):
                 "algo={algorithm:s}).".format(
                     command=base_command, dev=self._dev, parent=parent,
                     classid=classid, algorithm=self.algorithm_name)),
-            TcAlreadyExist
-        )
+            TcAlreadyExist)
 
     def _add_exclude_filter(self):
         import subprocrunner
 
-        if all([
-                typepy.is_null_string(self._tc_obj.exclude_dst_network),
+        if all([typepy.is_null_string(self._tc_obj.exclude_dst_network),
                 typepy.is_null_string(self._tc_obj.exclude_src_network),
                 typepy.is_null_string(self._tc_obj.exclude_dst_port),
                 typepy.is_null_string(self._tc_obj.exclude_src_port),
-        ]):
+                ]):
             logger.debug("no exclude filter found")
             return
 

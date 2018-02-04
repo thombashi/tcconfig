@@ -77,8 +77,7 @@ class TbfShaper(AbstractShaper):
                 "failed to '{command:s}': prio qdisc already exists "
                 "({dev:s}, algo={algorithm:s}, handle={handle:s}).".format(
                     command=base_command, dev=self._dev,
-                    algorithm=self.algorithm_name, handle=handle))
-        )
+                    algorithm=self.algorithm_name, handle=handle)))
 
     def _add_rate(self):
         try:
@@ -122,8 +121,7 @@ class TbfShaper(AbstractShaper):
                 "handle={handle:s}).".format(
                     command=base_command, dev=self._dev,
                     algorithm=self.algorithm_name, parent=parent,
-                    handle=handle))
-        )
+                    handle=handle)))
 
         self.__set_pre_network_filter()
 
