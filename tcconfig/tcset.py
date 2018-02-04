@@ -341,9 +341,9 @@ def main():
     try:
         verify_netem_module()
     except ModuleNotFoundError as e:
-        logger.debug(str(e))
+        logger.debug(e)
     except subprocrunner.CommandNotFoundError as e:
-        logger.error(str(e))
+        logger.error(e)
 
     if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
@@ -379,7 +379,7 @@ def main():
     try:
         tc.validate()
     except NetworkInterfaceNotFoundError as e:
-        logger.error(str(e))
+        logger.error(e)
         return errno.EINVAL
     except ipaddress.AddressValueError as e:
         logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))

@@ -464,14 +464,14 @@ class TrafficControl(object):
                 min_value=Tc.ValueRange.LatencyTime.MIN,
                 max_value=Tc.ValueRange.LatencyTime.MAX)
         except InvalidParameterError as e:
-            raise InvalidParameterError("delay {}".format(str(e)))
+            raise InvalidParameterError("delay {}".format(e))
 
         try:
             self.latency_distro_time.validate(
                 min_value=Tc.ValueRange.LatencyTime.MIN,
                 max_value=Tc.ValueRange.LatencyTime.MAX)
         except InvalidParameterError as e:
-            raise InvalidParameterError("delay-distro {}".format(str(e)))
+            raise InvalidParameterError("delay-distro {}".format(e))
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(

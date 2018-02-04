@@ -69,7 +69,7 @@ def main():
                 device, options.ip_version, options.tc_command_output, logger
             ).get_tc_parameter())
         except NetworkInterfaceNotFoundError as e:
-            logger.debug(str(e))
+            logger.debug(e)
             continue
 
     command_history = "\n".join(subprocrunner.SubprocessRunner.get_history())
