@@ -416,7 +416,7 @@ def main():
         return_code = tc.set_tc()
     except NetworkInterfaceNotFoundError as e:
         logger.error(e)
-        return errno.ENOENT
+        return errno.EINVAL
 
     command_history = "\n".join(tc.get_command_history())
 
