@@ -156,7 +156,7 @@ def read_iface_speed(tc_device):
         return int(f.read().strip())
 
 
-def run_command_helper(command, error_regexp, message, exception_class=None):
+def run_command_helper(command, error_regexp, notice_message, exception_class=None):
     if logger.level != logbook.DEBUG:
         spr.set_logger(is_enable=False)
 
@@ -174,8 +174,8 @@ def run_command_helper(command, error_regexp, message, exception_class=None):
         logger.error(proc.stderr)
         return proc.returncode
 
-    if typepy.is_not_null_string(message):
-        logger.notice(message)
+    if typepy.is_not_null_string(notice_message):
+        logger.notice(notice_message)
 
     if exception_class is not None:
         raise exception_class(command)

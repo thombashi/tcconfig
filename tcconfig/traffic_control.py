@@ -427,7 +427,7 @@ class TrafficControl(object):
             ))
 
         result = run_command_helper(
-            command=filter_del_command, error_regexp=None, message=None)
+            command=filter_del_command, error_regexp=None, notice_message=None)
 
         rule_finder.clear()
         if not rule_finder.is_any_filter():
