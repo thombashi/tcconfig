@@ -21,6 +21,7 @@ import pyparsing as pp
 
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
+    check_execution_authority,
     check_tc_command_installation,
     initialize_cli,
     is_execute_tc_command,
@@ -328,6 +329,12 @@ def main():
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
+        try:
+            check_execution_authority()
+        except PermissionError as e:
+            logger.error(e)
+            return errno.EPERM
+
     else:
         subprocrunner.SubprocessRunner.default_is_dry_run = True
 

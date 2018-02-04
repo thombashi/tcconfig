@@ -45,6 +45,13 @@ def check_tc_command_installation():
         sys.exit(errno.ENOENT)
 
 
+def check_execution_authority():
+    import os
+
+    if os.getuid() != 0:
+        raise PermissionError("Permission denied (you must be root)")
+
+
 def get_anywhere_network(ip_version):
     ip_version_n = typepy.type.Integer(ip_version).try_convert()
 
