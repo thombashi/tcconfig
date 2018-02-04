@@ -4,6 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
+import errno
 import json
 
 import pytest
@@ -119,16 +120,16 @@ class Test_tcdel(object):
         print("[actual]\n{}\n".format(runner.stdout))
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--network", "192.168.1.0/24",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
+        tcdel_proc = SubprocessRunner(" ".join([
+            Tc.Command.TCDEL, device_option, "--network", "192.168.1.0/24"]))
+        assert tcdel_proc.run() == 0, tcdel_proc.stderr
+        tcdel_proc = SubprocessRunner(" ".join([
             Tc.Command.TCDEL, device_option,
             "--network", "192.168.11.0/24",
             "--port", "80",
             "--direction", "incoming",
-        ])).run() == 0
+        ]))
+        assert tcdel_proc.run() == 0, tcdel_proc.stderr
 
         runner = SubprocessRunner("{:s} {:s}".format(
             Tc.Command.TCSHOW, device_option))
@@ -350,3 +351,6 @@ class Test_tcdel(object):
 
         # finalize ---
         execute_tcdel(device_value)
+
+    def test_abnormal(self):
+        assert execute_tcdel("not_exist_device") == errno.ENOENT
