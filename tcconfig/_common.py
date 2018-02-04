@@ -185,7 +185,10 @@ def run_tc_show(subcommand, device):
 
     runner = spr.SubprocessRunner(
         "tc {:s} show dev {:s}".format(subcommand, device))
-    runner.run()
+    if runner.run() != 0 and runner.stderr.find("Cannot find device") != -1:
+        # reach here if the device does not exist at the system and netiface
+        # not installed.
+        raise NetworkInterfaceNotFoundError(device=device)
 
     return runner.stdout
 

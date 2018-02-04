@@ -9,6 +9,7 @@ from __future__ import unicode_literals
 
 import copy
 
+import logbook
 import simplesqlite
 import subprocrunner
 import typepy
@@ -23,6 +24,7 @@ from .._const import (
     Tc,
     TrafficDirection,
 )
+from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
 from ._class import TcClassParser
 from ._filter import TcFilterParser
@@ -100,8 +102,10 @@ class TcShapingRuleParser(object):
             return None
 
         filter_runner = subprocrunner.SubprocessRunner(
-            "tc filter show dev {:s} root".format(self.device), dry_run=False)
-        filter_runner.run()
+            "tc filter show dev {:s} root".format(self.device),
+            error_log_level=logbook.NOTSET, dry_run=False)
+        if filter_runner.run() != 0 and filter_runner.stderr.find("Cannot find device") != -1:
+            raise NetworkInterfaceNotFoundError(device=self.device)
 
         return self.__filter_parser.parse_incoming_device(filter_runner.stdout)
 

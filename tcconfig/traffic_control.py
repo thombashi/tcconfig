@@ -367,11 +367,16 @@ class TrafficControl(object):
         result_list = []
 
         with logging_context("delete qdisc"):
-            returncode = run_command_helper(
-                "tc qdisc del dev {:s} root".format(self.device),
-                re.compile("RTNETLINK answers: No such file or directory"),
-                "no qdisc to delete for the outgoing device.")
-            result_list.append(returncode == 0)
+            proc = spr.SubprocessRunner(
+                "tc qdisc del dev {:s} root".format(self.device))
+            proc.run()
+            if re.search("RTNETLINK answers: No such file or directory", proc.stderr):
+                logger.notice("no qdisc to delete for the outgoing device.")
+                result_list.append(False)
+            elif re.search("Cannot find device", proc.stderr):
+                raise NetworkInterfaceNotFoundError(device=self.device)
+            else:
+                result_list.append(proc.returncode == 0)
 
         with logging_context("delete ingress qdisc"):
             returncode = run_command_helper(

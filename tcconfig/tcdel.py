@@ -126,10 +126,14 @@ def main():
     normalize_tc_value(tc)
 
     return_code = 0
-    if is_delete_all:
-        return_code = tc.delete_all_tc()
-    else:
-        return_code = tc.delete_tc()
+    try:
+        if is_delete_all:
+            return_code = tc.delete_all_tc()
+        else:
+            return_code = tc.delete_tc()
+    except NetworkInterfaceNotFoundError as e:
+        logger.error(e)
+        return errno.ENOENT
 
     command_history = "\n".join(tc.get_command_history())
 

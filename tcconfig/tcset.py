@@ -405,7 +405,12 @@ def main():
             "rule parameter.")
         return errno.EINVAL
 
-    return_code = tc.set_tc()
+    try:
+        return_code = tc.set_tc()
+    except NetworkInterfaceNotFoundError as e:
+        logger.error(e)
+        return errno.ENOENT
+
     command_history = "\n".join(tc.get_command_history())
 
     if options.tc_command_output == TcCommandOutput.STDOUT:
