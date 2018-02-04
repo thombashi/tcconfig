@@ -157,14 +157,8 @@ def read_iface_speed(tc_device):
 
 
 def run_command_helper(command, error_regexp, notice_message, exception_class=None):
-    if logger.level != logbook.DEBUG:
-        spr.set_logger(is_enable=False)
-
-    proc = spr.SubprocessRunner(command)
+    proc = spr.SubprocessRunner(command, error_log_level=logbook.NOTSET)
     proc.run()
-
-    if logger.level != logbook.DEBUG:
-        spr.set_logger(is_enable=True)
 
     if proc.returncode == 0:
         return 0
