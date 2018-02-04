@@ -6,6 +6,7 @@
 
 import errno
 import json
+import os
 
 import pytest
 from subprocrunner import SubprocessRunner
@@ -29,6 +30,8 @@ class Test_tcdel(object):
     """
 
     def test_normal_ipv4(self, device_value):
+        if os.getuid() != 0:
+            pytest.skip("must be root to execute the test case")
         if device_value is None:
             pytest.skip("device option is null")
 
@@ -188,6 +191,8 @@ class Test_tcdel(object):
         execute_tcdel(device_value)
 
     def test_normal_ipv6(self, device_value):
+        if os.getuid() != 0:
+            pytest.skip("must be root to execute the test case")
         if device_value is None:
             pytest.skip("device option is null")
 
@@ -353,4 +358,7 @@ class Test_tcdel(object):
         execute_tcdel(device_value)
 
     def test_abnormal(self):
+        if os.getuid() != 0:
+            pytest.skip("must be root to execute the test case")
+
         assert execute_tcdel("not_exist_device") == errno.EINVAL
