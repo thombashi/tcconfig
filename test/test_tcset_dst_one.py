@@ -148,13 +148,13 @@ class Test_tcset_one_network(object):
         execute_tcdel(device_option)
         transmitter.destination_host = dst_host_option
 
-        # w/o packet loss tc ---
+        # w/o traffic shaping ---
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
         pingparser.parse(ping_result)
         without_tc_loss_rate = pingparser.packet_loss_rate
 
-        # w/ packet loss tc ---
+        # w/ traffic shaping ---
         assert SubprocessRunner([
             Tc.Command.TCSET,
             "--device {:s}".format(device_option),
@@ -166,7 +166,7 @@ class Test_tcset_one_network(object):
         pingparser.parse(ping_result)
         with_tc_loss_rate = pingparser.packet_loss_rate
 
-        # assertion ---
+        # check packet loss rate ---
         loss_diff = with_tc_loss_rate - without_tc_loss_rate
         assert loss_diff > (value / 2)
 
