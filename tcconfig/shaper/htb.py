@@ -11,10 +11,11 @@ import re
 
 import typepy
 
-from .._common import get_no_limit_kbits, logging_context, run_command_helper, run_tc_show
+from .._common import logging_context, run_command_helper, run_tc_show
 from .._const import ShapingAlgorithm, Tc, TcCommandOutput
 from .._error import TcAlreadyExist
 from .._logger import logger
+from .._network import get_no_limit_kbits
 from ._interface import AbstractShaper
 
 

@@ -17,10 +17,11 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_execution_authority, check_tc_command_installation, initialize_cli, is_execute_tc_command,
-    normalize_tc_value, verify_network_interface)
+    normalize_tc_value)
 from ._const import Tc, TcCommandOutput
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger, set_logger
+from ._network import verify_network_interface
 from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
 

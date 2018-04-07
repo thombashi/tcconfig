@@ -5,8 +5,9 @@
 """
 
 import pytest
-from tcconfig._common import (
-    get_anywhere_network, get_iproute2_upper_limite_rate, get_no_limit_kbits, is_anywhere_network,
+
+from tcconfig._network import (
+    _get_iproute2_upper_limite_rate, get_anywhere_network, get_no_limit_kbits, is_anywhere_network,
     sanitize_network)
 
 
@@ -40,7 +41,7 @@ class Test_is_anywhere_network(object):
 class Test_get_iproute2_upper_limite_rate(object):
 
     def test_normal(self):
-        assert get_iproute2_upper_limite_rate() == 32000000
+        assert _get_iproute2_upper_limite_rate() == 32000000
 
 
 class Test_get_anywhere_network(object):
@@ -74,12 +75,12 @@ class Test_get_no_limit_kbits(object):
             pytest.skip("device option is null")
 
         monkeypatch.setattr(
-            "tcconfig._common.read_iface_speed", lambda x: speed)
+            "tcconfig._network._read_iface_speed", lambda x: speed)
 
         assert get_no_limit_kbits(device_option) == expected
 
     @pytest.mark.parametrize(["speed", "expected"], [
-        [-1, get_iproute2_upper_limite_rate()],
+        [-1, _get_iproute2_upper_limite_rate()],
     ])
     def test_normal_paravirt(
             self, monkeypatch, device_option, speed, expected):
@@ -87,7 +88,7 @@ class Test_get_no_limit_kbits(object):
             pytest.skip("device option is null")
 
         monkeypatch.setattr(
-            "tcconfig._common.read_iface_speed", lambda x: speed)
+            "tcconfig._network._read_iface_speed", lambda x: speed)
 
         assert get_no_limit_kbits(device_option) == expected
 
@@ -101,10 +102,10 @@ class Test_get_no_limit_kbits(object):
             pytest.skip("device option is null")
 
         monkeypatch.setattr(
-            "tcconfig._common.read_iface_speed", self.raise_ioerror)
+            "tcconfig._network._read_iface_speed", self.raise_ioerror)
 
         assert get_no_limit_kbits(
-            device_option) == get_iproute2_upper_limite_rate()
+            device_option) == _get_iproute2_upper_limite_rate()
 
 
 class Test_sanitize_network(object):

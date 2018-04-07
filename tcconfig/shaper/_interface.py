@@ -12,12 +12,13 @@ import six
 import subprocrunner
 import typepy
 
-from .._common import get_anywhere_network, run_command_helper
+from .._common import run_command_helper
 from .._const import Tc, TrafficDirection
 from .._converter import HumanReadableTime
 from .._error import InvalidParameterError
 from .._iptables import IptablesMangleMarkEntry
 from .._logger import logger
+from .._network import get_anywhere_network
 from .._shaping_rule_finder import TcShapingRuleFinder
 
 

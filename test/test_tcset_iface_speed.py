@@ -30,7 +30,7 @@ class Test_tcset_iface_speed(object):
 
         execute_tcdel(device_option)
         monkeypatch.setattr(
-            "tcconfig._common.read_iface_speed", lambda x: speed)
+            "tcconfig._network._read_iface_speed", lambda x: speed)
 
         command_list = [
             Tc.Command.TCSET,
@@ -52,7 +52,7 @@ class Test_tcset_iface_speed(object):
 
         execute_tcdel(device_option)
         monkeypatch.setattr(
-            "tcconfig._common.read_iface_speed", lambda x: "1")
+            "tcconfig._network._read_iface_speed", lambda x: "1")
 
         command_list = [
             Tc.Command.TCSET,

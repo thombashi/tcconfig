@@ -9,8 +9,8 @@ from __future__ import absolute_import, print_function
 
 from simplesqlite.sqlquery import SqlQuery
 
-from ._common import is_anywhere_network
 from ._const import Tc, TrafficDirection
+from ._network import is_anywhere_network
 from .parser.shaping_rule import TcShapingRuleParser
 
 

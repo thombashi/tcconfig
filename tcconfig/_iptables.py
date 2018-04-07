@@ -12,11 +12,10 @@ import typepy
 from subprocrunner import SubprocessRunner
 from typepy.type import Integer
 
-from ._common import sanitize_network
 from ._const import LIST_MANGLE_TABLE_COMMAND, Network
 from ._logger import logger
+from ._network import sanitize_network
 from ._split_line_list import split_line_list
-
 
 VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
 

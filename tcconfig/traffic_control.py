@@ -14,15 +14,14 @@ import typepy
 from dataproperty import DataProperty
 from typepy.type import RealNumber
 
-from ._common import (
-    get_no_limit_kbits, logging_context, run_command_helper, sanitize_network,
-    verify_network_interface)
+from ._common import logging_context, run_command_helper
 from ._const import (
     KILO_SIZE, LIST_MANGLE_TABLE_COMMAND, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import InvalidParameterError, NetworkInterfaceNotFoundError, UnitNotFoundError
 from ._iptables import IptablesMangleController
 from ._logger import logger
+from ._network import get_no_limit_kbits, sanitize_network, verify_network_interface
 from ._shaping_rule_finder import TcShapingRuleFinder
 from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper

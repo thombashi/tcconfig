@@ -14,9 +14,9 @@ from collections import OrderedDict
 import pyparsing as pp
 import typepy
 
-from .._common import sanitize_network
 from .._const import Tc
 from .._logger import logger
+from .._network import sanitize_network
 from ._interface import AbstractParser
 
 

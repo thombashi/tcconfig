@@ -14,10 +14,11 @@ import subprocrunner
 import typepy
 from typepy.type import Integer
 
-from .._common import is_anywhere_network, is_execute_tc_command, run_tc_show
+from .._common import is_execute_tc_command, run_tc_show
 from .._const import Tc, TrafficDirection
 from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
+from .._network import is_anywhere_network
 from ._class import TcClassParser
 from ._filter import TcFilterParser
 from ._qdisc import TcQdiscParser
