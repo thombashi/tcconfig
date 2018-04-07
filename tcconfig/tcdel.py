@@ -97,7 +97,7 @@ def main():
         check_tc_command_installation()
         try:
             check_execution_authority()
-        except PermissionError as e:
+        except OSError as e:
             logger.error(e)
             return errno.EPERM
         is_delete_all = options.is_delete_all

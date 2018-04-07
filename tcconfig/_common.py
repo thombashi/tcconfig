@@ -41,7 +41,9 @@ def check_execution_authority():
     import os
 
     if os.getuid() != 0:
-        raise PermissionError("Permission denied (you must be root)")
+        # using OSError for Python2 compatibility reason.
+        # (PermissionError introduced since Python 3.3)
+        raise OSError("Permission denied (you must be root)")
 
 
 def get_anywhere_network(ip_version):
