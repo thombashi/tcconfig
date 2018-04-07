@@ -14,8 +14,10 @@ if type pyinstaller > /dev/null 2>&1; then
 fi
 
 if [ ${have_pyinstaller} -eq 0 ];then
+    echo "pyinstaller not found"
     exit 2
 fi
+
 
 # initialize
 rm -rf $DIST_DIR_NAME
