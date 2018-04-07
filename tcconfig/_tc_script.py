@@ -25,18 +25,22 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     script_line_list = [
         "#!/bin/sh",
         "",
-        "# tc script file:",
     ]
+
+    org_tcconfig_cmd = _get_original_tcconfig_command(tcconfig_command)
 
     if tcconfig_command != Tc.Command.TCSHOW:
         script_line_list.extend([
-            "#   the following command sequence lead to equivalent results as",
-            "#   '{:s}'.".format(
-                _get_original_tcconfig_command(tcconfig_command)),
+            "# command sequence in this script attempt to simulate the following command:",
+            "# '{:s}'.".format(org_tcconfig_cmd),
         ])
 
     script_line_list.extend([
-        "#   created by {:s} on {:s}.".format(
+        "#",
+        "# note: the command sequence execution may result different, compared to '{}.'".format(
+            org_tcconfig_cmd),
+        "#",
+        "# created by {:s} on {:s}.".format(
             tcconfig_command,
             datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")),
         "",
