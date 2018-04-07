@@ -59,8 +59,7 @@ class Test_tcset_one_network(object):
         for params in itertools.product(["htb"], [100])
     ])
     def test_dst_net_uniform_latency(
-            self, device_option, dst_host_option, transmitter, pingparser,
-            shaping_algo, delay):
+            self, device_option, dst_host_option, transmitter, pingparser, shaping_algo, delay):
         if device_option is None:
             pytest.skip("device option is null")
         if typepy.is_null_string(dst_host_option):
@@ -99,8 +98,7 @@ class Test_tcset_one_network(object):
         [100, 50],
     ])
     def test_dst_net_latency_distro(
-            self, device_option, dst_host_option, transmitter, pingparser,
-            delay, delay_distro):
+            self, device_option, dst_host_option, transmitter, pingparser, delay, delay_distro):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
@@ -143,8 +141,7 @@ class Test_tcset_one_network(object):
         ["--corrupt", 10],
     ])
     def test_dst_net_packet_loss(
-            self, device_option, dst_host_option, transmitter, pingparser,
-            option, value):
+            self, device_option, dst_host_option, transmitter, pingparser, option, value):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
@@ -180,8 +177,7 @@ class Test_tcset_one_network(object):
         ["--duplicate", 50],
     ])
     def test_dst_net_packet_duplicate(
-            self, device_option, dst_host_option, transmitter, pingparser,
-            option, value):
+            self, device_option, dst_host_option, transmitter, pingparser, option, value):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
