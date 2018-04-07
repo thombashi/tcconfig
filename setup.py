@@ -10,11 +10,15 @@ import os.path
 import sys
 
 import setuptools
-import tcconfig
 
-
+MODULE_NAME = "tcconfig"
 REQUIREMENT_DIR = "requirements"
 
+pkg_info = {}
+
+
+with open(os.path.join(MODULE_NAME, "__version__.py")) as f:
+    exec(f.read(), pkg_info)
 
 with open("README.rst") as fp:
     long_description = fp.read()
@@ -39,19 +43,19 @@ needs_pytest = set(["pytest", "test", "ptr"]).intersection(sys.argv)
 pytest_runner = ["pytest-runner"] if needs_pytest else []
 
 setuptools.setup(
-    name="tcconfig",
-    version=tcconfig.VERSION,
-    url="https://github.com/thombashi/tcconfig",
+    name=MODULE_NAME,
+    version=pkg_info["__version__"],
+    url="https://github.com/thombashi/{:s}".format(MODULE_NAME),
 
-    author="Tsuyoshi Hombashi",
-    author_email="tsuyoshi.hombashi@gmail.com",
+    author=pkg_info["__author__"],
+    author_email=pkg_info["__email__"],
     description=summary,
     keywords=[
         "traffic control", "tc", "traffic shaping", "bandwidth",
         "latency", "packet loss",
     ],
     long_description=long_description,
-    license="MIT License",
+    license=pkg_info["__license__"],
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
 

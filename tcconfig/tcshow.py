@@ -13,9 +13,10 @@ import logbook
 import simplejson as json
 import subprocrunner
 
+from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import check_tc_command_installation, initialize_cli, verify_network_interface
-from ._const import VERSION, Tc, TcCommandOutput
+from ._const import Tc, TcCommandOutput
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 from ._tc_script import write_tc_script
@@ -23,7 +24,7 @@ from .parser.shaping_rule import TcShapingRuleParser
 
 
 def parse_option():
-    parser = ArgparseWrapper(VERSION)
+    parser = ArgparseWrapper(__version__)
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(

@@ -24,9 +24,9 @@ rm -rf $DIST_DIR_NAME
 mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 
 pip install --upgrade .
-PKG_VERSION=$(python -c "import pkg_resources; print(pkg_resources.get_distribution('${PKG_NAME}').version)")
+PKG_VERSION=$(python -c "import tcconfig; print(tcconfig.__version__)")
 
-echo $PKG_NAME $PKG_VERSION
+echo "$PKG_NAME $PKG_VERSION"
 
 
 # build an executable binary file

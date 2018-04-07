@@ -17,13 +17,13 @@ import six
 import subprocrunner
 import typepy
 
+from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_execution_authority, check_tc_command_installation, initialize_cli, is_execute_tc_command,
     normalize_tc_value)
 from ._const import (
-    IPV6_OPTION_ERROR_MSG_FORMAT, VERSION, Network, ShapingAlgorithm, Tc, TcCommandOutput,
-    TrafficDirection)
+    IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
 from ._error import InvalidParameterError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._logger import logger, set_log_level
@@ -33,7 +33,7 @@ from .traffic_control import TrafficControl
 
 
 def get_arg_parser():
-    parser = ArgparseWrapper(VERSION)
+    parser = ArgparseWrapper(__version__)
 
     group = parser.parser.add_mutually_exclusive_group(required=True)
     group.add_argument(
