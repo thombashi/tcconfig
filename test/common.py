@@ -13,6 +13,7 @@ from typepy.type import RealNumber
 
 
 DEADLINE_TIME = 3  # [sec]
+ASSERT_MARGIN = 0.5
 
 
 def is_invalid_param(

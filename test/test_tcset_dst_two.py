@@ -10,9 +10,10 @@ import pingparsing
 import pytest
 import typepy
 from subprocrunner import SubprocessRunner
+
 from tcconfig._const import Tc
 
-from .common import DEADLINE_TIME, execute_tcdel
+from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
 
 
 @pytest.fixture
@@ -96,7 +97,7 @@ class Test_tcset_two_network(object):
 
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay / 2.0)
+        assert rtt_diff > (delay * ASSERT_MARGIN)
 
         # finalize ---
         execute_tcdel(device_option)

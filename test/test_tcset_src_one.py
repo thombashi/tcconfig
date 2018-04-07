@@ -14,7 +14,7 @@ import typepy
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc, TrafficDirection
 
-from .common import DEADLINE_TIME, execute_tcdel
+from .common import DEADLINE_TIME, execute_tcdel, ASSERT_MARGIN
 
 
 @pytest.fixture
@@ -99,7 +99,7 @@ class Test_tcset_one_network(object):
         print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
         print("w/ tc rtt: {} ms".format(with_tc_rtt_avg))
 
-        assert rtt_diff > (delay / 2)
+        assert rtt_diff > (delay * ASSERT_MARGIN)
 
         # finalize ---
         execute_tcdel(device_option)
