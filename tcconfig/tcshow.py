@@ -9,7 +9,6 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
 
-import logbook
 import simplejson as json
 import subprocrunner
 
