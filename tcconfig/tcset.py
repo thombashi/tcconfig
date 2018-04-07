@@ -5,48 +5,28 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
 import errno
 import ipaddress
 import sys
 
 import logbook
+import pyparsing as pp
 import six
 import subprocrunner
 import typepy
 
-import pyparsing as pp
-
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
-    check_execution_authority,
-    check_tc_command_installation,
-    initialize_cli,
-    is_execute_tc_command,
-    normalize_tc_value,
-    write_tc_script,
-)
+    check_execution_authority, check_tc_command_installation, initialize_cli, is_execute_tc_command,
+    normalize_tc_value, write_tc_script)
 from ._const import (
-    VERSION,
-    IPV6_OPTION_ERROR_MSG_FORMAT,
-    Network,
-    ShapingAlgorithm,
-    Tc,
-    TcCommandOutput,
-    TrafficDirection,
-)
+    IPV6_OPTION_ERROR_MSG_FORMAT, VERSION, Network, ShapingAlgorithm, Tc, TcCommandOutput,
+    TrafficDirection)
 from ._converter import HumanReadableTime
-from ._error import (
-    InvalidParameterError,
-    ModuleNotFoundError,
-    NetworkInterfaceNotFoundError,
-)
-from ._logger import (
-    logger,
-    set_log_level,
-)
+from ._error import InvalidParameterError, ModuleNotFoundError, NetworkInterfaceNotFoundError
+from ._logger import logger, set_log_level
 from ._shaping_rule_finder import TcShapingRuleFinder
 from .traffic_control import TrafficControl
 

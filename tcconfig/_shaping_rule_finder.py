@@ -5,16 +5,12 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
 from simplesqlite.sqlquery import SqlQuery
 
 from ._common import is_anywhere_network
-from ._const import (
-    Tc,
-    TrafficDirection,
-)
+from ._const import Tc, TrafficDirection
 from .parser.shaping_rule import TcShapingRuleParser
 
 

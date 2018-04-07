@@ -5,14 +5,9 @@
 """
 
 import pytest
-
 from tcconfig._common import (
-    is_anywhere_network,
-    get_anywhere_network,
-    get_iproute2_upper_limite_rate,
-    get_no_limit_kbits,
-    sanitize_network,
-)
+    get_anywhere_network, get_iproute2_upper_limite_rate, get_no_limit_kbits, is_anywhere_network,
+    sanitize_network)
 
 
 @pytest.fixture

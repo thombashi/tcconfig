@@ -4,19 +4,14 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
+from __future__ import absolute_import, division, unicode_literals
 
-from collections import namedtuple
 import re
+from collections import namedtuple
 
 import typepy
 
-from ._error import (
-    InvalidParameterError,
-    UnitNotFoundError,
-)
+from ._error import InvalidParameterError, UnitNotFoundError
 from ._logger import logger
 
 

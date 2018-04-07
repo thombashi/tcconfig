@@ -6,18 +6,10 @@
 
 import itertools
 
-from allpairspy import AllPairs
 import pytest
-
-from tcconfig._const import (
-    ShapingAlgorithm,
-    Tc,
-    TrafficDirection,
-)
-from tcconfig._error import (
-    InvalidParameterError,
-    UnitNotFoundError,
-)
+from allpairspy import AllPairs
+from tcconfig._const import ShapingAlgorithm, Tc, TrafficDirection
+from tcconfig._error import InvalidParameterError, UnitNotFoundError
 from tcconfig.traffic_control import TrafficControl
 
 from .common import is_invalid_param

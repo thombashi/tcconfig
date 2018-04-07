@@ -4,17 +4,12 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import print_function
+from __future__ import absolute_import, print_function
 
 from subprocrunner import SubprocessRunner
-from typepy.type import RealNumber
-
 from tcconfig._const import Tc
-from tcconfig._converter import (
-    Humanreadable,
-    HumanReadableTime,
-)
+from tcconfig._converter import Humanreadable, HumanReadableTime
+from typepy.type import RealNumber
 
 
 DEADLINE_TIME = 3  # [sec]

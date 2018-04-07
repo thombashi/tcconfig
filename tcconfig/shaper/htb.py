@@ -4,26 +4,15 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import division
-from __future__ import unicode_literals
+from __future__ import absolute_import, division, unicode_literals
 
 import errno
 import re
 
 import typepy
 
-from .._common import (
-    get_no_limit_kbits,
-    logging_context,
-    run_command_helper,
-    run_tc_show,
-)
-from .._const import (
-    ShapingAlgorithm,
-    Tc,
-    TcCommandOutput,
-)
+from .._common import get_no_limit_kbits, logging_context, run_command_helper, run_tc_show
+from .._const import ShapingAlgorithm, Tc, TcCommandOutput
 from .._error import TcAlreadyExist
 from .._logger import logger
 from ._interface import AbstractShaper

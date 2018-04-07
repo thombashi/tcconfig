@@ -4,22 +4,18 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import absolute_import, division
 
 import itertools
 
-import pingparsing
 import pytest
-from subprocrunner import SubprocessRunner
 import typepy
-
+from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
 
-from .common import (
-    DEADLINE_TIME,
-    execute_tcdel,
-)
+import pingparsing
+
+from .common import DEADLINE_TIME, execute_tcdel
 
 
 @pytest.fixture

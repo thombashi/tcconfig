@@ -7,15 +7,8 @@
 from __future__ import division
 
 import pytest
-
-from tcconfig._converter import (
-    Humanreadable,
-    HumanReadableTime,
-)
-from tcconfig._error import (
-    InvalidParameterError,
-    UnitNotFoundError,
-)
+from tcconfig._converter import Humanreadable, HumanReadableTime
+from tcconfig._error import InvalidParameterError, UnitNotFoundError
 
 
 class Test_to_bit(object):

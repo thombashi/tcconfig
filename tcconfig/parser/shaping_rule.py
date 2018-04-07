@@ -4,8 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import copy
 
@@ -15,15 +14,8 @@ import subprocrunner
 import typepy
 from typepy.type import Integer
 
-from .._common import (
-    is_anywhere_network,
-    is_execute_tc_command,
-    run_tc_show,
-)
-from .._const import (
-    Tc,
-    TrafficDirection,
-)
+from .._common import is_anywhere_network, is_execute_tc_command, run_tc_show
+from .._const import Tc, TrafficDirection
 from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
 from ._class import TcClassParser

@@ -8,7 +8,6 @@ import json
 
 import pytest
 from subprocrunner import SubprocessRunner
-
 from tcconfig._const import Tc
 
 from .common import execute_tcdel

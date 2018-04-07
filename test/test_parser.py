@@ -4,17 +4,15 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import print_function, unicode_literals
 
 import pytest
-from simplesqlite import connect_sqlite_memdb
 import six
-
-from tcconfig._const import Tc
 import tcconfig.parser._filter
 import tcconfig.parser._qdisc
 import tcconfig.parser.shaping_rule
+from simplesqlite import connect_sqlite_memdb
+from tcconfig._const import Tc
 
 
 DEVICE = "eth0"

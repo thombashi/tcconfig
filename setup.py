@@ -10,7 +10,6 @@ import os.path
 import sys
 
 import setuptools
-
 import tcconfig
 
 

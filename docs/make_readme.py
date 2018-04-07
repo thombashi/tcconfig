@@ -6,10 +6,11 @@
 """
 
 from __future__ import unicode_literals
+
 import sys
 
-from path import Path
 import readmemaker
+from path import Path
 
 
 PROJECT_NAME = "tcconfig"

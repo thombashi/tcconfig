@@ -4,8 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import contextlib
 import errno
@@ -13,17 +12,10 @@ import sys
 
 import logbook
 import six
+import subprocrunner as spr
 import typepy
 
-import subprocrunner as spr
-
-from ._const import (
-    IPV6_OPTION_ERROR_MSG_FORMAT,
-    KILO_SIZE,
-    Network,
-    Tc,
-    TcCommandOutput,
-)
+from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, KILO_SIZE, Network, Tc, TcCommandOutput
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 

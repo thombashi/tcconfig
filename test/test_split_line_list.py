@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 import re
 
 import pytest
-
 from tcconfig._split_line_list import split_line_list
 
 

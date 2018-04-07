@@ -4,14 +4,12 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import division
-from __future__ import print_function
+from __future__ import division, print_function
 
 import json
 
 import pytest
 from subprocrunner import SubprocessRunner
-
 from tcconfig._const import Tc
 
 from .common import execute_tcdel

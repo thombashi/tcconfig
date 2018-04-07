@@ -4,17 +4,15 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
-from collections import OrderedDict
 import ipaddress
 import json
 import re
-
-import typepy
+from collections import OrderedDict
 
 import pyparsing as pp
+import typepy
 
 from .._common import sanitize_network
 from .._const import Tc

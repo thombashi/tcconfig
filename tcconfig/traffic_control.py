@@ -4,42 +4,23 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import division
+from __future__ import absolute_import, division
 
 import re
 
-from dataproperty import DataProperty
 import six
+import subprocrunner as spr
 import typepy
+from dataproperty import DataProperty
 from typepy.type import RealNumber
 
-import subprocrunner as spr
-
 from ._common import (
-    logging_context,
-    get_no_limit_kbits,
-    sanitize_network,
-    verify_network_interface,
-    run_command_helper,
-)
+    get_no_limit_kbits, logging_context, run_command_helper, sanitize_network,
+    verify_network_interface)
 from ._const import (
-    KILO_SIZE,
-    LIST_MANGLE_TABLE_COMMAND,
-    ShapingAlgorithm,
-    Tc,
-    TcCommandOutput,
-    TrafficDirection,
-)
-from ._converter import (
-    Humanreadable,
-    HumanReadableTime,
-)
-from ._error import (
-    NetworkInterfaceNotFoundError,
-    InvalidParameterError,
-    UnitNotFoundError,
-)
+    KILO_SIZE, LIST_MANGLE_TABLE_COMMAND, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
+from ._converter import Humanreadable, HumanReadableTime
+from ._error import InvalidParameterError, NetworkInterfaceNotFoundError, UnitNotFoundError
 from ._iptables import IptablesMangleController
 from ._logger import logger
 from ._shaping_rule_finder import TcShapingRuleFinder

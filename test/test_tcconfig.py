@@ -4,15 +4,12 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import division
-from __future__ import print_function
-from __future__ import unicode_literals
+from __future__ import division, print_function, unicode_literals
 
-from allpairspy import AllPairs
 import pytest
-from subprocrunner import SubprocessRunner
 import typepy
-
+from allpairspy import AllPairs
+from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
 
 from .common import execute_tcdel

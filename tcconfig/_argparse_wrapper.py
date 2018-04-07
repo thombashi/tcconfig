@@ -6,14 +6,12 @@
 """
 
 from __future__ import absolute_import
+
 import argparse
 
 import logbook
 
-from ._const import (
-    TcCommandOutput,
-    TrafficDirection,
-)
+from ._const import TcCommandOutput, TrafficDirection
 
 
 class ArgparseWrapper(object):

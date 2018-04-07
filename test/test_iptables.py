@@ -9,12 +9,7 @@ from __future__ import unicode_literals
 import random
 
 import pytest
-
-from tcconfig._iptables import (
-    IptablesMangleController,
-    IptablesMangleMarkEntry,
-    VALID_CHAIN_LIST,
-)
+from tcconfig._iptables import VALID_CHAIN_LIST, IptablesMangleController, IptablesMangleMarkEntry
 
 
 _DEF_SRC = "192.168.0.0/24"

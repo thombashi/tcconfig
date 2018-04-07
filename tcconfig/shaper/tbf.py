@@ -4,23 +4,13 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
-from subprocrunner import SubprocessRunner
 import typepy
+from subprocrunner import SubprocessRunner
 
-from .._common import (
-    get_anywhere_network,
-    get_no_limit_kbits,
-    logging_context,
-    run_command_helper,
-)
-from .._const import (
-    ShapingAlgorithm,
-    Tc,
-    TrafficDirection,
-)
+from .._common import get_anywhere_network, get_no_limit_kbits, logging_context, run_command_helper
+from .._const import ShapingAlgorithm, Tc, TrafficDirection
 from .._error import InvalidParameterError
 from ._interface import AbstractShaper
 

@@ -4,8 +4,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
-from __future__ import unicode_literals
+from __future__ import absolute_import, unicode_literals
 
 import abc
 
@@ -13,14 +12,8 @@ import six
 import subprocrunner
 import typepy
 
-from .._common import (
-    get_anywhere_network,
-    run_command_helper,
-)
-from .._const import (
-    Tc,
-    TrafficDirection,
-)
+from .._common import get_anywhere_network, run_command_helper
+from .._const import Tc, TrafficDirection
 from .._converter import HumanReadableTime
 from .._error import InvalidParameterError
 from .._iptables import IptablesMangleMarkEntry
