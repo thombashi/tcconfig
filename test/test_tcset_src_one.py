@@ -8,12 +8,11 @@ from __future__ import absolute_import, division, print_function
 
 import itertools
 
+import pingparsing
 import pytest
 import typepy
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc, TrafficDirection
-
-import pingparsing
 
 from .common import DEADLINE_TIME, execute_tcdel
 
