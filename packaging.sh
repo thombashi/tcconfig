@@ -5,7 +5,6 @@ set -eu
 dist_dir="tcconfig_wheel"
 wheelhouse_dir_path=${dist_dir}/"wheelhouse"
 install_script_path=${dist_dir}/"install.sh"
-lancher_script="launcher.sh"
 
 
 pip install pip wheel --upgrade
