@@ -20,7 +20,7 @@ import typepy
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_execution_authority, check_tc_command_installation, initialize_cli, is_execute_tc_command,
-    normalize_tc_value, write_tc_script)
+    normalize_tc_value)
 from ._const import (
     IPV6_OPTION_ERROR_MSG_FORMAT, VERSION, Network, ShapingAlgorithm, Tc, TcCommandOutput,
     TrafficDirection)
@@ -28,6 +28,7 @@ from ._converter import HumanReadableTime
 from ._error import InvalidParameterError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._logger import logger, set_log_level
 from ._shaping_rule_finder import TcShapingRuleFinder
+from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
 
 

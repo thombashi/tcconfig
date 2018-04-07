@@ -14,11 +14,11 @@ import simplejson as json
 import subprocrunner
 
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import (
-    check_tc_command_installation, initialize_cli, verify_network_interface, write_tc_script)
+from ._common import check_tc_command_installation, initialize_cli, verify_network_interface
 from ._const import VERSION, Tc, TcCommandOutput
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
+from ._tc_script import write_tc_script
 from .parser.shaping_rule import TcShapingRuleParser
 
 
