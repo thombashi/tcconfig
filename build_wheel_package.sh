@@ -16,7 +16,7 @@ pip wheel -r requirements/requirements.txt --wheel-dir ${wheelhouse_dir_path}
 pip wheel ipaddress --wheel-dir ${wheelhouse_dir_path}
 
 for package in Logbook voluptuous ipaddress; do
-    rm ${wheelhouse_dir_path}/${package}-*.whl 
+    rm ${wheelhouse_dir_path}/${package}-*.whl
     pip download ${package} --no-deps --no-binary :all: --dest ${wheelhouse_dir_path}
 done
 
