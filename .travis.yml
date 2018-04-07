@@ -34,6 +34,7 @@ deploy:
       secure: XfFkQj/maDHnSOENYma26+fctny1A8vbz51pJ3nAtAPNRrvuEr3VHNKC/1ylns5q0TZTa+1FJbPhhPfj1T1WHwF0zFUe1GZhQm9Rs/V2AFLLFjnfsuGlvRc4upryxsye3mZccy3RbXLrabG5aT03BPT+mp5jmAV6yW0k0DnsuSR02i1oXSjreg/NwT5c0cgE2r1d9fIdCDEFjzlHfL9pgGGHk6TGILju0FAsWGqfFXnTeUIYhy0iiXYApp27i4xD2SZm2CSay763ThLAq56wo+z5nUEAfWTLSRNUZYSO/AMiFqPKOlMxIiNwcS/7wvESGgWt/1tsxJsmgXyZTeQEW9Elrqw8LoA9Kn2+rsgnNGVRyqz25JqvIQwHLxCo/fvU20aCVC00zAotB8wR5Yx1eszlorNcaVvcLQhGWBdIk7VFkBaOwkHpZ/f1u7+Z4RzabbwQHySGDN651r5PR5+zJwMId1NiAYO7osC102W4iUpzZtywHHKIeNZP+7NcPoy9qUhhQ3f7zcH3DTTdwio7fbUIXT3FUZgkRLsYn8H1g8OjDOJh+vpDtIODlkMPaAEeVWLI4X/dWVqd00fuY3BsE5/wqy45sIV6upwaNsMETEDbyN54TsJLS6UN+liWJxURUJmuzJP6KDIUaqXAs+VHrf2QW9/FXg3c1IuOftBFwJY=
     on:
       tags: true
+      branch: master
       python: 3.6
     distributions: "sdist bdist_wheel"
   - provider: releases
