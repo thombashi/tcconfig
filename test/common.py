@@ -44,5 +44,4 @@ def is_invalid_param(
 
 def execute_tcdel(device):
     return SubprocessRunner(
-        "{:s} --device {} --all".format(Tc.Command.TCDEL, device),
-        dry_run=False).run()
+        "{:s} --device {} --all".format(Tc.Command.TCDEL, device), dry_run=False).run()
