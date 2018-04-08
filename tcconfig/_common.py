@@ -47,7 +47,7 @@ def find_bin_path(command):
     return None
 
 
-def check_execution_authority():
+def check_tc_execution_authority():
     if os.getuid() != 0:
         # using OSError for Python2 compatibility reason.
         # (PermissionError introduced since Python 3.3)

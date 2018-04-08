@@ -20,7 +20,7 @@ import typepy
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
-    check_execution_authority, initialize_cli, is_execute_tc_command, normalize_tc_value)
+    check_tc_execution_authority, initialize_cli, is_execute_tc_command, normalize_tc_value)
 from ._const import (
     IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
@@ -311,7 +311,7 @@ def main():
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
         try:
-            check_execution_authority()
+            check_tc_execution_authority()
         except OSError as e:
             logger.error(e)
             return errno.EPERM
