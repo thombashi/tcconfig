@@ -1,19 +1,19 @@
 ::
 
     usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--stacktrace] (-d DEVICE | -f CONFIG_FILE)
-                 [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
-                 [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_TIME]
-                 [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
-                 [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE]
-                 [--shaping-algo {htb,htb}] [--iptables]
-                 [--direction {outgoing,incoming}] [--network DST_NETWORK]
-                 [--src-network SRC_NETWORK] [--port DST_PORT]
-                 [--src-port SRC_PORT] [--ipv6]
-                 [--exclude-dst-network EXCLUDE_DST_NETWORK]
-                 [--exclude-src-network EXCLUDE_SRC_NETWORK]
-                 [--exclude-dst-port EXCLUDE_DST_PORT]
-                 [--exclude-src-port EXCLUDE_SRC_PORT]
+                [--stacktrace] (-d DEVICE | -f CONFIG_FILE)
+                [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
+                [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_TIME]
+                [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
+                [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE]
+                [--shaping-algo {htb,htb}] [--iptables]
+                [--direction {outgoing,incoming}] [--network DST_NETWORK]
+                [--src-network SRC_NETWORK] [--port DST_PORT]
+                [--src-port SRC_PORT] [--ipv6]
+                [--exclude-dst-network EXCLUDE_DST_NETWORK]
+                [--exclude-src-network EXCLUDE_SRC_NETWORK]
+                [--exclude-dst-port EXCLUDE_DST_PORT]
+                [--exclude-src-port EXCLUDE_SRC_PORT]
 
     optional arguments:
       -h, --help            show this help message and exit

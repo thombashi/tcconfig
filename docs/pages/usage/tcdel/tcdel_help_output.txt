@@ -1,10 +1,10 @@
 ::
 
     usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--stacktrace] -d DEVICE [-a] [--id FILTER_ID]
-                 [--direction {outgoing,incoming}] [--network DST_NETWORK]
-                 [--src-network SRC_NETWORK] [--port DST_PORT]
-                 [--src-port SRC_PORT] [--ipv6]
+                [--stacktrace] -d DEVICE [-a] [--id FILTER_ID]
+                [--direction {outgoing,incoming}] [--network DST_NETWORK]
+                [--src-network SRC_NETWORK] [--port DST_PORT]
+                [--src-port SRC_PORT] [--ipv6]
 
     optional arguments:
       -h, --help            show this help message and exit
@@ -51,4 +51,3 @@
                             IPv4.
 
     Issue tracker: https://github.com/thombashi/tcconfig/issues
-

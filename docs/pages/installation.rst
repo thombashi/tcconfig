@@ -25,7 +25,7 @@ Install in Debian/Ubuntu from a deb package
 Installing from files
 ------------------------------
 The following package includes ``tcconfig`` and dependency packages.
-This package is for environments which cannot access to 
+This package is for environments which cannot access to
 `PyPI <https://pypi.python.org/pypi>`__ directly.
 
 How to install:
@@ -44,8 +44,11 @@ Python 2.7+ or 3.4+
 
 Linux packages
 --------------
-- ``iproute``/``iproute2``/``iproute-tc`` (mandatory: required for ``tc`` command)
-- ``iptables`` (optional: required to when you use ``--iptables`` option)
+- mandatory: required for ``tc`` command:
+    - `ubuntu`/`debian`: ``iproute2``
+    - `fedora`/`RHEL`: ``iproute-tc``
+- optional: required to when you use ``--iptables`` option:
+    - ``iptables``
 
 Linux kernel module
 ----------------------------
