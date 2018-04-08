@@ -8,6 +8,7 @@ from __future__ import absolute_import, unicode_literals
 
 import contextlib
 import errno
+import os
 import sys
 
 import logbook
@@ -46,11 +47,7 @@ def find_bin_path(command):
     return None
 
 
-
-
 def check_execution_authority():
-    import os
-
     if os.getuid() != 0:
         # using OSError for Python2 compatibility reason.
         # (PermissionError introduced since Python 3.3)
