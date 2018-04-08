@@ -11,7 +11,8 @@ import sys
 
 import subprocrunner as spr
 
-from ._const import Tc
+from ._common import find_bin_path
+from ._const import Tc, TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -22,6 +23,13 @@ def check_tc_command_installation():
     except spr.CommandNotFoundError as e:
         logger.error("{:s}: {}".format(e.__class__.__name__, e))
         sys.exit(errno.ENOENT)
+
+
+def get_tc_base_command(tc_subcommand):
+    if tc_subcommand not in TcSubCommand:
+        raise ValueError("the argument must be a TcSubCommand value")
+
+    return "{:s} {:s}".format(find_bin_path("tc"), tc_subcommand.value)
 
 
 def run_tc_show(subcommand, device):
