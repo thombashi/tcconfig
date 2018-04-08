@@ -20,7 +20,10 @@ class ArgparseWrapper(object):
     """
 
     def __init__(self, version, description=""):
-        epilog = "Issue tracker: https://github.com/thombashi/tcconfig/issues"
+        epilog = """
+        Documentation: http://tcconfig.rtfd.io/
+        Issue tracker: https://github.com/thombashi/tcconfig/issues
+        """
 
         self.parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
