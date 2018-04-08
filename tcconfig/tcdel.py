@@ -96,11 +96,8 @@ def main():
 
     if is_execute_tc_command(options.tc_command_output):
         check_tc_command_installation()
-        try:
-            check_tc_execution_authority()
-        except OSError as e:
-            logger.error(e)
-            return errno.EPERM
+        check_tc_execution_authority()
+
         is_delete_all = options.is_delete_all
     else:
         subprocrunner.SubprocessRunner.default_is_dry_run = True

@@ -322,6 +322,9 @@ class TrafficControl(object):
             if re.search("^{:s} .* show dev".format(find_bin_path("tc")), command):
                 return False
 
+            if re.search("^{:s}".format(find_bin_path("getcap")), command):
+                return False
+
             return True
 
         return filter(tc_filter, spr.SubprocessRunner.get_history())
@@ -373,7 +376,10 @@ class TrafficControl(object):
                 result_list.append(False)
 
         with logging_context("delete iptables mangle table entries"):
-            self.iptables_ctrl.clear()
+            try:
+                self.iptables_ctrl.clear()
+            except OSError as e:
+                logger.error(e)
 
         return any(result_list)
 

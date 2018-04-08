@@ -17,6 +17,8 @@ from ._const import LIST_MANGLE_TABLE_OPTION, Network
 from ._logger import logger
 from ._network import sanitize_network
 from ._split_line_list import split_line_list
+from ._tc_command_helper import has_execution_authority
+
 
 VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
 _iptables_bin_path = find_bin_path("iptables")
@@ -144,12 +146,16 @@ class IptablesMangleController(object):
         if not self.enable:
             return
 
+        self.__check_execution_authority()
+
         for mangle in self.parse():
             proc = SubprocessRunner(mangle.to_delete_command())
             if proc.run() != 0:
                 raise RuntimeError(proc.stderr)
 
     def get_iptables(self):
+        self.__check_execution_authority()
+
         proc = SubprocessRunner(
             "{:s} {:s}".format(_iptables_bin_path, LIST_MANGLE_TABLE_OPTION))
         if proc.run() != 0:
@@ -158,6 +164,8 @@ class IptablesMangleController(object):
         return proc.stdout
 
     def get_unique_mark_id(self):
+        self.__check_execution_authority()
+
         mark_id_list = [
             mangle.mark_id for mangle in self.parse()]
         logger.debug("mangle mark list: {}".format(mark_id_list))
@@ -172,6 +180,8 @@ class IptablesMangleController(object):
         raise RuntimeError("usable mark id not found")
 
     def parse(self):
+        self.__check_execution_authority()
+
         MANGLE_ITEM_COUNT = 6
 
         for block in split_line_list(self.get_iptables().splitlines()):
@@ -214,4 +224,12 @@ class IptablesMangleController(object):
         if not cls.enable:
             return 0
 
+        cls.__check_execution_authority()
+
         return SubprocessRunner(mangling_mark.to_append_command()).run()
+
+    @staticmethod
+    def __check_execution_authority():
+        if not has_execution_authority("iptables"):
+            raise OSError("no right to execute iptables")
+
