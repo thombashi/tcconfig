@@ -12,7 +12,7 @@ import sys
 import subprocrunner as spr
 
 from ._common import find_bin_path
-from ._const import Tc, TcSubCommand
+from ._const import TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
