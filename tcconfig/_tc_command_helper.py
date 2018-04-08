@@ -7,6 +7,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
+import os
 import sys
 
 import subprocrunner as spr
@@ -23,6 +24,13 @@ def check_tc_command_installation():
 
     logger.error("command not found: tc")
     sys.exit(errno.ENOENT)
+
+
+def check_tc_execution_authority():
+    if os.getuid() != 0:
+        # using OSError for Python2 compatibility reason.
+        # (PermissionError introduced since Python 3.3)
+        raise OSError("Permission denied (you must be root)")
 
 
 def get_tc_base_command(tc_subcommand):

@@ -47,13 +47,6 @@ def find_bin_path(command):
     return None
 
 
-def check_tc_execution_authority():
-    if os.getuid() != 0:
-        # using OSError for Python2 compatibility reason.
-        # (PermissionError introduced since Python 3.3)
-        raise OSError("Permission denied (you must be root)")
-
-
 def initialize_cli(options):
     from ._logger import set_log_level
 
