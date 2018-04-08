@@ -14,7 +14,7 @@ import typepy
 from dataproperty import DataProperty
 from typepy.type import RealNumber
 
-from ._common import logging_context, run_command_helper
+from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (
     KILO_SIZE, LIST_MANGLE_TABLE_COMMAND, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
     TrafficDirection)
@@ -318,7 +318,7 @@ class TrafficControl(object):
             if command == LIST_MANGLE_TABLE_COMMAND:
                 return False
 
-            if re.search("^tc .* show dev", command):
+            if re.search("^{:s} .* show dev".format(find_bin_path("tc")), command):
                 return False
 
             return True
