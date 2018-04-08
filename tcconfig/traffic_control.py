@@ -16,7 +16,7 @@ from typepy.type import RealNumber
 
 from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (
-    KILO_SIZE, LIST_MANGLE_TABLE_COMMAND, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
+    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
     TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import InvalidParameterError, NetworkInterfaceNotFoundError, UnitNotFoundError
@@ -315,7 +315,8 @@ class TrafficControl(object):
 
     def get_command_history(self):
         def tc_filter(command):
-            if command == LIST_MANGLE_TABLE_COMMAND:
+            if re.search("^{:s} {:s}".format(
+                    find_bin_path("iptables"), re.escape(LIST_MANGLE_TABLE_OPTION)), command):
                 return False
 
             if re.search("^{:s} .* show dev".format(find_bin_path("tc")), command):

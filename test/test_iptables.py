@@ -9,12 +9,13 @@ from __future__ import unicode_literals
 import random
 
 import pytest
-from tcconfig._iptables import VALID_CHAIN_LIST, IptablesMangleController, IptablesMangleMarkEntry
 
+from tcconfig._common import find_bin_path
+from tcconfig._iptables import VALID_CHAIN_LIST, IptablesMangleController, IptablesMangleMarkEntry
 
 _DEF_SRC = "192.168.0.0/24"
 _DEF_DST = "192.168.100.0/24"
-
+_iptables_bin_path = find_bin_path("iptables")
 
 prerouting_mangle_mark_list = [
     IptablesMangleMarkEntry(
@@ -96,7 +97,7 @@ class Test_IptablesMangleMark_repr(object):
 
 
 class Test_IptablesMangleMark_to_append_command(object):
-    _CMD_PREFIX = "iptables -A {:s} -t mangle -j MARK"
+    _CMD_PREFIX = _iptables_bin_path + " -A {:s} -t mangle -j MARK"
 
     @pytest.mark.parametrize(
         [
@@ -156,11 +157,11 @@ class Test_IptablesMangleMark_to_delete_command(object):
         [
             [
                 2, _DEF_SRC, _DEF_DST, "PREROUTING", "all", 1,
-                "iptables -t mangle -D PREROUTING 1",
+                "{:s} -t mangle -D PREROUTING 1".format(_iptables_bin_path),
             ],
             [
                 20, None, None, "OUTPUT", "all", 2,
-                "iptables -t mangle -D OUTPUT 2",
+                "{:s} -t mangle -D OUTPUT 2".format(_iptables_bin_path),
             ],
         ]
     )

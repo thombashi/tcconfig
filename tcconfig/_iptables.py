@@ -12,12 +12,14 @@ import typepy
 from subprocrunner import SubprocessRunner
 from typepy.type import Integer
 
-from ._const import LIST_MANGLE_TABLE_COMMAND, Network
+from ._common import find_bin_path
+from ._const import LIST_MANGLE_TABLE_OPTION, Network
 from ._logger import logger
 from ._network import sanitize_network
 from ._split_line_list import split_line_list
 
 VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
+_iptables_bin_path = find_bin_path("iptables")
 
 
 class IptablesMangleMarkEntry(object):
@@ -89,7 +91,7 @@ class IptablesMangleMarkEntry(object):
         Integer(self.mark_id).validate()
 
         command_item_list = [
-            "iptables -A {:s} -t mangle -j MARK".format(self.chain),
+            "{:s} -A {:s} -t mangle -j MARK".format(_iptables_bin_path, self.chain),
             "--set-mark {}".format(self.mark_id),
         ]
 
@@ -110,8 +112,8 @@ class IptablesMangleMarkEntry(object):
     def to_delete_command(self):
         Integer(self.line_number).validate()
 
-        return "iptables -t mangle -D {:s} {}".format(
-            self.chain, self.line_number)
+        return "{:s} -t mangle -D {:s} {}".format(
+            _iptables_bin_path, self.chain, self.line_number)
 
     @staticmethod
     def __is_valid_srcdst(srcdst):
@@ -148,7 +150,8 @@ class IptablesMangleController(object):
                 raise RuntimeError(proc.stderr)
 
     def get_iptables(self):
-        proc = SubprocessRunner(LIST_MANGLE_TABLE_COMMAND)
+        proc = SubprocessRunner(
+            "{:s} {:s}".format(_iptables_bin_path, LIST_MANGLE_TABLE_OPTION))
         if proc.run() != 0:
             raise RuntimeError(proc.stderr)
 
