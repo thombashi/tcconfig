@@ -18,6 +18,8 @@ from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, Tc, TcCommandOutput
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
+_bin_path_cache = {}
+
 
 @contextlib.contextmanager
 def logging_context(name):
@@ -26,6 +28,23 @@ def logging_context(name):
         yield
     finally:
         logger.debug("----- {:s}: {:s} ----|".format("complete", name))
+
+
+def find_bin_path(command):
+    if command in _bin_path_cache:
+        return _bin_path_cache.get(command)
+
+    bin_path = spr.Which(command)
+    if bin_path.is_exist():
+        _bin_path_cache[command] = bin_path.abspath()
+        return _bin_path_cache[command]
+
+    for sbin_path in ("/sbin/{:s}".format(command), "/usr/sbin/{:s}".format(command)):
+        if os.path.isfile(sbin_path):
+            _bin_path_cache[command] = sbin_path
+            return _bin_path_cache[command]
+
+    return None
 
 
 def check_tc_command_installation():
