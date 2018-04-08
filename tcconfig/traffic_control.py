@@ -374,7 +374,6 @@ class TrafficControl(object):
 
         with logging_context("delete iptables mangle table entries"):
             self.iptables_ctrl.clear()
-            # IptablesMangleController.clear()
 
         return any(result_list)
 
