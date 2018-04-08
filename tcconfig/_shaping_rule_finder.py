@@ -9,7 +9,7 @@ from __future__ import absolute_import
 
 from simplesqlite.sqlquery import SqlQuery
 
-from ._const import Tc, TrafficDirection
+from ._const import Tc, TcSubCommand, TrafficDirection
 from ._network import is_anywhere_network
 from .parser.shaping_rule import TcShapingRuleParser
 
@@ -36,7 +36,7 @@ class TcShapingRuleFinder(object):
     def find_qdisc_handle(self, parent):
         return self._parser.con.get_value(
             select=Tc.Param.HANDLE,
-            table_name=Tc.Subcommand.QDISC,
+            table_name=TcSubCommand.QDISC.value,
             where=SqlQuery.make_where(Tc.Param.PARENT, parent))
 
     def find_filter_param(self):
@@ -44,7 +44,7 @@ class TcShapingRuleFinder(object):
 
         where_list = self.__get_filter_where_condition_list()
         where_query = " AND ".join(where_list)
-        table_name = Tc.Subcommand.FILTER
+        table_name = TcSubCommand.FILTER.value
         self.__logger.debug(
             "find filter param: table={}, where={}".format(
                 table_name, where_query))
@@ -73,7 +73,7 @@ class TcShapingRuleFinder(object):
 
     def find_parent(self):
         where_list = self.__get_filter_where_condition_list()
-        table_name = Tc.Subcommand.FILTER
+        table_name = TcSubCommand.FILTER.value
         parent = self._parser.con.get_value(
             select=Tc.Param.FLOW_ID,
             table_name=table_name,
@@ -90,7 +90,7 @@ class TcShapingRuleFinder(object):
 
     def is_any_filter(self):
         num_records = self._parser.con.get_num_records(
-            table_name=Tc.Subcommand.FILTER)
+            table_name=TcSubCommand.FILTER.value)
 
         return num_records and num_records > 0
 

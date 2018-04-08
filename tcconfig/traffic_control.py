@@ -310,15 +310,8 @@ class TrafficControl(object):
             expected=TrafficDirection.LIST, value=self.direction)
 
     def get_tc_command(self, subcommand):
-        valid_sub_command_list = (
-            Tc.Subcommand.CLASS, Tc.Subcommand.FILTER, Tc.Subcommand.QDISC)
-        if subcommand not in valid_sub_command_list:
-            raise InvalidParameterError(
-                "unknown sub command",
-                expected=valid_sub_command_list, value=subcommand)
-
-        return "tc {:s} {:s}".format(
-            subcommand, "change" if self.is_change_shaping_rule else "add")
+        return "{:s} {:s}".format(
+            get_tc_base_command(subcommand), "change" if self.is_change_shaping_rule else "add")
 
     def get_command_history(self):
         def tc_filter(command):

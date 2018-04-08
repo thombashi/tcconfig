@@ -13,7 +13,7 @@ import subprocrunner
 import typepy
 
 from .._common import run_command_helper
-from .._const import Tc, TrafficDirection
+from .._const import Tc, TcSubCommand, TrafficDirection
 from .._converter import HumanReadableTime
 from .._error import InvalidParameterError
 from .._iptables import IptablesMangleMarkEntry
@@ -70,7 +70,7 @@ class AbstractShaper(ShaperInterface):
         self.__existing_parent = None
 
     def _set_netem(self):
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         if base_command is None:
             return 0
 
@@ -123,7 +123,7 @@ class AbstractShaper(ShaperInterface):
                     parent=parent, handle=handle)))
 
     def _add_filter(self):
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.FILTER)
         if base_command is None:
             return 0
 

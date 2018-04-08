@@ -42,14 +42,6 @@ class Tc(object):
         TCDEL = "tcdel"
         TCSHOW = "tcshow"
 
-    class Subcommand(object):
-        CLASS = "class"
-        FILTER = "filter"
-        QDISC = "qdisc"
-        SHOW = "show"
-
-        LIST = (CLASS, FILTER, QDISC, SHOW)
-
     class Param(object):
         DEVICE = "device"
         FILTER_ID = "filter_id"

@@ -14,7 +14,7 @@ from collections import OrderedDict
 import pyparsing as pp
 import typepy
 
-from .._const import Tc
+from .._const import Tc, TcSubCommand
 from .._logger import logger
 from .._network import sanitize_network
 from ._interface import AbstractParser
@@ -71,7 +71,7 @@ class TcFilterParser(AbstractParser):
 
     @property
     def _tc_subcommand(self):
-        return Tc.Subcommand.FILTER
+        return TcSubCommand.FILTER.value
 
     def __init__(self, con, ip_version):
         super(TcFilterParser, self).__init__()

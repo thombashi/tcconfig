@@ -11,7 +11,7 @@ import re
 
 import typepy
 
-from .._const import ShapingAlgorithm, Tc
+from .._const import ShapingAlgorithm, Tc, TcSubCommand
 from .._logger import logger
 from ._interface import AbstractParser
 
@@ -31,7 +31,7 @@ class TcClassParser(AbstractParser):
 
     @property
     def _tc_subcommand(self):
-        return Tc.Subcommand.CLASS
+        return TcSubCommand.CLASS.value
 
     def __init__(self, con):
         super(TcClassParser, self).__init__()

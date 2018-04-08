@@ -10,7 +10,7 @@ import typepy
 from subprocrunner import SubprocessRunner
 
 from .._common import logging_context, run_command_helper
-from .._const import ShapingAlgorithm, Tc, TrafficDirection
+from .._const import ShapingAlgorithm, Tc, TcSubCommand, TrafficDirection
 from .._error import InvalidParameterError
 from .._network import get_anywhere_network, get_no_limit_kbits
 from ._interface import AbstractShaper
@@ -52,7 +52,7 @@ class TbfShaper(AbstractShaper):
             direction_offset)
 
     def _make_qdisc(self):
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         if base_command is None:
             return 0
 
@@ -76,7 +76,7 @@ class TbfShaper(AbstractShaper):
         except InvalidParameterError:
             return 0
 
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         if base_command is None:
             return 0
 
@@ -146,7 +146,7 @@ class TbfShaper(AbstractShaper):
             flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
         return SubprocessRunner(" ".join([
-            self._tc_obj.get_tc_command(Tc.Subcommand.FILTER),
+            self._tc_obj.get_tc_command(TcSubCommand.FILTER),
             self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),

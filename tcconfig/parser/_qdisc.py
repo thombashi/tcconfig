@@ -12,7 +12,7 @@ import re
 import pyparsing as pp
 import typepy
 
-from .._const import Tc
+from .._const import Tc, TcSubCommand
 from .._logger import logger
 from ._interface import AbstractParser
 
@@ -21,7 +21,7 @@ class TcQdiscParser(AbstractParser):
 
     @property
     def _tc_subcommand(self):
-        return Tc.Subcommand.QDISC
+        return TcSubCommand.QDISC.value
 
     def __init__(self, con):
         super(TcQdiscParser, self).__init__()

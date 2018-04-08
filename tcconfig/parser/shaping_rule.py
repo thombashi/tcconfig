@@ -167,19 +167,19 @@ class TcShapingRuleParser(object):
 
         try:
             class_param_list = self.__con.select_as_dict(
-                table_name=Tc.Subcommand.CLASS, where=where_query)
+                table_name=TcSubCommand.CLASS.value, where=where_query)
         except simplesqlite.TableNotFoundError:
             class_param_list = []
 
         try:
             filter_param_list = self.__con.select_as_dict(
-                table_name=Tc.Subcommand.FILTER, where=where_query)
+                table_name=TcSubCommand.FILTER.value, where=where_query)
         except simplesqlite.TableNotFoundError:
             filter_param_list = []
 
         try:
             qdisc_param_list = self.__con.select_as_dict(
-                table_name=Tc.Subcommand.QDISC, where=where_query)
+                table_name=TcSubCommand.QDISC.value, where=where_query)
         except simplesqlite.TableNotFoundError:
             qdisc_param_list = []
 
@@ -187,7 +187,7 @@ class TcShapingRuleParser(object):
 
         for filter_param in filter_param_list:
             self.__logger.debug(
-                "{:s} param: {}".format(Tc.Subcommand.FILTER, filter_param))
+                "{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
             shaping_rule = {}
 
             filter_key = self.__get_filter_key(filter_param)
@@ -198,7 +198,7 @@ class TcShapingRuleParser(object):
 
             for qdisc_param in qdisc_param_list:
                 self.__logger.debug(
-                    "{:s} param: {}".format(Tc.Subcommand.QDISC, qdisc_param))
+                    "{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
 
                 if qdisc_param.get(Tc.Param.PARENT) not in (
                         filter_param.get(Tc.Param.FLOW_ID),
@@ -215,7 +215,7 @@ class TcShapingRuleParser(object):
 
             for class_param in class_param_list:
                 self.__logger.debug(
-                    "{:s} param: {}".format(Tc.Subcommand.CLASS, class_param))
+                    "{:s} param: {}".format(TcSubCommand.CLASS, class_param))
 
                 if class_param.get(Tc.Param.CLASS_ID) not in (
                         filter_param.get(Tc.Param.FLOW_ID),

@@ -17,7 +17,7 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import (
     check_execution_authority, initialize_cli, is_execute_tc_command, normalize_tc_value)
-from ._const import Tc, TcCommandOutput
+from ._const import Tc, TcCommandOutput, TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger, set_logger
 from ._network import verify_network_interface
@@ -61,7 +61,7 @@ def create_tc_obj(options):
             logger=logger)
         shaping_rule_parser.parse()
         result = shaping_rule_parser.con.select_as_dict(
-            table_name=Tc.Subcommand.FILTER,
+            table_name=TcSubCommand.FILTER.value,
             column_list=[
                 Tc.Param.SRC_NETWORK, Tc.Param.DST_NETWORK,
                 Tc.Param.SRC_PORT, Tc.Param.DST_PORT],

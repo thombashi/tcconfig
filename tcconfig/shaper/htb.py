@@ -54,7 +54,7 @@ class HtbShaper(AbstractShaper):
         return self.__netem_major_id
 
     def _make_qdisc(self):
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.QDISC)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         if base_command is None:
             return 0
 
@@ -88,7 +88,7 @@ class HtbShaper(AbstractShaper):
         return self.__add_default_class()
 
     def _add_rate(self):
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.CLASS)
 
         parent = "{:s}:".format(self._get_tc_parent(
             "{:s}:".format(self._tc_obj.qdisc_major_id_str)).split(":")[0])
@@ -138,7 +138,7 @@ class HtbShaper(AbstractShaper):
             logger.debug("no exclude filter found")
             return
 
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.FILTER)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.FILTER)
         if base_command is None:
             return 0
 
@@ -266,7 +266,7 @@ class HtbShaper(AbstractShaper):
         return next_netem_major_id
 
     def __add_default_class(self):
-        base_command = self._tc_obj.get_tc_command(Tc.Subcommand.CLASS)
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.CLASS)
         parent = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
         classid = "{:s}:{:d}".format(
             self._tc_obj.qdisc_major_id_str, self.__DEFAULT_CLASS_MINOR_ID)
