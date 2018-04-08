@@ -14,11 +14,12 @@ import subprocrunner
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import check_tc_command_installation, initialize_cli
+from ._common import initialize_cli
 from ._const import Tc, TcCommandOutput
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 from ._network import verify_network_interface
+from ._tc_command_helper import check_tc_command_installation
 from ._tc_script import write_tc_script
 from .parser.shaping_rule import TcShapingRuleParser
 

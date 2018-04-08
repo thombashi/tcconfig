@@ -14,8 +14,7 @@ import logbook
 import subprocrunner as spr
 import typepy
 
-from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, Tc, TcCommandOutput
-from ._error import NetworkInterfaceNotFoundError
+from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
 from ._logger import logger
 
 _bin_path_cache = {}
@@ -47,12 +46,6 @@ def find_bin_path(command):
     return None
 
 
-def check_tc_command_installation():
-    try:
-        spr.Which("tc").verify()
-    except spr.CommandNotFoundError as e:
-        logger.error("{:s}: {}".format(e.__class__.__name__, e))
-        sys.exit(errno.ENOENT)
 
 
 def check_execution_authority():
@@ -127,21 +120,3 @@ def run_command_helper(command, error_regexp, notice_message, exception_class=No
         raise exception_class(command)
 
     return proc.returncode
-
-
-def run_tc_show(subcommand, device):
-    from ._network import verify_network_interface
-
-    if subcommand not in Tc.Subcommand.LIST:
-        raise ValueError("unexpected tc sub command: {}".format(subcommand))
-
-    verify_network_interface(device)
-
-    runner = spr.SubprocessRunner(
-        "tc {:s} show dev {:s}".format(subcommand, device))
-    if runner.run() != 0 and runner.stderr.find("Cannot find device") != -1:
-        # reach here if the device does not exist at the system and netiface
-        # not installed.
-        raise NetworkInterfaceNotFoundError(device=device)
-
-    return runner.stdout
