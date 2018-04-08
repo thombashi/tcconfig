@@ -35,13 +35,10 @@ def get_tc_base_command(tc_subcommand):
 def run_tc_show(subcommand, device):
     from ._network import verify_network_interface
 
-    if subcommand not in Tc.Subcommand.LIST:
-        raise ValueError("unexpected tc sub command: {}".format(subcommand))
-
     verify_network_interface(device)
 
     runner = spr.SubprocessRunner(
-        "tc {:s} show dev {:s}".format(subcommand, device))
+        "{:s} show dev {:s}".format(get_tc_base_command(subcommand), device))
     if runner.run() != 0 and runner.stderr.find("Cannot find device") != -1:
         # reach here if the device does not exist at the system and netiface
         # not installed.

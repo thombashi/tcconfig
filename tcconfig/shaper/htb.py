@@ -12,7 +12,7 @@ import re
 import typepy
 
 from .._common import logging_context, run_command_helper
-from .._const import ShapingAlgorithm, Tc, TcCommandOutput
+from .._const import ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand
 from .._error import TcAlreadyExist
 from .._logger import logger
 from .._network import get_no_limit_kbits
@@ -216,7 +216,7 @@ class HtbShaper(AbstractShaper):
             "class {algorithm:s} {qdisc_major_id:s}[\:][0-9]+".format(
                 algorithm=ShapingAlgorithm.HTB,
                 qdisc_major_id=self._tc_obj.qdisc_major_id_str),
-            run_tc_show(Tc.Subcommand.CLASS, self._tc_device),
+            run_tc_show(TcSubCommand.CLASS, self._tc_device),
             re.MULTILINE)
 
         exist_class_minor_id_list = []
@@ -244,7 +244,7 @@ class HtbShaper(AbstractShaper):
     def __get_unique_netem_major_id(self):
         exist_netem_item_list = re.findall(
             "qdisc [a-z]+ [a-z0-9]+",
-            run_tc_show(Tc.Subcommand.QDISC, self._tc_device),
+            run_tc_show(TcSubCommand.QDISC, self._tc_device),
             re.MULTILINE)
 
         exist_netem_major_id_list = []

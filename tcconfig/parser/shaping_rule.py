@@ -14,12 +14,12 @@ import subprocrunner
 import typepy
 from typepy.type import Integer
 
-from .._const import Tc, TrafficDirection
 from .._common import is_execute_tc_command
+from .._const import Tc, TcSubCommand, TrafficDirection
 from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
 from .._network import is_anywhere_network
-from .._tc_command_helper import run_tc_show
+from .._tc_command_helper import get_tc_base_command, run_tc_show
 from ._class import TcClassParser
 from ._filter import TcFilterParser
 from ._qdisc import TcQdiscParser
@@ -96,7 +96,8 @@ class TcShapingRuleParser(object):
             return None
 
         filter_runner = subprocrunner.SubprocessRunner(
-            "tc filter show dev {:s} root".format(self.device),
+            "{:s} show dev {:s} root".format(
+                get_tc_base_command(TcSubCommand.FILTER), self.device),
             error_log_level=logbook.NOTSET, dry_run=False)
         if filter_runner.run() != 0 and filter_runner.stderr.find("Cannot find device") != -1:
             raise NetworkInterfaceNotFoundError(device=self.device)
@@ -242,15 +243,15 @@ class TcShapingRuleParser(object):
 
     def __parse_tc_qdisc(self, device):
         return TcQdiscParser(self.__con).parse(
-            device, run_tc_show(Tc.Subcommand.QDISC, device))
+            device, run_tc_show(TcSubCommand.QDISC, device))
 
     def __parse_tc_filter(self, device):
         return self.__filter_parser.parse(
-            device, run_tc_show(Tc.Subcommand.FILTER, device))
+            device, run_tc_show(TcSubCommand.FILTER, device))
 
     def __parse_tc_class(self, device):
         return TcClassParser(self.__con).parse(
-            device, run_tc_show(Tc.Subcommand.CLASS, device))
+            device, run_tc_show(TcSubCommand.CLASS, device))
 
     @staticmethod
     def __strip_param(params, strip_param_list):

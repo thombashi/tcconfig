@@ -16,13 +16,15 @@ from typepy.type import RealNumber
 
 from ._common import logging_context, run_command_helper
 from ._const import (
-    KILO_SIZE, LIST_MANGLE_TABLE_COMMAND, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
+    KILO_SIZE, LIST_MANGLE_TABLE_COMMAND, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
+    TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import InvalidParameterError, NetworkInterfaceNotFoundError, UnitNotFoundError
 from ._iptables import IptablesMangleController
 from ._logger import logger
 from ._network import get_no_limit_kbits, sanitize_network, verify_network_interface
 from ._shaping_rule_finder import TcShapingRuleFinder
+from ._tc_command_helper import get_tc_base_command
 from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
@@ -347,8 +349,8 @@ class TrafficControl(object):
         result_list = []
 
         with logging_context("delete qdisc"):
-            proc = spr.SubprocessRunner(
-                "tc qdisc del dev {:s} root".format(self.device))
+            proc = spr.SubprocessRunner("{:s} del dev {:s} root".format(
+                get_tc_base_command(TcSubCommand.QDISC), self.device))
             proc.run()
             if re.search("RTNETLINK answers: No such file or directory", proc.stderr):
                 logger.notice("no qdisc to delete for the outgoing device.")
@@ -360,7 +362,8 @@ class TrafficControl(object):
 
         with logging_context("delete ingress qdisc"):
             returncode = run_command_helper(
-                "tc qdisc del dev {:s} ingress".format(self.device),
+                "{:s} del dev {:s} ingress".format(
+                    get_tc_base_command(TcSubCommand.QDISC), self.device),
                 re.compile("|".join([
                     "RTNETLINK answers: Invalid argument",
                     "RTNETLINK answers: No such file or directory",
@@ -402,14 +405,15 @@ class TrafficControl(object):
             return 1
 
         filter_del_command = (
-            "tc filter del dev {dev:s} protocol {protocol:s} "
+            "{command:s} del dev {dev:s} protocol {protocol:s} "
             "parent {parent:} handle {handle:s} prio {prio:} u32".format(
+                command=get_tc_base_command(TcSubCommand.FILTER),
                 dev=rule_finder.get_parsed_device(),
                 protocol=filter_param.get(Tc.Param.PROTOCOL),
                 parent="{:s}:".format(rule_finder.find_parent().split(":")[0]),
                 handle=filter_param.get(Tc.Param.FILTER_ID),
-                prio=filter_param.get(Tc.Param.PRIORITY),
-            ))
+                prio=filter_param.get(Tc.Param.PRIORITY))
+        )
 
         result = run_command_helper(
             command=filter_del_command, error_regexp=None, notice_message=None)
@@ -549,7 +553,7 @@ class TrafficControl(object):
         return_code |= spr.SubprocessRunner(
             "ip link set dev {:s} up".format(self.ifb_device)).run()
 
-        base_command = "tc qdisc add"
+        base_command = "{:s} add".format(get_tc_base_command(TcSubCommand.QDISC))
         if self.is_add_shaping_rule or self.is_change_shaping_rule:
             notice_message = None
         else:
@@ -561,7 +565,7 @@ class TrafficControl(object):
             self.REGEXP_FILE_EXISTS, notice_message)
 
         return_code |= spr.SubprocessRunner(" ".join([
-            "tc filter add",
+            "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),
             "dev {:s}".format(self.device),
             "parent ffff: protocol {:s} u32 match u32 0 0".format(
                 self.protocol),
@@ -576,7 +580,8 @@ class TrafficControl(object):
         verify_network_interface(self.ifb_device)
 
         command_list = [
-            "tc qdisc del dev {:s} root".format(self.ifb_device),
+            "{:s} del dev {:s} root".format(
+                get_tc_base_command(TcSubCommand.QDISC), self.ifb_device),
             "ip link set dev {:s} down".format(self.ifb_device),
             "ip link delete {:s} type ifb".format(self.ifb_device),
         ]
