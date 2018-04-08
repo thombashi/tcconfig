@@ -18,11 +18,11 @@ from ._logger import logger
 
 
 def check_tc_command_installation():
-    try:
-        spr.Which("tc").verify()
-    except spr.CommandNotFoundError as e:
-        logger.error("{:s}: {}".format(e.__class__.__name__, e))
-        sys.exit(errno.ENOENT)
+    if find_bin_path("tc"):
+        return
+
+    logger.error("command not found: tc")
+    sys.exit(errno.ENOENT)
 
 
 def get_tc_base_command(tc_subcommand):
