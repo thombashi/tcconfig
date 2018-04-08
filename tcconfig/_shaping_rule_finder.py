@@ -5,7 +5,7 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, print_function
+from __future__ import absolute_import
 
 from simplesqlite.sqlquery import SqlQuery
 
