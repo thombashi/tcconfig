@@ -202,8 +202,11 @@ Python 2.7+ or 3.4+
 
 Linux packages
 --------------
-- ``iproute``/``iproute2``/``iproute-tc`` (mandatory: required for ``tc`` command)
-- ``iptables`` (optional: required to when you use ``--iptables`` option)
+- mandatory: required for ``tc`` command:
+    - `ubuntu`/`debian`: ``iproute2``
+    - `fedora`/`RHEL`: ``iproute-tc``
+- optional: required to when you use ``--iptables`` option:
+    - ``iptables``
 
 Linux kernel module
 ----------------------------
