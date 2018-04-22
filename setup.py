@@ -21,22 +21,14 @@ ENCODING = "utf8"
 pkg_info = {}
 
 
-class ReleaseCommand(setuptools.Command):
-    user_options = []
+def get_release_command_class():
+    try:
+        from releasecmd import ReleaseCommand
+    except ImportError:
+        return {}
 
-    def initialize_options(self):
-        pass
+    return {"release": ReleaseCommand}
 
-    def finalize_options(self):
-        pass
-
-    def run(self):
-        tag = "v{}".format(pkg_info["__version__"])
-
-        print("Pushing git tags: {}".format(tag))
-
-        os.system("git tag {}".format(tag))
-        os.system("git push --tags")
 
 
 with open(os.path.join(MODULE_NAME, "__version__.py")) as f:
@@ -87,6 +79,7 @@ setuptools.setup(
     extras_require={
         "build": build_requires,
         "docs": docs_requires,
+        "release": "releasecmd>=0.0.9",
         "test": tests_requires,
     },
     project_urls={
@@ -121,6 +114,4 @@ setuptools.setup(
             "tcshow=tcconfig.tcshow:main",
         ],
     },
-    cmdclass={
-        "release": ReleaseCommand,
-    })
+    cmdclass=get_release_command_class())
