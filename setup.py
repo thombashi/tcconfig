@@ -14,6 +14,7 @@ import setuptools
 
 
 MODULE_NAME = "tcconfig"
+REPOSITORY_URL = "https://github.com/thombashi/{:s}".format(MODULE_NAME)
 REQUIREMENT_DIR = "requirements"
 ENCODING = "utf8"
 
@@ -66,7 +67,7 @@ pytest_runner = ["pytest-runner"] if needs_pytest else []
 setuptools.setup(
     name=MODULE_NAME,
     version=pkg_info["__version__"],
-    url="https://github.com/thombashi/{:s}".format(MODULE_NAME),
+    url=REPOSITORY_URL,
 
     author=pkg_info["__author__"],
     author_email=pkg_info["__email__"],
@@ -87,6 +88,10 @@ setuptools.setup(
         "build": build_requires,
         "docs": docs_requires,
         "test": tests_requires,
+    },
+    project_urls={
+        "Documentation": "http://{:s}.rtfd.io/".format(MODULE_NAME),
+        "Tracker": "{:s}/issues".format(REPOSITORY_URL),
     },
     python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*',
 
