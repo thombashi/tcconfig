@@ -95,13 +95,13 @@ class TcShapingRuleFinder(object):
         return num_records and num_records > 0
 
     def is_empty_filter_condition(self):
-        from typepy import is_empty_string
+        from typepy import is_null_string
 
         return all([
             is_anywhere_network(self.__tc.dst_network, self.__tc.ip_version),
             is_anywhere_network(self.__tc.src_network, self.__tc.ip_version),
-            is_empty_string(self.__tc.dst_port),
-            is_empty_string(self.__tc.src_port),
+            is_null_string(self.__tc.dst_port),
+            is_null_string(self.__tc.src_port),
         ])
 
     def get_parsed_device(self):
