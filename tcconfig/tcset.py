@@ -318,7 +318,7 @@ def main():
         verify_netem_module()
     except ModuleNotFoundError as e:
         logger.debug(e)
-    except subprocrunner.CommandNotFoundError as e:
+    except subprocrunner.CommandError as e:
         logger.error(e)
 
     if typepy.is_not_null_string(options.config_file):
