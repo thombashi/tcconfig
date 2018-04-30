@@ -21,6 +21,10 @@ ENCODING = "utf8"
 pkg_info = {}
 
 
+def need_pytest():
+    return set(["pytest", "test", "ptr"]).intersection(sys.argv)
+
+
 def get_release_command_class():
     try:
         from releasecmd import ReleaseCommand
@@ -53,8 +57,7 @@ with open(os.path.join(REQUIREMENT_DIR, "docs_requirements.txt")) as f:
     docs_requires = [line.strip() for line in f if line.strip()]
 
 setuptools_require = ["setuptools>=38.3.0"]
-needs_pytest = set(["pytest", "test", "ptr"]).intersection(sys.argv)
-pytest_runner = ["pytest-runner"] if needs_pytest else []
+pytest_runner = ["pytest-runner"] if need_pytest() else []
 
 setuptools.setup(
     name=MODULE_NAME,
