@@ -21,7 +21,10 @@ from ._split_line_list import split_line_list
 
 
 VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
-_iptables_bin_path = find_bin_path("iptables")
+
+
+def get_iptables_base_command():
+    return "{:s} iptables".format(find_bin_path("iptables"))
 
 
 class IptablesMangleMarkEntry(object):
@@ -92,7 +95,7 @@ class IptablesMangleMarkEntry(object):
         Integer(self.mark_id).validate()
 
         command_item_list = [
-            "{:s} -A {:s} -t mangle -j MARK".format(_iptables_bin_path, self.chain),
+            "{:s} -A {:s} -t mangle -j MARK".format(get_iptables_base_command(), self.chain),
             "--set-mark {}".format(self.mark_id),
         ]
 
@@ -108,7 +111,8 @@ class IptablesMangleMarkEntry(object):
     def to_delete_command(self):
         Integer(self.line_number).validate()
 
-        return "{:s} -t mangle -D {:s} {}".format(_iptables_bin_path, self.chain, self.line_number)
+        return "{:s} -t mangle -D {:s} {}".format(
+            get_iptables_base_command(), self.chain, self.line_number)
 
     @staticmethod
     def __is_valid_srcdst(srcdst):
@@ -145,7 +149,8 @@ class IptablesMangleController(object):
     def get_iptables(self):
         self.__check_execution_authority()
 
-        proc = SubprocessRunner("{:s} {:s}".format(_iptables_bin_path, LIST_MANGLE_TABLE_OPTION))
+        proc = SubprocessRunner("{:s} {:s}".format(
+            get_iptables_base_command(), LIST_MANGLE_TABLE_OPTION))
         if proc.run() != 0:
             raise RuntimeError(proc.stderr)
 
