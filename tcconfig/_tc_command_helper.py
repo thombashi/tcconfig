@@ -73,7 +73,10 @@ def has_execution_authority(command):
 
 def check_tc_execution_authority():
     if not has_execution_authority("tc"):
-        logger.error("Permission denied (you must be root)")
+        logger.error("\n".join([
+            "Permission denied: you must be root or set Linux capabilities to execute the command:",
+            "   $ sudo setcap cap_net_admin+ep {:s}".format(find_bin_path("tc"))
+        ]))
         sys.exit(errno.EPERM)
 
 
