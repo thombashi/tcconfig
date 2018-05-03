@@ -15,6 +15,7 @@ import logbook
 import msgfy
 import subprocrunner as spr
 import typepy
+from path import Path
 
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
 from ._logger import logger
@@ -33,11 +34,12 @@ def logging_context(name):
 
 
 def find_bin_path(command):
-    def _to_regular_bin_path(path):
-        if os.path.islink(path):
-            return os.readlink(path)
+    def _to_regular_bin_path(file_path):
+        path_obj = Path(file_path)
+        if path_obj.islink():
+            return path_obj.readlinkabs()
 
-        return path
+        return file_path
 
     if command in _bin_path_cache:
         return _bin_path_cache.get(command)
