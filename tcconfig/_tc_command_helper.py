@@ -7,8 +7,6 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
-import os
-import re
 import sys
 
 import subprocrunner as spr
@@ -27,56 +25,9 @@ def check_tc_command_installation():
     sys.exit(errno.ENOENT)
 
 
-def get_required_capabilities(command):
-    required_capabilities_map = {
-        "tc": ["cap_net_admin"],
-        "ip": ["cap_net_raw"],
-        "iptables": ["cap_net_raw", "cap_net_admin"],
-    }
-
-    return required_capabilities_map.get(command)
-
-
-def _has_capabilies(bin_path, capabilities):
-    getcap_bin_path = find_bin_path("getcap")
-
-    if not getcap_bin_path:
-        logger.error("command not found: getcap")
-        return False
-
-    bin_path = os.path.realpath(bin_path)
-    proc = spr.SubprocessRunner("{:s} {:s}".format(getcap_bin_path, bin_path))
-    if proc.run() != 0:
-        logger.error(proc.stderr)
-        sys.exit(proc.returncode)
-
-    getcap_output = proc.stdout
-    has_capabilies = True
-    for capability in capabilities:
-        if re.search(capability, getcap_output):
-            logger.debug("{:s} has {:s} capability".format(bin_path, capability))
-        else:
-            logger.debug("{:s} has no {:s} capability".format(bin_path, capability))
-            has_capabilies = False
-
-    capability = "+ep"
-    if re.search(re.escape(capability), getcap_output):
-        logger.debug("{:s} has {:s} capability".format(bin_path, capability))
-    else:
-        logger.debug("{:s} has no {:s} capability".format(bin_path, capability))
-        has_capabilies = False
-
-    return has_capabilies
-
-
-def has_execution_authority(command):
-    if os.getuid() == 0:
-        return True
-
-    return _has_capabilies(find_bin_path(command), get_required_capabilities(command))
-
-
 def check_tc_execution_authority():
+    from ._capabilities import get_required_capabilities, has_execution_authority
+
     if not has_execution_authority("tc"):
         logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
             capabilities=",".join(get_required_capabilities("tc")), bin_path=find_bin_path("tc")))

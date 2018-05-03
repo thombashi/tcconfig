@@ -12,12 +12,12 @@ import typepy
 from subprocrunner import SubprocessRunner
 from typepy.type import Integer
 
+from ._capabilities import has_execution_authority
 from ._common import find_bin_path
 from ._const import LIST_MANGLE_TABLE_OPTION, Network
 from ._logger import logger
 from ._network import sanitize_network
 from ._split_line_list import split_line_list
-from ._tc_command_helper import has_execution_authority
 
 
 VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
@@ -232,4 +232,3 @@ class IptablesMangleController(object):
     def __check_execution_authority():
         if not has_execution_authority("iptables"):
             raise OSError("no right to execute iptables")
-
