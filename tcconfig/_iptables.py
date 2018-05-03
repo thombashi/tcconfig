@@ -51,9 +51,8 @@ class IptablesMangleMarkEntry(object):
     def chain(self):
         return self.__chain
 
-    def __init__(
-            self, ip_version, mark_id, source, destination, chain,
-            protocol="all", line_number=None):
+    def __init__(self, ip_version, mark_id, source, destination, chain,
+                 protocol="all", line_number=None):
         self.__line_number = line_number
         self.__mark_id = mark_id
         self.__source = sanitize_network(source, ip_version)
@@ -98,10 +97,7 @@ class IptablesMangleMarkEntry(object):
             "--set-mark {}".format(self.mark_id),
         ]
 
-        if any([
-                typepy.is_not_null_string(self.protocol),
-                Integer(self.protocol).is_type(),
-        ]):
+        if typepy.is_not_null_string(self.protocol) or Integer(self.protocol).is_type():
             command_item_list.append("-p {}".format(self.protocol))
         if self.__is_valid_srcdst(self.source):
             command_item_list.append("-s {:s}".format(self.source))

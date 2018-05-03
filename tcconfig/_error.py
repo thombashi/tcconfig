@@ -19,8 +19,7 @@ class NetworkInterfaceNotFoundError(Exception):
 
     def __str__(self, *args, **kwargs):
         item_list = [ValueError.__str__(self, *args, **kwargs)]
-        item_list.append(
-            "network interface not found: {}".format(self.__device))
+        item_list.append("network interface not found: {}".format(self.__device))
 
         return " ".join(item_list).strip()
 
@@ -101,9 +100,6 @@ class UnitNotFoundError(InvalidParameterError):
         extra_msg_list = []
 
         if self.__available_unit:
-            extra_msg_list.append(
-                "available-units={}".format(self.__available_unit))
+            extra_msg_list.append("available-units={}".format(self.__available_unit))
 
-        return (
-            super(UnitNotFoundError, self)._get_extra_msg_list() +
-            extra_msg_list)
+        return super(UnitNotFoundError, self)._get_extra_msg_list() + extra_msg_list
