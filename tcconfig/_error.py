@@ -45,12 +45,6 @@ class TcAlreadyExist(TcCommandExecutionError):
     """
 
 
-class EmptyParameterError(ValueError):
-    """
-    Exception raised when a parameter value is empty value.
-    """
-
-
 class InvalidParameterError(ValueError):
     """
     Exception raised when an invalid parameter specified for
