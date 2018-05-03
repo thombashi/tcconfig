@@ -41,16 +41,13 @@ def _validate_within_min_max(param_name, value, min_value, max_value, unit):
     if value > max_value:
         raise InvalidParameterError(
             "'{:s}' is too high".format(param_name),
-            expected="<={:s}{:s}".format(
-                DataProperty(max_value).to_str(), unit),
-            value="{:s}{:s}".format(
-                DataProperty(value).to_str(), unit))
+            expected="<={:s}{:s}".format(DataProperty(max_value).to_str(), unit),
+            value="{:s}{:s}".format(DataProperty(value).to_str(), unit))
 
     if value < min_value:
         raise InvalidParameterError(
             "'{:s}' is too low".format(param_name),
-            expected=">={:s}{:s}".format(
-                DataProperty(min_value).to_str(), unit),
+            expected=">={:s}{:s}".format(DataProperty(min_value).to_str(), unit),
             value="{:s}{:s}".format(DataProperty(value).to_str(), unit))
 
 
@@ -74,12 +71,9 @@ class TrafficControl(object):
 
     EXISTS_MSG_TEMPLATE = (
         "{:s} try to execute with: "
-        "(a) --overwrite option if you want to overwrite "
-        "the existing rule. "
-        "(b) --add option if you want to add a new rule in addition "
-        "to the existing rules. "
-        "(c) --change option if you want to change the existing "
-        "rule parameter."
+        "(a) --overwrite option if you want to overwrite the existing rule. "
+        "(b) --add option if you want to add a new rule in addition to the existing rules. "
+        "(c) --change option if you want to change the existing rule parameter."
     )
 
     @property
@@ -241,8 +235,7 @@ class TrafficControl(object):
 
         self.__qdisc_major_id = self.__get_device_qdisc_major_id()
 
-        self.__iptables_ctrl = IptablesMangleController(
-            is_enable_iptables, self.ip_version)
+        self.__iptables_ctrl = IptablesMangleController(is_enable_iptables, self.ip_version)
 
         self.__init_shaper(shaping_algorithm)
 
@@ -278,8 +271,7 @@ class TrafficControl(object):
 
         if bandwidth_rate <= 0:
             raise InvalidParameterError(
-                "bandwidth_rate must be greater than zero",
-                value=bandwidth_rate)
+                "bandwidth_rate must be greater than zero", value=bandwidth_rate)
 
         no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
         if bandwidth_rate > no_limit_kbits:
@@ -289,10 +281,8 @@ class TrafficControl(object):
                 expected="less than {} kbps".format(no_limit_kbits))
 
     def sanitize(self):
-        self.__dst_network = sanitize_network(
-            self.dst_network, self.ip_version)
-        self.__src_network = sanitize_network(
-            self.src_network, self.ip_version)
+        self.__dst_network = sanitize_network(self.dst_network, self.ip_version)
+        self.__src_network = sanitize_network(self.src_network, self.ip_version)
 
     def get_tc_device(self):
         """
@@ -306,8 +296,7 @@ class TrafficControl(object):
             return self.ifb_device
 
         raise InvalidParameterError(
-            "unknown direction",
-            expected=TrafficDirection.LIST, value=self.direction)
+            "unknown direction", expected=TrafficDirection.LIST, value=self.direction)
 
     def get_tc_command(self, subcommand):
         return "{:s} {:s}".format(
@@ -396,9 +385,7 @@ class TrafficControl(object):
         if not filter_param:
             message = "shaping rule not found."
             if rule_finder.is_empty_filter_condition():
-                message += (
-                    " you can delete all of the shaping rules "
-                    "with --all option.")
+                message += " you can delete all of the shaping rules with --all option."
             logger.error(message)
 
             return 1
@@ -464,8 +451,7 @@ class TrafficControl(object):
     def __validate_packet_duplicate_rate(self):
         _validate_within_min_max(
             "duplicate (packet duplicate rate)", self.packet_duplicate_rate,
-            self.MIN_PACKET_DUPLICATE_RATE, self.MAX_PACKET_DUPLICATE_RATE,
-            unit="%")
+            self.MIN_PACKET_DUPLICATE_RATE, self.MAX_PACKET_DUPLICATE_RATE, unit="%")
 
     def __validate_corruption_rate(self):
         _validate_within_min_max(
@@ -500,12 +486,10 @@ class TrafficControl(object):
         ]
 
         if all([
-                not RealNumber(netem_param_value).is_type()
-                or netem_param_value <= 0
+                not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
                 for netem_param_value in netem_param_value_list
         ] + [
-            self.latency_time <= HumanReadableTime(
-                Tc.ValueRange.LatencyTime.MIN)
+            self.latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)
         ]):
             raise InvalidParameterError(
                 "there are no valid net emulation parameters found. "
@@ -515,12 +499,10 @@ class TrafficControl(object):
 
     def __validate_port(self):
         _validate_within_min_max(
-            "src_port", self.src_port, self.__MIN_PORT, self.__MAX_PORT,
-            unit=None)
+            "src_port", self.src_port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
 
         _validate_within_min_max(
-            "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT,
-            unit=None)
+            "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
 
     def __get_device_qdisc_major_id(self):
         import hashlib
@@ -557,8 +539,7 @@ class TrafficControl(object):
             notice_message = None
         else:
             notice_message = self.EXISTS_MSG_TEMPLATE.format(
-                "failed to '{:s}': ingress qdisc already exists.".format(
-                    base_command))
+                "failed to '{:s}': ingress qdisc already exists.".format(base_command))
         return_code |= run_command_helper(
             "{:s} dev {:s} ingress".format(base_command, self.device),
             self.REGEXP_FILE_EXISTS, notice_message)
@@ -566,8 +547,7 @@ class TrafficControl(object):
         return_code |= spr.SubprocessRunner(" ".join([
             "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),
             "dev {:s}".format(self.device),
-            "parent ffff: protocol {:s} u32 match u32 0 0".format(
-                self.protocol),
+            "parent ffff: protocol {:s} u32 match u32 0 0".format(self.protocol),
             "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
             "action mirred egress redirect",
             "dev {:s}".format(self.ifb_device),

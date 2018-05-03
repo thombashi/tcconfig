@@ -27,8 +27,7 @@ class TcShapingRuleFinder(object):
         self.__tc = tc
         self.__shaping_rule_parser = TcShapingRuleParser(
             device=self.__tc.device, ip_version=self.__tc.ip_version,
-            tc_command_output=self.__tc.tc_command_output,
-            logger=self.__logger)
+            tc_command_output=self.__tc.tc_command_output, logger=self.__logger)
 
     def clear(self):
         self.__shaping_rule_parser.clear()
@@ -45,29 +44,25 @@ class TcShapingRuleFinder(object):
         where_list = self.__get_filter_where_condition_list()
         where_query = " AND ".join(where_list)
         table_name = TcSubCommand.FILTER.value
-        self.__logger.debug(
-            "find filter param: table={}, where={}".format(
-                table_name, where_query))
+        self.__logger.debug("find filter param: table={}, where={}".format(
+            table_name, where_query))
 
         try:
             result = self._parser.con.select_as_dict(
-                column_list=[
-                    Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
+                column_list=[Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
                 table_name=table_name,
                 where=where_query)
         except simplesqlite.TableNotFoundError:
             return None
 
         if not result:
-            self.__logger.debug(
-                "find filter param: emptry result (table={}, where={})".format(
-                    table_name, where_query))
+            self.__logger.debug("find filter param: emptry result (table={}, where={})".format(
+                table_name, where_query))
             return None
 
         param = result[0]
-        self.__logger.debug(
-            "find filter param: result={}, table={}, where={}".format(
-                param, table_name, where_query))
+        self.__logger.debug("find filter param: result={}, table={}, where={}".format(
+            param, table_name, where_query))
 
         return param
 
@@ -79,9 +74,8 @@ class TcShapingRuleFinder(object):
             table_name=table_name,
             where=" AND ".join(where_list))
 
-        self.__logger.debug(
-            "find parent: result={}, table={}, where={}".format(
-                parent, table_name, where_list))
+        self.__logger.debug("find parent: result={}, table={}, where={}".format(
+            parent, table_name, where_list))
 
         return parent
 

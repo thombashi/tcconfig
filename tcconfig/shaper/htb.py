@@ -93,8 +93,7 @@ class HtbShaper(AbstractShaper):
         parent = "{:s}:".format(self._get_tc_parent(
             "{:s}:".format(self._tc_obj.qdisc_major_id_str)).split(":")[0])
         classid = self._get_tc_parent("{:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str,
-            self._get_qdisc_minor_id()))
+            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id()))
 
         no_limit_kbits = get_no_limit_kbits(self._tc_device)
 
@@ -153,29 +152,23 @@ class HtbShaper(AbstractShaper):
 
         if typepy.is_not_null_string(self._tc_obj.exclude_dst_network):
             command_item_list.append("match {:s} {:s} {:s}".format(
-                self._tc_obj.protocol_match,
-                "dst", self._tc_obj.exclude_dst_network))
+                self._tc_obj.protocol_match, "dst", self._tc_obj.exclude_dst_network))
 
         if typepy.is_not_null_string(self._tc_obj.exclude_src_network):
             command_item_list.append("match {:s} {:s} {:s}".format(
-                self._tc_obj.protocol_match,
-                "src", self._tc_obj.exclude_src_network))
+                self._tc_obj.protocol_match, "src", self._tc_obj.exclude_src_network))
 
         if typepy.is_not_null_string(self._tc_obj.exclude_dst_port):
             command_item_list.append("match {:s} {:s} {:s} 0xffff".format(
-                self._tc_obj.protocol_match,
-                "dport", self._tc_obj.exclude_dst_port))
+                self._tc_obj.protocol_match, "dport", self._tc_obj.exclude_dst_port))
 
         if typepy.is_not_null_string(self._tc_obj.exclude_src_port):
             command_item_list.append("match {:s} {:s} {:s} 0xffff".format(
-                self._tc_obj.protocol_match,
-                "sport", self._tc_obj.exclude_src_port))
+                self._tc_obj.protocol_match, "sport", self._tc_obj.exclude_src_port))
 
-        command_item_list.append(
-            "flowid {:s}".format(self.__classid_wo_shaping))
+        command_item_list.append("flowid {:s}".format(self.__classid_wo_shaping))
 
-        return subprocrunner.SubprocessRunner(
-            " ".join(command_item_list)).run()
+        return subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
 
     def set_shaping(self):
         is_add_shaping_rule = self._tc_obj.is_add_shaping_rule

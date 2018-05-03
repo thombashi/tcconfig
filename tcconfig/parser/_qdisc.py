@@ -68,9 +68,8 @@ class TcQdiscParser(AbstractParser):
             self.__con.create_table_from_data_matrix(
                 table_name=self._tc_subcommand,
                 attr_name_list=[
-                    Tc.Param.DEVICE, "parent", "handle", "delay",
-                    "delay-distro", "loss", "duplicate", "corrupt", "reorder",
-                    "rate",
+                    Tc.Param.DEVICE, "parent", "handle", "delay", "delay-distro",
+                    "loss", "duplicate", "corrupt", "reorder", "rate",
                 ],
                 data_matrix=entry_list)
 
@@ -96,8 +95,7 @@ class TcQdiscParser(AbstractParser):
         except pp.ParseException:
             pass
 
-    def __parse_netem_param(
-            self, line, parse_param_name, word_pattern, key_name=None):
+    def __parse_netem_param(self, line, parse_param_name, word_pattern, key_name=None):
         pattern = (
             pp.SkipTo(parse_param_name, include=True) +
             pp.Word(word_pattern))

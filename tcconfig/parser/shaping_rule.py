@@ -58,10 +58,8 @@ class TcShapingRuleParser(object):
     def get_tc_parameter(self):
         return {
             self.device: {
-                TrafficDirection.OUTGOING: self.__get_shaping_rule(
-                    self.device),
-                TrafficDirection.INCOMING: self.__get_shaping_rule(
-                    self.ifb_device),
+                TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
+                TrafficDirection.INCOMING: self.__get_shaping_rule(self.ifb_device),
             },
         }
 
@@ -122,8 +120,7 @@ class TcShapingRuleParser(object):
                 key_item_list.append(
                     dst_network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
-                    key_item_list.append("{:s}={:s}".format(
-                        Tc.Param.SRC_NETWORK, mangle.source))
+                    key_item_list.append("{:s}={:s}".format(Tc.Param.SRC_NETWORK, mangle.source))
                 key_item_list.append(protocol_format.format(mangle.protocol))
 
                 break
@@ -186,14 +183,12 @@ class TcShapingRuleParser(object):
         shaping_rule_mapping = {}
 
         for filter_param in filter_param_list:
-            self.__logger.debug(
-                "{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
+            self.__logger.debug("{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
             shaping_rule = {}
 
             filter_key = self.__get_filter_key(filter_param)
             if typepy.is_null_string(filter_key):
-                self.__logger.debug(
-                    "empty filter key: {}".format(filter_param))
+                self.__logger.debug("empty filter key: {}".format(filter_param))
                 continue
 
             for qdisc_param in qdisc_param_list:
@@ -210,12 +205,10 @@ class TcShapingRuleParser(object):
                 # shaping_rule[Tc.Param.PRIORITY] = filter_param.get(
                 #    Tc.Param.PRIORITY)
                 shaping_rule.update(self.__strip_param(
-                    qdisc_param,
-                    [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]))
+                    qdisc_param, [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]))
 
             for class_param in class_param_list:
-                self.__logger.debug(
-                    "{:s} param: {}".format(TcSubCommand.CLASS, class_param))
+                self.__logger.debug("{:s} param: {}".format(TcSubCommand.CLASS, class_param))
 
                 if class_param.get(Tc.Param.CLASS_ID) not in (
                         filter_param.get(Tc.Param.FLOW_ID),
@@ -230,28 +223,23 @@ class TcShapingRuleParser(object):
                     class_param, [Tc.Param.DEVICE, Tc.Param.CLASS_ID]))
 
             if not shaping_rule:
-                self.__logger.debug(
-                    "shaping rule not found for '{}'".format(filter_param))
+                self.__logger.debug("shaping rule not found for '{}'".format(filter_param))
                 continue
 
-            self.__logger.debug(
-                "shaping rule found: {} {}".format(filter_key, shaping_rule))
+            self.__logger.debug("shaping rule found: {} {}".format(filter_key, shaping_rule))
 
             shaping_rule_mapping[filter_key] = shaping_rule
 
         return shaping_rule_mapping
 
     def __parse_tc_qdisc(self, device):
-        return TcQdiscParser(self.__con).parse(
-            device, run_tc_show(TcSubCommand.QDISC, device))
+        return TcQdiscParser(self.__con).parse(device, run_tc_show(TcSubCommand.QDISC, device))
 
     def __parse_tc_filter(self, device):
-        return self.__filter_parser.parse(
-            device, run_tc_show(TcSubCommand.FILTER, device))
+        return self.__filter_parser.parse(device, run_tc_show(TcSubCommand.FILTER, device))
 
     def __parse_tc_class(self, device):
-        return TcClassParser(self.__con).parse(
-            device, run_tc_show(TcSubCommand.CLASS, device))
+        return TcClassParser(self.__con).parse(device, run_tc_show(TcSubCommand.CLASS, device))
 
     @staticmethod
     def __strip_param(params, strip_param_list):

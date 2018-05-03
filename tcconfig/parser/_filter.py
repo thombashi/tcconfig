@@ -35,13 +35,11 @@ class TcFilterParser(AbstractParser):
     __FILTER_FLOWID_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("flowid", include=True) +
-        pp.Word(pp.hexnums + ":")
-    )
+        pp.Word(pp.hexnums + ":"))
     __FILTER_PROTOCOL_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("protocol", include=True) +
-        pp.Word(pp.alphanums)
-    )
+        pp.Word(pp.alphanums))
     __FILTER_PRIORITY_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("pref", include=True) +
@@ -49,21 +47,18 @@ class TcFilterParser(AbstractParser):
     __FILTER_ID_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("fh", include=True) +
-        pp.Word(pp.hexnums + ":")
-    )
+        pp.Word(pp.hexnums + ":"))
     __FILTER_MATCH_PATTERN = (
         pp.Literal("match") +
         pp.Word(pp.alphanums + "/") +
         pp.Literal("at") +
-        pp.Word(pp.nums)
-    )
+        pp.Word(pp.nums))
     __FILTER_MANGLE_MARK_PATTERN = (
         pp.Literal("filter parent") +
         pp.SkipTo("handle", include=True) +
         pp.Word(pp.hexnums) +
         pp.SkipTo("classid", include=True) +
-        pp.Word(pp.hexnums + ":")
-    )
+        pp.Word(pp.hexnums + ":"))
 
     @property
     def protocol(self):
@@ -145,8 +140,7 @@ class TcFilterParser(AbstractParser):
                 elif self.__ip_version == 6:
                     self.__parse_filter_ipv6(line)
                 else:
-                    raise ValueError(
-                        "unknown ip version: {}".format(self.__ip_version))
+                    raise ValueError("unknown ip version: {}".format(self.__ip_version))
             except pp.ParseException:
                 logger.debug("failed to parse filter: {}".format(line))
 
@@ -169,8 +163,7 @@ class TcFilterParser(AbstractParser):
             return None
 
         match = re.search(
-            "Egress Redirect to device ifb[\d]+",
-            self._to_unicode(text), re.MULTILINE)
+            "Egress Redirect to device ifb[\d]+", self._to_unicode(text), re.MULTILINE)
         if match is None:
             return None
 
@@ -236,8 +229,7 @@ class TcFilterParser(AbstractParser):
         self.__handle = int("0" + parsed_list[-3], 16)
         logger.debug(
             "succeed to parse mangle mark: "
-            "classid={}, handle={}, line={}".format(
-                self.__classid, self.__handle, line))
+            "classid={}, handle={}, line={}".format(self.__classid, self.__handle, line))
 
     def __parse_filter_ip_line(self, line):
         parsed_list = self.__FILTER_MATCH_PATTERN.parseString(line)
@@ -248,8 +240,7 @@ class TcFilterParser(AbstractParser):
 
     def __parse_filter_ipv4_network(self, value_hex, mask_hex, match_id):
         ipaddr = ".".join([
-            str(int(value_hex[i: i + 2], 16))
-            for i in range(0, len(value_hex), 2)
+            str(int(value_hex[i: i + 2], 16)) for i in range(0, len(value_hex), 2)
         ])
         netmask = bin(int(mask_hex, 16)).count("1")
         network = "{:s}/{:d}".format(ipaddr, netmask)
@@ -284,8 +275,7 @@ class TcFilterParser(AbstractParser):
                 break
 
             try:
-                value_hex, mask_hex, match_id = self.__parse_filter_ip_line(
-                    line)
+                value_hex, mask_hex, match_id = self.__parse_filter_ip_line(line)
             except pp.ParseException:
                 break
 
@@ -343,17 +333,14 @@ class TcFilterParser(AbstractParser):
         src_port_hex = value_hex[:4]
         dst_port_hex = value_hex[4:]
 
-        logger.debug(
-            "parse ipv4 port: src-port-hex={}, dst-port-hex={}".format(
-                src_port_hex, dst_port_hex))
+        logger.debug("parse ipv4 port: src-port-hex={}, dst-port-hex={}".format(
+            src_port_hex, dst_port_hex))
 
         src_port_decimal = int(src_port_hex, 16)
-        self.__filter_src_port = (
-            src_port_decimal if src_port_decimal != 0 else None)
+        self.__filter_src_port = (src_port_decimal if src_port_decimal != 0 else None)
 
         dst_port_decimal = int(dst_port_hex, 16)
-        self.__filter_dst_port = (
-            dst_port_decimal if dst_port_decimal != 0 else None)
+        self.__filter_dst_port = (dst_port_decimal if dst_port_decimal != 0 else None)
 
     def __parse_filter_ipv4(self, line):
         value_hex, mask_hex, match_id = self.__parse_filter_ip_line(line)
@@ -369,9 +356,8 @@ class TcFilterParser(AbstractParser):
                           self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST +
                           [self.FilterMatchIdIpv6.PORT]):
             logger.warn(
-                "unknown match id for an IPv4 filter: "
-                "might be an IPv6 filter. try to use --ipv6 option. "
-                "(id={})".format(match_id))
+                "unknown match id for an IPv4 filter: might be an IPv6 filter. "
+                "try to use --ipv6 option. (id={})".format(match_id))
             return
         else:
             logger.debug("unknown match id: {}".format(match_id))

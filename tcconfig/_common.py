@@ -56,22 +56,16 @@ def initialize_cli(options):
     if options.log_level == logbook.DEBUG:
         info_format_str = debug_format_str
     else:
-        info_format_str = (
-            "[{record.level_name}] {record.channel}: {record.message}")
+        info_format_str = "[{record.level_name}] {record.channel}: {record.message}"
 
-    logbook.StderrHandler(
-        level=logbook.DEBUG, format_string=debug_format_str
-    ).push_application()
-    logbook.StderrHandler(
-        level=logbook.INFO, format_string=info_format_str
-    ).push_application()
+    logbook.StderrHandler(level=logbook.DEBUG, format_string=debug_format_str).push_application()
+    logbook.StderrHandler(level=logbook.INFO, format_string=info_format_str).push_application()
 
     set_log_level(options.log_level)
     spr.SubprocessRunner.is_save_history = True
 
     if options.is_output_stacktrace:
-        spr.SubprocessRunner.is_output_stacktrace = (
-            options.is_output_stacktrace)
+        spr.SubprocessRunner.is_output_stacktrace = options.is_output_stacktrace
 
 
 def is_execute_tc_command(tc_command_output):

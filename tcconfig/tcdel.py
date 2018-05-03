@@ -66,9 +66,8 @@ def create_tc_obj(options):
                 Tc.Param.SRC_PORT, Tc.Param.DST_PORT],
             where=SqlQuery.make_where(Tc.Param.FILTER_ID, options.filter_id))
         if not result:
-            logger.error(
-                "shaping rule not found associated with the id ({}).".format(
-                    options.filter_id))
+            logger.error("shaping rule not found associated with the id ({}).".format(
+                options.filter_id))
             sys.exit(1)
 
         filter_param = result[0]
@@ -133,8 +132,7 @@ def main():
         return return_code
     elif options.tc_command_output == TcCommandOutput.SCRIPT:
         set_logger(True)
-        write_tc_script(
-            Tc.Command.TCDEL, command_history, filename_suffix=options.device)
+        write_tc_script(Tc.Command.TCDEL, command_history, filename_suffix=options.device)
         return return_code
 
     logger.debug("command history\n{}".format(command_history))

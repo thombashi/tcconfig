@@ -380,12 +380,10 @@ def main():
     if (options.is_add_shaping_rule and
             TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()):
         logger.error(
-            "adding a shaping rule failed. a shaping rule for the same "
-            "network/port already exist. try to execute with: "
-            "(a) --overwrite option if you want to overwrite "
-            "the existing rules. "
-            "(b) --change option if you want to change the existing "
-            "rule parameter.")
+            "adding a shaping rule failed. a shaping rule for the same network/port "
+            "already exist. try to execute with: "
+            "(a) --overwrite option if you want to overwrite the existing rules. "
+            "(b) --change option if you want to change the existing rule parameter.")
         return errno.EINVAL
 
     try:
@@ -401,8 +399,7 @@ def main():
         return 0
 
     if options.tc_command_output == TcCommandOutput.SCRIPT:
-        write_tc_script(
-            Tc.Command.TCSET, command_history, filename_suffix=options.device)
+        write_tc_script(Tc.Command.TCSET, command_history, filename_suffix=options.device)
         return 0
 
     logger.debug("command history\n{}".format(command_history))
