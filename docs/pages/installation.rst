@@ -22,22 +22,6 @@ Install in Debian/Ubuntu from a deb package
         $ sudo dpkg -i tcconfig_0.17.1_amd64.deb
 
 
-Installing from files
-------------------------------
-The following package includes ``tcconfig`` and dependency packages.
-This package is for environments which cannot access to
-`PyPI <https://pypi.python.org/pypi>`__ directly.
-
-How to install:
-
-1. Navigate to ``https://github.com/thombashi/tcconfig/releases/``
-2. Download the latest version of ``tcconfig_wheel.tar.gz``
-3. Copy ``tcconfig_wheel.tar.gz`` to installation target
-4. ``tar xvf tcconfig_wheel.tar.gz``
-5. ``cd tcconfig_wheel/``
-6. ``./install.sh``
-
-
 Dependencies
 ============
 Python 2.7+ or 3.4+
@@ -45,8 +29,8 @@ Python 2.7+ or 3.4+
 Linux packages
 --------------
 - mandatory: required for ``tc`` command:
-    - `ubuntu`/`debian`: ``iproute2``
-    - `fedora`/`RHEL`: ``iproute-tc``
+    - `Ubuntu`/`Debian`: ``iproute2``
+    - `Fedora`/`RHEL`: ``iproute-tc``
 - optional: required to when you use ``--iptables`` option:
     - ``iptables``
 
@@ -62,6 +46,7 @@ Dependency python packages are automatically installed during
 - `DataPropery <https://github.com/thombashi/DataProperty>`__
 - `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
 - `logbook <http://logbook.readthedocs.io/en/stable/>`__
+- `msgfy <https://github.com/thombashi/msgfy>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
 - `six <https://pypi.python.org/pypi/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
