@@ -31,17 +31,23 @@ def logging_context(name):
 
 
 def find_bin_path(command):
+    def _to_regular_bin_path(path):
+        if os.path.islink(path):
+            return os.readlink(path)
+
+        return path
+
     if command in _bin_path_cache:
         return _bin_path_cache.get(command)
 
     bin_path = spr.Which(command)
     if bin_path.is_exist():
-        _bin_path_cache[command] = bin_path.abspath()
+        _bin_path_cache[command] = _to_regular_bin_path(bin_path.abspath())
         return _bin_path_cache[command]
 
     for sbin_path in ("/sbin/{:s}".format(command), "/usr/sbin/{:s}".format(command)):
         if os.path.isfile(sbin_path):
-            _bin_path_cache[command] = sbin_path
+            _bin_path_cache[command] = _to_regular_bin_path(sbin_path)
             return _bin_path_cache[command]
 
     return None
