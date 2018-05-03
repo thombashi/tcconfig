@@ -87,13 +87,11 @@ class Test_tcset_two_network(object):
 
         # w/o tc network ---
         transmitter.destination_host = dst_host_option
-        pingparser.parse(transmitter.ping().stdout)
-        without_tc_rtt_avg = pingparser.rtt_avg
+        without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
         # w/ tc network ---
         transmitter.destination_host = dst_host_ex_option
-        pingparser.parse(transmitter.ping().stdout)
-        with_tc_rtt_avg = pingparser.rtt_avg
+        with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg

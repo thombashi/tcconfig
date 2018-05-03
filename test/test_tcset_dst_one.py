@@ -72,8 +72,7 @@ class Test_tcset_one_network(object):
         # w/o latency tc ---
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        without_tc_rtt_avg = pingparser.rtt_avg
+        without_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
         # w/ latency tc ---
         assert SubprocessRunner([
@@ -84,9 +83,8 @@ class Test_tcset_one_network(object):
         ]).run() == 0
 
         ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        with_tc_rtt_avg = pingparser.rtt_avg
+        assert ping_result.returncode == 0        
+        with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
@@ -109,9 +107,9 @@ class Test_tcset_one_network(object):
         # w/o latency tc ---
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        without_tc_rtt_avg = pingparser.rtt_avg
-        without_tc_rtt_mdev = pingparser.rtt_mdev
+        ping_stats = pingparser.parse(ping_result)
+        without_tc_rtt_avg = ping_stats.rtt_avg
+        without_tc_rtt_mdev = ping_stats.rtt_mdev
 
         # w/ latency tc ---
         assert SubprocessRunner([
@@ -123,9 +121,9 @@ class Test_tcset_one_network(object):
 
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        with_tc_rtt_avg = pingparser.rtt_avg
-        with_tc_rtt_mdev = pingparser.rtt_mdev
+        ping_stats = pingparser.parse(ping_result)
+        with_tc_rtt_avg = ping_stats.rtt_avg
+        with_tc_rtt_mdev = ping_stats.rtt_mdev
 
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
@@ -152,8 +150,7 @@ class Test_tcset_one_network(object):
         # w/o traffic shaping ---
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        without_tc_loss_rate = pingparser.packet_loss_rate
+        without_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
 
         # w/ traffic shaping ---
         assert SubprocessRunner([
@@ -164,8 +161,7 @@ class Test_tcset_one_network(object):
 
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        with_tc_loss_rate = pingparser.packet_loss_rate
+        with_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
 
         # check packet loss rate ---
         loss_diff = with_tc_loss_rate - without_tc_loss_rate
@@ -188,8 +184,7 @@ class Test_tcset_one_network(object):
         # w/o packet duplicate tc ---
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        without_tc_duplicate_rate = pingparser.packet_duplicate_rate
+        without_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
 
         # w/ packet duplicate tc ---
         assert SubprocessRunner([
@@ -200,8 +195,7 @@ class Test_tcset_one_network(object):
 
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        with_tc_duplicate_rate = pingparser.packet_duplicate_rate
+        with_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
 
         # assertion ---
         duplicate_rate_diff = (
@@ -233,8 +227,7 @@ class Test_tcset_one_network(object):
 
         ping_result = transmitter.ping()
         assert ping_result.returncode == 0
-        pingparser.parse(ping_result)
-        with_tc_rtt_avg = pingparser.rtt_avg
+        with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
         # exclude certain network ---
         assert SubprocessRunner([
@@ -245,9 +238,7 @@ class Test_tcset_one_network(object):
             "--delay {:d}ms".format(delay),
             "--overwrite",
         ]).run() == 0
-
-        pingparser.parse(transmitter.ping())
-        without_tc_rtt_avg = pingparser.rtt_avg
+        without_tc_rtt_avg = pingparser.parse(transmitter.ping()).rtt_avg
 
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg

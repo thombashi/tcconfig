@@ -77,8 +77,7 @@ class Test_tcset_one_network(object):
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
-        pingparser.parse(transmitter.ping().stdout)
-        without_tc_rtt_avg = pingparser.rtt_avg
+        without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
         # w/ latency tc ---
         command_list = [
@@ -90,8 +89,7 @@ class Test_tcset_one_network(object):
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        pingparser.parse(transmitter.ping().stdout)
-        with_tc_rtt_avg = pingparser.rtt_avg
+        with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
         # assertion ---
         rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
@@ -136,8 +134,7 @@ class Test_tcset_exclude(object):
         transmitter.destination_host = dst_host_option
 
         # w/o latency tc ---
-        pingparser.parse(transmitter.ping().stdout)
-        without_tc_rtt_avg = pingparser.rtt_avg
+        without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
         # w/o latency tc (exclude network) ---
         command_list = [
@@ -151,8 +148,7 @@ class Test_tcset_exclude(object):
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        pingparser.parse(transmitter.ping().stdout)
-        exclude_tc_rtt_avg = pingparser.rtt_avg
+        exclude_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
         # assertion ---
         rtt_diff = exclude_tc_rtt_avg - without_tc_rtt_avg
