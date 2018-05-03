@@ -379,11 +379,12 @@ def main():
 
     if (options.is_add_shaping_rule and
             TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()):
-        logger.error(
+        logger.error("\n".join([
             "adding a shaping rule failed. a shaping rule for the same network/port "
-            "already exist. try to execute with: "
-            "(a) --overwrite option if you want to overwrite the existing rules. "
-            "(b) --change option if you want to change the existing rule parameter.")
+            "already exist. try to execute with:",
+            "  (a) --overwrite option if you want to overwrite the existing rules.",
+            "  (b) --change option if you want to change the existing rule parameter.",
+        ]))
         return errno.EINVAL
 
     try:
