@@ -14,7 +14,7 @@ import sys
 import subprocrunner as spr
 
 from ._common import find_bin_path
-from ._const import TcSubCommand
+from ._const import PERMISSION_ERROR_MSG_FORMAT, TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -78,10 +78,8 @@ def has_execution_authority(command):
 
 def check_tc_execution_authority():
     if not has_execution_authority("tc"):
-        logger.error("\n".join([
-            "Permission denied: you must be root or set Linux capabilities to execute the command:",
-            "   $ sudo setcap cap_net_admin+ep {:s}".format(find_bin_path("tc"))
-        ]))
+        logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
+            capabilities=",".join(get_required_capabilities("tc")), bin_path=find_bin_path("tc")))
         sys.exit(errno.EPERM)
 
 

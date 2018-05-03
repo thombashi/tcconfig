@@ -12,6 +12,11 @@ import enum
 KILO_SIZE = 1000
 LIST_MANGLE_TABLE_OPTION = "-t mangle --line-numbers -L"
 IPV6_OPTION_ERROR_MSG_FORMAT = "{}. --ipv6 option required to use IPv6 address."
+PERMISSION_ERROR_MSG_FORMAT = "\n".join([
+    "Permission denied: you must be root or set Linux capabilities to execute the command.",
+    "  How to setup Linux capabilities:",
+    "    $ sudo setcap {capabilities:s}+ep {bin_path:s}"
+])
 
 
 @enum.unique
