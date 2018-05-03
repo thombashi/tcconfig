@@ -19,7 +19,7 @@ from ._logger import logger
 def get_required_capabilities(command):
     required_capabilities_map = {
         "tc": ["cap_net_admin"],
-        "ip": ["cap_net_raw"],
+        "ip": ["cap_net_raw", "cap_net_admin"],
         "iptables": ["cap_net_raw", "cap_net_admin"],
     }
 
