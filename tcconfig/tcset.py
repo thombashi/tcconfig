@@ -21,7 +21,8 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import (
-    IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
+    IPV6_OPTION_ERROR_MSG_FORMAT, PERMISSION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc,
+    TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
 from ._error import InvalidParameterError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._logger import logger, set_log_level
@@ -302,6 +303,18 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
     return return_code
 
 
+def check_ip_execution_authority():
+    from ._common import find_bin_path
+    from ._capabilities import has_execution_authority, get_required_capabilities
+
+    if has_execution_authority("ip"):
+        return
+
+    logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
+        capabilities=",".join(get_required_capabilities("ip")), bin_path=find_bin_path("ip")))
+    sys.exit(errno.EPERM)
+
+
 def main():
     options = get_arg_parser().parse_args()
 
@@ -311,6 +324,8 @@ def main():
         check_tc_command_installation()
         check_tc_execution_authority()
 
+        if options.direction == TrafficDirection.INCOMING:
+            check_ip_execution_authority()
     else:
         subprocrunner.SubprocessRunner.default_is_dry_run = True
 

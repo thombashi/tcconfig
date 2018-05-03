@@ -6,6 +6,7 @@
 
 from __future__ import absolute_import, division
 
+import errno
 import re
 
 import six
@@ -16,8 +17,8 @@ from typepy.type import RealNumber
 
 from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (
-    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
-    TrafficDirection)
+    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, PERMISSION_ERROR_MSG_FORMAT, ShapingAlgorithm, Tc,
+    TcCommandOutput, TcSubCommand, TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import InvalidParameterError, NetworkInterfaceNotFoundError, UnitNotFoundError
 from ._iptables import IptablesMangleController
@@ -527,12 +528,13 @@ class TrafficControl(object):
         else:
             notice_message = self.EXISTS_MSG_TEMPLATE.format(
                 "failed to add ip link: ip link already exists.")
+
         return_code |= run_command_helper(
-            "ip link add {:s} type ifb".format(self.ifb_device),
+            "{:s} link add {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
             self.REGEXP_FILE_EXISTS, notice_message)
 
         return_code |= spr.SubprocessRunner(
-            "ip link set dev {:s} up".format(self.ifb_device)).run()
+            "{:s} link set dev {:s} up".format(find_bin_path("ip"), self.ifb_device)).run()
 
         base_command = "{:s} add".format(get_tc_base_command(TcSubCommand.QDISC))
         if self.is_add_shaping_rule or self.is_change_shaping_rule:
@@ -556,13 +558,22 @@ class TrafficControl(object):
         return return_code
 
     def __delete_ifb_device(self):
+        from ._capabilities import has_execution_authority, get_required_capabilities
+
         verify_network_interface(self.ifb_device)
+
+        if not has_execution_authority("ip"):
+            logger.warn(PERMISSION_ERROR_MSG_FORMAT.format(
+                capabilities=",".join(get_required_capabilities("ip")),
+                bin_path=find_bin_path("ip")))
+
+            return errno.EPERM
 
         command_list = [
             "{:s} del dev {:s} root".format(
                 get_tc_base_command(TcSubCommand.QDISC), self.ifb_device),
-            "ip link set dev {:s} down".format(self.ifb_device),
-            "ip link delete {:s} type ifb".format(self.ifb_device),
+            "{:s} link set dev {:s} down".format(find_bin_path("ip"), self.ifb_device),
+            "{:s} link delete {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
         ]
 
         if all([spr.SubprocessRunner(command).run() != 0 for command in
