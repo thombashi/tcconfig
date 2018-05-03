@@ -22,7 +22,7 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import (
-    IPV6_OPTION_ERROR_MSG_FORMAT, PERMISSION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc,
+    IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc,
     TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
 from ._error import InvalidParameterError, ModuleNotFoundError, NetworkInterfaceNotFoundError
@@ -306,15 +306,12 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
 def check_ip_execution_authority():
     from ._common import find_bin_path
-    from ._capabilities import has_execution_authority, get_required_capabilities
+    from ._capabilities import has_execution_authority, get_permission_error_message
 
     if has_execution_authority("ip"):
         return
 
-    logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
-        command="ip",
-        capabilities=",".join(get_required_capabilities("ip")),
-        bin_path=find_bin_path("ip")))
+    logger.error(get_permission_error_message("ip"))
     sys.exit(errno.EPERM)
 
 

@@ -18,7 +18,7 @@ from typepy.type import RealNumber
 
 from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (
-    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, PERMISSION_ERROR_MSG_FORMAT, ShapingAlgorithm, Tc,
+    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, ShapingAlgorithm, Tc,
     TcCommandOutput, TcSubCommand, TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import InvalidParameterError, NetworkInterfaceNotFoundError, UnitNotFoundError
@@ -559,15 +559,12 @@ class TrafficControl(object):
         return return_code
 
     def __delete_ifb_device(self):
-        from ._capabilities import has_execution_authority, get_required_capabilities
+        from ._capabilities import has_execution_authority, get_permission_error_message
 
         verify_network_interface(self.ifb_device)
 
         if not has_execution_authority("ip"):
-            logger.warn(PERMISSION_ERROR_MSG_FORMAT.format(
-                command="ip",
-                capabilities=",".join(get_required_capabilities("ip")),
-                bin_path=find_bin_path("ip")))
+            logger.warn(get_permission_error_message("ip"))
 
             return errno.EPERM
 

@@ -12,7 +12,7 @@ import sys
 import subprocrunner as spr
 
 from ._common import find_bin_path
-from ._const import PERMISSION_ERROR_MSG_FORMAT, TcSubCommand
+from ._const import TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
@@ -26,13 +26,10 @@ def check_tc_command_installation():
 
 
 def check_tc_execution_authority():
-    from ._capabilities import get_required_capabilities, has_execution_authority
+    from ._capabilities import get_permission_error_message, has_execution_authority
 
     if not has_execution_authority("tc"):
-        logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
-            command="tc",
-            capabilities=",".join(get_required_capabilities("tc")),
-            bin_path=find_bin_path("tc")))
+        logger.error(get_permission_error_message("tc"))
         sys.exit(errno.EPERM)
 
 

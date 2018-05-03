@@ -13,7 +13,6 @@ import typepy
 from subprocrunner import SubprocessRunner
 from typepy.type import Integer
 
-from ._capabilities import has_execution_authority
 from ._common import find_bin_path
 from ._const import LIST_MANGLE_TABLE_OPTION, Network
 from ._logger import logger
@@ -218,5 +217,7 @@ class IptablesMangleController(object):
 
     @staticmethod
     def __check_execution_authority():
+        from ._capabilities import get_permission_error_message, has_execution_authority
+
         if not has_execution_authority("iptables"):
-            raise OSError(errno.EPERM, "no right to execute iptables")
+            raise OSError(errno.EPERM, get_permission_error_message("iptables"))

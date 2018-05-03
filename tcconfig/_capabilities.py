@@ -26,6 +26,19 @@ def get_required_capabilities(command):
     return required_capabilities_map[command]
 
 
+def get_permission_error_message(command):
+    PERMISSION_ERROR_MSG_FORMAT = "\n".join([
+        "Permission denied: you must be root or set Linux capabilities to execute the command.",
+        "  How to setup Linux capabilities for the {command:s} command:",
+        "    $ sudo setcap {capabilities:s}+ep {bin_path:s}"
+    ])
+
+    return PERMISSION_ERROR_MSG_FORMAT.format(
+        command=command,
+        capabilities=",".join(get_required_capabilities(command)),
+        bin_path=find_bin_path(command))
+
+
 def _has_capabilies(bin_path, capabilities):
     getcap_bin_path = find_bin_path("getcap")
 
