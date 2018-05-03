@@ -352,11 +352,11 @@ class TrafficControl(object):
             returncode = run_command_helper(
                 "{:s} del dev {:s} ingress".format(
                     get_tc_base_command(TcSubCommand.QDISC), self.device),
-                re.compile("|".join([
+                ignore_error_msg_regexp=re.compile("|".join([
                     "RTNETLINK answers: Invalid argument",
                     "RTNETLINK answers: No such file or directory",
                 ])),
-                "no qdisc to delete for the incoming device.")
+                notice_msg="no qdisc to delete for the incoming device.")
             result_list.append(returncode == 0)
 
         with logging_context("delete ifb device"):
@@ -404,7 +404,7 @@ class TrafficControl(object):
         )
 
         result = run_command_helper(
-            command=filter_del_command, error_regexp=None, notice_message=None)
+            command=filter_del_command, ignore_error_msg_regexp=None, notice_msg=None)
 
         rule_finder.clear()
         if not rule_finder.is_any_filter():
@@ -532,7 +532,7 @@ class TrafficControl(object):
 
         return_code |= run_command_helper(
             "{:s} link add {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
-            self.REGEXP_FILE_EXISTS, notice_message)
+            ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS, notice_msg=notice_message)
 
         return_code |= spr.SubprocessRunner(
             "{:s} link set dev {:s} up".format(find_bin_path("ip"), self.ifb_device)).run()
@@ -545,7 +545,7 @@ class TrafficControl(object):
                 "failed to '{:s}': ingress qdisc already exists.".format(base_command))
         return_code |= run_command_helper(
             "{:s} dev {:s} ingress".format(base_command, self.device),
-            self.REGEXP_FILE_EXISTS, notice_message)
+            ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS, notice_msg=notice_message)
 
         return_code |= spr.SubprocessRunner(" ".join([
             "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),

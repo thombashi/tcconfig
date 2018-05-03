@@ -74,16 +74,14 @@ class HtbShaper(AbstractShaper):
 
         run_command_helper(
             " ".join([
-                base_command,
-                self._dev,
-                "root",
+                base_command, self._dev, "root",
                 "handle {:s}".format(handle),
                 self.algorithm_name,
                 "default {:d}".format(self.__DEFAULT_CLASS_MINOR_ID),
             ]),
-            self._tc_obj.REGEXP_FILE_EXISTS,
-            message,
-            TcAlreadyExist)
+            ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
+            notice_msg=message,
+            exception_class=TcAlreadyExist)
 
         return self.__add_default_class()
 
@@ -119,14 +117,14 @@ class HtbShaper(AbstractShaper):
 
         run_command_helper(
             " ".join(command_item_list),
-            self._tc_obj.REGEXP_FILE_EXISTS,
-            self._tc_obj.EXISTS_MSG_TEMPLATE.format(
+            ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
+            notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{command:s}': class already exists "
                 "({dev:s}, parent={parent:s}, classid={classid:s}, "
                 "algo={algorithm:s}).".format(
                     command=base_command, dev=self._dev, parent=parent,
                     classid=classid, algorithm=self.algorithm_name)),
-            TcAlreadyExist)
+            exception_class=TcAlreadyExist)
 
     def _add_exclude_filter(self):
         import subprocrunner
@@ -277,12 +275,11 @@ class HtbShaper(AbstractShaper):
 
         return run_command_helper(
             " ".join([
-                base_command,
-                self._dev,
+                base_command, self._dev,
                 "parent {:s}".format(parent),
                 "classid {:s}".format(classid),
                 self.algorithm_name,
                 "rate {}kbit".format(get_no_limit_kbits(self._tc_device)),
             ]),
-            self._tc_obj.REGEXP_FILE_EXISTS,
-            message)
+            ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
+            notice_msg=message)

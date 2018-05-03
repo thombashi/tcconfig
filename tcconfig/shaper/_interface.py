@@ -115,8 +115,8 @@ class AbstractShaper(ShaperInterface):
 
         return run_command_helper(
             " ".join(command_item_list),
-            self._tc_obj.REGEXP_FILE_EXISTS,
-            self._tc_obj.EXISTS_MSG_TEMPLATE.format(
+            ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
+            notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{command:s}': netem qdisc already exists "
                 "(dev={dev:s}, parent={parent:s}, handle={handle:s})".format(
                     command=base_command, dev=self._tc_obj.get_tc_device(),

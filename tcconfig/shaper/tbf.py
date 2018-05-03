@@ -63,8 +63,8 @@ class TbfShaper(AbstractShaper):
                 base_command, self._dev, "root",
                 "handle {:s}".format(handle), "prio",
             ]),
-            self._tc_obj.REGEXP_FILE_EXISTS,
-            self._tc_obj.EXISTS_MSG_TEMPLATE.format(
+            ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
+            notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{command:s}': prio qdisc already exists "
                 "({dev:s}, algo={algorithm:s}, handle={handle:s}).".format(
                     command=base_command, dev=self._dev,
@@ -105,14 +105,12 @@ class TbfShaper(AbstractShaper):
 
         run_command_helper(
             command,
-            self._tc_obj.REGEXP_FILE_EXISTS,
-            self._tc_obj.EXISTS_MSG_TEMPLATE.format(
-                "failed to '{command:s}': qdisc already exists "
-                "({dev:s}, algo={algorithm:s}, parent={parent:s}, "
-                "handle={handle:s}).".format(
-                    command=base_command, dev=self._dev,
-                    algorithm=self.algorithm_name, parent=parent,
-                    handle=handle)))
+            ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
+            notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
+                "failed to '{command:s}': qdisc already exists ({dev:s}, algo={algorithm:s}, "
+                "parent={parent:s}, handle={handle:s}).".format(
+                    command=base_command, dev=self._dev, algorithm=self.algorithm_name,
+                    parent=parent, handle=handle)))
 
         self.__set_pre_network_filter()
 
