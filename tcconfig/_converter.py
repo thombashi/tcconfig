@@ -52,25 +52,21 @@ class Humanreadable(object):
         :raises InvalidParameterError:
         """
 
-        logger.debug("human readable size to bit: {}".format(
-            self.__readable_size))
+        logger.debug("human readable size to bit: {}".format(self.__readable_size))
 
         if not typepy.is_not_null_string(self.__readable_size):
-            raise TypeError(
-                "readable_size must be a string: actual={}".format(
-                    self.__readable_size))
+            raise TypeError("readable_size must be a string: actual={}".format(
+                self.__readable_size))
 
         self.__readable_size = self.__readable_size.strip()
 
         try:
             size = _RE_NUMBER.search(self.__readable_size).group()
         except AttributeError:
-            raise InvalidParameterError(
-                "invalid value", value=self.__readable_size)
+            raise InvalidParameterError("invalid value", value=self.__readable_size)
         size = float(size)
         if size < 0:
-            raise InvalidParameterError(
-                "size must be greater or equals to zero", value=size)
+            raise InvalidParameterError("size must be greater or equals to zero", value=size)
 
         unit = _RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
@@ -107,10 +103,8 @@ class Humanreadable(object):
 class HumanReadableTime(object):
     __VALID_MINUTE_UNIT_LIST = ["m", "min", "mins", "minute", "minutes"]
     __VALID_SEC_UNIT_LIST = ["s", "sec", "secs", "second", "seconds"]
-    __VALID_MSEC_UNIT_LIST = [
-        "ms", "msec", "msecs",  "millisecond", "milliseconds"]
-    __VALID_USEC_UNIT_LIST = [
-        "us", "usec", "usecs", "microsecond", "microseconds"]
+    __VALID_MSEC_UNIT_LIST = ["ms", "msec", "msecs",  "millisecond", "milliseconds"]
+    __VALID_USEC_UNIT_LIST = ["us", "usec", "usecs", "microsecond", "microseconds"]
     __VALID_UNIT_LIST = (
         __VALID_MINUTE_UNIT_LIST + __VALID_SEC_UNIT_LIST +
         __VALID_MSEC_UNIT_LIST + __VALID_USEC_UNIT_LIST)
@@ -167,8 +161,7 @@ class HumanReadableTime(object):
             if self < min_value:
                 raise InvalidParameterError(
                     "time value is too low",
-                    expected="greater than or equal to {}".format(min_value),
-                    value=self)
+                    expected="greater than or equal to {}".format(min_value), value=self)
 
         if max_value is not None:
             if not isinstance(max_value, HumanReadableTime):
@@ -177,8 +170,7 @@ class HumanReadableTime(object):
             if self > max_value:
                 raise InvalidParameterError(
                     "time value is too high",
-                    expected="less than or equal to {}".format(max_value),
-                    value=self)
+                    expected="less than or equal to {}".format(max_value), value=self)
 
         if self.__unit not in self.__VALID_UNIT_LIST:
             raise UnitNotFoundError(
@@ -200,8 +192,7 @@ class HumanReadableTime(object):
         match = _RE_NUMBER.search(self.__readable_time)
         if not match:
             raise InvalidParameterError(
-                "human-readable time must be include a number",
-                value=self.__readable_time)
+                "human-readable time must be include a number", value=self.__readable_time)
 
         return float(match.group())
 

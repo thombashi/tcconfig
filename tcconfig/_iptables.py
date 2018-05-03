@@ -103,34 +103,27 @@ class IptablesMangleMarkEntry(object):
         ]):
             command_item_list.append("-p {}".format(self.protocol))
         if self.__is_valid_srcdst(self.source):
-            command_item_list.append(
-                "-s {:s}".format(self.source))
+            command_item_list.append("-s {:s}".format(self.source))
         if self.__is_valid_srcdst(self.destination):
-            command_item_list.append(
-                "-d {:s}".format(self.destination))
+            command_item_list.append("-d {:s}".format(self.destination))
 
         return " ".join(command_item_list)
 
     def to_delete_command(self):
         Integer(self.line_number).validate()
 
-        return "{:s} -t mangle -D {:s} {}".format(
-            _iptables_bin_path, self.chain, self.line_number)
+        return "{:s} -t mangle -D {:s} {}".format(_iptables_bin_path, self.chain, self.line_number)
 
     @staticmethod
     def __is_valid_srcdst(srcdst):
-        return (
-            typepy.is_not_null_string(srcdst) and
-            srcdst not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE)
-        )
+        return (typepy.is_not_null_string(srcdst) and
+                srcdst not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE))
 
 
 class IptablesMangleController(object):
 
-    __RE_CHAIN = re.compile(
-        "Chain {:s} |Chain {:s} |Chain {:s} ".format(*VALID_CHAIN_LIST))
-    __RE_CHAIN_NAME = re.compile(
-        "{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))
+    __RE_CHAIN = re.compile("Chain {:s} |Chain {:s} |Chain {:s} ".format(*VALID_CHAIN_LIST))
+    __RE_CHAIN_NAME = re.compile("{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))
     __MAX_MARK_ID = 0xffffffff
     __MARK_ID_OFFSET = 100
 
@@ -156,8 +149,7 @@ class IptablesMangleController(object):
     def get_iptables(self):
         self.__check_execution_authority()
 
-        proc = SubprocessRunner(
-            "{:s} {:s}".format(_iptables_bin_path, LIST_MANGLE_TABLE_OPTION))
+        proc = SubprocessRunner("{:s} {:s}".format(_iptables_bin_path, LIST_MANGLE_TABLE_OPTION))
         if proc.run() != 0:
             raise RuntimeError(proc.stderr)
 
@@ -166,8 +158,7 @@ class IptablesMangleController(object):
     def get_unique_mark_id(self):
         self.__check_execution_authority()
 
-        mark_id_list = [
-            mangle.mark_id for mangle in self.parse()]
+        mark_id_list = [mangle.mark_id for mangle in self.parse()]
         logger.debug("mangle mark list: {}".format(mark_id_list))
 
         unique_mark_id = 1 + self.__MARK_ID_OFFSET
