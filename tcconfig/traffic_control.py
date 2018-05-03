@@ -9,6 +9,7 @@ from __future__ import absolute_import, division
 import errno
 import re
 
+import msgfy
 import six
 import subprocrunner as spr
 import typepy
@@ -362,7 +363,7 @@ class TrafficControl(object):
             try:
                 result_list.append(self.__delete_ifb_device() == 0)
             except NetworkInterfaceNotFoundError as e:
-                logger.debug("{:s}: {}".format(e.__class__.__name__, e))
+                logger.debug(msgfy.to_debug_message(e))
                 result_list.append(False)
 
         with logging_context("delete iptables mangle table entries"):

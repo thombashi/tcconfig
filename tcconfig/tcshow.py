@@ -9,6 +9,7 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
 
+import msgfy
 import simplejson as json
 import subprocrunner
 
@@ -60,7 +61,7 @@ def main():
                 device, options.ip_version, options.tc_command_output, logger
             ).get_tc_parameter())
         except NetworkInterfaceNotFoundError as e:
-            logger.debug(e)
+            logger.debug(msgfy.to_debug_message(e))
             continue
 
     command_history = "\n".join(subprocrunner.SubprocessRunner.get_history())

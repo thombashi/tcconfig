@@ -12,11 +12,13 @@ import os
 import sys
 
 import logbook
+import msgfy
 import subprocrunner as spr
 import typepy
 
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
 from ._logger import logger
+
 
 _bin_path_cache = {}
 
@@ -87,7 +89,7 @@ def normalize_tc_value(tc_obj):
         logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
         sys.exit(errno.EINVAL)
     except ValueError as e:
-        logger.error("{:s}: {}".format(e.__class__.__name__, e))
+        logger.error(msgfy.to_error_message(e))
         sys.exit(errno.EINVAL)
 
 

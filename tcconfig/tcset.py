@@ -12,6 +12,7 @@ import ipaddress
 import sys
 
 import logbook
+import msgfy
 import pyparsing as pp
 import six
 import subprocrunner
@@ -293,7 +294,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
     try:
         loader.load_tcconfig(config_file_path)
     except IOError as e:
-        logger.error("{:s}: {}".format(e.__class__.__name__, e))
+        logger.error(msgfy.to_error_message(e))
         return errno.EIO
 
     for tcconfig_command in loader.get_tcconfig_command_list():
@@ -376,7 +377,7 @@ def main():
         logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
         return errno.EINVAL
     except InvalidParameterError as e:
-        logger.error("{:s}: {}".format(e.__class__.__name__, e))
+        logger.error(msgfy.to_error_message(e))
         return errno.EINVAL
 
     normalize_tc_value(tc)
