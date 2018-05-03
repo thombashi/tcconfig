@@ -26,10 +26,8 @@ prerouting_mangle_mark_list = [
         source=_DEF_SRC,
         destination=_DEF_DST,
         chain="PREROUTING",
-        protocol="all"
-    ),
+        protocol="all"),
 ]
-
 input_mangle_mark_list = [
     IptablesMangleMarkEntry(
         ip_version=4,
@@ -38,10 +36,8 @@ input_mangle_mark_list = [
         source="anywhere",
         destination=_DEF_DST,
         chain="INPUT",
-        protocol="all"
-    ),
+        protocol="all"),
 ]
-
 output_mangle_mark_list = [
     IptablesMangleMarkEntry(
         ip_version=4,
@@ -50,8 +46,7 @@ output_mangle_mark_list = [
         source=_DEF_SRC,
         destination=_DEF_DST,
         chain="OUTPUT",
-        protocol="tcp"
-    ),
+        protocol="tcp"),
     IptablesMangleMarkEntry(
         ip_version=4,
         line_number=2,
@@ -59,8 +54,7 @@ output_mangle_mark_list = [
         source=_DEF_SRC,
         destination="anywhere",
         chain="OUTPUT",
-        protocol="all"
-    ),
+        protocol="all"),
     IptablesMangleMarkEntry(
         ip_version=4,
         line_number=3,
@@ -68,21 +62,16 @@ output_mangle_mark_list = [
         source="anywhere",
         destination="anywhere",
         chain="OUTPUT",
-        protocol="all"
-    ),
+        protocol="all"),
 ]
-
 mangle_mark_list = (
     prerouting_mangle_mark_list +
     input_mangle_mark_list +
-    output_mangle_mark_list
-)
-
+    output_mangle_mark_list)
 reverse_mangle_mark_list = (
     list(reversed(prerouting_mangle_mark_list)) +
     list(reversed(input_mangle_mark_list)) +
-    list(reversed(output_mangle_mark_list))
-)
+    list(reversed(output_mangle_mark_list)))
 
 
 @pytest.fixture
@@ -101,10 +90,7 @@ class Test_IptablesMangleMark_to_append_command(object):
     _CMD_PREFIX = get_iptables_base_command() + " -A {:s} -t mangle -j MARK"
 
     @pytest.mark.parametrize(
-        [
-            "mark_id", "source", "destination", "chain", "protocol",
-            "line_number", "expected"
-        ],
+        ["mark_id", "source", "destination", "chain", "protocol", "line_number", "expected"],
         [
             [
                 2, _DEF_SRC, _DEF_DST, "PREROUTING", "all", None,
@@ -136,14 +122,10 @@ class Test_IptablesMangleMark_to_append_command(object):
                 "{} --set-mark 1 -p all".format(
                     _CMD_PREFIX.format("OUTPUT")),
             ],
-        ]
-    )
-    def test_normal(
-            self, mark_id, source, destination, chain, protocol, line_number,
-            expected):
+        ])
+    def test_normal(self, mark_id, source, destination, chain, protocol, line_number, expected):
         mark = IptablesMangleMarkEntry(
-            ip_version=4,
-            mark_id=mark_id, source=source, destination=destination,
+            ip_version=4, mark_id=mark_id, source=source, destination=destination,
             chain=chain, protocol=protocol, line_number=line_number)
         assert mark.to_append_command() == expected
 
@@ -151,10 +133,7 @@ class Test_IptablesMangleMark_to_append_command(object):
 class Test_IptablesMangleMark_to_delete_command(object):
 
     @pytest.mark.parametrize(
-        [
-            "mark_id", "source", "destination",  "chain", "protocol",
-            "line_number", "expected"
-        ],
+        ["mark_id", "source", "destination",  "chain", "protocol", "line_number", "expected"],
         [
             [
                 2, _DEF_SRC, _DEF_DST, "PREROUTING", "all", 1,
@@ -164,35 +143,21 @@ class Test_IptablesMangleMark_to_delete_command(object):
                 20, None, None, "OUTPUT", "all", 2,
                 "{:s} -t mangle -D OUTPUT 2".format(get_iptables_base_command()),
             ],
-        ]
-    )
-    def test_normal(
-            self, mark_id, source, destination, chain, protocol, line_number,
-            expected):
+        ])
+    def test_normal(self, mark_id, source, destination, chain, protocol, line_number, expected):
         mark = IptablesMangleMarkEntry(
-            ip_version=4,
-            mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
+            ip_version=4, mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
             chain=chain, protocol=protocol, line_number=line_number)
         assert mark.to_delete_command() == expected
 
     @pytest.mark.parametrize(
+        ["mark_id", "source", "destination", "chain", "protocol", "line_number", "expected"],
         [
-            "mark_id", "source", "destination", "chain", "protocol",
-            "line_number", "expected"
-        ],
-        [
-            [
-                2, _DEF_SRC, _DEF_DST, "OUTPUT", "all", None,
-                TypeError,
-            ],
-        ]
-    )
-    def test_exception(
-            self, mark_id, source, destination, chain, protocol, line_number,
-            expected):
+            [2, _DEF_SRC, _DEF_DST, "OUTPUT", "all", None, TypeError],
+        ])
+    def test_exception(self, mark_id, source, destination, chain, protocol, line_number, expected):
         mark = IptablesMangleMarkEntry(
-            ip_version=4,
-            mark_id=mark_id, source=source, destination=destination,
+            ip_version=4, mark_id=mark_id, source=source, destination=destination,
             chain=chain, protocol=protocol, line_number=line_number)
         with pytest.raises(expected):
             mark.to_delete_command()
@@ -210,8 +175,7 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
             assert mark_id == (i + 101)
 
             mangle_mark = IptablesMangleMarkEntry(
-                ip_version=4,
-                mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
+                ip_version=4, mark_id=mark_id, source=_DEF_SRC, destination=_DEF_DST,
                 chain=random.choice(VALID_CHAIN_LIST))
 
             assert iptables_ctrl_ipv4.add(mangle_mark) == 0
@@ -256,9 +220,7 @@ class Test_IptablesMangleController_parse(object):
         for mangle_mark in mangle_mark_list:
             assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
-        for lhs_mangle, rhs_mangle in zip(
-                iptables_ctrl_ipv4.parse(), reverse_mangle_mark_list):
-
+        for lhs_mangle, rhs_mangle in zip(iptables_ctrl_ipv4.parse(), reverse_mangle_mark_list):
             print("lhs: {}".format(lhs_mangle))
             print("rhs: {}".format(rhs_mangle))
 

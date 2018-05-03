@@ -38,9 +38,7 @@ def is_invalid_param(rate, delay, loss, corrupt):
         corrupt,
     ]
 
-    return all([
-        typepy.is_null_string(param) for param in params
-    ])
+    return all([typepy.is_null_string(param) for param in params])
 
 
 class NormalTestValue(object):
@@ -109,8 +107,7 @@ class Test_tcconfig(object):
             # "is_enable_iptables",
         ],
         [
-            opt_list
-            for opt_list in AllPairs([
+            opt_list for opt_list in AllPairs([
                 NormalTestValue.RATE_LIST,
                 NormalTestValue.DELAY_LIST,
                 NormalTestValue.DELAY_DISTRO_LIST,
@@ -139,8 +136,7 @@ class Test_tcconfig(object):
         execute_tcdel(device_value)
 
         command = " ".join([
-            Tc.Command.TCSET,
-            device_option,
+            Tc.Command.TCSET, device_option,
             rate, delay, delay_distro, loss, corrupt,
             direction, network, port, overwrite,
             # is_enable_iptables,
