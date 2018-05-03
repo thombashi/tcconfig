@@ -312,7 +312,9 @@ def check_ip_execution_authority():
         return
 
     logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
-        capabilities=",".join(get_required_capabilities("ip")), bin_path=find_bin_path("ip")))
+        command="ip",
+        capabilities=",".join(get_required_capabilities("ip")),
+        bin_path=find_bin_path("ip")))
     sys.exit(errno.EPERM)
 
 

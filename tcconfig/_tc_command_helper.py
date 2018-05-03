@@ -30,7 +30,9 @@ def check_tc_execution_authority():
 
     if not has_execution_authority("tc"):
         logger.error(PERMISSION_ERROR_MSG_FORMAT.format(
-            capabilities=",".join(get_required_capabilities("tc")), bin_path=find_bin_path("tc")))
+            command="tc",
+            capabilities=",".join(get_required_capabilities("tc")),
+            bin_path=find_bin_path("tc")))
         sys.exit(errno.EPERM)
 
 

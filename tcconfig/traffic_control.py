@@ -565,6 +565,7 @@ class TrafficControl(object):
 
         if not has_execution_authority("ip"):
             logger.warn(PERMISSION_ERROR_MSG_FORMAT.format(
+                command="ip",
                 capabilities=",".join(get_required_capabilities("ip")),
                 bin_path=find_bin_path("ip")))
 
