@@ -24,7 +24,10 @@ VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
 
 
 def get_iptables_base_command():
-    return "{:s} iptables".format(find_bin_path("iptables"))
+    if find_bin_path("iptables"):
+        return "{:s} iptables".format(find_bin_path("iptables"))
+
+    return None
 
 
 class IptablesMangleMarkEntry(object):

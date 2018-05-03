@@ -22,7 +22,7 @@ from ._const import (
     TcCommandOutput, TcSubCommand, TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import NetworkInterfaceNotFoundError, ParameterError, UnitNotFoundError
-from ._iptables import IptablesMangleController
+from ._iptables import IptablesMangleController, get_iptables_base_command
 from ._logger import logger
 from ._network import get_no_limit_kbits, sanitize_network, verify_network_interface
 from ._shaping_rule_finder import TcShapingRuleFinder
@@ -306,15 +306,17 @@ class TrafficControl(object):
 
     def get_command_history(self):
         def tc_filter(command):
-            if re.search("^{:s} {:s}".format(
-                    find_bin_path("iptables"), re.escape(LIST_MANGLE_TABLE_OPTION)), command):
-                return False
+            if get_iptables_base_command():
+                if re.search("^{:s} {:s}".format(
+                        get_iptables_base_command(), re.escape(LIST_MANGLE_TABLE_OPTION)), command):
+                    return False
 
             if re.search("^{:s} .* show dev".format(find_bin_path("tc")), command):
                 return False
 
-            if re.search("^{:s}".format(find_bin_path("getcap")), command):
-                return False
+            if find_bin_path("getcap"):
+                if re.search("^{:s}".format(find_bin_path("getcap")), command):
+                    return False
 
             return True
 
