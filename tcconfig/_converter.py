@@ -11,7 +11,7 @@ from collections import namedtuple
 
 import typepy
 
-from ._error import InvalidParameterError, UnitNotFoundError
+from ._error import ParameterError, UnitNotFoundError
 from ._logger import logger
 
 
@@ -49,7 +49,7 @@ class Humanreadable(object):
 
     def to_bit(self):
         """
-        :raises InvalidParameterError:
+        :raises ParameterError:
         """
 
         logger.debug("human readable size to bit: {}".format(self.__readable_size))
@@ -63,10 +63,10 @@ class Humanreadable(object):
         try:
             size = _RE_NUMBER.search(self.__readable_size).group()
         except AttributeError:
-            raise InvalidParameterError("invalid value", value=self.__readable_size)
+            raise ParameterError("invalid value", value=self.__readable_size)
         size = float(size)
         if size < 0:
-            raise InvalidParameterError("size must be greater or equals to zero", value=size)
+            raise ParameterError("size must be greater or equals to zero", value=size)
 
         unit = _RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
@@ -84,9 +84,8 @@ class Humanreadable(object):
         VALID_KILLO_SIZE = [1000, 1024]
 
         if self.kilo_size not in VALID_KILLO_SIZE:
-            raise InvalidParameterError(
-                "invalid kilo size",
-                expected=VALID_KILLO_SIZE, value=self.kilo_size)
+            raise ParameterError(
+                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.kilo_size)
 
     def __get_coefficient(self, unit_str):
         self.__validate_kilo_size()
@@ -96,8 +95,7 @@ class Humanreadable(object):
                 return self.kilo_size ** unit.factor
 
         raise UnitNotFoundError(
-            "unit not found", value=unit_str,
-            available_unit="b/bps/k/kbps/m/mbps/g/gbps/t/tbps")
+            "unit not found", value=unit_str, available_unit="b/bps/k/kbps/m/mbps/g/gbps/t/tbps")
 
 
 class HumanReadableTime(object):
@@ -159,7 +157,7 @@ class HumanReadableTime(object):
                 min_value = HumanReadableTime(min_value)
 
             if self < min_value:
-                raise InvalidParameterError(
+                raise ParameterError(
                     "time value is too low",
                     expected="greater than or equal to {}".format(min_value), value=self)
 
@@ -168,7 +166,7 @@ class HumanReadableTime(object):
                 max_value = HumanReadableTime(max_value)
 
             if self > max_value:
-                raise InvalidParameterError(
+                raise ParameterError(
                     "time value is too high",
                     expected="less than or equal to {}".format(max_value), value=self)
 
@@ -191,7 +189,7 @@ class HumanReadableTime(object):
     def __get_number(self):
         match = _RE_NUMBER.search(self.__readable_time)
         if not match:
-            raise InvalidParameterError(
+            raise ParameterError(
                 "human-readable time must be include a number", value=self.__readable_time)
 
         return float(match.group())

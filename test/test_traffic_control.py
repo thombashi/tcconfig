@@ -9,7 +9,7 @@ import itertools
 import pytest
 from allpairspy import AllPairs
 from tcconfig._const import ShapingAlgorithm, Tc, TrafficDirection
-from tcconfig._error import InvalidParameterError, UnitNotFoundError
+from tcconfig._error import ParameterError, UnitNotFoundError
 from tcconfig.traffic_control import TrafficControl
 
 from .common import is_invalid_param
@@ -48,11 +48,11 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
         ["", "kb", "KB", "mb", "MB", "gb", "GB"]
     ])
 ] + [
-    ["".join(value), InvalidParameterError]
+    ["".join(value), ParameterError]
     for value in ("B", "K", "M", "G")
 ] + [
-    ["0bps", InvalidParameterError],
-    ["34359738361bps", InvalidParameterError],
+    ["0bps", ParameterError],
+    ["34359738361bps", ParameterError],
 ])
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
@@ -65,7 +65,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
 
 
 @pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), InvalidParameterError]
+    ["".join(opt_list), ParameterError]
     for opt_list in itertools.product(
         ["-1", "0", "0.0"],
         ["k", "K", "m", "M", "g", "G"]
@@ -171,7 +171,7 @@ class Test_TrafficControl_validate(object):
 
         if is_invalid_param(
                 rate, delay, loss, duplicate, corrupt, reordering=None):
-            with pytest.raises(InvalidParameterError):
+            with pytest.raises(ParameterError):
                 tc_obj.validate()
         else:
             tc_obj.validate()
@@ -211,11 +211,11 @@ class Test_TrafficControl_validate(object):
     @pytest.mark.parametrize(["value", "expected"], [
         [
             {"latency_time": "-1ms"},
-            InvalidParameterError,
+            ParameterError,
         ],
         [
             {"latency_time": "61min"},
-            InvalidParameterError,
+            ParameterError,
         ],
 
         [
@@ -223,23 +223,23 @@ class Test_TrafficControl_validate(object):
                 "latency_time": "100ms",
                 "latency_distro_time": "-1ms",
             },
-            InvalidParameterError,
+            ParameterError,
         ],
         [
             {
                 "latency_time": "100ms",
                 "latency_distro_time": "61min",
             },
-            InvalidParameterError,
+            ParameterError,
         ],
 
         [
             {"packet_loss_rate": TrafficControl.MIN_PACKET_LOSS_RATE - 0.1},
-            InvalidParameterError,
+            ParameterError,
         ],
         [
             {"packet_loss_rate": TrafficControl.MAX_PACKET_LOSS_RATE + 0.1},
-            InvalidParameterError,
+            ParameterError,
         ],
 
         [
@@ -247,46 +247,46 @@ class Test_TrafficControl_validate(object):
                 "latency_time": "100ms",
                 "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
             },
-            InvalidParameterError,
+            ParameterError,
         ],
         [
             {
                 "latency_time": "100ms",
                 "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
             },
-            InvalidParameterError,
+            ParameterError,
         ],
 
         [
             {"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1},
-            InvalidParameterError,
+            ParameterError,
         ],
         [
             {"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1},
-            InvalidParameterError,
+            ParameterError,
         ],
 
         [
             {"reordering_rate": TrafficControl.MIN_REORDERING_RATE - 0.1},
-            InvalidParameterError,
+            ParameterError,
         ],
         [
             {"reordering_rate": TrafficControl.MAX_REORDERING_RATE + 0.1},
-            InvalidParameterError,
+            ParameterError,
         ],
 
-        [{Tc.Param.DST_NETWORK: "192.168.0."}, InvalidParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, InvalidParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, InvalidParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, InvalidParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, InvalidParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, InvalidParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0."}, ParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, ParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, ParameterError],
+        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, ParameterError],
 
-        [{"src_port": -1}, InvalidParameterError],
-        [{"src_port": 65536}, InvalidParameterError],
+        [{"src_port": -1}, ParameterError],
+        [{"src_port": 65536}, ParameterError],
 
-        [{"dst_port": -1}, InvalidParameterError],
-        [{"dst_port": 65536}, InvalidParameterError],
+        [{"dst_port": -1}, ParameterError],
+        [{"dst_port": 65536}, ParameterError],
     ])
     def test_exception(self, device_option, value, expected):
         if device_option is None:

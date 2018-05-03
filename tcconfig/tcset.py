@@ -25,7 +25,7 @@ from ._const import (
     IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc,
     TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
-from ._error import InvalidParameterError, ModuleNotFoundError, NetworkInterfaceNotFoundError
+from ._error import ModuleNotFoundError, NetworkInterfaceNotFoundError, ParameterError
 from ._logger import logger, set_log_level
 from ._shaping_rule_finder import TcShapingRuleFinder
 from ._tc_command_helper import check_tc_command_installation, check_tc_execution_authority
@@ -375,7 +375,7 @@ def main():
     except ipaddress.AddressValueError as e:
         logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
         return errno.EINVAL
-    except InvalidParameterError as e:
+    except ParameterError as e:
         logger.error(msgfy.to_error_message(e))
         return errno.EINVAL
 

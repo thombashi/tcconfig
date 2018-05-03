@@ -45,7 +45,7 @@ class TcAlreadyExist(TcCommandExecutionError):
     """
 
 
-class InvalidParameterError(ValueError):
+class ParameterError(ValueError):
     """
     Exception raised when an invalid parameter specified for
     a traffic shaping rule.
@@ -55,7 +55,7 @@ class InvalidParameterError(ValueError):
         self.__value = kwargs.pop("value", None)
         self.__expected = kwargs.pop("expected", None)
 
-        super(InvalidParameterError, self).__init__(*args, **kwargs)
+        super(ParameterError, self).__init__(*args, **kwargs)
 
     def __str__(self, *args, **kwargs):
         item_list = [ValueError.__str__(self, *args, **kwargs)]
@@ -81,7 +81,7 @@ class InvalidParameterError(ValueError):
         return extra_msg_list
 
 
-class UnitNotFoundError(InvalidParameterError):
+class UnitNotFoundError(ParameterError):
     """
     """
 

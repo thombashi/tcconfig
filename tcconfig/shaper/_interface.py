@@ -15,7 +15,7 @@ import typepy
 from .._common import run_command_helper
 from .._const import Tc, TcSubCommand, TrafficDirection
 from .._converter import HumanReadableTime
-from .._error import InvalidParameterError
+from .._error import ParameterError
 from .._iptables import IptablesMangleMarkEntry
 from .._logger import logger
 from .._network import get_anywhere_network
@@ -200,7 +200,7 @@ class AbstractShaper(ShaperInterface):
         if self._tc_obj.direction == TrafficDirection.INCOMING:
             return "src"
 
-        raise InvalidParameterError(
+        raise ParameterError(
             "unknown direction",
             expected=TrafficDirection.LIST, value=self.direction)
 

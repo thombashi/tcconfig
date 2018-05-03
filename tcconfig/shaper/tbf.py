@@ -11,7 +11,7 @@ from subprocrunner import SubprocessRunner
 
 from .._common import logging_context, run_command_helper
 from .._const import ShapingAlgorithm, Tc, TcSubCommand, TrafficDirection
-from .._error import InvalidParameterError
+from .._error import ParameterError
 from .._network import get_anywhere_network, get_no_limit_kbits
 from ._interface import AbstractShaper
 
@@ -36,9 +36,8 @@ class TbfShaper(AbstractShaper):
         if self._tc_obj.direction == TrafficDirection.INCOMING:
             return self.__IN_DEVICE_QDISC_MINOR_ID
 
-        raise InvalidParameterError(
-            "unknown direction",
-            expected=TrafficDirection.LIST, value=self._tc_obj.direction)
+        raise ParameterError(
+            "unknown direction", expected=TrafficDirection.LIST, value=self._tc_obj.direction)
 
     def _get_netem_qdisc_major_id(self, base_id):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
@@ -73,7 +72,7 @@ class TbfShaper(AbstractShaper):
     def _add_rate(self):
         try:
             self._tc_obj.validate_bandwidth_rate()
-        except InvalidParameterError:
+        except ParameterError:
             return 0
 
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)

@@ -8,7 +8,7 @@ from __future__ import division
 
 import pytest
 from tcconfig._converter import Humanreadable, HumanReadableTime
-from tcconfig._error import InvalidParameterError, UnitNotFoundError
+from tcconfig._error import ParameterError, UnitNotFoundError
 
 
 class Test_to_bit(object):
@@ -58,12 +58,12 @@ class Test_to_bit(object):
         [None, 1000, TypeError],
         [True, 1000, TypeError],
         [float("nan"), 1000, TypeError],
-        ["a", 1000, InvalidParameterError],
-        ["1k0 ", 1000, InvalidParameterError],
-        ["10kb", 1000, InvalidParameterError],
-        ["-2m", 1000, InvalidParameterError],
-        ["2m", None, InvalidParameterError],
-        ["2m", 1001, InvalidParameterError],
+        ["a", 1000, ParameterError],
+        ["1k0 ", 1000, ParameterError],
+        ["10kb", 1000, ParameterError],
+        ["-2m", 1000, ParameterError],
+        ["2m", None, ParameterError],
+        ["2m", 1001, ParameterError],
     ])
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
@@ -122,13 +122,13 @@ class Test_HumanReadableTime_get_value(object):
         assert str(HumanReadableTime(value)) == expected
 
     @pytest.mark.parametrize(["value", "exception"], [
-        ["", InvalidParameterError],
+        ["", ParameterError],
         [None, TypeError],
         [True, TypeError],
         [float("nan"), TypeError],
-        ["a", InvalidParameterError],
-        ["1k0 ", InvalidParameterError],
-        ["10kb", InvalidParameterError],
+        ["a", ParameterError],
+        ["1k0 ", ParameterError],
+        ["10kb", ParameterError],
     ])
     def test_exception(self, value, exception):
         with pytest.raises(exception):
@@ -163,12 +163,12 @@ class Test_HumanReadableTime_validate(object):
             min_value=min_value, max_value=max_value)
 
     @pytest.mark.parametrize(["value", "min_value", "max_value", "expected"], [
-        ["1s", "0s", "1ms", InvalidParameterError],
-        ["-1s", "0s", "60m", InvalidParameterError],
-        ["10ms", "0s", "1ms", InvalidParameterError],
-        ["-10ms", "0s", "60m", InvalidParameterError],
-        ["100us", "0s", "60us", InvalidParameterError],
-        ["-100us", "0s", "60m", InvalidParameterError],
+        ["1s", "0s", "1ms", ParameterError],
+        ["-1s", "0s", "60m", ParameterError],
+        ["10ms", "0s", "1ms", ParameterError],
+        ["-10ms", "0s", "60m", ParameterError],
+        ["100us", "0s", "60us", ParameterError],
+        ["-100us", "0s", "60m", ParameterError],
     ])
     def test_exception(self, value, min_value, max_value, expected):
         with pytest.raises(expected):
