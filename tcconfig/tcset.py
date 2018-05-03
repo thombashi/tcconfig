@@ -157,7 +157,7 @@ def verify_netem_module():
 
     runner = subprocrunner.SubprocessRunner("lsmod")
     if runner.run() != 0:
-        raise OSError("failed to execute lsmod")
+        raise OSError(runner.returncode, "failed to execute lsmod")
 
     if re.search(r"\bsch_netem\b", runner.stdout) is None:
         raise ModuleNotFoundError("sch_netem module not found")

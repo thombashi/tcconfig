@@ -6,6 +6,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import errno
 import re
 
 import typepy
@@ -222,4 +223,4 @@ class IptablesMangleController(object):
     @staticmethod
     def __check_execution_authority():
         if not has_execution_authority("iptables"):
-            raise OSError("no right to execute iptables")
+            raise OSError(errno.EPERM, "no right to execute iptables")
