@@ -14,7 +14,7 @@ import typepy
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc, TrafficDirection
 
-from .common import DEADLINE_TIME, execute_tcdel, ASSERT_MARGIN
+from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
 
 
 @pytest.fixture

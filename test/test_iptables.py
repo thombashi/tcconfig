@@ -9,9 +9,9 @@ from __future__ import unicode_literals
 import random
 
 import pytest
-
 from tcconfig._common import find_bin_path
 from tcconfig._iptables import VALID_CHAIN_LIST, IptablesMangleController, IptablesMangleMarkEntry
+
 
 _DEF_SRC = "192.168.0.0/24"
 _DEF_DST = "192.168.100.0/24"

@@ -5,7 +5,6 @@
 """
 
 import pytest
-
 from tcconfig._network import (
     _get_iproute2_upper_limite_rate, get_anywhere_network, get_no_limit_kbits, is_anywhere_network,
     sanitize_network)
