@@ -34,7 +34,7 @@ def dst_host_ex_option(request):
 @pytest.fixture
 def transmitter():
     transmitter = pingparsing.PingTransmitter()
-    transmitter.ping_option = "-f -q"
+    transmitter.ping_option = "-i 0.2 -q"
     transmitter.deadline = DEADLINE_TIME
 
     return transmitter
