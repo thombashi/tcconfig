@@ -63,12 +63,12 @@ def has_execution_authority(command):
     if os.getuid() == 0:
         return True
 
-    capabilities_map = {
+    required_capabilities_map = {
         "tc": ["cap_net_admin"],
         "iptables": ["cap_net_raw", "cap_net_admin"],
     }
 
-    return _has_capabilies(find_bin_path(command), capabilities_map[command])
+    return _has_capabilies(find_bin_path(command), required_capabilities_map[command])
 
 
 def check_tc_execution_authority():
