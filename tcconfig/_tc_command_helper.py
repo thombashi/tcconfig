@@ -27,6 +27,16 @@ def check_tc_command_installation():
     sys.exit(errno.ENOENT)
 
 
+def get_required_capabilities(command):
+    required_capabilities_map = {
+        "tc": ["cap_net_admin"],
+        "ip": ["cap_net_raw"],
+        "iptables": ["cap_net_raw", "cap_net_admin"],
+    }
+
+    return required_capabilities_map.get(command)
+
+
 def _has_capabilies(bin_path, capabilities):
     getcap_bin_path = find_bin_path("getcap")
 
@@ -63,12 +73,7 @@ def has_execution_authority(command):
     if os.getuid() == 0:
         return True
 
-    required_capabilities_map = {
-        "tc": ["cap_net_admin"],
-        "iptables": ["cap_net_raw", "cap_net_admin"],
-    }
-
-    return _has_capabilies(find_bin_path(command), required_capabilities_map[command])
+    return _has_capabilies(find_bin_path(command), get_required_capabilities(command))
 
 
 def check_tc_execution_authority():
