@@ -105,7 +105,11 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
     if ignore_error_msg_regexp:
         match = ignore_error_msg_regexp.search(proc.stderr)
         if match is None:
-            logger.error(proc.stderr)
+            logger.error("\n".join([
+                "command execution failed",
+                "  command={}".format(command),
+                "  stderr={}".format(proc.stderr),
+            ]))
             return proc.returncode
 
     if typepy.is_not_null_string(notice_msg):
