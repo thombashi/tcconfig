@@ -17,14 +17,6 @@ from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
 
-def check_tc_execution_authority():
-    from ._capabilities import get_permission_error_message, has_execution_authority
-
-    if not has_execution_authority("tc"):
-        logger.error(get_permission_error_message("tc"))
-        sys.exit(errno.EPERM)
-
-
 def get_tc_base_command(tc_subcommand):
     if tc_subcommand not in TcSubCommand:
         raise ValueError("the argument must be a TcSubCommand value")

@@ -6,6 +6,7 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import errno
 import os
 import re
 import sys
@@ -76,3 +77,11 @@ def has_execution_authority(command):
         return True
 
     return _has_capabilies(find_bin_path(command), get_required_capabilities(command))
+
+
+def check_execution_authority(command):
+    if has_execution_authority(command):
+        return
+
+    logger.error(get_permission_error_message(command))
+    sys.exit(errno.EPERM)

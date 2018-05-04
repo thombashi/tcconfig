@@ -20,14 +20,15 @@ import typepy
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import check_command_installation, initialize_cli, is_execute_tc_command, normalize_tc_value
+from ._capabilities import check_execution_authority
+from ._common import (
+    check_command_installation, initialize_cli, is_execute_tc_command, normalize_tc_value)
 from ._const import (
     IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
 from ._error import ModuleNotFoundError, NetworkInterfaceNotFoundError, ParameterError
 from ._logger import logger, set_log_level
 from ._shaping_rule_finder import TcShapingRuleFinder
-from ._tc_command_helper import check_tc_execution_authority
 from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
 
@@ -292,16 +293,6 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
     return return_code
 
 
-def check_ip_execution_authority():
-    from ._capabilities import has_execution_authority, get_permission_error_message
-
-    if has_execution_authority("ip"):
-        return
-
-    logger.error(get_permission_error_message("ip"))
-    sys.exit(errno.EPERM)
-
-
 def main():
     options = get_arg_parser().parse_args()
 
@@ -309,10 +300,10 @@ def main():
 
     if is_execute_tc_command(options.tc_command_output):
         check_command_installation("tc")
-        check_tc_execution_authority()
+        check_execution_authority("tc")
 
         if options.direction == TrafficDirection.INCOMING:
-            check_ip_execution_authority()
+            check_execution_authority("ip")
     else:
         spr.SubprocessRunner.default_is_dry_run = True
 

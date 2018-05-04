@@ -15,12 +15,13 @@ import subprocrunner as spr
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
-from ._common import check_command_installation, initialize_cli, is_execute_tc_command, normalize_tc_value
+from ._capabilities import check_execution_authority
+from ._common import (
+    check_command_installation, initialize_cli, is_execute_tc_command, normalize_tc_value)
 from ._const import Tc, TcCommandOutput, TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger, set_logger
 from ._network import verify_network_interface
-from ._tc_command_helper import check_tc_execution_authority
 from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
 
@@ -93,7 +94,7 @@ def main():
 
     if is_execute_tc_command(options.tc_command_output):
         check_command_installation("tc")
-        check_tc_execution_authority()
+        check_execution_authority("tc")
 
         is_delete_all = options.is_delete_all
     else:
