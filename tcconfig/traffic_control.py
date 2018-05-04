@@ -372,7 +372,7 @@ class TrafficControl(object):
             try:
                 self.iptables_ctrl.clear()
             except OSError as e:
-                logger.error(e)
+                logger.warn("{} (can not delete iptables entries)".format(e))
 
         return any(result_list)
 
