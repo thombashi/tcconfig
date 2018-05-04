@@ -523,8 +523,13 @@ class TrafficControl(object):
             return -1
 
         return_code = 0
+        modprobe_proc = spr.SubprocessRunner("modprobe ifb")
 
-        return_code |= spr.SubprocessRunner("modprobe ifb").run()
+        try:
+            if modprobe_proc.run() != 0:
+                logger.error(modprobe_proc.stderr)
+        except spr.CommandError as e:
+            logger.debug(msgfy.to_debug_message(e))
 
         if self.is_add_shaping_rule or self.is_change_shaping_rule:
             notice_message = None
