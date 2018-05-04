@@ -147,7 +147,7 @@ class IptablesMangleController(object):
         for mangle in self.parse():
             proc = SubprocessRunner(mangle.to_delete_command())
             if proc.run() != 0:
-                raise RuntimeError(proc.stderr)
+                raise OSError(proc.returncode, proc.stderr)
 
     def get_iptables(self):
         self.__check_execution_authority()
@@ -155,7 +155,7 @@ class IptablesMangleController(object):
         proc = SubprocessRunner("{:s} {:s}".format(
             get_iptables_base_command(), LIST_MANGLE_TABLE_OPTION))
         if proc.run() != 0:
-            raise RuntimeError(proc.stderr)
+            raise OSError(proc.returncode, proc.stderr)
 
         return proc.stdout
 
