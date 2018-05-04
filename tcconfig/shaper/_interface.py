@@ -58,8 +58,7 @@ class AbstractShaper(ShaperInterface):
         if self.__shaping_rule_finder:
             return self.__shaping_rule_finder
 
-        self.__shaping_rule_finder = TcShapingRuleFinder(
-            logger=logger, tc=self._tc_obj)
+        self.__shaping_rule_finder = TcShapingRuleFinder(logger=logger, tc=self._tc_obj)
 
         return self.__shaping_rule_finder
 
@@ -88,30 +87,23 @@ class AbstractShaper(ShaperInterface):
         ]
 
         if self._tc_obj.packet_loss_rate > 0:
-            command_item_list.append(
-                "loss {:f}%".format(self._tc_obj.packet_loss_rate))
+            command_item_list.append("loss {:f}%".format(self._tc_obj.packet_loss_rate))
 
         if self._tc_obj.packet_duplicate_rate > 0:
-            command_item_list.append(
-                "duplicate {:f}%".format(self._tc_obj.packet_duplicate_rate))
+            command_item_list.append("duplicate {:f}%".format(self._tc_obj.packet_duplicate_rate))
 
-        if self._tc_obj.latency_time > HumanReadableTime(
-                Tc.ValueRange.LatencyTime.MIN):
-            command_item_list.append(
-                "delay {}".format(self._tc_obj.latency_time))
+        if self._tc_obj.latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+            command_item_list.append("delay {}".format(self._tc_obj.latency_time))
 
-            if self._tc_obj.latency_distro_time > HumanReadableTime(
-                    Tc.ValueRange.LatencyTime.MIN):
+            if self._tc_obj.latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
                 command_item_list.append("{} distribution normal".format(
                     self._tc_obj.latency_distro_time))
 
         if self._tc_obj.corruption_rate > 0:
-            command_item_list.append(
-                "corrupt {:f}%".format(self._tc_obj.corruption_rate))
+            command_item_list.append("corrupt {:f}%".format(self._tc_obj.corruption_rate))
 
         if self._tc_obj.reordering_rate > 0:
-            command_item_list.append(
-                "reorder {:f}%".format(self._tc_obj.reordering_rate))
+            command_item_list.append("reorder {:f}%".format(self._tc_obj.reordering_rate))
 
         return run_command_helper(
             " ".join(command_item_list),
@@ -131,16 +123,14 @@ class AbstractShaper(ShaperInterface):
             return 0
 
         command_item_list = [
-            base_command,
-            self._dev,
+            base_command, self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 2",
         ]
 
         if self._is_use_iptables():
-            command_item_list.append(
-                "handle {:d} fw".format(self._get_unique_mangle_mark_id()))
+            command_item_list.append("handle {:d} fw".format(self._get_unique_mangle_mark_id()))
         else:
             if typepy.is_null_string(self._tc_obj.dst_network):
                 dst_network = get_anywhere_network(self._tc_obj.ip_version)
@@ -149,32 +139,25 @@ class AbstractShaper(ShaperInterface):
 
             command_item_list.extend([
                 "u32",
-                "match {:s} {:s} {:s}".format(
-                    self._tc_obj.protocol_match,
-                    "dst", dst_network),
+                "match {:s} {:s} {:s}".format(self._tc_obj.protocol_match, "dst", dst_network),
             ])
 
             if typepy.is_not_null_string(self._tc_obj.src_network):
                 command_item_list.append("match {:s} {:s} {:s}".format(
-                    self._tc_obj.protocol_match,
-                    "src", self._tc_obj.src_network))
+                    self._tc_obj.protocol_match, "src", self._tc_obj.src_network))
 
             if self._tc_obj.src_port:
-                command_item_list.append(
-                    "match {:s} sport {:d} 0xffff".format(
-                        self._tc_obj.protocol_match, self._tc_obj.src_port))
+                command_item_list.append("match {:s} sport {:d} 0xffff".format(
+                    self._tc_obj.protocol_match, self._tc_obj.src_port))
 
             if self._tc_obj.dst_port:
-                command_item_list.append(
-                    "match {:s} dport {:d} 0xffff".format(
-                        self._tc_obj.protocol_match, self._tc_obj.dst_port))
+                command_item_list.append("match {:s} dport {:d} 0xffff".format(
+                    self._tc_obj.protocol_match, self._tc_obj.dst_port))
 
         command_item_list.append("flowid {:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str,
-            self._get_qdisc_minor_id()))
+            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id()))
 
-        return subprocrunner.SubprocessRunner(
-            " ".join(command_item_list)).run()
+        return subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
 
     def _add_exclude_filter(self):
         pass
@@ -201,14 +184,12 @@ class AbstractShaper(ShaperInterface):
             return "src"
 
         raise ParameterError(
-            "unknown direction",
-            expected=TrafficDirection.LIST, value=self.direction)
+            "unknown direction", expected=TrafficDirection.LIST, value=self.direction)
 
     def _get_tc_handle(self, default_handle):
         handle = None
         if self._tc_obj.is_change_shaping_rule:
-            handle = self._shaping_rule_finder.find_qdisc_handle(
-                self._get_tc_parent(None))
+            handle = self._shaping_rule_finder.find_qdisc_handle(self._get_tc_parent(None))
 
         if not handle:
             handle = default_handle
