@@ -57,6 +57,14 @@ def find_bin_path(command):
     return None
 
 
+def check_command_installation(command):
+    if find_bin_path(command):
+        return
+
+    logger.error("command not found: {}".format(command))
+    sys.exit(errno.ENOENT)
+
+
 def initialize_cli(options):
     from ._logger import set_log_level
 

@@ -17,14 +17,6 @@ from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger
 
 
-def check_tc_command_installation():
-    if find_bin_path("tc"):
-        return
-
-    logger.error("command not found: tc")
-    sys.exit(errno.ENOENT)
-
-
 def check_tc_execution_authority():
     from ._capabilities import get_permission_error_message, has_execution_authority
 
