@@ -145,11 +145,17 @@ def verify_netem_module():
     import re
 
     runner = spr.SubprocessRunner("lsmod")
-    if runner.run() != 0:
-        raise OSError(runner.returncode, "failed to execute lsmod")
 
-    if re.search(r"\bsch_netem\b", runner.stdout) is None:
-        raise ModuleNotFoundError("sch_netem module not found")
+    try:
+        if runner.run() != 0:
+            raise OSError(runner.returncode, "failed to execute lsmod")
+    except spr.CommandError as e:
+        # reach here when the kmod package not installed.
+        # this kind of environments could exist such as slim containers.
+        logger.debug(msgfy.to_debug_message(e))
+    else:
+        if re.search(r"\bsch_netem\b", runner.stdout) is None:
+            raise ModuleNotFoundError("sch_netem module not found")
 
 
 class TcConfigLoader(object):
@@ -314,8 +320,6 @@ def main():
         verify_netem_module()
     except ModuleNotFoundError as e:
         logger.debug(e)
-    except spr.CommandError as e:
-        logger.error(e)
 
     if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
