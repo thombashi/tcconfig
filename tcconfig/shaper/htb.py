@@ -12,7 +12,7 @@ import re
 import typepy
 
 from .._common import logging_context, run_command_helper
-from .._const import ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand
+from .._const import ShapingAlgorithm, TcCommandOutput, TcSubCommand
 from .._error import TcAlreadyExist
 from .._logger import logger
 from .._network import get_no_limit_kbits

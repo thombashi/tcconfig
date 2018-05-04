@@ -305,7 +305,6 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
 
 def check_ip_execution_authority():
-    from ._common import find_bin_path
     from ._capabilities import has_execution_authority, get_permission_error_message
 
     if has_execution_authority("ip"):
