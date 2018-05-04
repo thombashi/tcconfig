@@ -35,10 +35,7 @@ def parse_option():
     group.add_argument(
         "--ipv6", dest="ip_version", action="store_const",
         const=6, default=4,
-        help="""
-        Display IPv6 shaping rules.
-        Defaults to show IPv4 shaping rules.
-        """)
+        help="Display IPv6 shaping rules. Defaults to show IPv4 shaping rules.")
 
     return parser.parser.parse_args()
 

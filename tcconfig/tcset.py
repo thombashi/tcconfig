@@ -41,9 +41,7 @@ def get_arg_parser():
         help="network device name (e.g. eth0)")
     group.add_argument(
         "-f", "--config-file",
-        help="""setting traffic controls from a configuration file.
-        output file of the tcshow.
-        """)
+        help="setting traffic controls from a configuration file. output file of the tcshow.")
 
     group = parser.parser.add_mutually_exclusive_group()
     group.add_argument(
@@ -52,11 +50,10 @@ def get_arg_parser():
     group.add_argument(
         "--change", dest="is_change_shaping_rule", action="store_true",
         default=False,
-        help="""change existing traffic shaping rules to the new one.
-        this option reduces the shaping rule switching side effect
-        (such as traffic spike) compared to --overwrite option.
-        note: the tcset command adds a shaping rule if there are no existing
-        shaping rules.
+        help="""change existing traffic shaping rules to the new one. this option reduces
+        the shaping rule switching side effect (such as traffic spike) compared to
+        --overwrite option.
+        note: the tcset command adds a shaping rule if there are no existing shaping rules.
         """)
     group.add_argument(
         "--add", dest="is_add_shaping_rule", action="store_true",
@@ -73,11 +70,9 @@ def get_arg_parser():
     group.add_argument(
         "--delay", dest="network_latency",
         default=Tc.ValueRange.LatencyTime.MIN,
-        help="""round trip network delay. the valid range is
-        from {min_value:} to {max_value:}.
-        valid time units are: {unit}.
-        if no unit string found, considered milliseconds as the time unit.
-        (default=%(default)s)
+        help="""round trip network delay. the valid range is from {min_value:} to {max_value:}.
+        valid time units are: {unit}. if no unit string found, considered milliseconds as 
+        the time unit. (default=%(default)s)
         """.format(
             min_value=Tc.ValueRange.LatencyTime.MIN,
             max_value=Tc.ValueRange.LatencyTime.MAX,
@@ -85,11 +80,9 @@ def get_arg_parser():
     group.add_argument(
         "--delay-distro", dest="latency_distro_time",
         default=Tc.ValueRange.LatencyTime.MIN,
-        help="""distribution of network latency becomes X +- Y
-        (normal distribution). Here X is the value of --delay option and
-        Y is the value of --delay-dist option).
-        network latency distribution is uniform, without this option.
-        valid time units are: {unit}.
+        help="""distribution of network latency becomes X +- Y (normal distribution).
+        Here X is the value of --delay option and Y is the value of --delay-dist option).
+        network latency distribution is uniform, without this option. valid time units are: {unit}.
         if no unit string found, considered milliseconds as the time unit.
         """.format(unit="/".join(HumanReadableTime.get_valid_unit_list())))
     group.add_argument(
@@ -108,9 +101,9 @@ def get_arg_parser():
             TrafficControl.MAX_PACKET_DUPLICATE_RATE))
     group.add_argument(
         "--corrupt", dest="corruption_rate", type=float, default=0,
-        help="""packet corruption rate [%%]. the valid range is from {:d}
-        to {:d}. packet corruption means single bit error at a random offset in
-        the packet. (default=%(default)s)
+        help="""packet corruption rate [%%]. the valid range is from {:d} to {:d}.
+        packet corruption means single bit error at a random offset in the packet.
+        (default=%(default)s)
         """.format(
             TrafficControl.MIN_CORRUPTION_RATE,
             TrafficControl.MAX_CORRUPTION_RATE))
@@ -134,14 +127,10 @@ def get_arg_parser():
     group = parser.add_routing_group()
     group.add_argument(
         "--exclude-dst-network",
-        help="""exclude a shaping rule for a specific destination
-        IP-address/network.
-        """)
+        help="exclude a shaping rule for a specific destination IP-address/network.")
     group.add_argument(
         "--exclude-src-network",
-        help="""exclude a shaping rule for a specific source
-        IP-address/network.
-        """)
+        help="exclude a shaping rule for a specific source IP-address/network.")
     group.add_argument(
         "--exclude-dst-port",
         help="exclude a shaping rule for a specific destination port.")
@@ -204,9 +193,8 @@ class TcConfigLoader(object):
                 is_first_set = True
 
                 for tc_filter, filter_table in six.iteritems(direction_table):
-                    self.__logger.debug(
-                        "is_first_set={}, filter='{}', table={}".format(
-                            is_first_set, tc_filter, filter_table))
+                    self.__logger.debug("is_first_set={}, filter='{}', table={}".format(
+                        is_first_set, tc_filter, filter_table))
 
                     if not filter_table:
                         continue
@@ -221,19 +209,16 @@ class TcConfigLoader(object):
                         parse_result = get_arg_parser().parse_known_args(
                             ["--device", "dummy", arg_item])
                         if parse_result[1]:
-                            self.__logger.debug(
-                                "unknown parameter: key={}, value={}".format(
-                                    key, value))
+                            self.__logger.debug("unknown parameter: key={}, value={}".format(
+                                key, value))
                             continue
 
                         option_list.append(arg_item)
 
                     try:
                         dst_network = self.__parse_tc_filter_network(tc_filter)
-                        if dst_network not in (
-                                Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
-                            option_list.append(
-                                "--dst-network={:s}".format(dst_network))
+                        if dst_network not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
+                            option_list.append("--dst-network={:s}".format(dst_network))
                     except pp.ParseException:
                         pass
 
@@ -254,8 +239,7 @@ class TcConfigLoader(object):
 
                     is_first_set = False
 
-                    command_list.append(
-                        " ".join([Tc.Command.TCSET] + option_list))
+                    command_list.append(" ".join([Tc.Command.TCSET] + option_list))
 
         return command_list
 

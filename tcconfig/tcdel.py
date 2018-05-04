@@ -37,9 +37,8 @@ def parse_option():
         help="delete all of the shaping rules.")
     group.add_argument(
         "--id", dest="filter_id",
-        help="""
-        delete a shaping rule which has a specific id.
-        you can get an id (filter_id) by tcshow command output.
+        help="""delete a shaping rule which has a specific id. you can get an id (filter_id)
+        by tcshow command output.
         e.g. "filter_id": "800::801"
         """)
 
@@ -56,8 +55,7 @@ def create_tc_obj(options):
         ip_version = 6 if options.is_ipv6 else 4
         shaping_rule_parser = TcShapingRuleParser(
             device=options.device, ip_version=ip_version,
-            tc_command_output=options.tc_command_output,
-            logger=logger)
+            tc_command_output=options.tc_command_output, logger=logger)
         shaping_rule_parser.parse()
         result = shaping_rule_parser.con.select_as_dict(
             table_name=TcSubCommand.FILTER.value,
