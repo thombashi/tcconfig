@@ -11,7 +11,7 @@ import errno
 import sys
 
 import logbook
-import subprocrunner
+import subprocrunner as spr
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
@@ -99,7 +99,7 @@ def main():
 
         is_delete_all = options.is_delete_all
     else:
-        subprocrunner.SubprocessRunner.default_is_dry_run = True
+        spr.SubprocessRunner.default_is_dry_run = True
         is_delete_all = True
         set_logger(False)
 
@@ -109,10 +109,10 @@ def main():
         logger.error(e)
         return errno.EINVAL
 
-    subprocrunner.SubprocessRunner.clear_history()
+    spr.SubprocessRunner.clear_history()
     tc = create_tc_obj(options)
     if options.log_level == logbook.INFO:
-        subprocrunner.set_log_level(logbook.ERROR)
+        spr.set_log_level(logbook.ERROR)
     normalize_tc_value(tc)
 
     return_code = 0

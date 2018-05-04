@@ -15,7 +15,7 @@ import logbook
 import msgfy
 import pyparsing as pp
 import six
-import subprocrunner
+import subprocrunner as spr
 import typepy
 
 from .__version__ import __version__
@@ -155,7 +155,7 @@ def get_arg_parser():
 def verify_netem_module():
     import re
 
-    runner = subprocrunner.SubprocessRunner("lsmod")
+    runner = spr.SubprocessRunner("lsmod")
     if runner.run() != 0:
         raise OSError(runner.returncode, "failed to execute lsmod")
 
@@ -297,8 +297,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
         return errno.EIO
 
     for tcconfig_command in loader.get_tcconfig_command_list():
-        return_code |= subprocrunner.SubprocessRunner(
-            tcconfig_command).run()
+        return_code |= spr.SubprocessRunner(tcconfig_command).run()
 
     return return_code
 
@@ -325,19 +324,19 @@ def main():
         if options.direction == TrafficDirection.INCOMING:
             check_ip_execution_authority()
     else:
-        subprocrunner.SubprocessRunner.default_is_dry_run = True
+        spr.SubprocessRunner.default_is_dry_run = True
 
     try:
         verify_netem_module()
     except ModuleNotFoundError as e:
         logger.debug(e)
-    except subprocrunner.CommandError as e:
+    except spr.CommandError as e:
         logger.error(e)
 
     if typepy.is_not_null_string(options.config_file):
         return set_tc_from_file(logger, options.config_file, options.overwrite)
 
-    subprocrunner.SubprocessRunner.clear_history()
+    spr.SubprocessRunner.clear_history()
 
     tc = TrafficControl(
         options.device,

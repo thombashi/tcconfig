@@ -11,7 +11,7 @@ import sys
 
 import msgfy
 import simplejson as json
-import subprocrunner
+import subprocrunner as spr
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
@@ -50,7 +50,7 @@ def main():
     check_tc_command_installation()
 
     if options.tc_command_output != TcCommandOutput.NOT_SET:
-        subprocrunner.SubprocessRunner.default_is_dry_run = True
+        spr.SubprocessRunner.default_is_dry_run = True
 
     tc_param = {}
     for device in options.device:
@@ -64,7 +64,7 @@ def main():
             logger.debug(msgfy.to_debug_message(e))
             continue
 
-    command_history = "\n".join(subprocrunner.SubprocessRunner.get_history())
+    command_history = "\n".join(spr.SubprocessRunner.get_history())
 
     if options.tc_command_output == TcCommandOutput.STDOUT:
         print(command_history)
