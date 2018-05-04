@@ -18,8 +18,8 @@ Install in Debian/Ubuntu from a deb package
 :Example:
     .. code:: console
 
-        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.17.1/tcconfig_0.17.1_amd64.deb
-        $ sudo dpkg -i tcconfig_0.17.1_amd64.deb
+        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.18.2/tcconfig_0.18.2_amd64.deb
+        $ sudo dpkg -i tcconfig_0.18.2_amd64.deb
 
 
 Dependencies
