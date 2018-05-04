@@ -18,8 +18,8 @@ from typepy.type import RealNumber
 
 from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (
-    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, ShapingAlgorithm, Tc,
-    TcCommandOutput, TcSubCommand, TrafficDirection)
+    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
+    TrafficDirection)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import NetworkInterfaceNotFoundError, ParameterError, UnitNotFoundError
 from ._iptables import IptablesMangleController, get_iptables_base_command
