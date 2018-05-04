@@ -299,7 +299,6 @@ def main():
     initialize_cli(options)
 
     if is_execute_tc_command(options.tc_command_output):
-        check_command_installation("tc")
         check_execution_authority("tc")
 
         if options.direction == TrafficDirection.INCOMING:

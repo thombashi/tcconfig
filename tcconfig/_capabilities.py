@@ -73,6 +73,10 @@ def _has_capabilies(bin_path, capabilities):
 
 
 def has_execution_authority(command):
+    from ._common import check_command_installation
+
+    check_command_installation(command)
+
     if os.getuid() == 0:
         return True
 
