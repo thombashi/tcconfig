@@ -1,5 +1,12 @@
-tcconfig
-==========
+**tcconfig**
+
+.. contents:: Table of Contents
+   :depth: 2
+
+Summary
+=========
+A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet loss/packet-corruption to a network interface.
+
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
    :alt: Linux CI test status
@@ -7,13 +14,6 @@ tcconfig
 .. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
    :target: https://github.com/thombashi/tcconfig
    :alt: GitHub repository
-
-.. contents:: Table of Contents
-   :depth: 2
-
-Summary
----------
-A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet loss/packet-corruption to a network interface.
 
 Traffic control features
 ------------------------
@@ -105,7 +105,6 @@ e.g. Specify the IP network and port of traffic control
 
 Delete traffic control (``tcdel`` command)
 ------------------------------------------
-
 ``tcdel`` is a command to delete traffic shaping rules from a network interface (device).
 
 e.g. Delete traffic control of ``eth0``
@@ -176,24 +175,8 @@ Install in Debian/Ubuntu from a deb package
 :Example:
     .. code:: console
 
-        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.17.1/tcconfig_0.17.1_amd64.deb
-        $ sudo dpkg -i tcconfig_0.17.1_amd64.deb
-
-
-Installing from files
-------------------------------
-The following package includes ``tcconfig`` and dependency packages.
-This package is for environments which cannot access to
-`PyPI <https://pypi.python.org/pypi>`__ directly.
-
-How to install:
-
-1. Navigate to ``https://github.com/thombashi/tcconfig/releases/``
-2. Download the latest version of ``tcconfig_wheel.tar.gz``
-3. Copy ``tcconfig_wheel.tar.gz`` to installation target
-4. ``tar xvf tcconfig_wheel.tar.gz``
-5. ``cd tcconfig_wheel/``
-6. ``./install.sh``
+        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.18.2/tcconfig_0.18.2_amd64.deb
+        $ sudo dpkg -i tcconfig_0.18.2_amd64.deb
 
 
 Dependencies
@@ -203,8 +186,8 @@ Python 2.7+ or 3.4+
 Linux packages
 --------------
 - mandatory: required for ``tc`` command:
-    - `ubuntu`/`debian`: ``iproute2``
-    - `fedora`/`RHEL`: ``iproute-tc``
+    - `Ubuntu`/`Debian`: ``iproute2``
+    - `Fedora`/`RHEL`: ``iproute-tc``
 - optional: required to when you use ``--iptables`` option:
     - ``iptables``
 
@@ -220,6 +203,7 @@ Dependency python packages are automatically installed during
 - `DataPropery <https://github.com/thombashi/DataProperty>`__
 - `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
 - `logbook <http://logbook.readthedocs.io/en/stable/>`__
+- `msgfy <https://github.com/thombashi/msgfy>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
 - `six <https://pypi.python.org/pypi/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
