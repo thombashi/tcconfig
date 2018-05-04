@@ -8,22 +8,13 @@ INSTALL_DIR_PATH="/usr/bin"
 DIST_DIR_PATH="./${DIST_DIR_NAME}/${INSTALL_DIR_PATH}"
 PKG_NAME="tcconfig"
 
-have_pyinstaller=0
-if type pyinstaller > /dev/null 2>&1; then
-    have_pyinstaller=1
-fi
-
-if [ ${have_pyinstaller} -eq 0 ];then
-    echo "pyinstaller not found"
-    exit 2
-fi
-
-
 # initialize
 rm -rf $DIST_DIR_NAME
 mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 
-pip install --upgrade .
+pip install --upgrade pip
+pip install --upgrade .[build]
+
 PKG_VERSION=$(python -c "import tcconfig; print(tcconfig.__version__)")
 
 echo "$PKG_NAME $PKG_VERSION"
