@@ -6,15 +6,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import errno
-import sys
-
 import subprocrunner as spr
 
 from ._common import find_bin_path
 from ._const import TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
-from ._logger import logger
 
 
 def get_tc_base_command(tc_subcommand):

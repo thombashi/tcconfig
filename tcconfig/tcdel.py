@@ -16,8 +16,7 @@ import subprocrunner as spr
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
-from ._common import (
-    check_command_installation, initialize_cli, is_execute_tc_command, normalize_tc_value)
+from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import Tc, TcCommandOutput, TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger, set_logger

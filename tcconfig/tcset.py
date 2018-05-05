@@ -21,8 +21,7 @@ import typepy
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
-from ._common import (
-    check_command_installation, initialize_cli, is_execute_tc_command, normalize_tc_value)
+from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import (
     IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
 from ._converter import HumanReadableTime
