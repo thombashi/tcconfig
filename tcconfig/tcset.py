@@ -71,7 +71,7 @@ def get_arg_parser():
         "--delay", dest="network_latency",
         default=Tc.ValueRange.LatencyTime.MIN,
         help="""round trip network delay. the valid range is from {min_value:} to {max_value:}.
-        valid time units are: {unit}. if no unit string found, considered milliseconds as 
+        valid time units are: {unit}. if no unit string found, considered milliseconds as
         the time unit. (default=%(default)s)
         """.format(
             min_value=Tc.ValueRange.LatencyTime.MIN,

@@ -82,7 +82,7 @@ class Test_tcset_one_network(object):
         ]).run() == 0
 
         ping_result = transmitter.ping()
-        assert ping_result.returncode == 0        
+        assert ping_result.returncode == 0
         with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
         # assertion ---
