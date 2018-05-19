@@ -18,7 +18,7 @@ def __line_strip(line):
 
 
 def split_line_list(
-        line_list, re_line_separator=re.compile("^$"),
+        line_list, re_block_separator=re.compile("^$"),
         is_include_match_line=False, is_strip=True):
     block_list = []
     block = []
@@ -27,7 +27,7 @@ def split_line_list(
     for line in line_list:
         line = strip_func(line)
 
-        if re_line_separator.search(line):
+        if re_block_separator.search(line):
             if block:
                 block_list.append(block)
 
