@@ -80,6 +80,12 @@ class Test_split_line_list(object):
                 [
                     ["a", "  ", "b", "c"],
                 ],
+            ], [
+                ["a", "b", "c"],
+                None, False, True,
+                [
+                    ["a", "b", "c"],
+                ],
             ],
         ])
     def test_normal(self, value, separator, is_include_matched_line, is_strip, expected):
@@ -89,7 +95,6 @@ class Test_split_line_list(object):
         ["value", "separator", "is_include_matched_line", "is_strip", "expected"],
         [
             [None, "", False, True, TypeError],
-            [["a", "b", "c"], None, False, True, AttributeError],
             [[1, 2, 3], re.compile(""), False, True, AttributeError],
             [[1, 2, 3], re.compile(""), False, False, TypeError],
         ])

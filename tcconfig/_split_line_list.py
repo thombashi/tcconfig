@@ -18,11 +18,14 @@ def __line_strip(line):
 
 
 def split_line_list(
-        line_list, re_block_separator=re.compile("^$"),
+        line_list, re_block_separator=None,
         is_include_match_line=False, is_strip=True):
     block_list = []
     block = []
     strip_func = __line_strip if is_strip else __null_line_strip
+
+    if not re_block_separator:
+        re_block_separator = re.compile("^$")
 
     for line in line_list:
         line = strip_func(line)
