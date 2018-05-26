@@ -12,7 +12,7 @@ import logbook
 import simplesqlite
 import subprocrunner
 import typepy
-from typepy.type import Integer
+from typepy import Integer
 
 from .._common import is_execute_tc_command
 from .._const import Tc, TcSubCommand, TrafficDirection

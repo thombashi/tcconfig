@@ -14,7 +14,7 @@ import six
 import subprocrunner as spr
 import typepy
 from dataproperty import DataProperty
-from typepy.type import RealNumber
+from typepy import RealNumber
 
 from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (

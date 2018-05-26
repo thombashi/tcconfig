@@ -214,7 +214,7 @@ class HtbShaper(AbstractShaper):
         for class_item in exist_class_item_list:
             try:
                 exist_class_minor_id_list.append(
-                    typepy.type.Integer(class_item.split(":")[1]).convert())
+                    typepy.Integer(class_item.split(":")[1]).convert())
             except typepy.TypeConversionError:
                 continue
 

@@ -11,7 +11,7 @@ import re
 
 import typepy
 from subprocrunner import SubprocessRunner
-from typepy.type import Integer
+from typepy import Integer
 
 from ._common import find_bin_path
 from ._const import LIST_MANGLE_TABLE_OPTION, Network

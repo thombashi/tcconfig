@@ -14,7 +14,7 @@ from ._error import NetworkInterfaceNotFoundError
 
 
 def get_anywhere_network(ip_version):
-    ip_version_n = typepy.type.Integer(ip_version).try_convert()
+    ip_version_n = typepy.Integer(ip_version).try_convert()
 
     if ip_version_n == 4:
         return Network.Ipv4.ANYWHERE
