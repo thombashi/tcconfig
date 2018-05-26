@@ -582,8 +582,7 @@ class TrafficControl(object):
             "{:s} link delete {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
         ]
 
-        if all([spr.SubprocessRunner(command).run() != 0 for command in
-                command_list]):
+        if all([spr.SubprocessRunner(command).run() != 0 for command in command_list]):
             return 2
 
         return 0

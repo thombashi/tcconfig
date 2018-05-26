@@ -15,10 +15,7 @@ from tcconfig._split_line_list import split_line_list
 class Test_split_line_list(object):
 
     @pytest.mark.parametrize(
-        [
-            "value", "separator", "is_include_matched_line",
-            "is_strip", "expected",
-        ],
+        ["value", "separator", "is_include_matched_line", "is_strip", "expected"],
         [
             [
                 [
@@ -33,8 +30,7 @@ class Test_split_line_list(object):
                     ["abcdefg"],
                     ["1234"],
                 ],
-            ],
-            [
+            ], [
                 [
                     "abcdefg",
                     "ABCDEFG",
@@ -48,8 +44,7 @@ class Test_split_line_list(object):
                     ["abcdefg"],
                     ["1234"],
                 ],
-            ],
-            [
+            ], [
                 [
                     "ABCDEFG",
                     "abcdefg",
@@ -64,8 +59,7 @@ class Test_split_line_list(object):
                     ["abcdefg"],
                     ["1234"],
                 ],
-            ],
-            [
+            ], [
                 [
                     "abcdefg",
                     "ABCDEFG",
@@ -81,8 +75,7 @@ class Test_split_line_list(object):
                         "1234",
                     ],
                 ],
-            ],
-            [
+            ], [
                 ["a", "  ", "b", "c"],
                 re.compile("^$"),
                 False,
@@ -91,8 +84,7 @@ class Test_split_line_list(object):
                     ["a"],
                     ["b", "c"]
                 ],
-            ],
-            [
+            ], [
                 ["a", "  ", "b", "c"],
                 re.compile("^$"),
                 False,
@@ -102,26 +94,17 @@ class Test_split_line_list(object):
                 ],
             ],
         ])
-    def test_normal(
-            self, value, separator, is_include_matched_line, is_strip,
-            expected):
-        assert split_line_list(
-            value, separator, is_include_matched_line, is_strip) == expected
+    def test_normal(self, value, separator, is_include_matched_line, is_strip, expected):
+        assert split_line_list(value, separator, is_include_matched_line, is_strip) == expected
 
     @pytest.mark.parametrize(
-        [
-            "value", "separator", "is_include_matched_line",
-            "is_strip", "expected",
-        ],
+        ["value", "separator", "is_include_matched_line", "is_strip", "expected"],
         [
             [None, "", False, True, TypeError],
             [["a", "b", "c"], None, False, True, AttributeError],
             [[1, 2, 3], re.compile(""), False, True, AttributeError],
             [[1, 2, 3], re.compile(""), False, False, TypeError],
         ])
-    def test_exception(
-            self, value, separator, is_include_matched_line, is_strip,
-            expected):
+    def test_exception(self, value, separator, is_include_matched_line, is_strip, expected):
         with pytest.raises(expected):
-            split_line_list(
-                value, separator, is_include_matched_line, is_strip)
+            split_line_list(value, separator, is_include_matched_line, is_strip)
