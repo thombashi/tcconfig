@@ -23,9 +23,7 @@ class Test_split_line_list(object):
                     "ABCDEFG",
                     "1234",
                 ],
-                re.compile("DEFG$"),
-                False,
-                True,
+                re.compile("DEFG$"), False, True,
                 [
                     ["abcdefg"],
                     ["1234"],
@@ -37,9 +35,7 @@ class Test_split_line_list(object):
                     "ABCDEFG",
                     "1234",
                 ],
-                re.compile("DEFG$"),
-                False,
-                True,
+                re.compile("DEFG$"), False, True,
                 [
                     ["abcdefg"],
                     ["1234"],
@@ -52,9 +48,7 @@ class Test_split_line_list(object):
                     "1234",
                     "ABCDEFG",
                 ],
-                re.compile("DEFG$"),
-                False,
-                True,
+                re.compile("DEFG$"), False, True,
                 [
                     ["abcdefg"],
                     ["1234"],
@@ -65,9 +59,7 @@ class Test_split_line_list(object):
                     "ABCDEFG",
                     "1234"
                 ],
-                re.compile("DEFG$"),
-                True,
-                True,
+                re.compile("DEFG$"), True, True,
                 [
                     ["abcdefg"],
                     [
@@ -77,18 +69,14 @@ class Test_split_line_list(object):
                 ],
             ], [
                 ["a", "  ", "b", "c"],
-                re.compile("^$"),
-                False,
-                True,
+                re.compile("^$"), False, True,
                 [
                     ["a"],
                     ["b", "c"]
                 ],
             ], [
                 ["a", "  ", "b", "c"],
-                re.compile("^$"),
-                False,
-                False,
+                re.compile("^$"), False, False,
                 [
                     ["a", "  ", "b", "c"],
                 ],
