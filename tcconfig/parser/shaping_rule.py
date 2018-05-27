@@ -154,13 +154,13 @@ class TcShapingRuleParser(object):
         return ", ".join(key_item_list)
 
     def __get_shaping_rule(self, device):
-        from simplesqlite.sqlquery import SqlQuery
+        from simplesqlite.query import Where
 
         if typepy.is_null_string(device):
             return {}
 
         self.__parse_device(device)
-        where_query = SqlQuery.make_where(Tc.Param.DEVICE, device)
+        where_query = Where(Tc.Param.DEVICE, device)
 
         try:
             class_param_list = self.__con.select_as_dict(

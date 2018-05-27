@@ -49,7 +49,7 @@ def parse_option():
 
 def create_tc_obj(options):
     from .parser.shaping_rule import TcShapingRuleParser
-    from simplesqlite.sqlquery import SqlQuery
+    from simplesqlite.query import Where
 
     if options.filter_id:
         ip_version = 6 if options.is_ipv6 else 4
@@ -62,7 +62,7 @@ def create_tc_obj(options):
             column_list=[
                 Tc.Param.SRC_NETWORK, Tc.Param.DST_NETWORK,
                 Tc.Param.SRC_PORT, Tc.Param.DST_PORT],
-            where=SqlQuery.make_where(Tc.Param.FILTER_ID, options.filter_id))
+            where=Where(Tc.Param.FILTER_ID, options.filter_id))
         if not result:
             logger.error("shaping rule not found associated with the id ({}).".format(
                 options.filter_id))

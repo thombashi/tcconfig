@@ -7,7 +7,7 @@
 
 from __future__ import absolute_import
 
-from simplesqlite.sqlquery import SqlQuery
+from simplesqlite.query import And, Where
 
 from ._const import Tc, TcSubCommand, TrafficDirection
 from ._network import is_anywhere_network
@@ -36,13 +36,13 @@ class TcShapingRuleFinder(object):
         return self._parser.con.get_value(
             select=Tc.Param.HANDLE,
             table_name=TcSubCommand.QDISC.value,
-            where=SqlQuery.make_where(Tc.Param.PARENT, parent))
+            where=Where(Tc.Param.PARENT, parent))
 
     def find_filter_param(self):
         import simplesqlite
 
         where_list = self.__get_filter_where_condition_list()
-        where_query = " AND ".join(where_list)
+        where_query = And(where_list)
         table_name = TcSubCommand.FILTER.value
         self.__logger.debug("find filter param: table={}, where={}".format(
             table_name, where_query))
@@ -72,7 +72,7 @@ class TcShapingRuleFinder(object):
         parent = self._parser.con.get_value(
             select=Tc.Param.FLOW_ID,
             table_name=table_name,
-            where=" AND ".join(where_list))
+            where=And(where_list))
 
         self.__logger.debug("find parent: result={}, table={}, where={}".format(
             parent, table_name, where_list))
@@ -113,10 +113,10 @@ class TcShapingRuleFinder(object):
             device = self._parser.ifb_device
 
         return [
-            SqlQuery.make_where(Tc.Param.DEVICE, device),
-            SqlQuery.make_where(Tc.Param.PROTOCOL, self.__tc.protocol),
-            SqlQuery.make_where(Tc.Param.DST_NETWORK, self.__tc.dst_network),
-            SqlQuery.make_where(Tc.Param.SRC_NETWORK, self.__tc.src_network),
-            SqlQuery.make_where(Tc.Param.DST_PORT, self.__tc.dst_port),
-            SqlQuery.make_where(Tc.Param.SRC_PORT, self.__tc.src_port),
+            Where(Tc.Param.DEVICE, device),
+            Where(Tc.Param.PROTOCOL, self.__tc.protocol),
+            Where(Tc.Param.DST_NETWORK, self.__tc.dst_network),
+            Where(Tc.Param.SRC_NETWORK, self.__tc.src_network),
+            Where(Tc.Param.DST_PORT, self.__tc.dst_port),
+            Where(Tc.Param.SRC_PORT, self.__tc.src_port),
         ]
