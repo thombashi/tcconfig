@@ -7,6 +7,12 @@ Summary
 =========
 A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet loss/packet-corruption to a network interface.
 
+.. image:: https://badge.fury.io/py/tcconfig.svg
+    :target: https://badge.fury.io/py/tcconfig
+
+.. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
+   :target: https://pypi.python.org/pypi/tcconfig
+
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
    :alt: Linux CI test status
