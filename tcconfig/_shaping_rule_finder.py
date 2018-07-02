@@ -32,7 +32,7 @@ class TcShapingRuleFinder(object):
         self.__shaping_rule_parser.clear()
 
     def find_qdisc_handle(self, parent):
-        return self._parser.con.get_value(
+        return self._parser.con.fetch_value(
             select=Tc.Param.HANDLE,
             table_name=TcSubCommand.QDISC.value,
             where=Where(Tc.Param.PARENT, parent))
@@ -68,7 +68,7 @@ class TcShapingRuleFinder(object):
     def find_parent(self):
         where_list = self.__get_filter_where_condition_list()
         table_name = TcSubCommand.FILTER.value
-        parent = self._parser.con.get_value(
+        parent = self._parser.con.fetch_value(
             select=Tc.Param.FLOW_ID,
             table_name=table_name,
             where=And(where_list))
@@ -82,7 +82,7 @@ class TcShapingRuleFinder(object):
         return self.find_parent() is not None
 
     def is_any_filter(self):
-        num_records = self._parser.con.get_num_records(
+        num_records = self._parser.con.fetch_num_records(
             table_name=TcSubCommand.FILTER.value)
 
         return num_records and num_records > 0
