@@ -1,13 +1,13 @@
-DataProperty>=0.30.6
+DataProperty>=0.31.1
 enum34;python_version<"3.4"
 ipaddress;python_version<"3.3"
 logbook
 msgfy>=0.0.2
 path.py
 pyparsing>=2.2.0
-simplejson>=3.13.2
-SimpleSQLite>=0.21.0
+simplejson>=3.16.0
+SimpleSQLite>=0.25.2
 six
 subprocrunner>=0.14.0
-typepy>=0.1.0
+typepy>=0.1.1
 voluptuous
