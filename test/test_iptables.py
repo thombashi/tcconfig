@@ -164,7 +164,7 @@ class Test_IptablesMangleMark_to_delete_command(object):
 
 class Test_IptablesMangleController_get_unique_mark_id(object):
 
-    @pytest.mark.xfail
+    @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
 
@@ -182,7 +182,7 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
 
 class Test_IptablesMangleController_add(object):
 
-    @pytest.mark.xfail
+    @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
         initial_len = len(iptables_ctrl_ipv4.get_iptables())
@@ -195,7 +195,7 @@ class Test_IptablesMangleController_add(object):
 
 class Test_IptablesMangleController_clear(object):
 
-    @pytest.mark.xfail
+    @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
 
@@ -212,7 +212,7 @@ class Test_IptablesMangleController_clear(object):
 
 
 class Test_IptablesMangleController_parse(object):
-    @pytest.mark.xfail
+    @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
 
