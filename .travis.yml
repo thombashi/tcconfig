@@ -10,7 +10,7 @@ matrix:
       env: TOXENV=python3.5
     - python: 3.6
       env: TOXENV=python3.6
-    - python: 3.7
+    - python: 3.7-dev
       env: TOXENV=python3.7
 
 os:
