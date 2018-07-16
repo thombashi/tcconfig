@@ -68,7 +68,7 @@ def main():
                 ).get_tc_parameter()
             )
         except NetworkInterfaceNotFoundError as e:
-            logger.debug(msgfy.to_debug_message(e))
+            logger.warn(e)
             continue
 
     command_history = "\n".join(spr.SubprocessRunner.get_history())
