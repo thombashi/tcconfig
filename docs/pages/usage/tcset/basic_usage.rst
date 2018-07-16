@@ -27,6 +27,13 @@ Set 0.5 minutes (30 seconds) network latency
 
     # tcset eth0 --delay 0.5min
 
+You can also use the following units:
+
+- m/min/mins/minute/minutes
+- s/sec/secs/second/seconds
+- ms/msec/msecs/millisecond/milliseconds
+- us/usec/usecs/microsecond/microseconds
+
 e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
