@@ -30,6 +30,7 @@ def parse_option():
 
     group = parser.parser.add_argument_group("Traffic Control")
     if set(["-d", "--device"]).intersection(set(sys.argv)):
+        # [deprecated] for backward compatibility
         group.add_argument("-d", "--device", required=True, help="network device name (e.g. eth0)")
     else:
         group.add_argument("device", help="network device name (e.g. eth0)")
