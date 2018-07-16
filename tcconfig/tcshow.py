@@ -29,12 +29,16 @@ def parse_option():
 
     group = parser.parser.add_argument_group("Traffic Control")
     group.add_argument(
-        "-d", "--device", action="append", required=True,
-        help="network device name (e.g. eth0)")
+        "-d", "--device", action="append", required=True, help="network device name (e.g. eth0)"
+    )
     group.add_argument(
-        "--ipv6", dest="ip_version", action="store_const",
-        const=6, default=4,
-        help="Display IPv6 shaping rules. Defaults to show IPv4 shaping rules.")
+        "--ipv6",
+        dest="ip_version",
+        action="store_const",
+        const=6,
+        default=4,
+        help="Display IPv6 shaping rules. Defaults to show IPv4 shaping rules.",
+    )
 
     return parser.parser.parse_args()
 
@@ -53,9 +57,11 @@ def main():
         try:
             verify_network_interface(device)
 
-            tc_param.update(TcShapingRuleParser(
-                device, options.ip_version, options.tc_command_output, logger
-            ).get_tc_parameter())
+            tc_param.update(
+                TcShapingRuleParser(
+                    device, options.ip_version, options.tc_command_output, logger
+                ).get_tc_parameter()
+            )
         except NetworkInterfaceNotFoundError as e:
             logger.debug(msgfy.to_debug_message(e))
             continue
@@ -68,9 +74,8 @@ def main():
 
     if options.tc_command_output == TcCommandOutput.SCRIPT:
         write_tc_script(
-            Tc.Command.TCSHOW,
-            command_history,
-            filename_suffix="-".join(options.device))
+            Tc.Command.TCSHOW, command_history, filename_suffix="-".join(options.device)
+        )
         return 0
 
     logger.debug("command history\n{}".format(command_history))
@@ -79,5 +84,5 @@ def main():
     return 0
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

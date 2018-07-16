@@ -59,13 +59,20 @@ class Test_tcset_one_network(object):
        - English locale (for parsing ping output)
     """
 
-    @pytest.mark.parametrize(["shaping_algo", "delay"], [
-        [params[0], params[1]]
-        for params in itertools.product(["htb"], [100])
-    ])
+    @pytest.mark.parametrize(
+        ["shaping_algo", "delay"],
+        [[params[0], params[1]] for params in itertools.product(["htb"], [100])],
+    )
     def test_src_net_uniform_latency(
-            self, device_option, local_host_option, dst_host_option,
-            transmitter, pingparser, shaping_algo, delay):
+        self,
+        device_option,
+        local_host_option,
+        dst_host_option,
+        transmitter,
+        pingparser,
+        shaping_algo,
+        delay,
+    ):
         if device_option is None:
             pytest.skip("device option is null")
         if typepy.is_null_string(local_host_option):
@@ -116,13 +123,20 @@ class Test_tcset_exclude(object):
        - English locale (for parsing ping output)
     """
 
-    @pytest.mark.parametrize(["shaping_algo", "delay"], [
-        [params[0], params[1]]
-        for params in itertools.product(["htb"], [100])
-    ])
+    @pytest.mark.parametrize(
+        ["shaping_algo", "delay"],
+        [[params[0], params[1]] for params in itertools.product(["htb"], [100])],
+    )
     def test_src_net_uniform_latency(
-            self, device_option, local_host_option, dst_host_option,
-            transmitter, pingparser, shaping_algo, delay):
+        self,
+        device_option,
+        local_host_option,
+        dst_host_option,
+        transmitter,
+        pingparser,
+        shaping_algo,
+        delay,
+    ):
         if device_option is None:
             pytest.skip("device option is null")
         if typepy.is_null_string(local_host_option):

@@ -24,7 +24,6 @@ from .._shaping_rule_finder import TcShapingRuleFinder
 
 @six.add_metaclass(abc.ABCMeta)
 class ShaperInterface(object):
-
     @abc.abstractproperty
     def algorithm_name(self):  # pragma: no cover
         pass
@@ -35,7 +34,6 @@ class ShaperInterface(object):
 
 
 class AbstractShaper(ShaperInterface):
-
     @property
     def _tc_device(self):
         return "{:s}".format(self._tc_obj.get_tc_device())
@@ -73,10 +71,12 @@ class AbstractShaper(ShaperInterface):
         if base_command is None:
             return 0
 
-        parent = self._get_tc_parent("{:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id()))
-        handle = self._get_tc_handle("{:x}:".format(
-            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id)))
+        parent = self._get_tc_parent(
+            "{:s}:{:d}".format(self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
+        )
+        handle = self._get_tc_handle(
+            "{:x}:".format(self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id))
+        )
 
         command_item_list = [
             base_command,
@@ -96,8 +96,9 @@ class AbstractShaper(ShaperInterface):
             command_item_list.append("delay {}".format(self._tc_obj.latency_time))
 
             if self._tc_obj.latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-                command_item_list.append("{} distribution normal".format(
-                    self._tc_obj.latency_distro_time))
+                command_item_list.append(
+                    "{} distribution normal".format(self._tc_obj.latency_distro_time)
+                )
 
         if self._tc_obj.corruption_rate > 0:
             command_item_list.append("corrupt {:f}%".format(self._tc_obj.corruption_rate))
@@ -111,8 +112,13 @@ class AbstractShaper(ShaperInterface):
             notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{command:s}': netem qdisc already exists "
                 "(dev={dev:s}, parent={parent:s}, handle={handle:s})".format(
-                    command=base_command, dev=self._tc_obj.get_tc_device(),
-                    parent=parent, handle=handle)))
+                    command=base_command,
+                    dev=self._tc_obj.get_tc_device(),
+                    parent=parent,
+                    handle=handle,
+                )
+            ),
+        )
 
     def _add_filter(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.FILTER)
@@ -123,7 +129,8 @@ class AbstractShaper(ShaperInterface):
             return 0
 
         command_item_list = [
-            base_command, self._dev,
+            base_command,
+            self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
             "prio 2",
@@ -137,25 +144,37 @@ class AbstractShaper(ShaperInterface):
             else:
                 dst_network = self._tc_obj.dst_network
 
-            command_item_list.extend([
-                "u32",
-                "match {:s} {:s} {:s}".format(self._tc_obj.protocol_match, "dst", dst_network),
-            ])
+            command_item_list.extend(
+                [
+                    "u32",
+                    "match {:s} {:s} {:s}".format(self._tc_obj.protocol_match, "dst", dst_network),
+                ]
+            )
 
             if typepy.is_not_null_string(self._tc_obj.src_network):
-                command_item_list.append("match {:s} {:s} {:s}".format(
-                    self._tc_obj.protocol_match, "src", self._tc_obj.src_network))
+                command_item_list.append(
+                    "match {:s} {:s} {:s}".format(
+                        self._tc_obj.protocol_match, "src", self._tc_obj.src_network
+                    )
+                )
 
             if self._tc_obj.src_port:
-                command_item_list.append("match {:s} sport {:d} 0xffff".format(
-                    self._tc_obj.protocol_match, self._tc_obj.src_port))
+                command_item_list.append(
+                    "match {:s} sport {:d} 0xffff".format(
+                        self._tc_obj.protocol_match, self._tc_obj.src_port
+                    )
+                )
 
             if self._tc_obj.dst_port:
-                command_item_list.append("match {:s} dport {:d} 0xffff".format(
-                    self._tc_obj.protocol_match, self._tc_obj.dst_port))
+                command_item_list.append(
+                    "match {:s} dport {:d} 0xffff".format(
+                        self._tc_obj.protocol_match, self._tc_obj.dst_port
+                    )
+                )
 
-        command_item_list.append("flowid {:s}:{:d}".format(
-            self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id()))
+        command_item_list.append(
+            "flowid {:s}:{:d}".format(self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
+        )
 
         return subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
 
@@ -163,10 +182,9 @@ class AbstractShaper(ShaperInterface):
         pass
 
     def _is_use_iptables(self):
-        return all([
-            self._tc_obj.is_enable_iptables,
-            self._tc_obj.direction == TrafficDirection.OUTGOING,
-        ])
+        return all(
+            [self._tc_obj.is_enable_iptables, self._tc_obj.direction == TrafficDirection.OUTGOING]
+        )
 
     @abc.abstractmethod
     def _get_qdisc_minor_id(self):  # pragma: no cover
@@ -184,7 +202,8 @@ class AbstractShaper(ShaperInterface):
             return "src"
 
         raise ParameterError(
-            "unknown direction", expected=TrafficDirection.LIST, value=self.direction)
+            "unknown direction", expected=TrafficDirection.LIST, value=self.direction
+        )
 
     def _get_tc_handle(self, default_handle):
         handle = None
@@ -236,6 +255,12 @@ class AbstractShaper(ShaperInterface):
             src_network = self._tc_obj.dst_network
             chain = "INPUT"
 
-        self._tc_obj.iptables_ctrl.add(IptablesMangleMarkEntry(
-            ip_version=self._tc_obj.ip_version, mark_id=mark_id,
-            source=src_network, destination=dst_network, chain=chain))
+        self._tc_obj.iptables_ctrl.add(
+            IptablesMangleMarkEntry(
+                ip_version=self._tc_obj.ip_version,
+                mark_id=mark_id,
+                source=src_network,
+                destination=dst_network,
+                chain=chain,
+            )
+        )

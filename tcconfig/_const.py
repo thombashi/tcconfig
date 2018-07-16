@@ -16,9 +16,9 @@ IPV6_OPTION_ERROR_MSG_FORMAT = "{}. --ipv6 option required to use IPv6 address."
 
 @enum.unique
 class TcSubCommand(enum.Enum):
-        CLASS = "class"
-        FILTER = "filter"
-        QDISC = "qdisc"
+    CLASS = "class"
+    FILTER = "filter"
+    QDISC = "qdisc"
 
 
 class Network(object):
@@ -36,7 +36,6 @@ class ShapingAlgorithm(object):
 
 
 class Tc(object):
-
     class Command(object):
         TCSET = "tcset"
         TCDEL = "tcdel"

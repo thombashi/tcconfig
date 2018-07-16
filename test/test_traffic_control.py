@@ -23,128 +23,173 @@ def device_option(request):
     return request.config.getoption("--device")
 
 
-@pytest.mark.parametrize(["value"], [
-    ["".join(opt_list)]
-    for opt_list in AllPairs([
-        ["0.1", "+1.25", "30"],
-        [
-            "k", " k ", "K", " K ", "kbps", "Kbps",
-            "m", " m ", "M", " M ", "mbps", "Mbps",
-            "g", " g ", "G", " G ", "gbps", "Gbps",
-        ]
-    ])
-])
+@pytest.mark.parametrize(
+    ["value"],
+    [
+        ["".join(opt_list)]
+        for opt_list in AllPairs(
+            [
+                ["0.1", "+1.25", "30"],
+                [
+                    "k",
+                    " k ",
+                    "K",
+                    " K ",
+                    "kbps",
+                    "Kbps",
+                    "m",
+                    " m ",
+                    "M",
+                    " M ",
+                    "mbps",
+                    "Mbps",
+                    "g",
+                    " g ",
+                    "G",
+                    " G ",
+                    "gbps",
+                    "Gbps",
+                ],
+            ]
+        )
+    ],
+)
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
     tc_obj = TrafficControl(
-        "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING,
-        shaping_algorithm=ShapingAlgorithm.HTB)
+        "dummy",
+        bandwidth_rate=value,
+        direction=TrafficDirection.OUTGOING,
+        shaping_algorithm=ShapingAlgorithm.HTB,
+    )
     tc_obj.validate_bandwidth_rate()
 
 
-@pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), UnitNotFoundError]
-    for opt_list in AllPairs([
-        ["0.1", "1"],
-        ["", "kb", "KB", "mb", "MB", "gb", "GB"]
-    ])
-] + [
-    ["".join(value), ParameterError]
-    for value in ("B", "K", "M", "G")
-] + [
-    ["0bps", ParameterError],
-    ["34359738361bps", ParameterError],
-])
+@pytest.mark.parametrize(
+    ["value", "expected"],
+    [
+        ["".join(opt_list), UnitNotFoundError]
+        for opt_list in AllPairs([["0.1", "1"], ["", "kb", "KB", "mb", "MB", "gb", "GB"]])
+    ]
+    + [["".join(value), ParameterError] for value in ("B", "K", "M", "G")]
+    + [["0bps", ParameterError], ["34359738361bps", ParameterError]],
+)
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
-            "dummy", bandwidth_rate=value, direction=TrafficDirection.OUTGOING,
+            "dummy",
+            bandwidth_rate=value,
+            direction=TrafficDirection.OUTGOING,
             latency_time=Tc.ValueRange.LatencyTime.MIN,
             latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
-            shaping_algorithm=ShapingAlgorithm.HTB)
+            shaping_algorithm=ShapingAlgorithm.HTB,
+        )
         tc_obj.validate_bandwidth_rate()
 
 
-@pytest.mark.parametrize(["value", "expected"], [
-    ["".join(opt_list), ParameterError]
-    for opt_list in itertools.product(
-        ["-1", "0", "0.0"],
-        ["k", "K", "m", "M", "g", "G"]
-    )
-])
+@pytest.mark.parametrize(
+    ["value", "expected"],
+    [
+        ["".join(opt_list), ParameterError]
+        for opt_list in itertools.product(["-1", "0", "0.0"], ["k", "K", "m", "M", "g", "G"])
+    ],
+)
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
-            "dummy", bandwidth_rate=value,
+            "dummy",
+            bandwidth_rate=value,
             latency_time=Tc.ValueRange.LatencyTime.MIN,
             latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
-            shaping_algorithm=ShapingAlgorithm.HTB)
+            shaping_algorithm=ShapingAlgorithm.HTB,
+        )
         tc_obj.validate_bandwidth_rate()
 
 
 class Test_TrafficControl_validate(object):
-
     @pytest.mark.parametrize(
         [
-            "rate", "direction", "delay", "delay_distro", "loss", "duplicate",
+            "rate",
+            "direction",
+            "delay",
+            "delay_distro",
+            "loss",
+            "duplicate",
             "corrupt",
-            "src_network", "exclude_src_network",
-            "dst_network", "exclude_dst_network",
-            "src_port", "exclude_src_port",
-            "dst_port", "exclude_dst_port",
+            "src_network",
+            "exclude_src_network",
+            "dst_network",
+            "exclude_dst_network",
+            "src_port",
+            "exclude_src_port",
+            "dst_port",
+            "exclude_dst_port",
             "shaping_algorithm",
         ],
         [
             opt_list
-            for opt_list in AllPairs([
-                [None, "", "100K", "0.5M", "0.1G"],  # rate
-                [TrafficDirection.OUTGOING],
+            for opt_list in AllPairs(
                 [
-                    Tc.ValueRange.LatencyTime.MIN,
-                    Tc.ValueRange.LatencyTime.MAX,
-                ],  # delay
-                [
-                    Tc.ValueRange.LatencyTime.MIN,
-                    Tc.ValueRange.LatencyTime.MAX,
-                ],  # delay_distro
-                [
-                    None,
-                    TrafficControl.MIN_PACKET_LOSS_RATE, MIN_VALID_PACKET_LOSS,
-                    TrafficControl.MAX_PACKET_LOSS_RATE,
-                ],  # loss
-                [
-                    None, TrafficControl.MIN_PACKET_DUPLICATE_RATE,
-                    TrafficControl.MAX_PACKET_DUPLICATE_RATE,
-                ],  # duplicate
-                [
-                    None, TrafficControl.MIN_CORRUPTION_RATE,
-                    TrafficControl.MAX_CORRUPTION_RATE,
-                ],  # corrupt
-                [None, "192.168.0.1", "192.168.0.0/24"],  # src_network
-                [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_src_network
-                [
-                    None,
-                    "",
-                    "192.168.0.1", "192.168.0.254",
-                    "192.168.0.1/32", "192.168.0.0/24"
-                ],  # dst_network
-                [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_dst_network
-                [None, 65535],  # src_port
-                [None, 22],  # exclude_src_port
-                [None, 65535],  # dst_port
-                [None, 22],  # exclude_dst_port
-                [
-                    ShapingAlgorithm.HTB, ShapingAlgorithm.TBF,
-                ],  # shaping_algorithm
-            ], n=3)
-        ])
+                    [None, "", "100K", "0.5M", "0.1G"],  # rate
+                    [TrafficDirection.OUTGOING],
+                    [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay
+                    [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay_distro
+                    [
+                        None,
+                        TrafficControl.MIN_PACKET_LOSS_RATE,
+                        MIN_VALID_PACKET_LOSS,
+                        TrafficControl.MAX_PACKET_LOSS_RATE,
+                    ],  # loss
+                    [
+                        None,
+                        TrafficControl.MIN_PACKET_DUPLICATE_RATE,
+                        TrafficControl.MAX_PACKET_DUPLICATE_RATE,
+                    ],  # duplicate
+                    [
+                        None,
+                        TrafficControl.MIN_CORRUPTION_RATE,
+                        TrafficControl.MAX_CORRUPTION_RATE,
+                    ],  # corrupt
+                    [None, "192.168.0.1", "192.168.0.0/24"],  # src_network
+                    [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_src_network
+                    [
+                        None,
+                        "",
+                        "192.168.0.1",
+                        "192.168.0.254",
+                        "192.168.0.1/32",
+                        "192.168.0.0/24",
+                    ],  # dst_network
+                    [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_dst_network
+                    [None, 65535],  # src_port
+                    [None, 22],  # exclude_src_port
+                    [None, 65535],  # dst_port
+                    [None, 22],  # exclude_dst_port
+                    [ShapingAlgorithm.HTB, ShapingAlgorithm.TBF],  # shaping_algorithm
+                ],
+                n=3,
+            )
+        ],
+    )
     def test_normal(
-            self, device_option, rate, direction, delay, delay_distro,
-            loss, duplicate, corrupt,
-            src_network, exclude_src_network,
-            dst_network, exclude_dst_network,
-            src_port, exclude_src_port,
-            dst_port, exclude_dst_port,
-            shaping_algorithm):
+        self,
+        device_option,
+        rate,
+        direction,
+        delay,
+        delay_distro,
+        loss,
+        duplicate,
+        corrupt,
+        src_network,
+        exclude_src_network,
+        dst_network,
+        exclude_dst_network,
+        src_port,
+        exclude_src_port,
+        dst_port,
+        exclude_dst_port,
+        shaping_algorithm,
+    ):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -169,8 +214,7 @@ class Test_TrafficControl_validate(object):
             shaping_algorithm=shaping_algorithm,
         )
 
-        if is_invalid_param(
-                rate, delay, loss, duplicate, corrupt, reordering=None):
+        if is_invalid_param(rate, delay, loss, duplicate, corrupt, reordering=None):
             with pytest.raises(ParameterError):
                 tc_obj.validate()
         else:
@@ -180,20 +224,20 @@ class Test_TrafficControl_validate(object):
         ["direction", "delay", "reordering"],
         [
             opt_list
-            for opt_list in AllPairs([
-                [TrafficDirection.OUTGOING],
+            for opt_list in AllPairs(
                 [
-                    "0.1ms",
-                    Tc.ValueRange.LatencyTime.MAX,
-                ],  # delay
-                [
-                    TrafficControl.MIN_REORDERING_RATE,
-                    TrafficControl.MAX_REORDERING_RATE,
-                ],  # reordering
-            ], n=2)
-        ])
-    def test_normal_reordering(
-            self, device_option, direction, delay, reordering):
+                    [TrafficDirection.OUTGOING],
+                    ["0.1ms", Tc.ValueRange.LatencyTime.MAX],  # delay
+                    [
+                        TrafficControl.MIN_REORDERING_RATE,
+                        TrafficControl.MAX_REORDERING_RATE,
+                    ],  # reordering
+                ],
+                n=2,
+            )
+        ],
+    )
+    def test_normal_reordering(self, device_option, direction, delay, reordering):
         if device_option is None:
             pytest.skip("device option is null")
 
@@ -208,86 +252,45 @@ class Test_TrafficControl_validate(object):
 
         tc_obj.validate()
 
-    @pytest.mark.parametrize(["value", "expected"], [
+    @pytest.mark.parametrize(
+        ["value", "expected"],
         [
-            {"latency_time": "-1ms"},
-            ParameterError,
+            [{"latency_time": "-1ms"}, ParameterError],
+            [{"latency_time": "61min"}, ParameterError],
+            [{"latency_time": "100ms", "latency_distro_time": "-1ms"}, ParameterError],
+            [{"latency_time": "100ms", "latency_distro_time": "61min"}, ParameterError],
+            [{"packet_loss_rate": TrafficControl.MIN_PACKET_LOSS_RATE - 0.1}, ParameterError],
+            [{"packet_loss_rate": TrafficControl.MAX_PACKET_LOSS_RATE + 0.1}, ParameterError],
+            [
+                {
+                    "latency_time": "100ms",
+                    "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
+                },
+                ParameterError,
+            ],
+            [
+                {
+                    "latency_time": "100ms",
+                    "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
+                },
+                ParameterError,
+            ],
+            [{"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1}, ParameterError],
+            [{"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1}, ParameterError],
+            [{"reordering_rate": TrafficControl.MIN_REORDERING_RATE - 0.1}, ParameterError],
+            [{"reordering_rate": TrafficControl.MAX_REORDERING_RATE + 0.1}, ParameterError],
+            [{Tc.Param.DST_NETWORK: "192.168.0."}, ParameterError],
+            [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ParameterError],
+            [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ParameterError],
+            [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, ParameterError],
+            [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, ParameterError],
+            [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, ParameterError],
+            [{"src_port": -1}, ParameterError],
+            [{"src_port": 65536}, ParameterError],
+            [{"dst_port": -1}, ParameterError],
+            [{"dst_port": 65536}, ParameterError],
         ],
-        [
-            {"latency_time": "61min"},
-            ParameterError,
-        ],
-
-        [
-            {
-                "latency_time": "100ms",
-                "latency_distro_time": "-1ms",
-            },
-            ParameterError,
-        ],
-        [
-            {
-                "latency_time": "100ms",
-                "latency_distro_time": "61min",
-            },
-            ParameterError,
-        ],
-
-        [
-            {"packet_loss_rate": TrafficControl.MIN_PACKET_LOSS_RATE - 0.1},
-            ParameterError,
-        ],
-        [
-            {"packet_loss_rate": TrafficControl.MAX_PACKET_LOSS_RATE + 0.1},
-            ParameterError,
-        ],
-
-        [
-            {
-                "latency_time": "100ms",
-                "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
-            },
-            ParameterError,
-        ],
-        [
-            {
-                "latency_time": "100ms",
-                "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
-            },
-            ParameterError,
-        ],
-
-        [
-            {"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1},
-            ParameterError,
-        ],
-        [
-            {"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1},
-            ParameterError,
-        ],
-
-        [
-            {"reordering_rate": TrafficControl.MIN_REORDERING_RATE - 0.1},
-            ParameterError,
-        ],
-        [
-            {"reordering_rate": TrafficControl.MAX_REORDERING_RATE + 0.1},
-            ParameterError,
-        ],
-
-        [{Tc.Param.DST_NETWORK: "192.168.0."}, ParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0/33"}, ParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.2/24"}, ParameterError],
-        [{Tc.Param.DST_NETWORK: "192.168.0.0000/24"}, ParameterError],
-
-        [{"src_port": -1}, ParameterError],
-        [{"src_port": 65536}, ParameterError],
-
-        [{"dst_port": -1}, ParameterError],
-        [{"dst_port": 65536}, ParameterError],
-    ])
+    )
     def test_exception(self, device_option, value, expected):
         if device_option is None:
             pytest.skip("device option is null")
@@ -296,8 +299,7 @@ class Test_TrafficControl_validate(object):
             device=device_option,
             bandwidth_rate=value.get("bandwidth_rate"),
             latency_time=value.get("latency_time", Tc.ValueRange.LatencyTime.MIN),
-            latency_distro_time=value.get(
-                "latency_distro_time", Tc.ValueRange.LatencyTime.MIN),
+            latency_distro_time=value.get("latency_distro_time", Tc.ValueRange.LatencyTime.MIN),
             packet_loss_rate=value.get("packet_loss_rate"),
             packet_duplicate_rate=value.get("packet_duplicate_rate"),
             corruption_rate=value.get("corruption_rate"),
@@ -312,26 +314,31 @@ class Test_TrafficControl_validate(object):
 
 
 class Test_TrafficControl_ipv4(object):
-
     @pytest.mark.parametrize(
-        [
-            "network", "is_ipv6",
-            "expected_ip_ver", "expected_protocol", "expected_protocol_match"
-        ],
+        ["network", "is_ipv6", "expected_ip_ver", "expected_protocol", "expected_protocol_match"],
         [
             ["192.168.0.1", False, 4, "ip", "ip"],
             ["192.168.0.0/24", False, 4, "ip", "ip"],
             ["::1", True, 6, "ipv6", "ip6"],
             ["2001:db00::0/24", True, 6, "ipv6", "ip6"],
-        ])
+        ],
+    )
     def test_normal(
-            self, device_option, network, is_ipv6,
-            expected_ip_ver, expected_protocol, expected_protocol_match):
+        self,
+        device_option,
+        network,
+        is_ipv6,
+        expected_ip_ver,
+        expected_protocol,
+        expected_protocol_match,
+    ):
         if device_option is None:
             pytest.skip("device option is null")
 
         tc_obj = TrafficControl(
-            device=device_option, dst_network=network, is_ipv6=is_ipv6,
+            device=device_option,
+            dst_network=network,
+            is_ipv6=is_ipv6,
             latency_time=Tc.ValueRange.LatencyTime.MIN,
             latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             shaping_algorithm=ShapingAlgorithm.HTB,

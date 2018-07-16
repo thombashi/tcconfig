@@ -37,7 +37,8 @@ class TbfShaper(AbstractShaper):
             return self.__IN_DEVICE_QDISC_MINOR_ID
 
         raise ParameterError(
-            "unknown direction", expected=TrafficDirection.LIST, value=self._tc_obj.direction)
+            "unknown direction", expected=TrafficDirection.LIST, value=self._tc_obj.direction
+        )
 
     def _get_netem_qdisc_major_id(self, base_id):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
@@ -45,10 +46,7 @@ class TbfShaper(AbstractShaper):
         elif self._tc_obj.direction == TrafficDirection.INCOMING:
             direction_offset = 1
 
-        return (
-            base_id +
-            self.__NETEM_QDISC_MAJOR_ID_OFFSET +
-            direction_offset)
+        return base_id + self.__NETEM_QDISC_MAJOR_ID_OFFSET + direction_offset
 
     def _make_qdisc(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
@@ -58,16 +56,18 @@ class TbfShaper(AbstractShaper):
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         return run_command_helper(
-            " ".join([
-                base_command, self._dev, "root",
-                "handle {:s}".format(handle), "prio",
-            ]),
+            " ".join([base_command, self._dev, "root", "handle {:s}".format(handle), "prio"]),
             ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,
             notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{command:s}': prio qdisc already exists "
                 "({dev:s}, algo={algorithm:s}, handle={handle:s}).".format(
-                    command=base_command, dev=self._dev,
-                    algorithm=self.algorithm_name, handle=handle)))
+                    command=base_command,
+                    dev=self._dev,
+                    algorithm=self.algorithm_name,
+                    handle=handle,
+                )
+            ),
+        )
 
     def _add_rate(self):
         try:
@@ -80,8 +80,8 @@ class TbfShaper(AbstractShaper):
             return 0
 
         parent = "{:x}:{:d}".format(
-            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
-            self._get_qdisc_minor_id())
+            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id), self._get_qdisc_minor_id()
+        )
         handle = "{:d}:".format(20)
         no_limit_kbits = get_no_limit_kbits(self._tc_device)
 
@@ -89,18 +89,18 @@ class TbfShaper(AbstractShaper):
         if kbits is None:
             kbits = no_limit_kbits
 
-        command = " ".join([
-            base_command,
-            self._dev,
-            "parent {:s}".format(parent),
-            "handle {:s}".format(handle),
-            self.algorithm_name,
-            "rate {}kbit".format(kbits),
-            "buffer {:d}".format(
-                max(int(kbits), self.__MIN_BUFFER_BYTE)
-            ),  # [byte]
-            "limit 10000",
-        ])
+        command = " ".join(
+            [
+                base_command,
+                self._dev,
+                "parent {:s}".format(parent),
+                "handle {:s}".format(handle),
+                self.algorithm_name,
+                "rate {}kbit".format(kbits),
+                "buffer {:d}".format(max(int(kbits), self.__MIN_BUFFER_BYTE)),  # [byte]
+                "limit 10000",
+            ]
+        )
 
         run_command_helper(
             command,
@@ -108,8 +108,14 @@ class TbfShaper(AbstractShaper):
             notice_msg=self._tc_obj.EXISTS_MSG_TEMPLATE.format(
                 "failed to '{command:s}': qdisc already exists ({dev:s}, algo={algorithm:s}, "
                 "parent={parent:s}, handle={handle:s}).".format(
-                    command=base_command, dev=self._dev, algorithm=self.algorithm_name,
-                    parent=parent, handle=handle)))
+                    command=base_command,
+                    dev=self._dev,
+                    algorithm=self.algorithm_name,
+                    parent=parent,
+                    handle=handle,
+                )
+            ),
+        )
 
         self.__set_pre_network_filter()
 
@@ -132,24 +138,29 @@ class TbfShaper(AbstractShaper):
         if self._is_use_iptables():
             return 0
 
-        if all([
+        if all(
+            [
                 typepy.is_null_string(self._tc_obj.dst_network),
                 not typepy.Integer(self._tc_obj.dst_port).is_type(),
-        ]):
-            flowid = "{:s}:{:d}".format(
-                self._tc_obj.qdisc_major_id_str,
-                self._get_qdisc_minor_id())
+            ]
+        ):
+            flowid = "{:s}:{:d}".format(self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
         else:
             flowid = "{:s}:2".format(self._tc_obj.qdisc_major_id_str)
 
-        return SubprocessRunner(" ".join([
-            self._tc_obj.get_tc_command(TcSubCommand.FILTER),
-            self._dev,
-            "protocol {:s}".format(self._tc_obj.protocol),
-            "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio 2 u32 match {:s} {:s} {:s}".format(
-                self._tc_obj.protocol,
-                self._get_network_direction_str(),
-                get_anywhere_network(self._tc_obj.ip_version)),
-            "flowid {:s}".format(flowid),
-        ])).run()
+        return SubprocessRunner(
+            " ".join(
+                [
+                    self._tc_obj.get_tc_command(TcSubCommand.FILTER),
+                    self._dev,
+                    "protocol {:s}".format(self._tc_obj.protocol),
+                    "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
+                    "prio 2 u32 match {:s} {:s} {:s}".format(
+                        self._tc_obj.protocol,
+                        self._get_network_direction_str(),
+                        get_anywhere_network(self._tc_obj.ip_version),
+                    ),
+                    "flowid {:s}".format(flowid),
+                ]
+            )
+        ).run()

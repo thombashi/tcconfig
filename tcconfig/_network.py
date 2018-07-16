@@ -1,8 +1,8 @@
 # encoding: utf-8
 
-'''
+"""
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
-'''
+"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -37,8 +37,7 @@ def _get_iproute2_upper_limite_rate():
     # bits per second older than 3.14.0
     # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
-    return Humanreadable(
-        "32G", kilo_size=KILO_SIZE).to_kilo_bit()
+    return Humanreadable("32G", kilo_size=KILO_SIZE).to_kilo_bit()
 
 
 def _read_iface_speed(tc_device):
@@ -59,9 +58,7 @@ def get_no_limit_kbits(tc_device):
         # default to the iproute2 upper limit when speed value is -1 in
         # paravirtualized network interfaces
         return _get_iproute2_upper_limite_rate()
-    return min(
-        speed_value * KILO_SIZE,
-        _get_iproute2_upper_limite_rate())
+    return min(speed_value * KILO_SIZE, _get_iproute2_upper_limite_rate())
 
 
 def is_anywhere_network(network, ip_version):
@@ -74,8 +71,7 @@ def is_anywhere_network(network, ip_version):
         return network == get_anywhere_network(ip_version)
 
     if ip_version == 6:
-        return network in (
-            get_anywhere_network(ip_version), "0:0:0:0:0:0:0:0/0")
+        return network in (get_anywhere_network(ip_version), "0:0:0:0:0:0:0:0/0")
 
     raise ValueError("invalid ip version: {}".format(ip_version))
 

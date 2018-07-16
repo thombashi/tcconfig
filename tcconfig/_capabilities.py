@@ -1,8 +1,8 @@
 # encoding: utf-8
 
-'''
+"""
 .. codeauthor:: Tsuyoshi Hombashi <>
-'''
+"""
 
 from __future__ import absolute_import, unicode_literals
 
@@ -28,16 +28,19 @@ def get_required_capabilities(command):
 
 
 def get_permission_error_message(command):
-    PERMISSION_ERROR_MSG_FORMAT = "\n".join([
-        "Permission denied: you must be root or set Linux capabilities to execute the command.",
-        "  How to setup Linux capabilities for the {command:s} command:",
-        "    $ sudo setcap {capabilities:s}+ep {bin_path:s}"
-    ])
+    PERMISSION_ERROR_MSG_FORMAT = "\n".join(
+        [
+            "Permission denied: you must be root or set Linux capabilities to execute the command.",
+            "  How to setup Linux capabilities for the {command:s} command:",
+            "    $ sudo setcap {capabilities:s}+ep {bin_path:s}",
+        ]
+    )
 
     return PERMISSION_ERROR_MSG_FORMAT.format(
         command=command,
         capabilities=",".join(get_required_capabilities(command)),
-        bin_path=find_bin_path(command))
+        bin_path=find_bin_path(command),
+    )
 
 
 def _has_capabilies(bin_path, capabilities):

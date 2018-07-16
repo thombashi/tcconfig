@@ -18,7 +18,6 @@ from ._interface import AbstractParser
 
 
 class TcQdiscParser(AbstractParser):
-
     @property
     def _tc_subcommand(self):
         return TcSubCommand.QDISC.value
@@ -68,13 +67,23 @@ class TcQdiscParser(AbstractParser):
             self.__con.create_table_from_data_matrix(
                 table_name=self._tc_subcommand,
                 attr_name_list=[
-                    Tc.Param.DEVICE, "parent", "handle", "delay", "delay-distro",
-                    "loss", "duplicate", "corrupt", "reorder", "rate",
+                    Tc.Param.DEVICE,
+                    "parent",
+                    "handle",
+                    "delay",
+                    "delay-distro",
+                    "loss",
+                    "duplicate",
+                    "corrupt",
+                    "reorder",
+                    "rate",
                 ],
-                data_matrix=entry_list)
+                data_matrix=entry_list,
+            )
 
-        logger.debug("tc {:s} parse result: {}".format(
-            self._tc_subcommand, json.dumps(entry_list, indent=4)))
+        logger.debug(
+            "tc {:s} parse result: {}".format(self._tc_subcommand, json.dumps(entry_list, indent=4))
+        )
 
         return entry_list
 
@@ -84,9 +93,10 @@ class TcQdiscParser(AbstractParser):
     def __parse_netem_delay_distro(self, line):
         parse_param_name = "delay"
         pattern = (
-            pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.nums + ".msu") +
-            pp.Word(pp.nums + ".msu"))
+            pp.SkipTo(parse_param_name, include=True)
+            + pp.Word(pp.nums + ".msu")
+            + pp.Word(pp.nums + ".msu")
+        )
 
         try:
             parsed_list = pattern.parseString(line)
@@ -96,9 +106,7 @@ class TcQdiscParser(AbstractParser):
             pass
 
     def __parse_netem_param(self, line, parse_param_name, word_pattern, key_name=None):
-        pattern = (
-            pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(word_pattern))
+        pattern = pp.SkipTo(parse_param_name, include=True) + pp.Word(word_pattern)
         if not key_name:
             key_name = parse_param_name
 
@@ -111,9 +119,7 @@ class TcQdiscParser(AbstractParser):
 
     def __parse_bandwidth_rate(self, line):
         parse_param_name = "rate"
-        pattern = (
-            pp.SkipTo(parse_param_name, include=True) +
-            pp.Word(pp.alphanums + "." + ":"))
+        pattern = pp.SkipTo(parse_param_name, include=True) + pp.Word(pp.alphanums + "." + ":")
 
         try:
             result = pattern.parseString(line)[-1]

@@ -38,50 +38,109 @@ class Test_tcdel(object):
 
         execute_tcdel(device_value)
 
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "10",
-            "--delay-distro", "2",
-            "--loss", "0.01",
-            "--duplicate", "0.5",
-            "--reorder", "0.2",
-            "--rate", "0.25K",
-            "--network", "192.168.0.10",
-            "--port", "8080",
-            "--overwrite",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "1",
-            "--loss", "1",
-            "--rate", "100M",
-            "--network", "192.168.1.0/24",
-            "--add",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "10",
-            "--delay-distro", "2",
-            "--rate", "500K",
-            "--direction", "incoming",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "1",
-            "--loss", "0.02",
-            "--duplicate", "0.5",
-            "--reorder", "0.2",
-            "--rate", "0.1M",
-            "--network", "192.168.11.0/24",
-            "--port", "80",
-            "--direction", "incoming",
-            "--add",
-        ])).run() == 0
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--loss",
+                        "0.01",
+                        "--duplicate",
+                        "0.5",
+                        "--reorder",
+                        "0.2",
+                        "--rate",
+                        "0.25K",
+                        "--network",
+                        "192.168.0.10",
+                        "--port",
+                        "8080",
+                        "--overwrite",
+                    ]
+                )
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "1",
+                        "--rate",
+                        "100M",
+                        "--network",
+                        "192.168.1.0/24",
+                        "--add",
+                    ]
+                )
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--rate",
+                        "500K",
+                        "--direction",
+                        "incoming",
+                    ]
+                )
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "0.02",
+                        "--duplicate",
+                        "0.5",
+                        "--reorder",
+                        "0.2",
+                        "--rate",
+                        "0.1M",
+                        "--network",
+                        "192.168.11.0/24",
+                        "--port",
+                        "80",
+                        "--direction",
+                        "incoming",
+                        "--add",
+                    ]
+                )
+            ).run()
+            == 0
+        )
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
            "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "filter_id": "800::800",
@@ -117,26 +176,39 @@ class Test_tcdel(object):
         }
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        tcdel_proc = SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option, "--network", "192.168.1.0/24"]))
+        tcdel_proc = SubprocessRunner(
+            " ".join([Tc.Command.TCDEL, device_option, "--network", "192.168.1.0/24"])
+        )
         assert tcdel_proc.run() == 0, tcdel_proc.stderr
-        tcdel_proc = SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--network", "192.168.11.0/24",
-            "--port", "80",
-            "--direction", "incoming",
-        ]))
+        tcdel_proc = SubprocessRunner(
+            " ".join(
+                [
+                    Tc.Command.TCDEL,
+                    device_option,
+                    "--network",
+                    "192.168.11.0/24",
+                    "--port",
+                    "80",
+                    "--direction",
+                    "incoming",
+                ]
+            )
+        )
         assert tcdel_proc.run() == 0, tcdel_proc.stderr
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
             "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "delay": "10.0ms",
@@ -158,29 +230,37 @@ class Test_tcdel(object):
         }
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--id", "800::800",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--id", "800::800",
-            "--direction", "incoming",
-        ])).run() == 0
+        assert (
+            SubprocessRunner(" ".join([Tc.Command.TCDEL, device_option, "--id", "800::800"])).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [Tc.Command.TCDEL, device_option, "--id", "800::800", "--direction", "incoming"]
+                )
+            ).run()
+            == 0
+        )
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {},
         "incoming": {}
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))
@@ -199,56 +279,111 @@ class Test_tcdel(object):
 
         execute_tcdel(device_value)
 
-        proc = SubprocessRunner([
-            Tc.Command.TCSET, device_option,
-            "--delay", "10",
-            "--delay-distro", "2",
-            "--loss", "0.01",
-            "--duplicate", "5",
-            "--reorder", "2",
-            "--rate", "0.25K",
-            "--network", "::1",
-            "--port", "8080",
-            "--overwrite",
-            "--ipv6",
-        ])
+        proc = SubprocessRunner(
+            [
+                Tc.Command.TCSET,
+                device_option,
+                "--delay",
+                "10",
+                "--delay-distro",
+                "2",
+                "--loss",
+                "0.01",
+                "--duplicate",
+                "5",
+                "--reorder",
+                "2",
+                "--rate",
+                "0.25K",
+                "--network",
+                "::1",
+                "--port",
+                "8080",
+                "--overwrite",
+                "--ipv6",
+            ]
+        )
         print(proc.command)
         assert proc.run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "1",
-            "--loss", "1",
-            "--rate", "100M",
-            "--network", "2001:db00::0/24",
-            "--add",
-            "--ipv6",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "10",
-            "--delay-distro", "2",
-            "--rate", "500K",
-            "--direction", "incoming",
-            "--ipv6",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCSET, device_option,
-            "--delay", "1",
-            "--loss", "0.02",
-            "--duplicate", "5",
-            "--reorder", "2",
-            "--rate", "0.1M",
-            "--network", "2001:db00::0/25",
-            "--port", "80",
-            "--direction", "incoming",
-            "--add",
-            "--ipv6",
-        ])).run() == 0
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "1",
+                        "--rate",
+                        "100M",
+                        "--network",
+                        "2001:db00::0/24",
+                        "--add",
+                        "--ipv6",
+                    ]
+                )
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--rate",
+                        "500K",
+                        "--direction",
+                        "incoming",
+                        "--ipv6",
+                    ]
+                )
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "0.02",
+                        "--duplicate",
+                        "5",
+                        "--reorder",
+                        "2",
+                        "--rate",
+                        "0.1M",
+                        "--network",
+                        "2001:db00::0/25",
+                        "--port",
+                        "80",
+                        "--direction",
+                        "incoming",
+                        "--add",
+                        "--ipv6",
+                    ]
+                )
+            ).run()
+            == 0
+        )
 
         runner = SubprocessRunner("tcshow {:s} --ipv6".format(device_option))
         runner.run()
 
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
             "dst-network=::1/128, dst-port=8080, protocol=ipv6": {
                 "filter_id": "800::800",
@@ -284,28 +419,46 @@ class Test_tcdel(object):
         }
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--network", "2001:db00::0/24",
-            "--ipv6",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--network", "2001:db00::0/25",
-            "--port", "80",
-            "--direction", "incoming",
-            "--ipv6",
-        ])).run() == 0
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [Tc.Command.TCDEL, device_option, "--network", "2001:db00::0/24", "--ipv6"]
+                )
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCDEL,
+                        device_option,
+                        "--network",
+                        "2001:db00::0/25",
+                        "--port",
+                        "80",
+                        "--direction",
+                        "incoming",
+                        "--ipv6",
+                    ]
+                )
+            ).run()
+            == 0
+        )
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
             "protocol=ipv6": {
                 "delay": "10.0ms",
@@ -327,31 +480,47 @@ class Test_tcdel(object):
         }
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))
         assert json.loads(runner.stdout) == json.loads(expected)
 
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--id", "800::800",
-            "--ipv6",
-        ])).run() == 0
-        assert SubprocessRunner(" ".join([
-            Tc.Command.TCDEL, device_option,
-            "--id", "800::800",
-            "--direction", "incoming",
-            "--ipv6",
-        ])).run() == 0
+        assert (
+            SubprocessRunner(
+                " ".join([Tc.Command.TCDEL, device_option, "--id", "800::800", "--ipv6"])
+            ).run()
+            == 0
+        )
+        assert (
+            SubprocessRunner(
+                " ".join(
+                    [
+                        Tc.Command.TCDEL,
+                        device_option,
+                        "--id",
+                        "800::800",
+                        "--direction",
+                        "incoming",
+                        "--ipv6",
+                    ]
+                )
+            ).run()
+            == 0
+        )
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {},
         "incoming": {}
     }
 }"""
+        )
 
         # finalize ---
         execute_tcdel(device_value)

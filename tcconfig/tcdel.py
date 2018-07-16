@@ -29,18 +29,22 @@ def parse_option():
     parser = ArgparseWrapper(__version__)
 
     group = parser.parser.add_argument_group("Traffic Control")
+    group.add_argument("-d", "--device", required=True, help="network device name (e.g. eth0)")
     group.add_argument(
-        "-d", "--device", required=True,
-        help="network device name (e.g. eth0)")
+        "-a",
+        "--all",
+        dest="is_delete_all",
+        action="store_true",
+        help="delete all of the shaping rules.",
+    )
     group.add_argument(
-        "-a", "--all", dest="is_delete_all", action="store_true",
-        help="delete all of the shaping rules.")
-    group.add_argument(
-        "--id", dest="filter_id",
+        "--id",
+        dest="filter_id",
         help="""delete a shaping rule which has a specific id. you can get an id (filter_id)
         by tcshow command output.
         e.g. "filter_id": "800::801"
-        """)
+        """,
+    )
 
     parser.add_routing_group()
 
@@ -54,18 +58,26 @@ def create_tc_obj(options):
     if options.filter_id:
         ip_version = 6 if options.is_ipv6 else 4
         shaping_rule_parser = TcShapingRuleParser(
-            device=options.device, ip_version=ip_version,
-            tc_command_output=options.tc_command_output, logger=logger)
+            device=options.device,
+            ip_version=ip_version,
+            tc_command_output=options.tc_command_output,
+            logger=logger,
+        )
         shaping_rule_parser.parse()
         result = shaping_rule_parser.con.select_as_dict(
             table_name=TcSubCommand.FILTER.value,
             column_list=[
-                Tc.Param.SRC_NETWORK, Tc.Param.DST_NETWORK,
-                Tc.Param.SRC_PORT, Tc.Param.DST_PORT],
-            where=Where(Tc.Param.FILTER_ID, options.filter_id))
+                Tc.Param.SRC_NETWORK,
+                Tc.Param.DST_NETWORK,
+                Tc.Param.SRC_PORT,
+                Tc.Param.DST_PORT,
+            ],
+            where=Where(Tc.Param.FILTER_ID, options.filter_id),
+        )
         if not result:
-            logger.error("shaping rule not found associated with the id ({}).".format(
-                options.filter_id))
+            logger.error(
+                "shaping rule not found associated with the id ({}).".format(options.filter_id)
+            )
             sys.exit(1)
 
         filter_param = result[0]
@@ -80,10 +92,14 @@ def create_tc_obj(options):
         src_port = options.src_port
 
     return TrafficControl(
-        options.device, direction=options.direction,
-        dst_network=dst_network, src_network=src_network,
-        dst_port=dst_port, src_port=src_port,
-        is_ipv6=options.is_ipv6)
+        options.device,
+        direction=options.direction,
+        dst_network=dst_network,
+        src_network=src_network,
+        dst_port=dst_port,
+        src_port=src_port,
+        is_ipv6=options.is_ipv6,
+    )
 
 
 def main():
@@ -137,5 +153,5 @@ def main():
     return return_code
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

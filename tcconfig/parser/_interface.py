@@ -13,7 +13,6 @@ import six
 
 @six.add_metaclass(abc.ABCMeta)
 class ParserInterface(object):
-
     @abc.abstractmethod
     def parse(self, text):  # pragma: no cover
         pass
@@ -21,7 +20,6 @@ class ParserInterface(object):
 
 @six.add_metaclass(abc.ABCMeta)
 class AbstractParser(ParserInterface):
-
     def __init__(self):
         self._clear()
 

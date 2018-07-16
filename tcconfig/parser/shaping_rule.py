@@ -26,7 +26,6 @@ from ._qdisc import TcQdiscParser
 
 
 class TcShapingRuleParser(object):
-
     @property
     def con(self):
         return self.__con
@@ -60,7 +59,7 @@ class TcShapingRuleParser(object):
             self.device: {
                 TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
                 TrafficDirection.INCOMING: self.__get_shaping_rule(self.ifb_device),
-            },
+            }
         }
 
     def get_outgoing_tc_filter(self):
@@ -94,9 +93,10 @@ class TcShapingRuleParser(object):
             return None
 
         filter_runner = subprocrunner.SubprocessRunner(
-            "{:s} show dev {:s} root".format(
-                get_tc_base_command(TcSubCommand.FILTER), self.device),
-            error_log_level=logbook.NOTSET, dry_run=False)
+            "{:s} show dev {:s} root".format(get_tc_base_command(TcSubCommand.FILTER), self.device),
+            error_log_level=logbook.NOTSET,
+            dry_run=False,
+        )
         if filter_runner.run() != 0 and filter_runner.stderr.find("Cannot find device") != -1:
             raise NetworkInterfaceNotFoundError(device=self.device)
 
@@ -117,8 +117,7 @@ class TcShapingRuleParser(object):
                 if mangle.mark_id != handle:
                     continue
 
-                key_item_list.append(
-                    dst_network_format.format(mangle.destination))
+                key_item_list.append(dst_network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
                     key_item_list.append("{:s}={:s}".format(Tc.Param.SRC_NETWORK, mangle.source))
                 key_item_list.append(protocol_format.format(mangle.protocol))
@@ -128,13 +127,15 @@ class TcShapingRuleParser(object):
                 raise ValueError("mangle mark not found: {}".format(mangle))
         else:
             src_network = filter_param.get(Tc.Param.SRC_NETWORK)
-            if (typepy.is_not_null_string(src_network) and
-                    not is_anywhere_network(src_network, self.__ip_version)):
+            if typepy.is_not_null_string(src_network) and not is_anywhere_network(
+                src_network, self.__ip_version
+            ):
                 key_item_list.append(src_network_format.format(src_network))
 
             dst_network = filter_param.get(Tc.Param.DST_NETWORK)
-            if (typepy.is_not_null_string(dst_network) and
-                    not is_anywhere_network(dst_network, self.__ip_version)):
+            if typepy.is_not_null_string(dst_network) and not is_anywhere_network(
+                dst_network, self.__ip_version
+            ):
                 key_item_list.append(dst_network_format.format(dst_network))
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
@@ -164,19 +165,22 @@ class TcShapingRuleParser(object):
 
         try:
             class_param_list = self.__con.select_as_dict(
-                table_name=TcSubCommand.CLASS.value, where=where_query)
+                table_name=TcSubCommand.CLASS.value, where=where_query
+            )
         except simplesqlite.TableNotFoundError:
             class_param_list = []
 
         try:
             filter_param_list = self.__con.select_as_dict(
-                table_name=TcSubCommand.FILTER.value, where=where_query)
+                table_name=TcSubCommand.FILTER.value, where=where_query
+            )
         except simplesqlite.TableNotFoundError:
             filter_param_list = []
 
         try:
             qdisc_param_list = self.__con.select_as_dict(
-                table_name=TcSubCommand.QDISC.value, where=where_query)
+                table_name=TcSubCommand.QDISC.value, where=where_query
+            )
         except simplesqlite.TableNotFoundError:
             qdisc_param_list = []
 
@@ -192,35 +196,38 @@ class TcShapingRuleParser(object):
                 continue
 
             for qdisc_param in qdisc_param_list:
-                self.__logger.debug(
-                    "{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
+                self.__logger.debug("{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
 
                 if qdisc_param.get(Tc.Param.PARENT) not in (
-                        filter_param.get(Tc.Param.FLOW_ID),
-                        filter_param.get(Tc.Param.CLASS_ID)):
+                    filter_param.get(Tc.Param.FLOW_ID),
+                    filter_param.get(Tc.Param.CLASS_ID),
+                ):
                     continue
 
-                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(
-                    Tc.Param.FILTER_ID)
+                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
                 # shaping_rule[Tc.Param.PRIORITY] = filter_param.get(
                 #    Tc.Param.PRIORITY)
-                shaping_rule.update(self.__strip_param(
-                    qdisc_param, [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]))
+                shaping_rule.update(
+                    self.__strip_param(
+                        qdisc_param, [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]
+                    )
+                )
 
             for class_param in class_param_list:
                 self.__logger.debug("{:s} param: {}".format(TcSubCommand.CLASS, class_param))
 
                 if class_param.get(Tc.Param.CLASS_ID) not in (
-                        filter_param.get(Tc.Param.FLOW_ID),
-                        filter_param.get(Tc.Param.CLASS_ID)):
+                    filter_param.get(Tc.Param.FLOW_ID),
+                    filter_param.get(Tc.Param.CLASS_ID),
+                ):
                     continue
 
-                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(
-                    Tc.Param.FILTER_ID)
+                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
                 # shaping_rule[Tc.Param.PRIORITY] = filter_param.get(
                 #    Tc.Param.PRIORITY)
-                shaping_rule.update(self.__strip_param(
-                    class_param, [Tc.Param.DEVICE, Tc.Param.CLASS_ID]))
+                shaping_rule.update(
+                    self.__strip_param(class_param, [Tc.Param.DEVICE, Tc.Param.CLASS_ID])
+                )
 
             if not shaping_rule:
                 self.__logger.debug("shaping rule not found for '{}'".format(filter_param))

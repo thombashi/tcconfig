@@ -55,8 +55,9 @@ class Humanreadable(object):
         logger.debug("human readable size to bit: {}".format(self.__readable_size))
 
         if not typepy.is_not_null_string(self.__readable_size):
-            raise TypeError("readable_size must be a string: actual={}".format(
-                self.__readable_size))
+            raise TypeError(
+                "readable_size must be a string: actual={}".format(self.__readable_size)
+            )
 
         self.__readable_size = self.__readable_size.strip()
 
@@ -85,7 +86,8 @@ class Humanreadable(object):
 
         if self.kilo_size not in VALID_KILLO_SIZE:
             raise ParameterError(
-                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.kilo_size)
+                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.kilo_size
+            )
 
     def __get_coefficient(self, unit_str):
         self.__validate_kilo_size()
@@ -95,17 +97,21 @@ class Humanreadable(object):
                 return self.kilo_size ** unit.factor
 
         raise UnitNotFoundError(
-            "unit not found", value=unit_str, available_unit="b/bps/k/kbps/m/mbps/g/gbps/t/tbps")
+            "unit not found", value=unit_str, available_unit="b/bps/k/kbps/m/mbps/g/gbps/t/tbps"
+        )
 
 
 class HumanReadableTime(object):
     __VALID_MINUTE_UNIT_LIST = ["m", "min", "mins", "minute", "minutes"]
     __VALID_SEC_UNIT_LIST = ["s", "sec", "secs", "second", "seconds"]
-    __VALID_MSEC_UNIT_LIST = ["ms", "msec", "msecs",  "millisecond", "milliseconds"]
+    __VALID_MSEC_UNIT_LIST = ["ms", "msec", "msecs", "millisecond", "milliseconds"]
     __VALID_USEC_UNIT_LIST = ["us", "usec", "usecs", "microsecond", "microseconds"]
     __VALID_UNIT_LIST = (
-        __VALID_MINUTE_UNIT_LIST + __VALID_SEC_UNIT_LIST +
-        __VALID_MSEC_UNIT_LIST + __VALID_USEC_UNIT_LIST)
+        __VALID_MINUTE_UNIT_LIST
+        + __VALID_SEC_UNIT_LIST
+        + __VALID_MSEC_UNIT_LIST
+        + __VALID_USEC_UNIT_LIST
+    )
 
     def __init__(self, readable_time):
         self.__readable_time = readable_time
@@ -159,7 +165,9 @@ class HumanReadableTime(object):
             if self < min_value:
                 raise ParameterError(
                     "time value is too low",
-                    expected="greater than or equal to {}".format(min_value), value=self)
+                    expected="greater than or equal to {}".format(min_value),
+                    value=self,
+                )
 
         if max_value is not None:
             if not isinstance(max_value, HumanReadableTime):
@@ -168,12 +176,16 @@ class HumanReadableTime(object):
             if self > max_value:
                 raise ParameterError(
                     "time value is too high",
-                    expected="less than or equal to {}".format(max_value), value=self)
+                    expected="less than or equal to {}".format(max_value),
+                    value=self,
+                )
 
         if self.__unit not in self.__VALID_UNIT_LIST:
             raise UnitNotFoundError(
-                "unknown unit", value=self.__readable_time,
-                available_unit="/".join(self.__VALID_UNIT_LIST))
+                "unknown unit",
+                value=self.__readable_time,
+                available_unit="/".join(self.__VALID_UNIT_LIST),
+            )
 
     def __normalize(self):
         if self.__unit in self.__VALID_SEC_UNIT_LIST:
@@ -190,7 +202,8 @@ class HumanReadableTime(object):
         match = _RE_NUMBER.search(self.__readable_time)
         if not match:
             raise ParameterError(
-                "human-readable time must be include a number", value=self.__readable_time)
+                "human-readable time must be include a number", value=self.__readable_time
+            )
 
         return float(match.group())
 

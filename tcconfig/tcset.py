@@ -23,7 +23,13 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import (
-    IPV6_OPTION_ERROR_MSG_FORMAT, Network, ShapingAlgorithm, Tc, TcCommandOutput, TrafficDirection)
+    IPV6_OPTION_ERROR_MSG_FORMAT,
+    Network,
+    ShapingAlgorithm,
+    Tc,
+    TcCommandOutput,
+    TrafficDirection,
+)
 from ._converter import HumanReadableTime
 from ._error import ModuleNotFoundError, NetworkInterfaceNotFoundError, ParameterError
 from ._logger import logger, set_log_level
@@ -36,39 +42,52 @@ def get_arg_parser():
     parser = ArgparseWrapper(__version__)
 
     group = parser.parser.add_mutually_exclusive_group(required=True)
+    group.add_argument("-d", "--device", help="network device name (e.g. eth0)")
     group.add_argument(
-        "-d", "--device",
-        help="network device name (e.g. eth0)")
-    group.add_argument(
-        "-f", "--config-file",
-        help="setting traffic controls from a configuration file. output file of the tcshow.")
+        "-f",
+        "--config-file",
+        help="setting traffic controls from a configuration file. output file of the tcshow.",
+    )
 
     group = parser.parser.add_mutually_exclusive_group()
     group.add_argument(
-        "--overwrite", action="store_true", default=False,
-        help="overwrite existing traffic shaping rules.")
+        "--overwrite",
+        action="store_true",
+        default=False,
+        help="overwrite existing traffic shaping rules.",
+    )
     group.add_argument(
-        "--change", dest="is_change_shaping_rule", action="store_true",
+        "--change",
+        dest="is_change_shaping_rule",
+        action="store_true",
         default=False,
         help="""change existing traffic shaping rules to the new one. this option reduces
         the shaping rule switching side effect (such as traffic spike) compared to
         --overwrite option.
         note: the tcset command adds a shaping rule if there are no existing shaping rules.
-        """)
+        """,
+    )
     group.add_argument(
-        "--add", dest="is_add_shaping_rule", action="store_true",
+        "--add",
+        dest="is_add_shaping_rule",
+        action="store_true",
         default=False,
-        help="add a traffic shaping rule in addition to existing rules.")
+        help="add a traffic shaping rule in addition to existing rules.",
+    )
 
     group = parser.parser.add_argument_group("Traffic Control Parameters")
     group.add_argument(
-        "--rate", "--bandwidth-rate", dest="bandwidth_rate",
+        "--rate",
+        "--bandwidth-rate",
+        dest="bandwidth_rate",
         help="""network bandwidth rate [bit per second].
         valid units are either: K/M/G/Kbps/Mbps/Gbps
         e.g. --rate 10Mbps
-        """)
+        """,
+    )
     group.add_argument(
-        "--delay", dest="network_latency",
+        "--delay",
+        dest="network_latency",
         default=Tc.ValueRange.LatencyTime.MIN,
         help="""round trip network delay. the valid range is from {min_value:} to {max_value:}.
         valid time units are: {unit}. if no unit string found, considered milliseconds as
@@ -76,67 +95,96 @@ def get_arg_parser():
         """.format(
             min_value=Tc.ValueRange.LatencyTime.MIN,
             max_value=Tc.ValueRange.LatencyTime.MAX,
-            unit="/".join(HumanReadableTime.get_valid_unit_list())))
+            unit="/".join(HumanReadableTime.get_valid_unit_list()),
+        ),
+    )
     group.add_argument(
-        "--delay-distro", dest="latency_distro_time",
+        "--delay-distro",
+        dest="latency_distro_time",
         default=Tc.ValueRange.LatencyTime.MIN,
         help="""distribution of network latency becomes X +- Y (normal distribution).
         Here X is the value of --delay option and Y is the value of --delay-dist option).
         network latency distribution is uniform, without this option. valid time units are: {unit}.
         if no unit string found, considered milliseconds as the time unit.
-        """.format(unit="/".join(HumanReadableTime.get_valid_unit_list())))
+        """.format(
+            unit="/".join(HumanReadableTime.get_valid_unit_list())
+        ),
+    )
     group.add_argument(
-        "--loss", dest="packet_loss_rate", type=float, default=0,
+        "--loss",
+        dest="packet_loss_rate",
+        type=float,
+        default=0,
         help="""round trip packet loss rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
         """.format(
-            TrafficControl.MIN_PACKET_LOSS_RATE,
-            TrafficControl.MAX_PACKET_LOSS_RATE))
+            TrafficControl.MIN_PACKET_LOSS_RATE, TrafficControl.MAX_PACKET_LOSS_RATE
+        ),
+    )
     group.add_argument(
-        "--duplicate", dest="packet_duplicate_rate", type=float, default=0,
+        "--duplicate",
+        dest="packet_duplicate_rate",
+        type=float,
+        default=0,
         help="""round trip packet duplicate rate [%%]. the valid range is
         from {:d} to {:d}. (default=%(default)s)
         """.format(
-            TrafficControl.MIN_PACKET_DUPLICATE_RATE,
-            TrafficControl.MAX_PACKET_DUPLICATE_RATE))
+            TrafficControl.MIN_PACKET_DUPLICATE_RATE, TrafficControl.MAX_PACKET_DUPLICATE_RATE
+        ),
+    )
     group.add_argument(
-        "--corrupt", dest="corruption_rate", type=float, default=0,
+        "--corrupt",
+        dest="corruption_rate",
+        type=float,
+        default=0,
         help="""packet corruption rate [%%]. the valid range is from {:d} to {:d}.
         packet corruption means single bit error at a random offset in the packet.
         (default=%(default)s)
         """.format(
-            TrafficControl.MIN_CORRUPTION_RATE,
-            TrafficControl.MAX_CORRUPTION_RATE))
+            TrafficControl.MIN_CORRUPTION_RATE, TrafficControl.MAX_CORRUPTION_RATE
+        ),
+    )
     group.add_argument(
-        "--reordering", dest="reordering_rate", type=float, default=0,
+        "--reordering",
+        dest="reordering_rate",
+        type=float,
+        default=0,
         help="""packet reordering rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
         """.format(
-            TrafficControl.MIN_REORDERING_RATE,
-            TrafficControl.MAX_REORDERING_RATE))
+            TrafficControl.MIN_REORDERING_RATE, TrafficControl.MAX_REORDERING_RATE
+        ),
+    )
     group.add_argument(
-        "--shaping-algo", dest="shaping_algorithm",
+        "--shaping-algo",
+        dest="shaping_algorithm",
         choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.HTB],
         default=ShapingAlgorithm.HTB,
-        help="shaping algorithm. defaults to %(default)s (recommended).")
+        help="shaping algorithm. defaults to %(default)s (recommended).",
+    )
     group.add_argument(
-        "--iptables", dest="is_enable_iptables",
-        action="store_true", default=False,
-        help="use iptables to traffic control.")
+        "--iptables",
+        dest="is_enable_iptables",
+        action="store_true",
+        default=False,
+        help="use iptables to traffic control.",
+    )
 
     group = parser.add_routing_group()
     group.add_argument(
         "--exclude-dst-network",
-        help="exclude a shaping rule for a specific destination IP-address/network.")
+        help="exclude a shaping rule for a specific destination IP-address/network.",
+    )
     group.add_argument(
         "--exclude-src-network",
-        help="exclude a shaping rule for a specific source IP-address/network.")
+        help="exclude a shaping rule for a specific source IP-address/network.",
+    )
     group.add_argument(
-        "--exclude-dst-port",
-        help="exclude a shaping rule for a specific destination port.")
+        "--exclude-dst-port", help="exclude a shaping rule for a specific destination port."
+    )
     group.add_argument(
-        "--exclude-src-port",
-        help="exclude a shaping rule for a specific source port.")
+        "--exclude-src-port", help="exclude a shaping rule for a specific source port."
+    )
 
     return parser.parser
 
@@ -168,22 +216,24 @@ class TcConfigLoader(object):
         import json
         from voluptuous import Schema, Required, Any, ALLOW_EXTRA
 
-        schema = Schema({
-            Required(six.text_type): {
-                Any(*TrafficDirection.LIST): {
-                    six.text_type: {
-                        six.text_type: Any(six.text_type, int, float)
-                    },
+        schema = Schema(
+            {
+                Required(six.text_type): {
+                    Any(*TrafficDirection.LIST): {
+                        six.text_type: {six.text_type: Any(six.text_type, int, float)}
+                    }
                 }
             },
-        }, extra=ALLOW_EXTRA)
+            extra=ALLOW_EXTRA,
+        )
 
         with open(config_file_path) as fp:
             self.__config_table = json.load(fp)
 
         schema(self.__config_table)
-        self.__logger.debug("tc config file: {:s}".format(
-            json.dumps(self.__config_table, indent=4)))
+        self.__logger.debug(
+            "tc config file: {:s}".format(json.dumps(self.__config_table, indent=4))
+        )
 
     def get_tcconfig_command_list(self):
         command_list = []
@@ -192,31 +242,32 @@ class TcConfigLoader(object):
             device_option = "--device={:s}".format(device)
 
             if self.is_overwrite:
-                command_list.append("{:s} {:s}".format(
-                    Tc.Command.TCDEL, device_option))
+                command_list.append("{:s} {:s}".format(Tc.Command.TCDEL, device_option))
 
             for direction, direction_table in six.iteritems(device_table):
                 is_first_set = True
 
                 for tc_filter, filter_table in six.iteritems(direction_table):
-                    self.__logger.debug("is_first_set={}, filter='{}', table={}".format(
-                        is_first_set, tc_filter, filter_table))
+                    self.__logger.debug(
+                        "is_first_set={}, filter='{}', table={}".format(
+                            is_first_set, tc_filter, filter_table
+                        )
+                    )
 
                     if not filter_table:
                         continue
 
-                    option_list = [
-                        device_option,
-                        "--direction={:s}".format(direction),
-                    ]
+                    option_list = [device_option, "--direction={:s}".format(direction)]
                     for key, value in six.iteritems(filter_table):
                         arg_item = "--{:s}={}".format(key, value)
 
                         parse_result = get_arg_parser().parse_known_args(
-                            ["--device", "dummy", arg_item])
+                            ["--device", "dummy", arg_item]
+                        )
                         if parse_result[1]:
-                            self.__logger.debug("unknown parameter: key={}, value={}".format(
-                                key, value))
+                            self.__logger.debug(
+                                "unknown parameter: key={}, value={}".format(key, value)
+                            )
                             continue
 
                         option_list.append(arg_item)
@@ -251,25 +302,21 @@ class TcConfigLoader(object):
 
     @staticmethod
     def __parse_tc_filter_network(text):
-        network_pattern = (
-            pp.SkipTo("{:s}=".format(Tc.Param.DST_NETWORK), include=True) +
-            pp.Word(pp.alphanums + "." + "/"))
+        network_pattern = pp.SkipTo("{:s}=".format(Tc.Param.DST_NETWORK), include=True) + pp.Word(
+            pp.alphanums + "." + "/"
+        )
 
         return network_pattern.parseString(text)[-1]
 
     @staticmethod
     def __parse_tc_filter_src_port(text):
-        port_pattern = (
-            pp.SkipTo("{:s}=".format(Tc.Param.SRC_PORT), include=True) +
-            pp.Word(pp.nums))
+        port_pattern = pp.SkipTo("{:s}=".format(Tc.Param.SRC_PORT), include=True) + pp.Word(pp.nums)
 
         return port_pattern.parseString(text)[-1]
 
     @staticmethod
     def __parse_tc_filter_dst_port(text):
-        port_pattern = (
-            pp.SkipTo("{:s}=".format(Tc.Param.DST_PORT), include=True) +
-            pp.Word(pp.nums))
+        port_pattern = pp.SkipTo("{:s}=".format(Tc.Param.DST_PORT), include=True) + pp.Word(pp.nums)
 
         return port_pattern.parseString(text)[-1]
 
@@ -366,14 +413,17 @@ def main():
 
         set_log_level(options.log_level)
 
-    if (options.is_add_shaping_rule and
-            TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()):
-        logger.error("\n".join([
-            "adding a shaping rule failed. a shaping rule for the same network/port "
-            "already exist. try to execute with:",
-            "  (a) --overwrite option if you want to overwrite the existing rules.",
-            "  (b) --change option if you want to change the existing rule parameter.",
-        ]))
+    if options.is_add_shaping_rule and TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule():
+        logger.error(
+            "\n".join(
+                [
+                    "adding a shaping rule failed. a shaping rule for the same network/port "
+                    "already exist. try to execute with:",
+                    "  (a) --overwrite option if you want to overwrite the existing rules.",
+                    "  (b) --change option if you want to change the existing rule parameter.",
+                ]
+            )
+        )
         return errno.EINVAL
 
     try:
@@ -397,5 +447,5 @@ def main():
     return return_code
 
 
-if __name__ == '__main__':
+if __name__ == "__main__":
     sys.exit(main())

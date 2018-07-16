@@ -18,8 +18,14 @@ from typepy import RealNumber
 
 from ._common import find_bin_path, logging_context, run_command_helper
 from ._const import (
-    KILO_SIZE, LIST_MANGLE_TABLE_OPTION, ShapingAlgorithm, Tc, TcCommandOutput, TcSubCommand,
-    TrafficDirection)
+    KILO_SIZE,
+    LIST_MANGLE_TABLE_OPTION,
+    ShapingAlgorithm,
+    Tc,
+    TcCommandOutput,
+    TcSubCommand,
+    TrafficDirection,
+)
 from ._converter import Humanreadable, HumanReadableTime
 from ._error import NetworkInterfaceNotFoundError, ParameterError, UnitNotFoundError
 from ._iptables import IptablesMangleController, get_iptables_base_command
@@ -44,13 +50,15 @@ def _validate_within_min_max(param_name, value, min_value, max_value, unit):
         raise ParameterError(
             "'{:s}' is too high".format(param_name),
             expected="<={:s}{:s}".format(DataProperty(max_value).to_str(), unit),
-            value="{:s}{:s}".format(DataProperty(value).to_str(), unit))
+            value="{:s}{:s}".format(DataProperty(value).to_str(), unit),
+        )
 
     if value < min_value:
         raise ParameterError(
             "'{:s}' is too low".format(param_name),
             expected=">={:s}{:s}".format(DataProperty(min_value).to_str(), unit),
-            value="{:s}{:s}".format(DataProperty(value).to_str(), unit))
+            value="{:s}{:s}".format(DataProperty(value).to_str(), unit),
+        )
 
 
 class TrafficControl(object):
@@ -71,12 +79,14 @@ class TrafficControl(object):
 
     REGEXP_FILE_EXISTS = re.compile("RTNETLINK answers: File exists")
 
-    EXISTS_MSG_TEMPLATE = "\n".join([
-        "{:s} try to execute with: ",
-        "  (a) --overwrite option if you want to overwrite the existing rule.",
-        "  (b) --add option if you want to add a new rule in addition to the existing rules.",
-        "  (c) --change option if you want to change the existing rule parameter.",
-    ])
+    EXISTS_MSG_TEMPLATE = "\n".join(
+        [
+            "{:s} try to execute with: ",
+            "  (a) --overwrite option if you want to overwrite the existing rule.",
+            "  (b) --add option if you want to add a new rule in addition to the existing rules.",
+            "  (c) --change option if you want to change the existing rule parameter.",
+        ]
+    )
 
     @property
     def device(self):
@@ -94,8 +104,7 @@ class TrafficControl(object):
     def bandwidth_rate(self):
         # convert bandwidth string [K/M/G bit per second] to a number
         try:
-            return Humanreadable(
-                self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+            return Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
         except (ParameterError, UnitNotFoundError, TypeError):
             return None
 
@@ -196,20 +205,30 @@ class TrafficControl(object):
         return self.__iptables_ctrl
 
     def __init__(
-            self, device,
-            direction=None, bandwidth_rate=None,
-            latency_time=None, latency_distro_time=None,
-            packet_loss_rate=None, packet_duplicate_rate=None,
-            corruption_rate=None, reordering_rate=None,
-            dst_network=None, exclude_dst_network=None,
-            src_network=None, exclude_src_network=None,
-            dst_port=None, exclude_dst_port=None,
-            src_port=None, exclude_src_port=None,
-            is_ipv6=False,
-            is_change_shaping_rule=False, is_add_shaping_rule=False,
-            is_enable_iptables=True,
-            shaping_algorithm=None,
-            tc_command_output=TcCommandOutput.NOT_SET,
+        self,
+        device,
+        direction=None,
+        bandwidth_rate=None,
+        latency_time=None,
+        latency_distro_time=None,
+        packet_loss_rate=None,
+        packet_duplicate_rate=None,
+        corruption_rate=None,
+        reordering_rate=None,
+        dst_network=None,
+        exclude_dst_network=None,
+        src_network=None,
+        exclude_src_network=None,
+        dst_port=None,
+        exclude_dst_port=None,
+        src_port=None,
+        exclude_src_port=None,
+        is_ipv6=False,
+        is_change_shaping_rule=False,
+        is_add_shaping_rule=False,
+        is_enable_iptables=True,
+        shaping_algorithm=None,
+        tc_command_output=TcCommandOutput.NOT_SET,
     ):
         self.__device = device
 
@@ -248,39 +267,40 @@ class TrafficControl(object):
         self.__validate_port()
 
     def __validate_src_network(self):
-        if any([
+        if any(
+            [
                 typepy.is_null_string(self.src_network),
                 self.__shaper.algorithm_name == ShapingAlgorithm.HTB,
-        ]):
+            ]
+        ):
             return
 
         if not self.is_enable_iptables:
             raise ParameterError(
                 "--iptables option required to use --src-network option",
-                value=self.is_enable_iptables)
+                value=self.is_enable_iptables,
+            )
 
     def validate_bandwidth_rate(self):
         if typepy.is_null_string(self.__bandwidth_rate):
             return
 
         # convert bandwidth string [K/M/G bit per second] to a number
-        bandwidth_rate = Humanreadable(
-            self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        bandwidth_rate = Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
 
         if not RealNumber(bandwidth_rate).is_type():
-            raise ParameterError(
-                "bandwidth_rate must be a number", value=bandwidth_rate)
+            raise ParameterError("bandwidth_rate must be a number", value=bandwidth_rate)
 
         if bandwidth_rate <= 0:
-            raise ParameterError(
-                "bandwidth_rate must be greater than zero", value=bandwidth_rate)
+            raise ParameterError("bandwidth_rate must be greater than zero", value=bandwidth_rate)
 
         no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
         if bandwidth_rate > no_limit_kbits:
             raise ParameterError(
                 "exceed bandwidth rate limit",
                 value="{} kbps".format(bandwidth_rate),
-                expected="less than {} kbps".format(no_limit_kbits))
+                expected="less than {} kbps".format(no_limit_kbits),
+            )
 
     def sanitize(self):
         self.__dst_network = sanitize_network(self.dst_network, self.ip_version)
@@ -298,17 +318,23 @@ class TrafficControl(object):
             return self.ifb_device
 
         raise ParameterError(
-            "unknown direction", expected=TrafficDirection.LIST, value=self.direction)
+            "unknown direction", expected=TrafficDirection.LIST, value=self.direction
+        )
 
     def get_tc_command(self, subcommand):
         return "{:s} {:s}".format(
-            get_tc_base_command(subcommand), "change" if self.is_change_shaping_rule else "add")
+            get_tc_base_command(subcommand), "change" if self.is_change_shaping_rule else "add"
+        )
 
     def get_command_history(self):
         def tc_filter(command):
             if get_iptables_base_command():
-                if re.search("^{:s} {:s}".format(
-                        get_iptables_base_command(), re.escape(LIST_MANGLE_TABLE_OPTION)), command):
+                if re.search(
+                    "^{:s} {:s}".format(
+                        get_iptables_base_command(), re.escape(LIST_MANGLE_TABLE_OPTION)
+                    ),
+                    command,
+                ):
                     return False
 
             if re.search("^{:s} .* show dev".format(find_bin_path("tc")), command):
@@ -339,8 +365,11 @@ class TrafficControl(object):
         result_list = []
 
         with logging_context("delete qdisc"):
-            proc = spr.SubprocessRunner("{:s} del dev {:s} root".format(
-                get_tc_base_command(TcSubCommand.QDISC), self.device))
+            proc = spr.SubprocessRunner(
+                "{:s} del dev {:s} root".format(
+                    get_tc_base_command(TcSubCommand.QDISC), self.device
+                )
+            )
             proc.run()
             if re.search("RTNETLINK answers: No such file or directory", proc.stderr):
                 logger.notice("no qdisc to delete for the outgoing device.")
@@ -353,12 +382,18 @@ class TrafficControl(object):
         with logging_context("delete ingress qdisc"):
             returncode = run_command_helper(
                 "{:s} del dev {:s} ingress".format(
-                    get_tc_base_command(TcSubCommand.QDISC), self.device),
-                ignore_error_msg_regexp=re.compile("|".join([
-                    "RTNETLINK answers: Invalid argument",
-                    "RTNETLINK answers: No such file or directory",
-                ])),
-                notice_msg="no qdisc to delete for the incoming device.")
+                    get_tc_base_command(TcSubCommand.QDISC), self.device
+                ),
+                ignore_error_msg_regexp=re.compile(
+                    "|".join(
+                        [
+                            "RTNETLINK answers: Invalid argument",
+                            "RTNETLINK answers: No such file or directory",
+                        ]
+                    )
+                ),
+                notice_msg="no qdisc to delete for the incoming device.",
+            )
             result_list.append(returncode == 0)
 
         with logging_context("delete ifb device"):
@@ -402,11 +437,13 @@ class TrafficControl(object):
                 protocol=filter_param.get(Tc.Param.PROTOCOL),
                 parent="{:s}:".format(rule_finder.find_parent().split(":")[0]),
                 handle=filter_param.get(Tc.Param.FILTER_ID),
-                prio=filter_param.get(Tc.Param.PRIORITY))
+                prio=filter_param.get(Tc.Param.PRIORITY),
+            )
         )
 
         result = run_command_helper(
-            command=filter_del_command, ignore_error_msg_regexp=None, notice_msg=None)
+            command=filter_del_command, ignore_error_msg_regexp=None, notice_msg=None
+        )
 
         rule_finder.clear()
         if not rule_finder.is_any_filter():
@@ -429,48 +466,63 @@ class TrafficControl(object):
             return
 
         raise ParameterError(
-            "unknown shaping algorithm",
-            expected=ShapingAlgorithm.LIST, value=shaping_algorithm)
+            "unknown shaping algorithm", expected=ShapingAlgorithm.LIST, value=shaping_algorithm
+        )
 
     def __validate_network_delay(self):
         try:
             self.latency_time.validate(
-                min_value=Tc.ValueRange.LatencyTime.MIN,
-                max_value=Tc.ValueRange.LatencyTime.MAX)
+                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+            )
         except ParameterError as e:
             raise ParameterError("delay {}".format(e))
 
         try:
             self.latency_distro_time.validate(
-                min_value=Tc.ValueRange.LatencyTime.MIN,
-                max_value=Tc.ValueRange.LatencyTime.MAX)
+                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+            )
         except ParameterError as e:
             raise ParameterError("delay-distro {}".format(e))
 
     def __validate_packet_loss_rate(self):
         _validate_within_min_max(
-            "loss (packet loss rate)", self.packet_loss_rate,
-            self.MIN_PACKET_LOSS_RATE, self.MAX_PACKET_LOSS_RATE, unit="%")
+            "loss (packet loss rate)",
+            self.packet_loss_rate,
+            self.MIN_PACKET_LOSS_RATE,
+            self.MAX_PACKET_LOSS_RATE,
+            unit="%",
+        )
 
     def __validate_packet_duplicate_rate(self):
         _validate_within_min_max(
-            "duplicate (packet duplicate rate)", self.packet_duplicate_rate,
-            self.MIN_PACKET_DUPLICATE_RATE, self.MAX_PACKET_DUPLICATE_RATE, unit="%")
+            "duplicate (packet duplicate rate)",
+            self.packet_duplicate_rate,
+            self.MIN_PACKET_DUPLICATE_RATE,
+            self.MAX_PACKET_DUPLICATE_RATE,
+            unit="%",
+        )
 
     def __validate_corruption_rate(self):
         _validate_within_min_max(
-            "corruption (packet corruption rate)", self.corruption_rate,
-            self.MIN_CORRUPTION_RATE, self.MAX_CORRUPTION_RATE, unit="%")
+            "corruption (packet corruption rate)",
+            self.corruption_rate,
+            self.MIN_CORRUPTION_RATE,
+            self.MAX_CORRUPTION_RATE,
+            unit="%",
+        )
 
     def __validate_reordering_rate(self):
         _validate_within_min_max(
-            "reordering (packet reordering rate)", self.reordering_rate,
-            self.MIN_REORDERING_RATE, self.MAX_REORDERING_RATE, unit="%")
+            "reordering (packet reordering rate)",
+            self.reordering_rate,
+            self.MIN_REORDERING_RATE,
+            self.MAX_REORDERING_RATE,
+            unit="%",
+        )
 
     def __validate_reordering_and_delay(self):
         if self.reordering_rate and not self.latency_time:
-            raise ParameterError(
-                'reordering needs latency to be specified: set latency > 0')
+            raise ParameterError("reordering needs latency to be specified: set latency > 0")
 
     def __validate_netem_parameter(self):
         self.validate_bandwidth_rate()
@@ -489,12 +541,13 @@ class TrafficControl(object):
             self.reordering_rate,
         ]
 
-        if all([
+        if all(
+            [
                 not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
                 for netem_param_value in netem_param_value_list
-        ] + [
-            self.latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)
-        ]):
+            ]
+            + [self.latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)]
+        ):
             raise ParameterError(
                 "there are no valid net emulation parameters found. "
                 "at least one or more following parameters are required: "
@@ -503,13 +556,16 @@ class TrafficControl(object):
 
     def __validate_port(self):
         _validate_within_min_max(
-            "src_port", self.src_port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
+            "src_port", self.src_port, self.__MIN_PORT, self.__MAX_PORT, unit=None
+        )
 
         _validate_within_min_max(
-            "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT, unit=None)
+            "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT, unit=None
+        )
 
     def __get_device_qdisc_major_id(self):
         import hashlib
+
         base_device_hash = hashlib.md5(six.b(self.device)).hexdigest()[:3]
         device_hash_prefix = "1"
 
@@ -535,33 +591,44 @@ class TrafficControl(object):
             notice_message = None
         else:
             notice_message = self.EXISTS_MSG_TEMPLATE.format(
-                "failed to add ip link: ip link already exists.")
+                "failed to add ip link: ip link already exists."
+            )
 
         return_code |= run_command_helper(
             "{:s} link add {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
-            ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS, notice_msg=notice_message)
+            ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS,
+            notice_msg=notice_message,
+        )
 
         return_code |= spr.SubprocessRunner(
-            "{:s} link set dev {:s} up".format(find_bin_path("ip"), self.ifb_device)).run()
+            "{:s} link set dev {:s} up".format(find_bin_path("ip"), self.ifb_device)
+        ).run()
 
         base_command = "{:s} add".format(get_tc_base_command(TcSubCommand.QDISC))
         if self.is_add_shaping_rule or self.is_change_shaping_rule:
             notice_message = None
         else:
             notice_message = self.EXISTS_MSG_TEMPLATE.format(
-                "failed to '{:s}': ingress qdisc already exists.".format(base_command))
+                "failed to '{:s}': ingress qdisc already exists.".format(base_command)
+            )
         return_code |= run_command_helper(
             "{:s} dev {:s} ingress".format(base_command, self.device),
-            ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS, notice_msg=notice_message)
+            ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS,
+            notice_msg=notice_message,
+        )
 
-        return_code |= spr.SubprocessRunner(" ".join([
-            "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),
-            "dev {:s}".format(self.device),
-            "parent ffff: protocol {:s} u32 match u32 0 0".format(self.protocol),
-            "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
-            "action mirred egress redirect",
-            "dev {:s}".format(self.ifb_device),
-        ])).run()
+        return_code |= spr.SubprocessRunner(
+            " ".join(
+                [
+                    "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),
+                    "dev {:s}".format(self.device),
+                    "parent ffff: protocol {:s} u32 match u32 0 0".format(self.protocol),
+                    "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
+                    "action mirred egress redirect",
+                    "dev {:s}".format(self.ifb_device),
+                ]
+            )
+        ).run()
 
         return return_code
 
@@ -577,7 +644,8 @@ class TrafficControl(object):
 
         command_list = [
             "{:s} del dev {:s} root".format(
-                get_tc_base_command(TcSubCommand.QDISC), self.ifb_device),
+                get_tc_base_command(TcSubCommand.QDISC), self.ifb_device
+            ),
             "{:s} link set dev {:s} down".format(find_bin_path("ip"), self.ifb_device),
             "{:s} link delete {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
         ]

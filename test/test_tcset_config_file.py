@@ -21,17 +21,17 @@ def device_value(request):
 
 
 class Test_tcconfig(object):
-
-    @pytest.mark.parametrize(["overwrite"], [
-        [""],
-        ["--overwrite"],
-    ])
+    @pytest.mark.parametrize(["overwrite"], [[""], ["--overwrite"]])
     def test_config_file_smoke(self, tmpdir, device_value, overwrite):
         if device_value is None:
             pytest.skip("device option is null")
 
         p = tmpdir.join("tcconfig.json")
-        config = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        config = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
             "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "filter_id": "800::800",
@@ -56,18 +56,17 @@ class Test_tcconfig(object):
     }
 }
 """
+        )
         print("[config]\n{}\n".format(config))
         p.write(config)
 
         device_option = "--device {:s}".format(device_value)
 
         execute_tcdel(device_value)
-        command = " ".join(
-            ["{:s} -f ".format(Tc.Command.TCSET), str(p), overwrite])
+        command = " ".join(["{:s} -f ".format(Tc.Command.TCSET), str(p), overwrite])
         SubprocessRunner(command).run()
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
 
         print("[expected]\n{}\n".format(config))

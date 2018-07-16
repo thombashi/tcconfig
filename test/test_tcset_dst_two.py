@@ -57,18 +57,19 @@ class Test_tcset_two_network(object):
        - English locale (for parsing ping output)
     """
 
-    @pytest.mark.parametrize(["shaping_algo"], [
-        ["htb"],
-    ])
+    @pytest.mark.parametrize(["shaping_algo"], [["htb"]])
     def test_network(
-            self, device_option, dst_host_option, dst_host_ex_option,
-            transmitter, pingparser, shaping_algo):
+        self,
+        device_option,
+        dst_host_option,
+        dst_host_ex_option,
+        transmitter,
+        pingparser,
+        shaping_algo,
+    ):
         if device_option is None:
             pytest.skip("device option is null")
-        if any([
-                typepy.is_null_string(dst_host_option),
-                typepy.is_null_string(dst_host_ex_option),
-        ]):
+        if any([typepy.is_null_string(dst_host_option), typepy.is_null_string(dst_host_ex_option)]):
             pytest.skip("destination host is null")
 
         execute_tcdel(device_option)

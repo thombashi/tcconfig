@@ -19,18 +19,13 @@ def device_option(request):
 
 
 class Test_tcset_iface_speed(object):
-
-    @pytest.mark.parametrize(["speed"], [
-        [1],
-        [-1],  # para-virtualized network driver
-    ])
+    @pytest.mark.parametrize(["speed"], [[1], [-1]])  # para-virtualized network driver
     def test_smoke_speed(self, monkeypatch, device_option, speed):
         if device_option is None:
             pytest.skip("device option is null")
 
         execute_tcdel(device_option)
-        monkeypatch.setattr(
-            "tcconfig._network._read_iface_speed", lambda x: speed)
+        monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: speed)
 
         command_list = [
             Tc.Command.TCSET,
@@ -42,17 +37,13 @@ class Test_tcset_iface_speed(object):
         # finalize ---
         execute_tcdel(device_option)
 
-    @pytest.mark.parametrize(["rate"], [
-        ["0kbps"],
-        ["99Gbps"],
-    ])
+    @pytest.mark.parametrize(["rate"], [["0kbps"], ["99Gbps"]])
     def test_abnormal(self, monkeypatch, device_option, rate):
         if device_option is None:
             pytest.skip("device option is null")
 
         execute_tcdel(device_option)
-        monkeypatch.setattr(
-            "tcconfig._network._read_iface_speed", lambda x: "1")
+        monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: "1")
 
         command_list = [
             Tc.Command.TCSET,

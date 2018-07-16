@@ -31,61 +31,22 @@ def is_valid_combination(row):
 
 
 def is_invalid_param(rate, delay, loss, corrupt):
-    params = [
-        rate,
-        delay,
-        loss,
-        corrupt,
-    ]
+    params = [rate, delay, loss, corrupt]
 
     return all([typepy.is_null_string(param) for param in params])
 
 
 class NormalTestValue(object):
-    RATE_LIST = [
-        "",
-        "--rate 100K",
-        "--rate 0.5M",
-    ]
-    DELAY_LIST = [
-        "",
-        "--delay 100ms",
-    ]
-    DELAY_DISTRO_LIST = [
-        "",
-        "--delay-distro 20ms",
-    ]
-    PACKET_LOSS_RATE_LIST = [
-        "",
-        "--loss 0.1",
-    ]
-    CORRUPTION_RATE_LIST = [
-        "",
-        "--corrupt 0.1",
-    ]
-    DIRECTION_LIST = [
-        "",
-        "--direction outgoing",
-        "--direction incoming",
-    ]
-    NETWORK_LIST = [
-        "",
-        "--network 192.168.0.10",
-        "--network 192.168.0.0/24",
-    ]
-    PORT_LIST = [
-        "",
-        "--port 80",
-    ]
-    OVERWRITE_LIST = [
-        "",
-        "--add",
-        "--overwrite",
-    ]
-    IPTABLES_LIST = [
-        "",
-        "--iptables",
-    ]
+    RATE_LIST = ["", "--rate 100K", "--rate 0.5M"]
+    DELAY_LIST = ["", "--delay 100ms"]
+    DELAY_DISTRO_LIST = ["", "--delay-distro 20ms"]
+    PACKET_LOSS_RATE_LIST = ["", "--loss 0.1"]
+    CORRUPTION_RATE_LIST = ["", "--corrupt 0.1"]
+    DIRECTION_LIST = ["", "--direction outgoing", "--direction incoming"]
+    NETWORK_LIST = ["", "--network 192.168.0.10", "--network 192.168.0.0/24"]
+    PORT_LIST = ["", "--port 80"]
+    OVERWRITE_LIST = ["", "--add", "--overwrite"]
+    IPTABLES_LIST = ["", "--iptables"]
 
 
 class Test_tcconfig(object):
@@ -102,27 +63,49 @@ class Test_tcconfig(object):
     @pytest.mark.skipif("SKIP_TEST is True")
     @pytest.mark.parametrize(
         [
-            "rate", "delay", "delay_distro", "loss", "corrupt",
-            "direction", "network", "port", "overwrite",
+            "rate",
+            "delay",
+            "delay_distro",
+            "loss",
+            "corrupt",
+            "direction",
+            "network",
+            "port",
+            "overwrite",
             # "is_enable_iptables",
         ],
         [
-            opt_list for opt_list in AllPairs([
-                NormalTestValue.RATE_LIST,
-                NormalTestValue.DELAY_LIST,
-                NormalTestValue.DELAY_DISTRO_LIST,
-                NormalTestValue.PACKET_LOSS_RATE_LIST,
-                NormalTestValue.CORRUPTION_RATE_LIST,
-                NormalTestValue.DIRECTION_LIST,
-                NormalTestValue.NETWORK_LIST,
-                NormalTestValue.PORT_LIST,
-                NormalTestValue.OVERWRITE_LIST,
-                # NormalTestValue.IPTABLES_LIST,
-            ], n=3, filter_func=is_valid_combination)
-        ])
+            opt_list
+            for opt_list in AllPairs(
+                [
+                    NormalTestValue.RATE_LIST,
+                    NormalTestValue.DELAY_LIST,
+                    NormalTestValue.DELAY_DISTRO_LIST,
+                    NormalTestValue.PACKET_LOSS_RATE_LIST,
+                    NormalTestValue.CORRUPTION_RATE_LIST,
+                    NormalTestValue.DIRECTION_LIST,
+                    NormalTestValue.NETWORK_LIST,
+                    NormalTestValue.PORT_LIST,
+                    NormalTestValue.OVERWRITE_LIST,
+                    # NormalTestValue.IPTABLES_LIST,
+                ],
+                n=3,
+                filter_func=is_valid_combination,
+            )
+        ],
+    )
     def test_smoke(
-            self, device_value, rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite,  # is_enable_iptables
+        self,
+        device_value,
+        rate,
+        delay,
+        delay_distro,
+        loss,
+        corrupt,
+        direction,
+        network,
+        port,
+        overwrite,  # is_enable_iptables
     ):
 
         if device_value is None:
@@ -135,12 +118,22 @@ class Test_tcconfig(object):
 
         execute_tcdel(device_value)
 
-        command = " ".join([
-            Tc.Command.TCSET, device_option,
-            rate, delay, delay_distro, loss, corrupt,
-            direction, network, port, overwrite,
-            # is_enable_iptables,
-        ])
+        command = " ".join(
+            [
+                Tc.Command.TCSET,
+                device_option,
+                rate,
+                delay,
+                delay_distro,
+                loss,
+                corrupt,
+                direction,
+                network,
+                port,
+                overwrite,
+                # is_enable_iptables,
+            ]
+        )
         print("command: {}".format(command))
         tcset_proc = SubprocessRunner(command)
         assert tcset_proc.run() == 0, tcset_proc.stderr

@@ -39,15 +39,27 @@ class Test_tcset_change(object):
         device_option = "--device {:s}".format(device_value)
         execute_tcdel(device_option)
 
-        assert SubprocessRunner([
-            Tc.Command.TCSET, device_option,
-            "--delay 100ms --rate 50k --network 192.168.1.2 --change",
-        ]).run() == 0
+        assert (
+            SubprocessRunner(
+                [
+                    Tc.Command.TCSET,
+                    device_option,
+                    "--delay 100ms --rate 50k --network 192.168.1.2 --change",
+                ]
+            ).run()
+            == 0
+        )
 
-        assert SubprocessRunner([
-            Tc.Command.TCSET, device_option,
-            "--delay 100ms --rate 50k --network 192.168.1.3 --change",
-        ]).run() == 0
+        assert (
+            SubprocessRunner(
+                [
+                    Tc.Command.TCSET,
+                    device_option,
+                    "--delay 100ms --rate 50k --network 192.168.1.3 --change",
+                ]
+            ).run()
+            == 0
+        )
 
         execute_tcdel(device_option)
 
@@ -58,13 +70,15 @@ class Test_tcset_change(object):
         device_option = "--device {:s}".format(device_value)
 
         command_list = [
-            Tc.Command.TCSET, device_option,
+            Tc.Command.TCSET,
+            device_option,
             "--delay 100ms --rate 50k --network 192.168.1.2 --overwrite",
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
         command_list = [
-            Tc.Command.TCSET, device_option,
+            Tc.Command.TCSET,
+            device_option,
             "--delay 200.0ms",
             "--delay-distro 20",
             "--rate 100k",
@@ -76,11 +90,14 @@ class Test_tcset_change(object):
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
 
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
             "dst-network=192.168.1.2/32, protocol=ip": {
                 "filter_id": "800::800",
@@ -100,13 +117,15 @@ class Test_tcset_change(object):
         "incoming": {}
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))
         assert json.loads(runner.stdout) == json.loads(expected)
 
         command_list = [
-            Tc.Command.TCSET, device_option,
+            Tc.Command.TCSET,
+            device_option,
             "--delay 300ms",
             "--delay-distro 30",
             "--rate 200k",
@@ -118,11 +137,14 @@ class Test_tcset_change(object):
         ]
         assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        runner = SubprocessRunner("{:s} {:s}".format(
-            Tc.Command.TCSHOW, device_option))
+        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
 
-        expected = "{" + '"{:s}"'.format(device_value) + ": {" + """
+        expected = (
+            "{"
+            + '"{:s}"'.format(device_value)
+            + ": {"
+            + """
         "outgoing": {
             "dst-network=192.168.1.2/32, protocol=ip": {
                 "filter_id": "800::800",
@@ -142,6 +164,7 @@ class Test_tcset_change(object):
         "incoming": {}
     }
 }"""
+        )
 
         print("[expected]\n{}\n".format(expected))
         print("[actual]\n{}\n".format(runner.stdout))

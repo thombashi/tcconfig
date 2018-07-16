@@ -71,7 +71,8 @@ def initialize_cli(options):
 
     debug_format_str = (
         "[{record.level_name}] {record.channel} {record.func_name} "
-        "({record.lineno}): {record.message}")
+        "({record.lineno}): {record.message}"
+    )
     if options.log_level == logbook.DEBUG:
         info_format_str = debug_format_str
     else:
@@ -114,11 +115,13 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
     if ignore_error_msg_regexp:
         match = ignore_error_msg_regexp.search(proc.stderr)
         if match is None:
-            error_msg_format = "\n".join([
-                "command execution failed",
-                "  command={}".format(command),
-                "  stderr={}".format(proc.stderr),
-            ])
+            error_msg_format = "\n".join(
+                [
+                    "command execution failed",
+                    "  command={}".format(command),
+                    "  stderr={}".format(proc.stderr),
+                ]
+            )
 
             if re.search("RTNETLINK answers: Operation not permitted", proc.stderr):
                 logger.error(error_msg_format.format(command, proc.stderr))

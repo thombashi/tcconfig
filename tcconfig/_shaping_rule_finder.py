@@ -14,7 +14,6 @@ from .parser.shaping_rule import TcShapingRuleParser
 
 
 class TcShapingRuleFinder(object):
-
     @property
     def _parser(self):
         self.__shaping_rule_parser.parse()
@@ -25,8 +24,11 @@ class TcShapingRuleFinder(object):
         self.__logger = logger
         self.__tc = tc
         self.__shaping_rule_parser = TcShapingRuleParser(
-            device=self.__tc.device, ip_version=self.__tc.ip_version,
-            tc_command_output=self.__tc.tc_command_output, logger=self.__logger)
+            device=self.__tc.device,
+            ip_version=self.__tc.ip_version,
+            tc_command_output=self.__tc.tc_command_output,
+            logger=self.__logger,
+        )
 
     def clear(self):
         self.__shaping_rule_parser.clear()
@@ -35,7 +37,8 @@ class TcShapingRuleFinder(object):
         return self._parser.con.fetch_value(
             select=Tc.Param.HANDLE,
             table_name=TcSubCommand.QDISC.value,
-            where=Where(Tc.Param.PARENT, parent))
+            where=Where(Tc.Param.PARENT, parent),
+        )
 
     def find_filter_param(self):
         import simplesqlite
@@ -43,25 +46,31 @@ class TcShapingRuleFinder(object):
         where_list = self.__get_filter_where_condition_list()
         where_query = And(where_list)
         table_name = TcSubCommand.FILTER.value
-        self.__logger.debug("find filter param: table={}, where={}".format(
-            table_name, where_query))
+        self.__logger.debug("find filter param: table={}, where={}".format(table_name, where_query))
 
         try:
             result = self._parser.con.select_as_dict(
                 column_list=[Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
                 table_name=table_name,
-                where=where_query)
+                where=where_query,
+            )
         except simplesqlite.TableNotFoundError:
             return None
 
         if not result:
-            self.__logger.debug("find filter param: emptry result (table={}, where={})".format(
-                table_name, where_query))
+            self.__logger.debug(
+                "find filter param: emptry result (table={}, where={})".format(
+                    table_name, where_query
+                )
+            )
             return None
 
         param = result[0]
-        self.__logger.debug("find filter param: result={}, table={}, where={}".format(
-            param, table_name, where_query))
+        self.__logger.debug(
+            "find filter param: result={}, table={}, where={}".format(
+                param, table_name, where_query
+            )
+        )
 
         return param
 
@@ -69,12 +78,12 @@ class TcShapingRuleFinder(object):
         where_list = self.__get_filter_where_condition_list()
         table_name = TcSubCommand.FILTER.value
         parent = self._parser.con.fetch_value(
-            select=Tc.Param.FLOW_ID,
-            table_name=table_name,
-            where=And(where_list))
+            select=Tc.Param.FLOW_ID, table_name=table_name, where=And(where_list)
+        )
 
-        self.__logger.debug("find parent: result={}, table={}, where={}".format(
-            parent, table_name, where_list))
+        self.__logger.debug(
+            "find parent: result={}, table={}, where={}".format(parent, table_name, where_list)
+        )
 
         return parent
 
@@ -82,20 +91,21 @@ class TcShapingRuleFinder(object):
         return self.find_parent() is not None
 
     def is_any_filter(self):
-        num_records = self._parser.con.fetch_num_records(
-            table_name=TcSubCommand.FILTER.value)
+        num_records = self._parser.con.fetch_num_records(table_name=TcSubCommand.FILTER.value)
 
         return num_records and num_records > 0
 
     def is_empty_filter_condition(self):
         from typepy import is_null_string
 
-        return all([
-            is_anywhere_network(self.__tc.dst_network, self.__tc.ip_version),
-            is_anywhere_network(self.__tc.src_network, self.__tc.ip_version),
-            is_null_string(self.__tc.dst_port),
-            is_null_string(self.__tc.src_port),
-        ])
+        return all(
+            [
+                is_anywhere_network(self.__tc.dst_network, self.__tc.ip_version),
+                is_anywhere_network(self.__tc.src_network, self.__tc.ip_version),
+                is_null_string(self.__tc.dst_port),
+                is_null_string(self.__tc.src_port),
+            ]
+        )
 
     def get_parsed_device(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:

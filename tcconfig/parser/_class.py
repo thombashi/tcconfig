@@ -17,7 +17,6 @@ from ._interface import AbstractParser
 
 
 class TcClassParser(AbstractParser):
-
     class Pattern(object):
         CLASS_ID = "[0-9a-z:]+"
         RATE = "[0-9]+[KMGT]?"
@@ -58,12 +57,12 @@ class TcClassParser(AbstractParser):
 
         if entry_list:
             self.__con.create_table_from_data_matrix(
-                table_name=self._tc_subcommand,
-                attr_name_list=self.Key.LIST,
-                data_matrix=entry_list)
+                table_name=self._tc_subcommand, attr_name_list=self.Key.LIST, data_matrix=entry_list
+            )
 
-        logger.debug("tc {:s} parse result: {}".format(
-            self._tc_subcommand, json.dumps(entry_list, indent=4)))
+        logger.debug(
+            "tc {:s} parse result: {}".format(self._tc_subcommand, json.dumps(entry_list, indent=4))
+        )
 
         return entry_list
 
@@ -79,7 +78,8 @@ class TcClassParser(AbstractParser):
             return
 
         self.__parsed_param[self.Key.CLASS_ID] = re.search(
-            self.Pattern.CLASS_ID, match.group().lstrip(tag)).group()
+            self.Pattern.CLASS_ID, match.group().lstrip(tag)
+        ).group()
 
     def __parse_rate(self, line):
         self.__parsed_param[self.Key.RATE] = None
@@ -88,5 +88,4 @@ class TcClassParser(AbstractParser):
         if match is None:
             return
 
-        self.__parsed_param[self.Key.RATE] = re.search(
-            self.Pattern.RATE, match.group()).group()
+        self.__parsed_param[self.Key.RATE] = re.search(self.Pattern.RATE, match.group()).group()

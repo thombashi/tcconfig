@@ -31,7 +31,6 @@ def get_iptables_base_command():
 
 
 class IptablesMangleMarkEntry(object):
-
     @property
     def line_number(self):
         return self.__line_number
@@ -56,8 +55,9 @@ class IptablesMangleMarkEntry(object):
     def chain(self):
         return self.__chain
 
-    def __init__(self, ip_version, mark_id, source, destination, chain,
-                 protocol="all", line_number=None):
+    def __init__(
+        self, ip_version, mark_id, source, destination, chain, protocol="all", line_number=None
+    ):
         self.__line_number = line_number
         self.__mark_id = mark_id
         self.__source = sanitize_network(source, ip_version)
@@ -70,13 +70,15 @@ class IptablesMangleMarkEntry(object):
         self.__chain = chain
 
     def __eq__(self, other):
-        return all([
-            self.chain == other.chain,
-            self.mark_id == other.mark_id,
-            self.protocol == other.protocol,
-            self.source == other.source,
-            self.destination == other.destination,
-        ])
+        return all(
+            [
+                self.chain == other.chain,
+                self.mark_id == other.mark_id,
+                self.protocol == other.protocol,
+                self.source == other.source,
+                self.destination == other.destination,
+            ]
+        )
 
     def __repr__(self, *args, **kwargs):
         str_list = []
@@ -84,13 +86,15 @@ class IptablesMangleMarkEntry(object):
         if Integer(self.line_number).is_type():
             str_list.append("line-num={}".format(self.line_number))
 
-        str_list.extend([
-            "protocol={:s}".format(self.protocol),
-            "source={:s}".format(self.source),
-            "destination={:s}".format(self.destination),
-            "mark_id={:d}".format(self.mark_id),
-            "chain={:s}".format(self.chain),
-        ])
+        str_list.extend(
+            [
+                "protocol={:s}".format(self.protocol),
+                "source={:s}".format(self.source),
+                "destination={:s}".format(self.destination),
+                "mark_id={:d}".format(self.mark_id),
+                "chain={:s}".format(self.chain),
+            ]
+        )
 
         return ", ".join(str_list)
 
@@ -115,12 +119,15 @@ class IptablesMangleMarkEntry(object):
         Integer(self.line_number).validate()
 
         return "{:s} -t mangle -D {:s} {}".format(
-            get_iptables_base_command(), self.chain, self.line_number)
+            get_iptables_base_command(), self.chain, self.line_number
+        )
 
     @staticmethod
     def __is_valid_srcdst(srcdst):
-        return (typepy.is_not_null_string(srcdst) and
-                srcdst not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE))
+        return typepy.is_not_null_string(srcdst) and srcdst not in (
+            Network.Ipv4.ANYWHERE,
+            Network.Ipv6.ANYWHERE,
+        )
 
 
 class IptablesMangleController(object):
@@ -152,8 +159,9 @@ class IptablesMangleController(object):
     def get_iptables(self):
         self.__check_execution_authority()
 
-        proc = SubprocessRunner("{:s} {:s}".format(
-            get_iptables_base_command(), LIST_MANGLE_TABLE_OPTION))
+        proc = SubprocessRunner(
+            "{:s} {:s}".format(get_iptables_base_command(), LIST_MANGLE_TABLE_OPTION)
+        )
         if proc.run() != 0:
             raise OSError(proc.returncode, proc.stderr)
 
@@ -211,8 +219,13 @@ class IptablesMangleController(object):
 
                 yield IptablesMangleMarkEntry(
                     ip_version=self.__ip_version,
-                    mark_id=mark, source=source, destination=destination,
-                    chain=chain, protocol=protocol, line_number=line_number)
+                    mark_id=mark,
+                    source=source,
+                    destination=destination,
+                    chain=chain,
+                    protocol=protocol,
+                    line_number=line_number,
+                )
 
     @classmethod
     def add(cls, mangling_mark):
