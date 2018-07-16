@@ -29,7 +29,10 @@ def parse_option():
     parser = ArgparseWrapper(__version__)
 
     group = parser.parser.add_argument_group("Traffic Control")
-    group.add_argument("-d", "--device", required=True, help="network device name (e.g. eth0)")
+    if set(["-d", "--device"]).intersection(set(sys.argv)):
+        group.add_argument("-d", "--device", required=True, help="network device name (e.g. eth0)")
+    else:
+        group.add_argument("device", help="network device name (e.g. eth0)")
     group.add_argument(
         "-a",
         "--all",
