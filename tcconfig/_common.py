@@ -79,8 +79,12 @@ def initialize_cli(options):
     else:
         info_format_str = "[{record.level_name}] {record.channel}: {record.message}"
 
-    logbook.more.ColorizedStderrHandler(level=logbook.DEBUG, format_string=debug_format_str).push_application()
-    logbook.more.ColorizedStderrHandler(level=logbook.INFO, format_string=info_format_str).push_application()
+    logbook.more.ColorizedStderrHandler(
+        level=logbook.DEBUG, format_string=debug_format_str
+    ).push_application()
+    logbook.more.ColorizedStderrHandler(
+        level=logbook.INFO, format_string=info_format_str
+    ).push_application()
 
     set_log_level(options.log_level)
     spr.SubprocessRunner.is_save_history = True
