@@ -6,10 +6,10 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import json
 import re
 
 import pyparsing as pp
+import simplejson as json
 import typepy
 
 from .._const import Tc, TcSubCommand

@@ -6,9 +6,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
-import json
 import re
 
+import simplejson as json
 import typepy
 
 from .._const import ShapingAlgorithm, Tc, TcSubCommand

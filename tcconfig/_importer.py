@@ -10,6 +10,7 @@ import errno
 
 import msgfy
 import pyparsing as pp
+import simplejson as json
 import six
 import subprocrunner as spr
 
@@ -23,7 +24,6 @@ class TcConfigLoader(object):
         self.is_overwrite = False
 
     def load_tcconfig(self, config_file_path):
-        import json
         from voluptuous import Schema, Required, Any, ALLOW_EXTRA
 
         schema = Schema(

@@ -7,11 +7,11 @@
 from __future__ import absolute_import, unicode_literals
 
 import ipaddress
-import json
 import re
 from collections import OrderedDict
 
 import pyparsing as pp
+import simplejson as json
 import typepy
 
 from .._const import Tc, TcSubCommand
