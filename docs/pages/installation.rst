@@ -55,7 +55,7 @@ Dependency python packages are automatically installed during
 
 Optional Python packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-- `netifaces <https://bitbucket.org/al45tair/netifaces>`__
+- `netifaces <https://github.com/al45tair/netifaces>`__
     - Suppress excessive error messages if this package installed
 
 Test dependencies
