@@ -69,12 +69,12 @@ class TcConfigLoader(object):
                     if not filter_table:
                         continue
 
-                    option_list = [device_option, "--direction={:s}".format(direction)]
+                    option_list = [device, "--direction={:s}".format(direction)]
                     for key, value in six.iteritems(filter_table):
                         arg_item = "--{:s}={}".format(key, value)
 
                         parse_result = get_arg_parser().parse_known_args(
-                            ["--device", "dummy", arg_item]
+                            ["dummy", arg_item]
                         )
                         if parse_result[1]:
                             self.__logger.debug(

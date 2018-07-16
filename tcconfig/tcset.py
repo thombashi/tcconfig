@@ -39,12 +39,19 @@ from .traffic_control import TrafficControl
 def get_arg_parser():
     parser = ArgparseWrapper(__version__)
 
-    group = parser.parser.add_mutually_exclusive_group(required=True)
-    group.add_argument("-d", "--device", help="network device name (e.g. eth0)")
-    group.add_argument(
-        "-f",
-        "--config-file",
-        help="setting traffic controls from a configuration file. output file of the tcshow.",
+    if set(["-d", "--device"]).intersection(set(sys.argv)):
+        group = parser.parser.add_mutually_exclusive_group(required=True)
+        group.add_argument("-d", "--device", help="network device name (e.g. eth0)")
+    else:
+        parser.parser.add_argument(
+            "device", help="target name: network-interface/config-file (e.g. eth0)"
+        )
+
+    parser.parser.add_argument(
+        "--import-setting",
+        action="store_true",
+        default=False,
+        help="import traffic control settings from a configuration file.",
     )
 
     group = parser.parser.add_mutually_exclusive_group()
@@ -222,8 +229,8 @@ def main():
     except ModuleNotFoundError as e:
         logger.debug(e)
 
-    if typepy.is_not_null_string(options.config_file):
-        return set_tc_from_file(logger, options.config_file, options.overwrite)
+    if options.import_setting:
+        return set_tc_from_file(logger, options.device, options.overwrite)
 
     spr.SubprocessRunner.clear_history()
 

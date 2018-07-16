@@ -63,7 +63,7 @@ class Test_tcconfig(object):
         device_option = "--device {:s}".format(device_value)
 
         execute_tcdel(device_value)
-        command = " ".join(["{:s} -f ".format(Tc.Command.TCSET), str(p), overwrite])
+        command = " ".join([Tc.Command.TCSET, str(p), "--import-setting", overwrite])
         SubprocessRunner(command).run()
 
         runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
