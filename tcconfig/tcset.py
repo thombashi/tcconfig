@@ -14,7 +14,6 @@ import sys
 import logbook
 import msgfy
 import subprocrunner as spr
-import typepy
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
