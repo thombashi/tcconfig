@@ -165,7 +165,7 @@ def get_arg_parser():
     group.add_argument(
         "--shaping-algo",
         dest="shaping_algorithm",
-        choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.HTB],
+        choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.TBF],
         default=ShapingAlgorithm.HTB,
         help="shaping algorithm. defaults to %(default)s (recommended).",
     )
