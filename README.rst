@@ -60,7 +60,7 @@ e.g. Set a limit on bandwidth up to 100Kbps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset --device eth0 --rate 100k
+    # tcset eth0 --rate 100k
 
 e.g. Set network latency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -70,44 +70,44 @@ Set 100 milliseconds network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
-    # tcset --device eth0 --delay 100ms
+    # tcset eth0 --delay 100ms
 
 
 Set 10 seconds network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
-    # tcset --device eth0 --delay 10sec
+    # tcset eth0 --delay 10sec
 
 Set 0.5 minutes (30 seconds) network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
-    # tcset --device eth0 --delay 0.5min
+    # tcset eth0 --delay 0.5min
 
 e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset --device eth0 --loss 0.1
+    # tcset eth0 --loss 0.1
 
 e.g. All of the above at once
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset --device eth0 --rate 100k --delay 100 --loss 0.1
+    # tcset eth0 --rate 100k --delay 100 --loss 0.1
 
 e.g. Specify the IP address of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset --device eth0 --delay 100 --network 192.168.0.10
+    # tcset eth0 --delay 100 --network 192.168.0.10
 
 e.g. Specify the IP network and port of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset --device eth0 --delay 100 --network 192.168.0.0/24 --port 80
+    # tcset eth0 --delay 100 --network 192.168.0.0/24 --port 80
 
 Delete traffic control (``tcdel`` command)
 ------------------------------------------
@@ -119,7 +119,7 @@ You can delete all of the shaping rules for the ``eth0`` with ``-a``/``--all`` o
 
 .. code-block:: console
 
-    # tcdel --device eth0 --all
+    # tcdel eth0 --all
 
 Display traffic control configurations (``tcshow`` command)
 -----------------------------------------------------------
@@ -130,9 +130,9 @@ Example
 
 .. code-block:: console
 
-    # tcset --device eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
-    # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
-    # tcshow --device eth0
+    # tcset eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
+    # tcset eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
+    # tcshow eth0
     {
         "eth0": {
             "outgoing": {
@@ -218,7 +218,7 @@ Dependency python packages are automatically installed during
 
 Optional Python packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-- `netifaces <https://bitbucket.org/al45tair/netifaces>`__
+- `netifaces <https://github.com/al45tair/netifaces>`__
     - Suppress excessive error messages if this package installed
 
 Test dependencies
