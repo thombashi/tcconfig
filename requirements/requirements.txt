@@ -1,3 +1,4 @@
+colorama>=0.3.9
 DataProperty>=0.31.1
 enum34;python_version<"3.4"
 ipaddress;python_version<"3.3"

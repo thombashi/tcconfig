@@ -13,6 +13,7 @@ import re
 import sys
 
 import logbook
+import logbook.more
 import msgfy
 import subprocrunner as spr
 import typepy
@@ -78,8 +79,8 @@ def initialize_cli(options):
     else:
         info_format_str = "[{record.level_name}] {record.channel}: {record.message}"
 
-    logbook.StderrHandler(level=logbook.DEBUG, format_string=debug_format_str).push_application()
-    logbook.StderrHandler(level=logbook.INFO, format_string=info_format_str).push_application()
+    logbook.more.ColorizedStderrHandler(level=logbook.DEBUG, format_string=debug_format_str).push_application()
+    logbook.more.ColorizedStderrHandler(level=logbook.INFO, format_string=info_format_str).push_application()
 
     set_log_level(options.log_level)
     spr.SubprocessRunner.is_save_history = True
