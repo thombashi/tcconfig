@@ -80,34 +80,35 @@ class Test_tcset_one_network(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/o latency tc ---
-        without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
+            # w/o latency tc ---
+            without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
-        # w/ latency tc ---
-        command_list = [
-            Tc.Command.TCSET,
-            "--device {:s}".format(device_option),
-            "--src-network {:s}".format(local_host_option),
-            "--delay {:d}ms".format(delay),
-            "--shaping-algo {:s}".format(shaping_algo),
-        ]
-        assert SubprocessRunner(" ".join(command_list)).run() == 0
+            # w/ latency tc ---
+            command_list = [
+                Tc.Command.TCSET,
+                tc_target,
+                "--src-network {:s}".format(local_host_option),
+                "--delay {:d}ms".format(delay),
+                "--shaping-algo {:s}".format(shaping_algo),
+            ]
+            assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
+            with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
+            # assertion ---
+            rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
 
-        print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
-        print("w/ tc rtt: {} ms".format(with_tc_rtt_avg))
+            print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
+            print("w/ tc rtt: {} ms".format(with_tc_rtt_avg))
 
-        assert rtt_diff > (delay * ASSERT_MARGIN)
+            assert rtt_diff > (delay * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)
 
 
 class Test_tcset_exclude(object):
@@ -144,33 +145,34 @@ class Test_tcset_exclude(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/o latency tc ---
-        without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
+            # w/o latency tc ---
+            without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
-        # w/o latency tc (exclude network) ---
-        command_list = [
-            Tc.Command.TCSET,
-            "--device {:s}".format(device_option),
-            "--direction {:s}".format(TrafficDirection.INCOMING),
-            "--exclude-dst-network {:s}".format(local_host_option),
-            "--exclude-src-network {:s}".format(dst_host_option),
-            "--delay {:d}ms".format(delay),
-            "--shaping-algo {:s}".format(shaping_algo),
-        ]
-        assert SubprocessRunner(" ".join(command_list)).run() == 0
+            # w/o latency tc (exclude network) ---
+            command_list = [
+                Tc.Command.TCSET,
+                tc_target,
+                "--direction {:s}".format(TrafficDirection.INCOMING),
+                "--exclude-dst-network {:s}".format(local_host_option),
+                "--exclude-src-network {:s}".format(dst_host_option),
+                "--delay {:d}ms".format(delay),
+                "--shaping-algo {:s}".format(shaping_algo),
+            ]
+            assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        exclude_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
+            exclude_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
-        # assertion ---
-        rtt_diff = exclude_tc_rtt_avg - without_tc_rtt_avg
+            # assertion ---
+            rtt_diff = exclude_tc_rtt_avg - without_tc_rtt_avg
 
-        print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
-        print("exclude tc rtt: {} ms".format(exclude_tc_rtt_avg))
+            print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
+            print("exclude tc rtt: {} ms".format(exclude_tc_rtt_avg))
 
-        assert rtt_diff < (delay / 10)
+            assert rtt_diff < (delay / 10)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)

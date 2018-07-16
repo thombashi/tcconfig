@@ -60,17 +60,16 @@ class Test_tcconfig(object):
         print("[config]\n{}\n".format(config))
         p.write(config)
 
-        device_option = "--device {:s}".format(device_value)
+        for device_option in [device_value, "--device {}".format(device_value)]:
+            execute_tcdel(device_value)
+            command = " ".join([Tc.Command.TCSET, str(p), "--import-setting", overwrite])
+            SubprocessRunner(command).run()
 
-        execute_tcdel(device_value)
-        command = " ".join([Tc.Command.TCSET, str(p), "--import-setting", overwrite])
-        SubprocessRunner(command).run()
+            runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
+            runner.run()
 
-        runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
-        runner.run()
+            print_test_result(expected=config, actual=runner.stdout, error=runner.stderr)
 
-        print_test_result(expected=config, actual=runner.stdout, error=runner.stderr)
+            assert json.loads(runner.stdout) == json.loads(config)
 
-        assert json.loads(runner.stdout) == json.loads(config)
-
-        execute_tcdel(device_value)
+            execute_tcdel(device_value)

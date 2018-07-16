@@ -66,37 +66,38 @@ class Test_tcset_one_network(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/o latency tc ---
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        without_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
+            # w/o latency tc ---
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            without_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
-        # w/ latency tc ---
-        assert (
-            SubprocessRunner(
-                [
-                    Tc.Command.TCSET,
-                    "--device {:s}".format(device_option),
-                    "--delay {}ms".format(delay),
-                    "--shaping-algo {:s}".format(shaping_algo),
-                ]
-            ).run()
-            == 0
-        )
+            # w/ latency tc ---
+            assert (
+                SubprocessRunner(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay {}ms".format(delay),
+                        "--shaping-algo {:s}".format(shaping_algo),
+                    ]
+                ).run()
+                == 0
+            )
 
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay * ASSERT_MARGIN)
+            # assertion ---
+            rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
+            assert rtt_diff > (delay * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(device_option)
 
     @pytest.mark.parametrize(["delay", "delay_distro"], [[100, 50]])
     def test_dst_net_latency_distro(
@@ -105,44 +106,45 @@ class Test_tcset_one_network(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/o latency tc ---
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        ping_stats = pingparser.parse(ping_result)
-        without_tc_rtt_avg = ping_stats.rtt_avg
-        without_tc_rtt_mdev = ping_stats.rtt_mdev
+            # w/o latency tc ---
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            ping_stats = pingparser.parse(ping_result)
+            without_tc_rtt_avg = ping_stats.rtt_avg
+            without_tc_rtt_mdev = ping_stats.rtt_mdev
 
-        # w/ latency tc ---
-        assert (
-            SubprocessRunner(
-                [
-                    Tc.Command.TCSET,
-                    "--device {:s}".format(device_option),
-                    "--delay {:d}ms".format(delay),
-                    "--delay-distro {:d}ms".format(delay_distro),
-                ]
-            ).run()
-            == 0
-        )
+            # w/ latency tc ---
+            assert (
+                SubprocessRunner(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay {:d}ms".format(delay),
+                        "--delay-distro {:d}ms".format(delay_distro),
+                    ]
+                ).run()
+                == 0
+            )
 
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        ping_stats = pingparser.parse(ping_result)
-        with_tc_rtt_avg = ping_stats.rtt_avg
-        with_tc_rtt_mdev = ping_stats.rtt_mdev
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            ping_stats = pingparser.parse(ping_result)
+            with_tc_rtt_avg = ping_stats.rtt_avg
+            with_tc_rtt_mdev = ping_stats.rtt_mdev
 
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay * ASSERT_MARGIN)
+            # assertion ---
+            rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
+            assert rtt_diff > (delay * ASSERT_MARGIN)
 
-        rtt_diff = with_tc_rtt_mdev - without_tc_rtt_mdev
-        assert rtt_diff > (delay_distro * ASSERT_MARGIN)
+            rtt_diff = with_tc_rtt_mdev - without_tc_rtt_mdev
+            assert rtt_diff > (delay_distro * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)
 
     @pytest.mark.parametrize(["option", "value"], [["--loss", 10], ["--corrupt", 10]])
     def test_dst_net_packet_loss(
@@ -151,36 +153,33 @@ class Test_tcset_one_network(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/o traffic shaping ---
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        without_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
+            # w/o traffic shaping ---
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            without_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
 
-        # w/ traffic shaping ---
-        assert (
-            SubprocessRunner(
-                [
-                    Tc.Command.TCSET,
-                    "--device {:s}".format(device_option),
-                    "{:s} {:f}".format(option, value),
-                ]
-            ).run()
-            == 0
-        )
+            # w/ traffic shaping ---
+            assert (
+                SubprocessRunner(
+                    [Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)]
+                ).run()
+                == 0
+            )
 
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        with_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            with_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
 
-        # check packet loss rate ---
-        loss_diff = with_tc_loss_rate - without_tc_loss_rate
-        assert loss_diff > (value * ASSERT_MARGIN)
+            # check packet loss rate ---
+            loss_diff = with_tc_loss_rate - without_tc_loss_rate
+            assert loss_diff > (value * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)
 
     @pytest.mark.parametrize(["option", "value"], [["--duplicate", 50]])
     def test_dst_net_packet_duplicate(
@@ -189,36 +188,33 @@ class Test_tcset_one_network(object):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/o packet duplicate tc ---
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        without_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
+            # w/o packet duplicate tc ---
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            without_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
 
-        # w/ packet duplicate tc ---
-        assert (
-            SubprocessRunner(
-                [
-                    Tc.Command.TCSET,
-                    "--device {:s}".format(device_option),
-                    "{:s} {:f}".format(option, value),
-                ]
-            ).run()
-            == 0
-        )
+            # w/ packet duplicate tc ---
+            assert (
+                SubprocessRunner(
+                    [Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)]
+                ).run()
+                == 0
+            )
 
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        with_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            with_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
 
-        # assertion ---
-        duplicate_rate_diff = with_tc_duplicate_rate - without_tc_duplicate_rate
-        assert duplicate_rate_diff > (value * ASSERT_MARGIN)
+            # assertion ---
+            duplicate_rate_diff = with_tc_duplicate_rate - without_tc_duplicate_rate
+            assert duplicate_rate_diff > (value * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)
 
     def test_dst_net_exclude_dst_network(
         self, device_option, dst_host_option, transmitter, pingparser
@@ -230,41 +226,38 @@ class Test_tcset_one_network(object):
 
         delay = 100
 
-        execute_tcdel(device_option)
-        transmitter.destination_host = dst_host_option
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            transmitter.destination_host = dst_host_option
 
-        # w/ latency tc ---
-        command_list = [
-            Tc.Command.TCSET,
-            "--device {:s}".format(device_option),
-            "--delay {:d}ms".format(delay),
-        ]
-        assert SubprocessRunner(" ".join(command_list)).run() == 0
+            # w/ latency tc ---
+            command_list = [Tc.Command.TCSET, tc_target, "--delay {:d}ms".format(delay)]
+            assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        ping_result = transmitter.ping()
-        assert ping_result.returncode == 0
-        with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
+            ping_result = transmitter.ping()
+            assert ping_result.returncode == 0
+            with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
-        # exclude certain network ---
-        assert (
-            SubprocessRunner(
-                [
-                    Tc.Command.TCSET,
-                    "--device {:s}".format(device_option),
-                    "--exclude-dst-network {:s}/24".format(
-                        ".".join(dst_host_option.split(".")[:3] + ["0"])
-                    ),
-                    "--delay {:d}ms".format(delay),
-                    "--overwrite",
-                ]
-            ).run()
-            == 0
-        )
-        without_tc_rtt_avg = pingparser.parse(transmitter.ping()).rtt_avg
+            # exclude certain network ---
+            assert (
+                SubprocessRunner(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--exclude-dst-network {:s}/24".format(
+                            ".".join(dst_host_option.split(".")[:3] + ["0"])
+                        ),
+                        "--delay {:d}ms".format(delay),
+                        "--overwrite",
+                    ]
+                ).run()
+                == 0
+            )
+            without_tc_rtt_avg = pingparser.parse(transmitter.ping()).rtt_avg
 
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay * ASSERT_MARGIN)
+            # assertion ---
+            rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
+            assert rtt_diff > (delay * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)

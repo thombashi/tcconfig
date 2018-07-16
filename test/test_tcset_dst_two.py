@@ -72,30 +72,31 @@ class Test_tcset_two_network(object):
         if any([typepy.is_null_string(dst_host_option), typepy.is_null_string(dst_host_ex_option)]):
             pytest.skip("destination host is null")
 
-        execute_tcdel(device_option)
-        delay = 100
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            delay = 100
 
-        # tc to specific network ---
-        command_list = [
-            Tc.Command.TCSET,
-            "--device {:s}".format(device_option),
-            "--delay {:d}ms".format(delay),
-            "--dst-network {:s}".format(dst_host_ex_option),
-            "--shaping-algo {:s}".format(shaping_algo),
-        ]
-        assert SubprocessRunner(" ".join(command_list)).run() == 0
+            # tc to specific network ---
+            command_list = [
+                Tc.Command.TCSET,
+                tc_target,
+                "--delay {:d}ms".format(delay),
+                "--dst-network {:s}".format(dst_host_ex_option),
+                "--shaping-algo {:s}".format(shaping_algo),
+            ]
+            assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        # w/o tc network ---
-        transmitter.destination_host = dst_host_option
-        without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
+            # w/o tc network ---
+            transmitter.destination_host = dst_host_option
+            without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
-        # w/ tc network ---
-        transmitter.destination_host = dst_host_ex_option
-        with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
+            # w/ tc network ---
+            transmitter.destination_host = dst_host_ex_option
+            with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
-        # assertion ---
-        rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
-        assert rtt_diff > (delay * ASSERT_MARGIN)
+            # assertion ---
+            rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
+            assert rtt_diff > (delay * ASSERT_MARGIN)
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)

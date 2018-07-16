@@ -114,28 +114,27 @@ class Test_tcconfig(object):
         if is_invalid_param(rate, delay, loss, corrupt):
             pytest.skip("skip null parameters")
 
-        device_option = "--device {}".format(device_value)
+        for device_option in [device_value, "--device {}".format(device_value)]:
+            execute_tcdel(device_value)
 
-        execute_tcdel(device_value)
+            command = " ".join(
+                [
+                    Tc.Command.TCSET,
+                    device_option,
+                    rate,
+                    delay,
+                    delay_distro,
+                    loss,
+                    corrupt,
+                    direction,
+                    network,
+                    port,
+                    overwrite,
+                    # is_enable_iptables,
+                ]
+            )
+            print("command: {}".format(command))
+            tcset_proc = SubprocessRunner(command)
+            assert tcset_proc.run() == 0, tcset_proc.stderr
 
-        command = " ".join(
-            [
-                Tc.Command.TCSET,
-                device_option,
-                rate,
-                delay,
-                delay_distro,
-                loss,
-                corrupt,
-                direction,
-                network,
-                port,
-                overwrite,
-                # is_enable_iptables,
-            ]
-        )
-        print("command: {}".format(command))
-        tcset_proc = SubprocessRunner(command)
-        assert tcset_proc.run() == 0, tcset_proc.stderr
-
-        execute_tcdel(device_value)
+            execute_tcdel(device_value)

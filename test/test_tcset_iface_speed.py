@@ -24,33 +24,27 @@ class Test_tcset_iface_speed(object):
         if device_option is None:
             pytest.skip("device option is null")
 
-        execute_tcdel(device_option)
-        monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: speed)
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: speed)
 
-        command_list = [
-            Tc.Command.TCSET,
-            "--device {:s}".format(device_option),
-            "--rate {:s}".format("1kbps"),
-        ]
-        assert SubprocessRunner(" ".join(command_list)).run() == 0
+            command_list = [Tc.Command.TCSET, tc_target, "--rate {:s}".format("1kbps")]
+            assert SubprocessRunner(" ".join(command_list)).run() == 0
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)
 
     @pytest.mark.parametrize(["rate"], [["0kbps"], ["99Gbps"]])
     def test_abnormal(self, monkeypatch, device_option, rate):
         if device_option is None:
             pytest.skip("device option is null")
 
-        execute_tcdel(device_option)
-        monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: "1")
+        for tc_target in [device_option, "--device {}".format(device_option)]:
+            execute_tcdel(tc_target)
+            monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: "1")
 
-        command_list = [
-            Tc.Command.TCSET,
-            "--device {:s}".format(device_option),
-            "--rate {:s}".format(rate),
-        ]
-        assert SubprocessRunner(" ".join(command_list)).run() != 0
+            command_list = [Tc.Command.TCSET, tc_target, "--rate {:s}".format(rate)]
+            assert SubprocessRunner(" ".join(command_list)).run() != 0
 
-        # finalize ---
-        execute_tcdel(device_option)
+            # finalize ---
+            execute_tcdel(tc_target)
