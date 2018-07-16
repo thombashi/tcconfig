@@ -19,7 +19,16 @@ class NetworkInterfaceNotFoundError(Exception):
 
     def __str__(self, *args, **kwargs):
         item_list = [ValueError.__str__(self, *args, **kwargs)]
-        item_list.append("network interface not found: {}".format(self.__device))
+
+        if self.__device:
+            item_list.append("network interface not found: {}".format(self.__device))
+
+        try:
+            import netifaces
+
+            item_list.append("(available interfaces: {})".format(", ".join(netifaces.interfaces())))
+        except ImportError:
+            pass
 
         return " ".join(item_list).strip()
 
