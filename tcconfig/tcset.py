@@ -40,8 +40,9 @@ def get_arg_parser():
     parser = ArgparseWrapper(__version__)
 
     if set(["-d", "--device"]).intersection(set(sys.argv)):
-        group = parser.parser.add_mutually_exclusive_group(required=True)
-        group.add_argument("-d", "--device", help="network device name (e.g. eth0)")
+        parser.parser.add_argument(
+            "-d", "--device", required=True, help="network device name (e.g. eth0)"
+        )
     else:
         parser.parser.add_argument(
             "device", help="target name: network-interface/config-file (e.g. eth0)"
