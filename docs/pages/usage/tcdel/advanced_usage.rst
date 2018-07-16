@@ -4,10 +4,10 @@ You can delete a specific shaping rule by either network specifier or ``filter_i
 
 .. code-block:: console
 
-    # tcset --device ens33 --delay 10 --rate 10k --network 192.168.1.2 --overwrite
-    # tcset --device ens33 --delay 100 --rate 50k --network 192.168.1.3 --add
-    # tcset --device ens33 --delay 200 --rate 100k --network 192.168.0.0/24 --add
-    # tcshow -d ens33
+    # tcset ens33 --delay 10 --rate 10k --network 192.168.1.2 --overwrite
+    # tcset ens33 --delay 100 --rate 50k --network 192.168.1.3 --add
+    # tcset ens33 --delay 200 --rate 100k --network 192.168.0.0/24 --add
+    # tcshow ens33
     {
         "ens33": {
             "outgoing": {
@@ -35,8 +35,8 @@ e.g. Delete a shaping rule with network specifier:
 
 .. code-block:: console
 
-    # tcdel --device ens33 --dst-network 192.168.1.2
-    # tcshow -d ens33
+    # tcdel ens33 --dst-network 192.168.1.2
+    # tcshow ens33
     {
         "ens33": {
             "outgoing": {
@@ -59,8 +59,8 @@ e.g. Delete a shaping rule with filter id:
 
 .. code-block:: console
 
-    # tcdel --device ens33 --id 800::801
-    # tcshow -d ens33
+    # tcdel ens33 --id 800::801
+    # tcshow ens33
     {
         "ens33": {
             "outgoing": {

@@ -1,20 +1,21 @@
 ::
 
     usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-                [--stacktrace] -d DEVICE [-a] [--id FILTER_ID]
-                [--direction {outgoing,incoming}] [--network DST_NETWORK]
-                [--src-network SRC_NETWORK] [--port DST_PORT]
-                [--src-port SRC_PORT] [--ipv6]
+                 [--stacktrace] [-a] [--id FILTER_ID]
+                 [--direction {outgoing,incoming}] [--network DST_NETWORK]
+                 [--src-network SRC_NETWORK] [--port DST_PORT]
+                 [--src-port SRC_PORT] [--ipv6]
+                 device
 
     optional arguments:
       -h, --help            show this help message and exit
       --version             show program's version number and exit
       --tc-command          display tc commands to be executed and exit. these
-                            commands are not executed.
-      --tc-script           generate a script file that described tc commands
-                            which equivalent with execution tcconfig command. the
-                            script can be execute without tcconfig package
-                            installation.
+                            commands are not actually executed.
+      --tc-script           generate a shell script file that described tc
+                            commands. this tc script execution result nearly
+                            equivalent with the tcconfig command. the script can
+                            be executed without tcconfig package installation.
       --debug               for debug print.
       --quiet               suppress execution log messages.
 
@@ -23,8 +24,7 @@
                             option required to see the debug print.
 
     Traffic Control:
-      -d DEVICE, --device DEVICE
-                            network device name (e.g. eth0)
+      device                network device name (e.g. eth0)
       -a, --all             delete all of the shaping rules.
       --id FILTER_ID        delete a shaping rule which has a specific id. you can
                             get an id (filter_id) by tcshow command output. e.g.
@@ -50,4 +50,6 @@
       --ipv6                apply traffic control to IPv6 packets rather than
                             IPv4.
 
-    Issue tracker: https://github.com/thombashi/tcconfig/issues
+            Documentation: http://tcconfig.rtfd.io/
+            Issue tracker: https://github.com/thombashi/tcconfig/issues
+        

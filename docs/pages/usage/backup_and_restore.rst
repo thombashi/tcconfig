@@ -10,16 +10,16 @@ e.g. Backup configurations
 
 .. code-block:: console
 
-    # tcset --device eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
-    # tcset --device eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
-    # tcset --device eth1 --delay 2.5 --delay-distro 1.2 --loss 0.01 --rate 0.25M --port 80
-    # tcset --device eth1 --corrupt 0.02 --rate 1.5M --direction incoming --network 192.168.10.0/24
+    # tcset eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
+    # tcset eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
+    # tcset eth1 --delay 2.5 --delay-distro 1.2 --loss 0.01 --rate 0.25M --port 80
+    # tcset eth1 --corrupt 0.02 --rate 1.5M --direction incoming --network 192.168.10.0/24
 
 Redirect configurations to the ``tcconfig.json`` file.
 
 .. code-block:: console
 
-    # tcshow --device eth0 --device eth1 > tcconfig.json
+    # tcshow eth0 eth1 > tcconfig.json
 
 
 e.g. Restore configurations
@@ -29,7 +29,7 @@ Before restore
 
 .. code-block:: console
 
-    # tcshow --device eth0 --device eth1
+    # tcshow eth0 eth1
     {
         "eth1": {
             "outgoing": {},
@@ -45,13 +45,13 @@ Restore from a configuration file (``tcconfig.json``).
 
 .. code-block:: console
 
-    # tcset -f tcconfig.json
+    # tcset tcconfig.json --import-setting
 
 After restore
 
 .. code-block:: console
 
-    # tcshow --device eth0 --device eth1
+    # tcshow eth0 eth1
     {
         "eth1": {
             "outgoing": {
@@ -90,4 +90,3 @@ After restore
             }
         }
     }
-    

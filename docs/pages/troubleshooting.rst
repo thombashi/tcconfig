@@ -12,7 +12,7 @@ Phenomenon
 
     .. code:: console
 
-        # tcset --device eth0 --rate 1M
+        # tcset eth0 --rate 1M
         [ERROR] tcconfig: RTNETLINK answers: No such file or directory
 
 
@@ -50,7 +50,7 @@ Load ``sch_netem`` module after the package installation.
 .. code:: console
 
     # modprobe sch_netem
-    # 
+    #
 
 
 RTNETLINK answers: Operation not supported

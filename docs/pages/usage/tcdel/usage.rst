@@ -4,4 +4,4 @@ You can delete all of the shaping rules for the ``eth0`` with ``-a``/``--all`` o
 
 .. code-block:: console
 
-    # tcdel --device eth0 --all
+    # tcdel eth0 --all
