@@ -51,10 +51,8 @@ class TcConfigLoader(object):
         command_list = []
 
         for device, device_table in six.iteritems(self.__config_table):
-            device_option = "--device={:s}".format(device)
-
             if self.is_overwrite:
-                command_list.append("{:s} {:s}".format(Tc.Command.TCDEL, device_option))
+                command_list.append(" ".join([Tc.Command.TCDEL, device]))
 
             for direction, direction_table in six.iteritems(device_table):
                 is_first_set = True
