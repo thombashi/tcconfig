@@ -124,7 +124,7 @@ class ArgparseWrapper(object):
             default=TcCommandOutput.NOT_SET,
             help="""
             display tc commands to be executed and exit.
-            these commands are not executed.
+            these commands are not actually executed.
             """,
         )
 
@@ -135,8 +135,8 @@ class ArgparseWrapper(object):
             const=TcCommandOutput.SCRIPT,
             default=TcCommandOutput.NOT_SET,
             help="""
-            generate a script file that described tc commands which equivalent
-            with execution tcconfig command. the script can be execute without
-            tcconfig package installation.
+            generate a shell script file that described tc commands.
+            this tc script execution result nearly equivalent with the tcconfig command.
+            the script can be executed without tcconfig package installation.
             """,
         )

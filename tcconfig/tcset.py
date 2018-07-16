@@ -68,10 +68,10 @@ def get_arg_parser():
         dest="is_change_shaping_rule",
         action="store_true",
         default=False,
-        help="""change existing traffic shaping rules to the new one. this option reduces
-        the shaping rule switching side effect (such as traffic spike) compared to
-        --overwrite option.
-        note: the tcset command adds a shaping rule if there are no existing shaping rules.
+        help="""change existing traffic shaping rules to the new one.
+        this option is effective to reduce the time between the shaping rule switching
+        compared to --overwrite option.
+        note: just adds a shaping rule if there are no existing shaping rules.
         """,
     )
     group.add_argument(
