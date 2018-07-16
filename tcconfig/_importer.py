@@ -73,9 +73,7 @@ class TcConfigLoader(object):
                     for key, value in six.iteritems(filter_table):
                         arg_item = "--{:s}={}".format(key, value)
 
-                        parse_result = get_arg_parser().parse_known_args(
-                            ["dummy", arg_item]
-                        )
+                        parse_result = get_arg_parser().parse_known_args(["dummy", arg_item])
                         if parse_result[1]:
                             self.__logger.debug(
                                 "unknown parameter: key={}, value={}".format(key, value)

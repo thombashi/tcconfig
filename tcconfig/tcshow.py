@@ -34,9 +34,7 @@ def parse_option():
             "-d", "--device", action="append", required=True, help="network device name (e.g. eth0)"
         )
     else:
-        group.add_argument(
-            "device", nargs="+", help="network device name (e.g. eth0)"
-        )
+        group.add_argument("device", nargs="+", help="network device name (e.g. eth0)")
     group.add_argument(
         "--ipv6",
         dest="ip_version",
