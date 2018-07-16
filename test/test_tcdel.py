@@ -12,7 +12,7 @@ import pytest
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
 
-from .common import execute_tcdel
+from .common import execute_tcdel, print_test_result
 
 
 @pytest.fixture
@@ -178,8 +178,8 @@ class Test_tcdel(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+
         assert json.loads(runner.stdout) == json.loads(expected)
 
         tcdel_proc = SubprocessRunner(
@@ -232,8 +232,7 @@ class Test_tcdel(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
         assert json.loads(runner.stdout) == json.loads(expected)
 
         assert (
@@ -262,8 +261,7 @@ class Test_tcdel(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
         assert json.loads(runner.stdout) == json.loads(expected)
 
         # finalize ---
@@ -421,8 +419,7 @@ class Test_tcdel(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
         assert json.loads(runner.stdout) == json.loads(expected)
 
         assert (
@@ -482,8 +479,7 @@ class Test_tcdel(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
         assert json.loads(runner.stdout) == json.loads(expected)
 
         assert (

@@ -14,6 +14,8 @@ import tcconfig.parser.shaping_rule
 from simplesqlite import connect_sqlite_memdb
 from tcconfig._const import Tc
 
+from .common import print_test_result
+
 
 DEVICE = "eth0"
 
@@ -184,8 +186,7 @@ filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""
     def test_normal(self, filter_parser_ipv4, value, expected):
         actual = filter_parser_ipv4.parse(DEVICE, value)
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(actual))
+        print_test_result(expected=expected, actual=actual)
 
         assert actual == expected
 
@@ -320,8 +321,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
     def test_normal(self, filter_parser_ipv6, value, expected):
         actual = filter_parser_ipv6.parse(DEVICE, value)
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(actual))
+        print_test_result(expected=expected, actual=actual)
 
         assert actual == expected
 
@@ -443,7 +443,6 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 0.5s  1.0ms loss 5%
     def test_normal(self, qdisc_parser, value, expected):
         actual = qdisc_parser.parse(DEVICE, value)
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(actual))
+        print_test_result(expected=expected, actual=actual)
 
         assert actual == expected

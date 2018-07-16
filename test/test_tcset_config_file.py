@@ -12,7 +12,7 @@ import pytest
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
 
-from .common import execute_tcdel
+from .common import execute_tcdel, print_test_result
 
 
 @pytest.fixture
@@ -69,9 +69,7 @@ class Test_tcconfig(object):
         runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
         runner.run()
 
-        print("[expected]\n{}\n".format(config))
-        print("[actual]\n{}\n".format(runner.stdout))
-        print("[stderr]\n{}".format(runner.stderr))
+        print_test_result(expected=config, actual=runner.stdout, error=runner.stderr)
 
         assert json.loads(runner.stdout) == json.loads(config)
 

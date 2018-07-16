@@ -12,7 +12,7 @@ import pytest
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
 
-from .common import execute_tcdel
+from .common import execute_tcdel, print_test_result
 
 
 @pytest.fixture
@@ -119,8 +119,7 @@ class Test_tcset_change(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
         assert json.loads(runner.stdout) == json.loads(expected)
 
         command_list = [
@@ -166,8 +165,7 @@ class Test_tcset_change(object):
 }"""
         )
 
-        print("[expected]\n{}\n".format(expected))
-        print("[actual]\n{}\n".format(runner.stdout))
+        print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
         assert json.loads(runner.stdout) == json.loads(expected)
 
         # finalize ---

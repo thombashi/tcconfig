@@ -6,6 +6,8 @@
 
 from __future__ import absolute_import, print_function
 
+import sys
+
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
 from tcconfig._converter import Humanreadable, HumanReadableTime
@@ -14,6 +16,14 @@ from typepy import RealNumber
 
 DEADLINE_TIME = 3  # [sec]
 ASSERT_MARGIN = 0.5
+
+
+def print_test_result(expected, actual, error=None):
+    print("[expected]\n{}\n".format(expected))
+    print("[actual]\n{}\n".format(actual))
+
+    if error:
+        print(error, file=sys.stderr)
 
 
 def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reordering):
