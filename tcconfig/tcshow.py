@@ -44,7 +44,26 @@ def parse_option():
         help="Display IPv6 shaping rules. Defaults to show IPv4 shaping rules.",
     )
 
+    parser.parser.add_argument(
+        "--color", action="store_true", default=False, help="colorize the output."
+    )
+
     return parser.parser.parse_args()
+
+
+def print_tc(text, is_colorize):
+    if is_colorize:
+        from pygments import highlight
+        from pygments.lexers import JsonLexer
+        from pygments.formatters import TerminalTrueColorFormatter
+
+        print(
+            highlight(
+                code=text, lexer=JsonLexer(), formatter=TerminalTrueColorFormatter(style="monokai")
+            )
+        )
+    else:
+        print(text)
 
 
 def main():
@@ -83,7 +102,8 @@ def main():
         return 0
 
     logger.debug("command history\n{}".format(command_history))
-    print(json.dumps(tc_param, indent=4))
+
+    print_tc(json.dumps(tc_param, ensure_ascii=False, indent=4), options.color)
 
     return 0
 

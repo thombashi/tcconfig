@@ -26,14 +26,15 @@ class Test_tcshow(object):
         python setup.py test --addopts "--runxfail --device=<test device>"
     """
 
-    def test_normal_empty(self, device_value):
+    @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
+    def test_normal_empty(self, device_value, colorize_option):
         if device_value is None:
             pytest.skip("device option is null")
 
         for tc_target in [device_value, "--device {}".format(device_value)]:
             execute_tcdel(tc_target)
 
-            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target]))
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
 
             expected = (
                 "{"
@@ -52,7 +53,8 @@ class Test_tcshow(object):
             assert runner.run() == 0
             assert json.loads(runner.stdout) == json.loads(expected)
 
-    def test_normal_ipv4(self, device_value):
+    @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
+    def test_normal_ipv4(self, device_value, colorize_option):
         if device_value is None:
             pytest.skip("device option is null")
 
@@ -153,7 +155,7 @@ class Test_tcshow(object):
                 == 0
             )
 
-            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target]))
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
             runner.run()
 
             expected = (
@@ -204,7 +206,8 @@ class Test_tcshow(object):
 
             execute_tcdel(tc_target)
 
-    def test_normal_ipv6(self, device_value):
+    @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
+    def test_normal_ipv6(self, device_value, colorize_option):
         if device_value is None:
             pytest.skip("device option is null")
 
@@ -309,7 +312,9 @@ class Test_tcshow(object):
                 == 0
             )
 
-            runner = SubprocessRunner("tcshow {:s} --ipv6".format(tc_target))
+            runner = SubprocessRunner(
+                " ".join([Tc.Command.TCSHOW, tc_target, "--ipv6", colorize_option])
+            )
             runner.run()
 
             expected = (

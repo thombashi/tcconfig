@@ -5,6 +5,7 @@ ipaddress;python_version<"3.3"
 logbook
 msgfy>=0.0.2
 path.py
+Pygments>=2.2.0
 pyparsing>=2.2.0
 simplejson>=3.16.0
 SimpleSQLite>=0.25.2
