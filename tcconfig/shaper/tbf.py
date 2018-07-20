@@ -50,7 +50,6 @@ class TbfShaper(AbstractShaper):
 
     def _make_qdisc(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
-
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         return run_command_helper(
@@ -74,7 +73,6 @@ class TbfShaper(AbstractShaper):
             return 0
 
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
-
         parent = "{:x}:{:d}".format(
             self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id), self._get_qdisc_minor_id()
         )

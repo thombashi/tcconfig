@@ -93,14 +93,12 @@ class HtbShaper(AbstractShaper):
 
     def _add_rate(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.CLASS)
-
         parent = "{:s}:".format(
             self._get_tc_parent("{:s}:".format(self._tc_obj.qdisc_major_id_str)).split(":")[0]
         )
         classid = self._get_tc_parent(
             "{:s}:{:d}".format(self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
         )
-
         no_limit_kbits = get_no_limit_kbits(self._tc_device)
 
         kbits = self._tc_obj.bandwidth_rate
