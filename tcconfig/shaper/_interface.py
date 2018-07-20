@@ -118,13 +118,11 @@ class AbstractShaper(ShaperInterface):
         )
 
     def _add_filter(self):
-        base_command = self._tc_obj.get_tc_command(TcSubCommand.FILTER)
-
         if self._tc_obj.is_change_shaping_rule:
             return 0
 
         command_item_list = [
-            base_command,
+            self._tc_obj.get_tc_command(TcSubCommand.FILTER),
             self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
