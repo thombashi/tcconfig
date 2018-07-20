@@ -54,8 +54,6 @@ class HtbShaper(AbstractShaper):
 
     def _make_qdisc(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
-        if base_command is None:
-            return 0
 
         if self._tc_obj.is_change_shaping_rule:
             return 0
@@ -159,8 +157,6 @@ class HtbShaper(AbstractShaper):
             return
 
         base_command = self._tc_obj.get_tc_command(TcSubCommand.FILTER)
-        if base_command is None:
-            return 0
 
         command_item_list = [
             base_command,

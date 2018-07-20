@@ -68,8 +68,6 @@ class AbstractShaper(ShaperInterface):
 
     def _set_netem(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
-        if base_command is None:
-            return 0
 
         parent = self._get_tc_parent(
             "{:s}:{:d}".format(self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
@@ -122,8 +120,6 @@ class AbstractShaper(ShaperInterface):
 
     def _add_filter(self):
         base_command = self._tc_obj.get_tc_command(TcSubCommand.FILTER)
-        if base_command is None:
-            return 0
 
         if self._tc_obj.is_change_shaping_rule:
             return 0
