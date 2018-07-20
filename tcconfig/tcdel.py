@@ -103,6 +103,7 @@ def create_tc_obj(options):
         dst_port=dst_port,
         src_port=src_port,
         is_ipv6=options.is_ipv6,
+        tc_command_output=options.tc_command_output,
     )
 
 
@@ -114,17 +115,17 @@ def main():
     if is_execute_tc_command(options.tc_command_output):
         check_execution_authority("tc")
 
+        try:
+            verify_network_interface(options.device, options.tc_command_output)
+        except NetworkInterfaceNotFoundError as e:
+            logger.error(e)
+            return errno.EINVAL
+
         is_delete_all = options.is_delete_all
     else:
         spr.SubprocessRunner.default_is_dry_run = True
         is_delete_all = True
         set_logger(False)
-
-    try:
-        verify_network_interface(options.device)
-    except NetworkInterfaceNotFoundError as e:
-        logger.error(e)
-        return errno.EINVAL
 
     spr.SubprocessRunner.clear_history()
     tc = create_tc_obj(options)

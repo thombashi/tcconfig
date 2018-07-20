@@ -240,7 +240,7 @@ class HtbShaper(AbstractShaper):
             "class {algorithm:s} {qdisc_major_id:s}[\:][0-9]+".format(
                 algorithm=ShapingAlgorithm.HTB, qdisc_major_id=self._tc_obj.qdisc_major_id_str
             ),
-            run_tc_show(TcSubCommand.CLASS, self._tc_device),
+            run_tc_show(TcSubCommand.CLASS, self._tc_device, self._tc_obj.tc_command_output),
             re.MULTILINE,
         )
 
@@ -267,7 +267,9 @@ class HtbShaper(AbstractShaper):
 
     def __get_unique_netem_major_id(self):
         exist_netem_item_list = re.findall(
-            "qdisc [a-z]+ [a-z0-9]+", run_tc_show(TcSubCommand.QDISC, self._tc_device), re.MULTILINE
+            "qdisc [a-z]+ [a-z0-9]+",
+            run_tc_show(TcSubCommand.QDISC, self._tc_device, self._tc_obj.tc_command_output),
+            re.MULTILINE,
         )
 
         exist_netem_major_id_list = []

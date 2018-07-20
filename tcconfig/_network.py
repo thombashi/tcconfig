@@ -109,10 +109,15 @@ def sanitize_network(network, ip_version):
     raise ValueError("unexpected ip version: {}".format(ip_version))
 
 
-def verify_network_interface(device):
+def verify_network_interface(device, tc_command_output):
     try:
         import netifaces
     except ImportError:
+        return
+
+    from ._common import is_execute_tc_command
+
+    if not is_execute_tc_command(tc_command_output):
         return
 
     if device not in netifaces.interfaces():

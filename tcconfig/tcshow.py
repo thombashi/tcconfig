@@ -77,7 +77,7 @@ def main():
     tc_param = {}
     for device in options.device:
         try:
-            verify_network_interface(device)
+            verify_network_interface(device, options.tc_command_output)
 
             tc_param.update(
                 TcShapingRuleParser(

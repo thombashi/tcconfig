@@ -20,10 +20,10 @@ def get_tc_base_command(tc_subcommand):
     return "{:s} {:s}".format(find_bin_path("tc"), tc_subcommand.value)
 
 
-def run_tc_show(subcommand, device):
+def run_tc_show(subcommand, device, tc_command_output):
     from ._network import verify_network_interface
 
-    verify_network_interface(device)
+    verify_network_interface(device, tc_command_output)
 
     runner = spr.SubprocessRunner(
         "{:s} show dev {:s}".format(get_tc_base_command(subcommand), device)

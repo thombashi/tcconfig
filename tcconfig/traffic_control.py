@@ -261,7 +261,7 @@ class TrafficControl(object):
         self.__init_shaper(shaping_algorithm)
 
     def validate(self):
-        verify_network_interface(self.device)
+        verify_network_interface(self.device, self.__tc_command_output)
         self.__validate_netem_parameter()
         self.__validate_src_network()
         self.__validate_port()
@@ -635,7 +635,7 @@ class TrafficControl(object):
     def __delete_ifb_device(self):
         from ._capabilities import has_execution_authority, get_permission_error_message
 
-        verify_network_interface(self.ifb_device)
+        verify_network_interface(self.ifb_device, self.__tc_command_output)
 
         if not has_execution_authority("ip"):
             logger.warn(get_permission_error_message("ip"))
