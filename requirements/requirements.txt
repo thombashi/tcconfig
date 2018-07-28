@@ -8,7 +8,7 @@ path.py
 Pygments>=2.2.0
 pyparsing>=2.2.0
 simplejson>=3.16.0
-SimpleSQLite>=0.28.1
+SimpleSQLite>=0.29.0
 six
 subprocrunner>=0.14.1
 typepy>=0.1.1
