@@ -7,6 +7,7 @@
 from __future__ import absolute_import
 
 import argparse
+from textwrap import dedent
 
 import logbook
 
@@ -19,10 +20,12 @@ class ArgparseWrapper(object):
     """
 
     def __init__(self, version, description=""):
-        epilog = """
-        Documentation: http://tcconfig.rtfd.io/
-        Issue tracker: https://github.com/thombashi/tcconfig/issues
-        """
+        epilog = dedent(
+            """\
+            Documentation: http://tcconfig.rtfd.io/
+            Issue tracker: https://github.com/thombashi/tcconfig/issues
+            """
+        )
 
         self.parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
