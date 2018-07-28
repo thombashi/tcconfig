@@ -11,7 +11,7 @@ import six
 import tcconfig.parser._filter
 import tcconfig.parser._qdisc
 import tcconfig.parser.shaping_rule
-from simplesqlite import connect_sqlite_memdb
+from simplesqlite import connect_memdb
 from tcconfig._const import Tc
 
 from .common import print_test_result
@@ -22,17 +22,17 @@ DEVICE = "eth0"
 
 @pytest.fixture
 def filter_parser_ipv4():
-    return tcconfig.parser._filter.TcFilterParser(connect_sqlite_memdb(), ip_version=4)
+    return tcconfig.parser._filter.TcFilterParser(connect_memdb(), ip_version=4)
 
 
 @pytest.fixture
 def filter_parser_ipv6():
-    return tcconfig.parser._filter.TcFilterParser(connect_sqlite_memdb(), ip_version=6)
+    return tcconfig.parser._filter.TcFilterParser(connect_memdb(), ip_version=6)
 
 
 @pytest.fixture
 def qdisc_parser():
-    return tcconfig.parser._qdisc.TcQdiscParser(connect_sqlite_memdb())
+    return tcconfig.parser._qdisc.TcQdiscParser(connect_memdb())
 
 
 class Test_TcFilterParser_parse_filter_ipv4(object):

@@ -50,7 +50,7 @@ class TcShapingRuleParser(object):
         self.__iptables_ctrl = IptablesMangleController(True, ip_version)
 
     def clear(self):
-        self.__con = simplesqlite.connect_sqlite_memdb()
+        self.__con = simplesqlite.connect_memdb()
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__parsed_mappings = {}
 
