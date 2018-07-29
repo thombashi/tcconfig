@@ -27,6 +27,9 @@ class TargetNotFoundError(Exception):
 
         return " ".join(item_list).strip()
 
+    def __repr__(self, *args, **kwargs):
+        return self.__str__(*args, **kwargs)
+
 
 class NetworkInterfaceNotFoundError(TargetNotFoundError):
     """
@@ -48,9 +51,6 @@ class NetworkInterfaceNotFoundError(TargetNotFoundError):
             pass
 
         return " ".join(item_list).strip()
-
-    def __repr__(self, *args, **kwargs):
-        return self.__str__(*args, **kwargs)
 
 
 class ModuleNotFoundError(Exception):
