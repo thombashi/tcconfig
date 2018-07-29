@@ -205,7 +205,7 @@ def verify_netem_module():
             raise OSError(runner.returncode, "failed to execute lsmod")
     except spr.CommandError as e:
         # reach here when the kmod package not installed.
-        # this kind of environments could exist such as slim containers.
+        # this kind of environments could exist such as slim Docker containers.
         logger.debug(msgfy.to_debug_message(e))
     else:
         if re.search(r"\bsch_netem\b", runner.stdout) is None:
