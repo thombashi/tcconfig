@@ -121,4 +121,4 @@ def verify_network_interface(device, tc_command_output):
         return
 
     if device not in netifaces.interfaces():
-        raise NetworkInterfaceNotFoundError(device=device)
+        raise NetworkInterfaceNotFoundError(target=device)

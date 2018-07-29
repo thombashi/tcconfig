@@ -375,7 +375,7 @@ class TrafficControl(object):
                 logger.notice("no qdisc to delete for the outgoing device.")
                 result_list.append(False)
             elif re.search("Cannot find device", proc.stderr):
-                raise NetworkInterfaceNotFoundError(device=self.device)
+                raise NetworkInterfaceNotFoundError(target=self.device)
             else:
                 result_list.append(proc.returncode == 0)
 

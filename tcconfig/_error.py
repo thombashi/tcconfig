@@ -37,12 +37,6 @@ class NetworkInterfaceNotFoundError(TargetNotFoundError):
     def _target_type(self):
         return "network interface"
 
-    def __init__(self, *args, **kwargs):
-        if "device" in kwargs:
-            kwargs["target"] = kwargs.pop("device", None)
-
-        super(NetworkInterfaceNotFoundError, self).__init__(*args, **kwargs)
-
     def __str__(self, *args, **kwargs):
         item_list = [super(NetworkInterfaceNotFoundError, self).__str__(*args, **kwargs)]
 
