@@ -6,22 +6,45 @@
 
 from __future__ import absolute_import
 
+import abc
 
-class NetworkInterfaceNotFoundError(Exception):
+
+class TargetNotFoundError(Exception):
+    @abc.abstractproperty
+    def _target_type(self):
+        return None
+
+    def __init__(self, *args, **kwargs):
+        self._target = kwargs.pop("target", None)
+
+        super(TargetNotFoundError, self).__init__(*args, **kwargs)
+
+    def __str__(self, *args, **kwargs):
+        item_list = [Exception.__str__(self, *args, **kwargs)]
+
+        if self._target:
+            item_list.append("{} not found: {}".format(self._target_type, self._target))
+
+        return " ".join(item_list).strip()
+
+
+class NetworkInterfaceNotFoundError(TargetNotFoundError):
     """
     Exception raised when network interface not found.
     """
 
+    @property
+    def _target_type(self):
+        return "network interface"
+
     def __init__(self, *args, **kwargs):
-        self.__device = kwargs.pop("device", None)
+        if "device" in kwargs:
+            kwargs["target"] = kwargs.pop("device", None)
 
         super(NetworkInterfaceNotFoundError, self).__init__(*args, **kwargs)
 
     def __str__(self, *args, **kwargs):
-        item_list = [ValueError.__str__(self, *args, **kwargs)]
-
-        if self.__device:
-            item_list.append("network interface not found: {}".format(self.__device))
+        item_list = [super(NetworkInterfaceNotFoundError, self).__str__(*args, **kwargs)]
 
         try:
             import netifaces
