@@ -27,7 +27,13 @@ from ._const import (
     TrafficDirection,
 )
 from ._converter import HumanReadableTime
-from ._error import ModuleNotFoundError, NetworkInterfaceNotFoundError, ParameterError
+from ._docker import DockerClient
+from ._error import (
+    ContainerNotFoundError,
+    ModuleNotFoundError,
+    NetworkInterfaceNotFoundError,
+    ParameterError,
+)
 from ._importer import set_tc_from_file
 from ._logger import logger, set_log_level
 from ._shaping_rule_finder import TcShapingRuleFinder
@@ -235,87 +241,102 @@ def main():
 
     spr.SubprocessRunner.clear_history()
 
-    tc = TrafficControl(
-        options.device,
-        direction=options.direction,
-        bandwidth_rate=options.bandwidth_rate,
-        latency_time=options.network_latency,
-        latency_distro_time=options.latency_distro_time,
-        packet_loss_rate=options.packet_loss_rate,
-        packet_duplicate_rate=options.packet_duplicate_rate,
-        corruption_rate=options.corruption_rate,
-        reordering_rate=options.reordering_rate,
-        dst_network=options.dst_network,
-        exclude_dst_network=options.exclude_dst_network,
-        src_network=options.src_network,
-        exclude_src_network=options.exclude_src_network,
-        src_port=options.src_port,
-        exclude_src_port=options.exclude_src_port,
-        dst_port=options.dst_port,
-        exclude_dst_port=options.exclude_dst_port,
-        is_ipv6=options.is_ipv6,
-        is_change_shaping_rule=options.is_change_shaping_rule,
-        is_add_shaping_rule=options.is_add_shaping_rule,
-        is_enable_iptables=options.is_enable_iptables,
-        shaping_algorithm=options.shaping_algorithm,
-        tc_command_output=options.tc_command_output,
-    )
+    if options.use_docker:
+        dclient = DockerClient(options.tc_command_output)
+        container = options.device
 
-    try:
-        tc.validate()
-    except NetworkInterfaceNotFoundError as e:
-        logger.error(e)
-        return errno.EINVAL
-    except ipaddress.AddressValueError as e:
-        logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
-        return errno.EINVAL
-    except ParameterError as e:
-        logger.error(msgfy.to_error_message(e))
-        return errno.EINVAL
+        dclient.verify_container(container, exit_on_exception=True)
+        dclient.create_veth_table(container)
+        tc_target_list = dclient.fetch_veth_list(dclient.get_container_info(container).name)
+    else:
+        tc_target_list = [options.device]
 
-    normalize_tc_value(tc)
-
-    if options.overwrite:
-        if options.log_level == logbook.INFO:
-            set_log_level(logbook.ERROR)
+    return_code = 0
+    for device in tc_target_list:
+        tc = TrafficControl(
+            device,
+            direction=options.direction,
+            bandwidth_rate=options.bandwidth_rate,
+            latency_time=options.network_latency,
+            latency_distro_time=options.latency_distro_time,
+            packet_loss_rate=options.packet_loss_rate,
+            packet_duplicate_rate=options.packet_duplicate_rate,
+            corruption_rate=options.corruption_rate,
+            reordering_rate=options.reordering_rate,
+            dst_network=options.dst_network,
+            exclude_dst_network=options.exclude_dst_network,
+            src_network=options.src_network,
+            exclude_src_network=options.exclude_src_network,
+            src_port=options.src_port,
+            exclude_src_port=options.exclude_src_port,
+            dst_port=options.dst_port,
+            exclude_dst_port=options.exclude_dst_port,
+            is_ipv6=options.is_ipv6,
+            is_change_shaping_rule=options.is_change_shaping_rule,
+            is_add_shaping_rule=options.is_add_shaping_rule,
+            is_enable_iptables=options.is_enable_iptables,
+            shaping_algorithm=options.shaping_algorithm,
+            tc_command_output=options.tc_command_output,
+        )
 
         try:
-            tc.delete_all_tc()
-        except NetworkInterfaceNotFoundError:
-            pass
+            tc.validate()
+        except (NetworkInterfaceNotFoundError, ContainerNotFoundError) as e:
+            logger.error(e)
+            return errno.EINVAL
+        except ipaddress.AddressValueError as e:
+            logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
+            return errno.EINVAL
+        except ParameterError as e:
+            logger.error(msgfy.to_error_message(e))
+            return errno.EINVAL
 
-        set_log_level(options.log_level)
+        normalize_tc_value(tc)
 
-    if options.is_add_shaping_rule and TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule():
-        logger.error(
-            "\n".join(
-                [
-                    "adding a shaping rule failed. a shaping rule for the same network/port "
-                    "already exist. try to execute with:",
-                    "  (a) --overwrite option if you want to overwrite the existing rules.",
-                    "  (b) --change option if you want to change the existing rule parameter.",
-                ]
+        if options.overwrite:
+            if options.log_level == logbook.INFO:
+                set_log_level(logbook.ERROR)
+
+            try:
+                tc.delete_all_tc()
+            except NetworkInterfaceNotFoundError:
+                pass
+
+            set_log_level(options.log_level)
+
+        if (
+            options.is_add_shaping_rule
+            and TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()
+        ):
+            logger.error(
+                "\n".join(
+                    [
+                        "adding a shaping rule failed. a shaping rule for the same network/port "
+                        "already exist. try to execute with:",
+                        "  (a) --overwrite option if you want to overwrite the existing rules.",
+                        "  (b) --change option if you want to change the existing rule parameter.",
+                    ]
+                )
             )
-        )
-        return errno.EINVAL
+            return errno.EINVAL
 
-    try:
-        return_code = tc.set_tc()
-    except NetworkInterfaceNotFoundError as e:
-        logger.error(e)
-        return errno.EINVAL
+        try:
+            return_code = tc.set_tc()
+        except NetworkInterfaceNotFoundError as e:
+            logger.error(e)
+            return errno.EINVAL
 
-    command_history = "\n".join(tc.get_command_history())
+        command_history = "\n".join(tc.get_command_history())
 
-    if options.tc_command_output == TcCommandOutput.STDOUT:
-        print(command_history)
-        return 0
+        if options.tc_command_output == TcCommandOutput.STDOUT:
+            print(command_history)
+            continue
 
-    if options.tc_command_output == TcCommandOutput.SCRIPT:
-        write_tc_script(Tc.Command.TCSET, command_history, filename_suffix=options.device)
-        return 0
+        if options.tc_command_output == TcCommandOutput.SCRIPT:
+            write_tc_script(Tc.Command.TCSET, command_history, filename_suffix=device)
+            continue
 
-    logger.debug("command history\n{}".format(command_history))
+        logger.debug("command history\n{}".format(command_history))
 
     return return_code
 

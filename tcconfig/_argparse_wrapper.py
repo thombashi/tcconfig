@@ -33,6 +33,13 @@ class ArgparseWrapper(object):
             epilog=epilog,
         )
         self.parser.add_argument("--version", action="version", version="%(prog)s " + version)
+        self.parser.add_argument(
+            "--docker",
+            dest="use_docker",
+            action="store_true",
+            default=False,
+            help="apply traffic control to a docker container.",
+        )
 
         self._add_tc_command_arg_group()
         self._add_log_level_argument_group()

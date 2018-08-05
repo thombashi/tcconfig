@@ -53,6 +53,30 @@ class NetworkInterfaceNotFoundError(TargetNotFoundError):
         return " ".join(item_list).strip()
 
 
+class ContainerNotFoundError(TargetNotFoundError):
+    """
+    Exception raised when container not found.
+    """
+
+    @property
+    def _target_type(self):
+        return "container"
+
+    def __str__(self, *args, **kwargs):
+        from ._docker import DockerClient
+
+        dclient = DockerClient()
+        container_list = dclient.get_running_container_name_list()
+        item_list = [super(ContainerNotFoundError, self).__str__(*args, **kwargs)]
+
+        if container_list:
+            item_list.append("(available running containers: {})".format(", ".join(container_list)))
+        else:
+            item_list.append("(running container not found)")
+
+        return " ".join(item_list).strip()
+
+
 class ModuleNotFoundError(Exception):
     """
     Exception raised when mandatory kernel module not found.

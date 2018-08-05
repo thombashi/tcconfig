@@ -1,5 +1,6 @@
 colorama>=0.3.9
 DataProperty>=0.31.2
+docker>=3.4.1
 enum34;python_version<"3.4"
 ipaddress;python_version<"3.3"
 logbook
@@ -8,7 +9,7 @@ path.py
 Pygments>=2.2.0
 pyparsing>=2.2.0
 simplejson>=3.16.0
-SimpleSQLite>=0.30.0
+SimpleSQLite>=0.30.1
 six
 subprocrunner>=0.14.1
 typepy>=0.2.0

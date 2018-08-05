@@ -13,6 +13,7 @@ from collections import OrderedDict
 import pyparsing as pp
 import simplejson as json
 import typepy
+from six import text_type
 
 from .._const import Tc, TcSubCommand
 from .._logger import logger
@@ -245,7 +246,9 @@ class TcFilterParser(AbstractParser):
         return (value_hex, mask_hex, match_id)
 
     def __parse_filter_ipv4_network(self, value_hex, mask_hex, match_id):
-        ipaddr = ".".join([str(int(value_hex[i : i + 2], 16)) for i in range(0, len(value_hex), 2)])
+        ipaddr = ".".join(
+            [text_type(int(value_hex[i : i + 2], 16)) for i in range(0, len(value_hex), 2)]
+        )
         netmask = bin(int(mask_hex, 16)).count("1")
         network = "{:s}/{:d}".format(ipaddr, netmask)
 

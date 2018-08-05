@@ -93,6 +93,10 @@ class TrafficControl(object):
         return self.__device
 
     @property
+    def tc_target(self):
+        return self.__device
+
+    @property
     def ifb_device(self):
         return "ifb{:d}".format(self.__qdisc_major_id)
 

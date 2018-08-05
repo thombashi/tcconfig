@@ -98,7 +98,7 @@ class TcShapingRuleParser(object):
             dry_run=False,
         )
         if filter_runner.run() != 0 and filter_runner.stderr.find("Cannot find device") != -1:
-            raise NetworkInterfaceNotFoundError(taret=self.device)
+            raise NetworkInterfaceNotFoundError(target=self.device)
 
         return self.__filter_parser.parse_incoming_device(filter_runner.stdout)
 

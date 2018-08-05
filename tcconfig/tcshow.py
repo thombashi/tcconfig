@@ -16,7 +16,8 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._common import check_command_installation, initialize_cli
 from ._const import Tc, TcCommandOutput
-from ._error import NetworkInterfaceNotFoundError
+from ._docker import DockerClient
+from ._error import TargetNotFoundError
 from ._logger import logger
 from ._network import verify_network_interface
 from ._tc_script import write_tc_script
@@ -74,17 +75,38 @@ def main():
     if options.tc_command_output != TcCommandOutput.NOT_SET:
         spr.SubprocessRunner.default_is_dry_run = True
 
+    dclient = DockerClient(options.tc_command_output)
+
     tc_param = {}
     for device in options.device:
         try:
-            verify_network_interface(device, options.tc_command_output)
+            if options.use_docker and dclient.exist_container(container=device):
+                container = device
 
-            tc_param.update(
-                TcShapingRuleParser(
-                    device, options.ip_version, options.tc_command_output, logger
-                ).get_tc_parameter()
-            )
-        except NetworkInterfaceNotFoundError as e:
+                dclient.verify_container(container)
+                dclient.create_veth_table(container)
+                container_info = dclient.get_container_info(container)
+
+                for veth in dclient.fetch_veth_list(container_info.name):
+                    tc_param.update(
+                        TcShapingRuleParser(
+                            veth, options.ip_version, options.tc_command_output, logger
+                        ).get_tc_parameter()
+                    )
+                    tc_param[
+                        "{veth} (container_id={id}, image={image})".format(
+                            veth=veth, id=container_info.id[:12], image=container_info.image
+                        )
+                    ] = tc_param.pop(veth)
+            else:
+                verify_network_interface(device, options.tc_command_output)
+
+                tc_param.update(
+                    TcShapingRuleParser(
+                        device, options.ip_version, options.tc_command_output, logger
+                    ).get_tc_parameter()
+                )
+        except TargetNotFoundError as e:
             logger.warn(e)
             continue
 

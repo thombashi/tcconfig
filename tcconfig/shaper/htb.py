@@ -53,11 +53,10 @@ class HtbShaper(AbstractShaper):
         return self.__netem_major_id
 
     def _make_qdisc(self):
-        base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
-
         if self._tc_obj.is_change_shaping_rule:
             return 0
 
+        base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         handle = "{:s}:".format(self._tc_obj.qdisc_major_id_str)
 
         if self._tc_obj.is_add_shaping_rule:
