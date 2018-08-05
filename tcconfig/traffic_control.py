@@ -66,7 +66,7 @@ class TrafficControl(object):
 
     @property
     def netem_param(self):
-        return self.__netem_parameter
+        return self.__netem_param
 
     @property
     def dst_network(self):
@@ -163,7 +163,7 @@ class TrafficControl(object):
         self.__device = device
 
         self.__direction = direction
-        self.__netem_parameter = netem_param
+        self.__netem_param = netem_param
         self.__dst_network = dst_network
         self.__exclude_dst_network = exclude_dst_network
         self.__src_network = src_network
@@ -186,7 +186,7 @@ class TrafficControl(object):
 
     def validate(self):
         verify_network_interface(self.device, self.__tc_command_output)
-        self.__netem_parameter.validate_netem_parameter()
+        self.__netem_param.validate_netem_parameter()
         self.__validate_src_network()
         self.__validate_port()
 
