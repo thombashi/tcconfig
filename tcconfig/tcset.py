@@ -347,7 +347,9 @@ def main():
             continue
 
         if options.tc_command_output == TcCommandOutput.SCRIPT:
-            write_tc_script(Tc.Command.TCSET, command_history, filename_suffix=device)
+            write_tc_script(
+                Tc.Command.TCSET, command_history, filename_suffix=tc.netem_param.make_param_name()
+            )
             continue
 
         logger.debug("command history\n{}".format(command_history))

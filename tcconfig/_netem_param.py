@@ -6,6 +6,9 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import hashlib
+
+import six
 import typepy
 from typepy import RealNumber
 
@@ -133,6 +136,32 @@ class NetemParameter(object):
                 value="{} kbps".format(bandwidth_rate),
                 expected="less than {} kbps".format(no_limit_kbits),
             )
+
+    def make_param_name(self):
+        item_list = [self.__device]
+
+        if self.bandwidth_rate:
+            item_list.append("rate{}".format(self.bandwidth_rate))
+
+        if self.latency_time.get_msec():
+            item_list.append("delay{}".format(self.latency_time))
+
+        if self.latency_distro_time.get_msec():
+            item_list.append("distro{}".format(self.latency_distro_time))
+
+        if self.packet_loss_rate:
+            item_list.append("loss{}".format(self.packet_loss_rate))
+
+        if self.packet_duplicate_rate:
+            item_list.append("duplicate{}".format(self.packet_duplicate_rate))
+
+        if self.corruption_rate:
+            item_list.append("corrupt{}".format(self.corruption_rate))
+
+        if self.reordering_rate:
+            item_list.append("reordering{}".format(self.reordering_rate))
+
+        return "_".join(item_list)
 
     def __validate_network_delay(self):
         try:
