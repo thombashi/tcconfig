@@ -251,6 +251,23 @@ class TrafficControl(object):
 
         return filter(tc_filter, spr.SubprocessRunner.get_history())
 
+    def make_srcdst_text(self):
+        return "".join(
+            [
+                six.text_type(item)
+                for item in [
+                    self.dst_network,
+                    self.exclude_dst_network,
+                    self.src_network,
+                    self.exclude_src_network,
+                    self.src_port,
+                    self.exclude_src_port,
+                    self.dst_port,
+                    self.exclude_dst_port,
+                ]
+            ]
+        )
+
     def set_tc(self):
         rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
         if self.__is_change_shaping_rule:

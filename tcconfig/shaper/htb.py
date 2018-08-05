@@ -11,8 +11,8 @@ import re
 
 import typepy
 
-from .._common import logging_context, run_command_helper
-from .._const import ShapingAlgorithm, TcCommandOutput, TcSubCommand
+from .._common import is_execute_tc_command, logging_context, run_command_helper
+from .._const import ShapingAlgorithm, TcSubCommand
 from .._error import TcAlreadyExist
 from .._logger import logger
 from .._network import get_no_limit_kbits
@@ -223,10 +223,13 @@ class HtbShaper(AbstractShaper):
         return 0
 
     def __get_unique_qdisc_minor_id(self):
-        if (
-            self._tc_obj.tc_command_output != TcCommandOutput.NOT_SET
-            or self._tc_obj.is_change_shaping_rule
-        ):
+        if not is_execute_tc_command(self._tc_obj.tc_command_output):
+            return (
+                int(self._tc_obj.netem_param.calc_hash(self._tc_obj.make_srcdst_text())[-2:], 16)
+                + 1
+            )
+
+        if self._tc_obj.is_change_shaping_rule:
             self.__qdisc_minor_id_count += 1
 
             return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
@@ -278,7 +281,7 @@ class HtbShaper(AbstractShaper):
             )
         )
 
-        next_netem_major_id = self._tc_obj.qdisc_major_id + 128
+        next_netem_major_id = self._tc_obj.netem_param.calc_device_qdisc_major_id()
         while True:
             if next_netem_major_id not in exist_netem_major_id_list:
                 break

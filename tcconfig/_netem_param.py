@@ -163,6 +163,15 @@ class NetemParameter(object):
 
         return "_".join(item_list)
 
+    def calc_hash(self, extra=""):
+        return hashlib.md5(six.b(self.make_param_name() + extra)).hexdigest()
+
+    def calc_device_qdisc_major_id(self):
+        base_device_hash = self.calc_hash()[:3]
+        device_hash_prefix = "2"
+
+        return int(device_hash_prefix + base_device_hash, 16)
+
     def __validate_network_delay(self):
         try:
             self.latency_time.validate(
