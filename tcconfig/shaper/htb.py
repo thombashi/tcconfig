@@ -100,7 +100,7 @@ class HtbShaper(AbstractShaper):
         )
         no_limit_kbits = get_no_limit_kbits(self._tc_device)
 
-        kbits = self._tc_obj.bandwidth_rate
+        kbits = self._tc_obj.netem_param.bandwidth_rate
         if kbits is None:
             kbits = no_limit_kbits
 

@@ -36,6 +36,17 @@ from ._error import (
 )
 from ._importer import set_tc_from_file
 from ._logger import logger, set_log_level
+from ._netem_param import (
+    MAX_CORRUPTION_RATE,
+    MAX_PACKET_DUPLICATE_RATE,
+    MAX_PACKET_LOSS_RATE,
+    MAX_REORDERING_RATE,
+    MIN_CORRUPTION_RATE,
+    MIN_PACKET_DUPLICATE_RATE,
+    MIN_PACKET_LOSS_RATE,
+    MIN_REORDERING_RATE,
+    NetemParameter,
+)
 from ._shaping_rule_finder import TcShapingRuleFinder
 from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
@@ -130,7 +141,7 @@ def get_arg_parser():
         help="""round trip packet loss rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
         """.format(
-            TrafficControl.MIN_PACKET_LOSS_RATE, TrafficControl.MAX_PACKET_LOSS_RATE
+            MIN_PACKET_LOSS_RATE, MAX_PACKET_LOSS_RATE
         ),
     )
     group.add_argument(
@@ -141,7 +152,7 @@ def get_arg_parser():
         help="""round trip packet duplicate rate [%%]. the valid range is
         from {:d} to {:d}. (default=%(default)s)
         """.format(
-            TrafficControl.MIN_PACKET_DUPLICATE_RATE, TrafficControl.MAX_PACKET_DUPLICATE_RATE
+            MIN_PACKET_DUPLICATE_RATE, MAX_PACKET_DUPLICATE_RATE
         ),
     )
     group.add_argument(
@@ -153,7 +164,7 @@ def get_arg_parser():
         packet corruption means single bit error at a random offset in the packet.
         (default=%(default)s)
         """.format(
-            TrafficControl.MIN_CORRUPTION_RATE, TrafficControl.MAX_CORRUPTION_RATE
+            MIN_CORRUPTION_RATE, MAX_CORRUPTION_RATE
         ),
     )
     group.add_argument(
@@ -164,7 +175,7 @@ def get_arg_parser():
         help="""packet reordering rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
         """.format(
-            TrafficControl.MIN_REORDERING_RATE, TrafficControl.MAX_REORDERING_RATE
+            MIN_REORDERING_RATE, MAX_REORDERING_RATE
         ),
     )
     group.add_argument(
@@ -256,13 +267,16 @@ def main():
         tc = TrafficControl(
             device,
             direction=options.direction,
-            bandwidth_rate=options.bandwidth_rate,
-            latency_time=options.network_latency,
-            latency_distro_time=options.latency_distro_time,
-            packet_loss_rate=options.packet_loss_rate,
-            packet_duplicate_rate=options.packet_duplicate_rate,
-            corruption_rate=options.corruption_rate,
-            reordering_rate=options.reordering_rate,
+            netem_param=NetemParameter(
+                device=device,
+                bandwidth_rate=options.bandwidth_rate,
+                latency_time=options.network_latency,
+                latency_distro_time=options.latency_distro_time,
+                packet_loss_rate=options.packet_loss_rate,
+                packet_duplicate_rate=options.packet_duplicate_rate,
+                corruption_rate=options.corruption_rate,
+                reordering_rate=options.reordering_rate,
+            ),
             dst_network=options.dst_network,
             exclude_dst_network=options.exclude_dst_network,
             src_network=options.src_network,

@@ -83,25 +83,33 @@ class AbstractShaper(ShaperInterface):
             "netem",
         ]
 
-        if self._tc_obj.packet_loss_rate > 0:
-            command_item_list.append("loss {:f}%".format(self._tc_obj.packet_loss_rate))
+        if self._tc_obj.netem_param.packet_loss_rate > 0:
+            command_item_list.append("loss {:f}%".format(self._tc_obj.netem_param.packet_loss_rate))
 
-        if self._tc_obj.packet_duplicate_rate > 0:
-            command_item_list.append("duplicate {:f}%".format(self._tc_obj.packet_duplicate_rate))
+        if self._tc_obj.netem_param.packet_duplicate_rate > 0:
+            command_item_list.append(
+                "duplicate {:f}%".format(self._tc_obj.netem_param.packet_duplicate_rate)
+            )
 
-        if self._tc_obj.latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-            command_item_list.append("delay {}".format(self._tc_obj.latency_time))
+        if self._tc_obj.netem_param.latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+            command_item_list.append("delay {}".format(self._tc_obj.netem_param.latency_time))
 
-            if self._tc_obj.latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+            if self._tc_obj.netem_param.latency_distro_time > HumanReadableTime(
+                Tc.ValueRange.LatencyTime.MIN
+            ):
                 command_item_list.append(
-                    "{} distribution normal".format(self._tc_obj.latency_distro_time)
+                    "{} distribution normal".format(self._tc_obj.netem_param.latency_distro_time)
                 )
 
-        if self._tc_obj.corruption_rate > 0:
-            command_item_list.append("corrupt {:f}%".format(self._tc_obj.corruption_rate))
+        if self._tc_obj.netem_param.corruption_rate > 0:
+            command_item_list.append(
+                "corrupt {:f}%".format(self._tc_obj.netem_param.corruption_rate)
+            )
 
-        if self._tc_obj.reordering_rate > 0:
-            command_item_list.append("reorder {:f}%".format(self._tc_obj.reordering_rate))
+        if self._tc_obj.netem_param.reordering_rate > 0:
+            command_item_list.append(
+                "reorder {:f}%".format(self._tc_obj.netem_param.reordering_rate)
+            )
 
         return run_command_helper(
             " ".join(command_item_list),

@@ -13,12 +13,9 @@ import msgfy
 import six
 import subprocrunner as spr
 import typepy
-from dataproperty import DataProperty
-from typepy import RealNumber
 
-from ._common import find_bin_path, logging_context, run_command_helper
+from ._common import find_bin_path, logging_context, run_command_helper, validate_within_min_max
 from ._const import (
-    KILO_SIZE,
     LIST_MANGLE_TABLE_OPTION,
     ShapingAlgorithm,
     Tc,
@@ -26,54 +23,17 @@ from ._const import (
     TcSubCommand,
     TrafficDirection,
 )
-from ._converter import Humanreadable, HumanReadableTime
-from ._error import NetworkInterfaceNotFoundError, ParameterError, UnitNotFoundError
+from ._error import NetworkInterfaceNotFoundError, ParameterError
 from ._iptables import IptablesMangleController, get_iptables_base_command
 from ._logger import logger
-from ._network import get_no_limit_kbits, sanitize_network, verify_network_interface
+from ._network import sanitize_network, verify_network_interface
 from ._shaping_rule_finder import TcShapingRuleFinder
 from ._tc_command_helper import get_tc_base_command
 from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
 
-def _validate_within_min_max(param_name, value, min_value, max_value, unit):
-    if value is None:
-        return
-
-    if unit is None:
-        unit = ""
-    else:
-        unit = "[{:s}]".format(unit)
-
-    if value > max_value:
-        raise ParameterError(
-            "'{:s}' is too high".format(param_name),
-            expected="<={:s}{:s}".format(DataProperty(max_value).to_str(), unit),
-            value="{:s}{:s}".format(DataProperty(value).to_str(), unit),
-        )
-
-    if value < min_value:
-        raise ParameterError(
-            "'{:s}' is too low".format(param_name),
-            expected=">={:s}{:s}".format(DataProperty(min_value).to_str(), unit),
-            value="{:s}{:s}".format(DataProperty(value).to_str(), unit),
-        )
-
-
 class TrafficControl(object):
-    MIN_PACKET_LOSS_RATE = 0  # [%]
-    MAX_PACKET_LOSS_RATE = 100  # [%]
-
-    MIN_PACKET_DUPLICATE_RATE = 0  # [%]
-    MAX_PACKET_DUPLICATE_RATE = 100  # [%]
-
-    MIN_CORRUPTION_RATE = 0  # [%]
-    MAX_CORRUPTION_RATE = 100  # [%]
-
-    MIN_REORDERING_RATE = 0  # [%]
-    MAX_REORDERING_RATE = 100  # [%]
-
     __MIN_PORT = 0
     __MAX_PORT = 65535
 
@@ -105,36 +65,8 @@ class TrafficControl(object):
         return self.__direction
 
     @property
-    def bandwidth_rate(self):
-        # convert bandwidth string [K/M/G bit per second] to a number
-        try:
-            return Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
-        except (ParameterError, UnitNotFoundError, TypeError):
-            return None
-
-    @property
-    def latency_time(self):
-        return self.__latency_time
-
-    @property
-    def latency_distro_time(self):
-        return self.__latency_distro_time
-
-    @property
-    def packet_loss_rate(self):
-        return self.__packet_loss_rate
-
-    @property
-    def packet_duplicate_rate(self):
-        return self.__packet_duplicate_rate
-
-    @property
-    def corruption_rate(self):
-        return self.__corruption_rate
-
-    @property
-    def reordering_rate(self):
-        return self.__reordering_rate
+    def netem_param(self):
+        return self.__netem_parameter
 
     @property
     def dst_network(self):
@@ -212,13 +144,7 @@ class TrafficControl(object):
         self,
         device,
         direction=None,
-        bandwidth_rate=None,
-        latency_time=None,
-        latency_distro_time=None,
-        packet_loss_rate=None,
-        packet_duplicate_rate=None,
-        corruption_rate=None,
-        reordering_rate=None,
+        netem_param=None,
         dst_network=None,
         exclude_dst_network=None,
         src_network=None,
@@ -237,13 +163,7 @@ class TrafficControl(object):
         self.__device = device
 
         self.__direction = direction
-        self.__bandwidth_rate = bandwidth_rate
-        self.__latency_time = HumanReadableTime(latency_time)
-        self.__latency_distro_time = HumanReadableTime(latency_distro_time)
-        self.__packet_loss_rate = packet_loss_rate  # [%]
-        self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
-        self.__corruption_rate = corruption_rate  # [%]
-        self.__reordering_rate = reordering_rate
+        self.__netem_parameter = netem_param
         self.__dst_network = dst_network
         self.__exclude_dst_network = exclude_dst_network
         self.__src_network = src_network
@@ -266,7 +186,7 @@ class TrafficControl(object):
 
     def validate(self):
         verify_network_interface(self.device, self.__tc_command_output)
-        self.__validate_netem_parameter()
+        self.__netem_parameter.validate_netem_parameter()
         self.__validate_src_network()
         self.__validate_port()
 
@@ -283,27 +203,6 @@ class TrafficControl(object):
             raise ParameterError(
                 "--iptables option required to use --src-network option",
                 value=self.is_enable_iptables,
-            )
-
-    def validate_bandwidth_rate(self):
-        if typepy.is_null_string(self.__bandwidth_rate):
-            return
-
-        # convert bandwidth string [K/M/G bit per second] to a number
-        bandwidth_rate = Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
-
-        if not RealNumber(bandwidth_rate).is_type():
-            raise ParameterError("bandwidth_rate must be a number", value=bandwidth_rate)
-
-        if bandwidth_rate <= 0:
-            raise ParameterError("bandwidth_rate must be greater than zero", value=bandwidth_rate)
-
-        no_limit_kbits = get_no_limit_kbits(self.get_tc_device())
-        if bandwidth_rate > no_limit_kbits:
-            raise ParameterError(
-                "exceed bandwidth rate limit",
-                value="{} kbps".format(bandwidth_rate),
-                expected="less than {} kbps".format(no_limit_kbits),
             )
 
     def sanitize(self):
@@ -473,97 +372,12 @@ class TrafficControl(object):
             "unknown shaping algorithm", expected=ShapingAlgorithm.LIST, value=shaping_algorithm
         )
 
-    def __validate_network_delay(self):
-        try:
-            self.latency_time.validate(
-                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
-            )
-        except ParameterError as e:
-            raise ParameterError("delay {}".format(e))
-
-        try:
-            self.latency_distro_time.validate(
-                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
-            )
-        except ParameterError as e:
-            raise ParameterError("delay-distro {}".format(e))
-
-    def __validate_packet_loss_rate(self):
-        _validate_within_min_max(
-            "loss (packet loss rate)",
-            self.packet_loss_rate,
-            self.MIN_PACKET_LOSS_RATE,
-            self.MAX_PACKET_LOSS_RATE,
-            unit="%",
-        )
-
-    def __validate_packet_duplicate_rate(self):
-        _validate_within_min_max(
-            "duplicate (packet duplicate rate)",
-            self.packet_duplicate_rate,
-            self.MIN_PACKET_DUPLICATE_RATE,
-            self.MAX_PACKET_DUPLICATE_RATE,
-            unit="%",
-        )
-
-    def __validate_corruption_rate(self):
-        _validate_within_min_max(
-            "corruption (packet corruption rate)",
-            self.corruption_rate,
-            self.MIN_CORRUPTION_RATE,
-            self.MAX_CORRUPTION_RATE,
-            unit="%",
-        )
-
-    def __validate_reordering_rate(self):
-        _validate_within_min_max(
-            "reordering (packet reordering rate)",
-            self.reordering_rate,
-            self.MIN_REORDERING_RATE,
-            self.MAX_REORDERING_RATE,
-            unit="%",
-        )
-
-    def __validate_reordering_and_delay(self):
-        if self.reordering_rate and not self.latency_time:
-            raise ParameterError("reordering needs latency to be specified: set latency > 0")
-
-    def __validate_netem_parameter(self):
-        self.validate_bandwidth_rate()
-        self.__validate_network_delay()
-        self.__validate_packet_loss_rate()
-        self.__validate_packet_duplicate_rate()
-        self.__validate_corruption_rate()
-        self.__validate_reordering_rate()
-        self.__validate_reordering_and_delay()
-
-        netem_param_value_list = [
-            self.bandwidth_rate,
-            self.packet_loss_rate,
-            self.packet_duplicate_rate,
-            self.corruption_rate,
-            self.reordering_rate,
-        ]
-
-        if all(
-            [
-                not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
-                for netem_param_value in netem_param_value_list
-            ]
-            + [self.latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)]
-        ):
-            raise ParameterError(
-                "there are no valid net emulation parameters found. "
-                "at least one or more following parameters are required: "
-                "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
-            )
-
     def __validate_port(self):
-        _validate_within_min_max(
+        validate_within_min_max(
             "src_port", self.src_port, self.__MIN_PORT, self.__MAX_PORT, unit=None
         )
 
-        _validate_within_min_max(
+        validate_within_min_max(
             "dst_port", self.dst_port, self.__MIN_PORT, self.__MAX_PORT, unit=None
         )
 

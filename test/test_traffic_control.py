@@ -10,6 +10,17 @@ import pytest
 from allpairspy import AllPairs
 from tcconfig._const import ShapingAlgorithm, Tc, TrafficDirection
 from tcconfig._error import ParameterError, UnitNotFoundError
+from tcconfig._netem_param import (
+    MAX_CORRUPTION_RATE,
+    MAX_PACKET_DUPLICATE_RATE,
+    MAX_PACKET_LOSS_RATE,
+    MAX_REORDERING_RATE,
+    MIN_CORRUPTION_RATE,
+    MIN_PACKET_DUPLICATE_RATE,
+    MIN_PACKET_LOSS_RATE,
+    MIN_REORDERING_RATE,
+    NetemParameter,
+)
 from tcconfig.traffic_control import TrafficControl
 
 from .common import is_invalid_param
@@ -57,11 +68,11 @@ def device_option(request):
 def test_TrafficControl_validate_bandwidth_rate_normal(value):
     tc_obj = TrafficControl(
         "dummy",
-        bandwidth_rate=value,
+        netem_param=NetemParameter("dummy", bandwidth_rate=value),
         direction=TrafficDirection.OUTGOING,
         shaping_algorithm=ShapingAlgorithm.HTB,
     )
-    tc_obj.validate_bandwidth_rate()
+    tc_obj.netem_param.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(
@@ -77,13 +88,16 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
             "dummy",
-            bandwidth_rate=value,
+            netem_param=NetemParameter(
+                "dummy",
+                bandwidth_rate=value,
+                latency_time=Tc.ValueRange.LatencyTime.MIN,
+                latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
+            ),
             direction=TrafficDirection.OUTGOING,
-            latency_time=Tc.ValueRange.LatencyTime.MIN,
-            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
-        tc_obj.validate_bandwidth_rate()
+        tc_obj.netem_param.validate_bandwidth_rate()
 
 
 @pytest.mark.parametrize(
@@ -97,12 +111,15 @@ def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
     with pytest.raises(expected):
         tc_obj = TrafficControl(
             "dummy",
-            bandwidth_rate=value,
-            latency_time=Tc.ValueRange.LatencyTime.MIN,
-            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
+            netem_param=NetemParameter(
+                "dummy",
+                bandwidth_rate=value,
+                latency_time=Tc.ValueRange.LatencyTime.MIN,
+                latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
+            ),
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
-        tc_obj.validate_bandwidth_rate()
+        tc_obj.netem_param.validate_bandwidth_rate()
 
 
 class Test_TrafficControl_validate(object):
@@ -135,20 +152,12 @@ class Test_TrafficControl_validate(object):
                     [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay_distro
                     [
                         None,
-                        TrafficControl.MIN_PACKET_LOSS_RATE,
+                        MIN_PACKET_LOSS_RATE,
                         MIN_VALID_PACKET_LOSS,
-                        TrafficControl.MAX_PACKET_LOSS_RATE,
+                        MAX_PACKET_LOSS_RATE,
                     ],  # loss
-                    [
-                        None,
-                        TrafficControl.MIN_PACKET_DUPLICATE_RATE,
-                        TrafficControl.MAX_PACKET_DUPLICATE_RATE,
-                    ],  # duplicate
-                    [
-                        None,
-                        TrafficControl.MIN_CORRUPTION_RATE,
-                        TrafficControl.MAX_CORRUPTION_RATE,
-                    ],  # corrupt
+                    [None, MIN_PACKET_DUPLICATE_RATE, MAX_PACKET_DUPLICATE_RATE],  # duplicate
+                    [None, MIN_CORRUPTION_RATE, MAX_CORRUPTION_RATE],  # corrupt
                     [None, "192.168.0.1", "192.168.0.0/24"],  # src_network
                     [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_src_network
                     [
@@ -196,12 +205,15 @@ class Test_TrafficControl_validate(object):
         tc_obj = TrafficControl(
             device=device_option,
             direction=direction,
-            bandwidth_rate=rate,
-            latency_time=delay,
-            latency_distro_time=delay_distro,
-            packet_loss_rate=loss,
-            packet_duplicate_rate=duplicate,
-            corruption_rate=corrupt,
+            netem_param=NetemParameter(
+                device=device_option,
+                bandwidth_rate=rate,
+                latency_time=delay,
+                latency_distro_time=delay_distro,
+                packet_loss_rate=loss,
+                packet_duplicate_rate=duplicate,
+                corruption_rate=corrupt,
+            ),
             src_network=src_network,
             exclude_src_network=exclude_src_network,
             dst_network=dst_network,
@@ -228,10 +240,7 @@ class Test_TrafficControl_validate(object):
                 [
                     [TrafficDirection.OUTGOING],
                     ["0.1ms", Tc.ValueRange.LatencyTime.MAX],  # delay
-                    [
-                        TrafficControl.MIN_REORDERING_RATE,
-                        TrafficControl.MAX_REORDERING_RATE,
-                    ],  # reordering
+                    [MIN_REORDERING_RATE, MAX_REORDERING_RATE],  # reordering
                 ],
                 n=2,
             )
@@ -243,10 +252,13 @@ class Test_TrafficControl_validate(object):
 
         tc_obj = TrafficControl(
             device=device_option,
+            netem_param=NetemParameter(
+                device=device_option,
+                latency_time=delay,
+                latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
+                reordering_rate=reordering,
+            ),
             direction=direction,
-            latency_time=delay,
-            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
-            reordering_rate=reordering,
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
 
@@ -259,26 +271,20 @@ class Test_TrafficControl_validate(object):
             [{"latency_time": "61min"}, ParameterError],
             [{"latency_time": "100ms", "latency_distro_time": "-1ms"}, ParameterError],
             [{"latency_time": "100ms", "latency_distro_time": "61min"}, ParameterError],
-            [{"packet_loss_rate": TrafficControl.MIN_PACKET_LOSS_RATE - 0.1}, ParameterError],
-            [{"packet_loss_rate": TrafficControl.MAX_PACKET_LOSS_RATE + 0.1}, ParameterError],
+            [{"packet_loss_rate": MIN_PACKET_LOSS_RATE - 0.1}, ParameterError],
+            [{"packet_loss_rate": MAX_PACKET_LOSS_RATE + 0.1}, ParameterError],
             [
-                {
-                    "latency_time": "100ms",
-                    "packet_duplicate_rate": TrafficControl.MIN_PACKET_DUPLICATE_RATE - 0.1,
-                },
+                {"latency_time": "100ms", "packet_duplicate_rate": MIN_PACKET_DUPLICATE_RATE - 0.1},
                 ParameterError,
             ],
             [
-                {
-                    "latency_time": "100ms",
-                    "packet_duplicate_rate": TrafficControl.MAX_PACKET_DUPLICATE_RATE + 0.1,
-                },
+                {"latency_time": "100ms", "packet_duplicate_rate": MAX_PACKET_DUPLICATE_RATE + 0.1},
                 ParameterError,
             ],
-            [{"corruption_rate": TrafficControl.MIN_CORRUPTION_RATE - 0.1}, ParameterError],
-            [{"corruption_rate": TrafficControl.MAX_CORRUPTION_RATE + 0.1}, ParameterError],
-            [{"reordering_rate": TrafficControl.MIN_REORDERING_RATE - 0.1}, ParameterError],
-            [{"reordering_rate": TrafficControl.MAX_REORDERING_RATE + 0.1}, ParameterError],
+            [{"corruption_rate": MIN_CORRUPTION_RATE - 0.1}, ParameterError],
+            [{"corruption_rate": MAX_CORRUPTION_RATE + 0.1}, ParameterError],
+            [{"reordering_rate": MIN_REORDERING_RATE - 0.1}, ParameterError],
+            [{"reordering_rate": MAX_REORDERING_RATE + 0.1}, ParameterError],
             [{Tc.Param.DST_NETWORK: "192.168.0."}, ParameterError],
             [{Tc.Param.DST_NETWORK: "192.168.0.256"}, ParameterError],
             [{Tc.Param.DST_NETWORK: "192.168.0.0/0"}, ParameterError],
@@ -297,12 +303,15 @@ class Test_TrafficControl_validate(object):
 
         tc_obj = TrafficControl(
             device=device_option,
-            bandwidth_rate=value.get("bandwidth_rate"),
-            latency_time=value.get("latency_time", Tc.ValueRange.LatencyTime.MIN),
-            latency_distro_time=value.get("latency_distro_time", Tc.ValueRange.LatencyTime.MIN),
-            packet_loss_rate=value.get("packet_loss_rate"),
-            packet_duplicate_rate=value.get("packet_duplicate_rate"),
-            corruption_rate=value.get("corruption_rate"),
+            netem_param=NetemParameter(
+                device=device_option,
+                bandwidth_rate=value.get("bandwidth_rate"),
+                latency_time=value.get("latency_time", Tc.ValueRange.LatencyTime.MIN),
+                latency_distro_time=value.get("latency_distro_time", Tc.ValueRange.LatencyTime.MIN),
+                packet_loss_rate=value.get("packet_loss_rate"),
+                packet_duplicate_rate=value.get("packet_duplicate_rate"),
+                corruption_rate=value.get("corruption_rate"),
+            ),
             dst_network=value.get(Tc.Param.DST_NETWORK),
             src_port=value.get("src_port"),
             dst_port=value.get("dst_port"),
@@ -337,10 +346,13 @@ class Test_TrafficControl_ipv4(object):
 
         tc_obj = TrafficControl(
             device=device_option,
+            netem_param=NetemParameter(
+                device=device_option,
+                latency_time=Tc.ValueRange.LatencyTime.MIN,
+                latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
+            ),
             dst_network=network,
             is_ipv6=is_ipv6,
-            latency_time=Tc.ValueRange.LatencyTime.MIN,
-            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
 

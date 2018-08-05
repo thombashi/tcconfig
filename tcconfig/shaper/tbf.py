@@ -68,7 +68,7 @@ class TbfShaper(AbstractShaper):
 
     def _add_rate(self):
         try:
-            self._tc_obj.validate_bandwidth_rate()
+            self._tc_obj.netem_param.validate_bandwidth_rate()
         except ParameterError:
             return 0
 
@@ -79,7 +79,7 @@ class TbfShaper(AbstractShaper):
         handle = "{:d}:".format(20)
         no_limit_kbits = get_no_limit_kbits(self._tc_device)
 
-        kbits = self._tc_obj.bandwidth_rate
+        kbits = self._tc_obj.netem_param.bandwidth_rate
         if kbits is None:
             kbits = no_limit_kbits
 

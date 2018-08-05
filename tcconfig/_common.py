@@ -20,6 +20,7 @@ import typepy
 from path import Path
 
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
+from ._error import ParameterError
 from ._logger import logger
 
 
@@ -95,6 +96,32 @@ def initialize_cli(options):
 
 def is_execute_tc_command(tc_command_output):
     return tc_command_output == TcCommandOutput.NOT_SET
+
+
+def validate_within_min_max(param_name, value, min_value, max_value, unit):
+    from dataproperty import DataProperty
+
+    if value is None:
+        return
+
+    if unit is None:
+        unit = ""
+    else:
+        unit = "[{:s}]".format(unit)
+
+    if value > max_value:
+        raise ParameterError(
+            "'{:s}' is too high".format(param_name),
+            expected="<={:s}{:s}".format(DataProperty(max_value).to_str(), unit),
+            value="{:s}{:s}".format(DataProperty(value).to_str(), unit),
+        )
+
+    if value < min_value:
+        raise ParameterError(
+            "'{:s}' is too low".format(param_name),
+            expected=">={:s}{:s}".format(DataProperty(min_value).to_str(), unit),
+            value="{:s}{:s}".format(DataProperty(value).to_str(), unit),
+        )
 
 
 def normalize_tc_value(tc_obj):

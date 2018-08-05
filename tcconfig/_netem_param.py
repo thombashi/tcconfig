@@ -1,0 +1,190 @@
+# encoding: utf-8
+
+"""
+.. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
+"""
+
+from __future__ import absolute_import, unicode_literals
+
+import typepy
+from typepy import RealNumber
+
+from ._common import validate_within_min_max
+from ._const import KILO_SIZE, Tc
+from ._converter import Humanreadable, HumanReadableTime
+from ._error import ParameterError, UnitNotFoundError
+from ._network import get_no_limit_kbits
+
+
+MIN_PACKET_LOSS_RATE = 0  # [%]
+MAX_PACKET_LOSS_RATE = 100  # [%]
+
+MIN_PACKET_DUPLICATE_RATE = 0  # [%]
+MAX_PACKET_DUPLICATE_RATE = 100  # [%]
+
+MIN_CORRUPTION_RATE = 0  # [%]
+MAX_CORRUPTION_RATE = 100  # [%]
+
+MIN_REORDERING_RATE = 0  # [%]
+MAX_REORDERING_RATE = 100  # [%]
+
+
+class NetemParameter(object):
+    @property
+    def bandwidth_rate(self):
+        # convert bandwidth string [K/M/G bit per second] to a number
+        try:
+            return Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        except (ParameterError, UnitNotFoundError, TypeError):
+            return None
+
+    @property
+    def latency_time(self):
+        return self.__latency_time
+
+    @property
+    def latency_distro_time(self):
+        return self.__latency_distro_time
+
+    @property
+    def packet_loss_rate(self):
+        return self.__packet_loss_rate
+
+    @property
+    def packet_duplicate_rate(self):
+        return self.__packet_duplicate_rate
+
+    @property
+    def corruption_rate(self):
+        return self.__corruption_rate
+
+    @property
+    def reordering_rate(self):
+        return self.__reordering_rate
+
+    def __init__(
+        self,
+        device,
+        bandwidth_rate=None,
+        latency_time=None,
+        latency_distro_time=None,
+        packet_loss_rate=None,
+        packet_duplicate_rate=None,
+        corruption_rate=None,
+        reordering_rate=None,
+    ):
+        self.__device = device
+
+        self.__bandwidth_rate = bandwidth_rate
+        self.__latency_time = HumanReadableTime(latency_time)
+        self.__latency_distro_time = HumanReadableTime(latency_distro_time)
+        self.__packet_loss_rate = packet_loss_rate  # [%]
+        self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
+        self.__corruption_rate = corruption_rate  # [%]
+        self.__reordering_rate = reordering_rate
+
+    def validate_netem_parameter(self):
+        self.validate_bandwidth_rate()
+        self.__validate_network_delay()
+        self.__validate_packet_loss_rate()
+        self.__validate_packet_duplicate_rate()
+        self.__validate_corruption_rate()
+        self.__validate_reordering_rate()
+        self.__validate_reordering_and_delay()
+
+        netem_param_value_list = [
+            self.bandwidth_rate,
+            self.packet_loss_rate,
+            self.packet_duplicate_rate,
+            self.corruption_rate,
+            self.reordering_rate,
+        ]
+
+        if all(
+            [
+                not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
+                for netem_param_value in netem_param_value_list
+            ]
+            + [self.latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)]
+        ):
+            raise ParameterError(
+                "there are no valid net emulation parameters found. "
+                "at least one or more following parameters are required: "
+                "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
+            )
+
+    def validate_bandwidth_rate(self):
+        if typepy.is_null_string(self.__bandwidth_rate):
+            return
+
+        # convert bandwidth string [K/M/G bit per second] to a number
+        bandwidth_rate = Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+
+        if not RealNumber(bandwidth_rate).is_type():
+            raise ParameterError("bandwidth_rate must be a number", value=bandwidth_rate)
+
+        if bandwidth_rate <= 0:
+            raise ParameterError("bandwidth_rate must be greater than zero", value=bandwidth_rate)
+
+        no_limit_kbits = get_no_limit_kbits(self.__device)
+        if bandwidth_rate > no_limit_kbits:
+            raise ParameterError(
+                "exceed bandwidth rate limit",
+                value="{} kbps".format(bandwidth_rate),
+                expected="less than {} kbps".format(no_limit_kbits),
+            )
+
+    def __validate_network_delay(self):
+        try:
+            self.latency_time.validate(
+                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+            )
+        except ParameterError as e:
+            raise ParameterError("delay {}".format(e))
+
+        try:
+            self.latency_distro_time.validate(
+                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+            )
+        except ParameterError as e:
+            raise ParameterError("delay-distro {}".format(e))
+
+    def __validate_packet_loss_rate(self):
+        validate_within_min_max(
+            "loss (packet loss rate)",
+            self.packet_loss_rate,
+            MIN_PACKET_LOSS_RATE,
+            MAX_PACKET_LOSS_RATE,
+            unit="%",
+        )
+
+    def __validate_packet_duplicate_rate(self):
+        validate_within_min_max(
+            "duplicate (packet duplicate rate)",
+            self.packet_duplicate_rate,
+            MIN_PACKET_DUPLICATE_RATE,
+            MAX_PACKET_DUPLICATE_RATE,
+            unit="%",
+        )
+
+    def __validate_corruption_rate(self):
+        validate_within_min_max(
+            "corruption (packet corruption rate)",
+            self.corruption_rate,
+            MIN_CORRUPTION_RATE,
+            MAX_CORRUPTION_RATE,
+            unit="%",
+        )
+
+    def __validate_reordering_rate(self):
+        validate_within_min_max(
+            "reordering (packet reordering rate)",
+            self.reordering_rate,
+            MIN_REORDERING_RATE,
+            MAX_REORDERING_RATE,
+            unit="%",
+        )
+
+    def __validate_reordering_and_delay(self):
+        if self.reordering_rate and not self.latency_time:
+            raise ParameterError("reordering needs latency to be specified: set latency > 0")
