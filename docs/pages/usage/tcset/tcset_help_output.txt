@@ -1,7 +1,7 @@
 ::
 
-    usage: tcset [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--stacktrace] [--import-setting]
+    usage: tcset [-h] [--version] [--docker] [--tc-command | --tc-script]
+                 [--debug | --quiet] [--stacktrace] [--import-setting]
                  [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
                  [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_TIME]
                  [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
@@ -22,6 +22,7 @@
     optional arguments:
       -h, --help            show this help message and exit
       --version             show program's version number and exit
+      --docker              apply traffic control to a docker container.
       --tc-command          display tc commands to be executed and exit. these
                             commands are not actually executed.
       --tc-script           generate a shell script file that described tc
@@ -114,6 +115,5 @@
       --exclude-src-port EXCLUDE_SRC_PORT
                             exclude a shaping rule for a specific source port.
 
-            Documentation: http://tcconfig.rtfd.io/
-            Issue tracker: https://github.com/thombashi/tcconfig/issues
-        
+    Documentation: http://tcconfig.rtfd.io/
+    Issue tracker: https://github.com/thombashi/tcconfig/issues

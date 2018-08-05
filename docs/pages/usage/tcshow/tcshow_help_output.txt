@@ -1,12 +1,13 @@
 ::
 
-    usage: tcshow [-h] [--version] [--tc-command | --tc-script]
+    usage: tcshow [-h] [--version] [--docker] [--tc-command | --tc-script]
                   [--debug | --quiet] [--stacktrace] [--ipv6] [--color]
                   device [device ...]
 
     optional arguments:
       -h, --help    show this help message and exit
       --version     show program's version number and exit
+      --docker      apply traffic control to a docker container.
       --tc-command  display tc commands to be executed and exit. these commands
                     are not actually executed.
       --tc-script   generate a shell script file that described tc commands. this
@@ -26,6 +27,5 @@
       --ipv6        Display IPv6 shaping rules. Defaults to show IPv4 shaping
                     rules.
 
-            Documentation: http://tcconfig.rtfd.io/
-            Issue tracker: https://github.com/thombashi/tcconfig/issues
-        
+    Documentation: http://tcconfig.rtfd.io/
+    Issue tracker: https://github.com/thombashi/tcconfig/issues

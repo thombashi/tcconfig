@@ -1,7 +1,7 @@
 ::
 
-    usage: tcdel [-h] [--version] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--stacktrace] [-a] [--id FILTER_ID]
+    usage: tcdel [-h] [--version] [--docker] [--tc-command | --tc-script]
+                 [--debug | --quiet] [--stacktrace] [-a] [--id FILTER_ID]
                  [--direction {outgoing,incoming}] [--network DST_NETWORK]
                  [--src-network SRC_NETWORK] [--port DST_PORT]
                  [--src-port SRC_PORT] [--ipv6]
@@ -10,6 +10,7 @@
     optional arguments:
       -h, --help            show this help message and exit
       --version             show program's version number and exit
+      --docker              apply traffic control to a docker container.
       --tc-command          display tc commands to be executed and exit. these
                             commands are not actually executed.
       --tc-script           generate a shell script file that described tc
@@ -50,6 +51,5 @@
       --ipv6                apply traffic control to IPv6 packets rather than
                             IPv4.
 
-            Documentation: http://tcconfig.rtfd.io/
-            Issue tracker: https://github.com/thombashi/tcconfig/issues
-        
+    Documentation: http://tcconfig.rtfd.io/
+    Issue tracker: https://github.com/thombashi/tcconfig/issues
