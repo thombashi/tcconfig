@@ -441,7 +441,7 @@ class TrafficControl(object):
                     "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),
                     "dev {:s}".format(self.device),
                     "parent ffff: protocol {:s} u32 match u32 0 0".format(self.protocol),
-                    "flowid {:x}:".format(self.__get_device_qdisc_major_id()),
+                    "flowid {:x}:".format(self.__qdisc_major_id),
                     "action mirred egress redirect",
                     "dev {:s}".format(self.ifb_device),
                 ]
