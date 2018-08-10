@@ -227,19 +227,3 @@ class DockerClient(object):
                 return errno.EPERM
 
         return 0
-
-
-"""
-def verify_container(container, tc_command_output, exit_on_exception=False):
-    if not is_execute_tc_command(tc_command_output):
-        return
-
-    try:
-        DockerClient().verify_container(container)
-    except ContainerNotFoundError as e:
-        if exit_on_exception:
-            logger.error(msgfy.to_error_message(e))
-            sys.exit(errno.EPERM)
-
-        raise
-"""
