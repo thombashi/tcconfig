@@ -163,6 +163,29 @@ class NetemParameter(object):
 
         return "_".join(item_list)
 
+    def make_netem_command_parts(self):
+        item_list = ["netem"]
+
+        if self.packet_loss_rate > 0:
+            item_list.append("loss {:f}%".format(self.packet_loss_rate))
+
+        if self.packet_duplicate_rate > 0:
+            item_list.append("duplicate {:f}%".format(self.packet_duplicate_rate))
+
+        if self.latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+            item_list.append("delay {}".format(self.latency_time))
+
+            if self.latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+                item_list.append("{} distribution normal".format(self.latency_distro_time))
+
+        if self.corruption_rate > 0:
+            item_list.append("corrupt {:f}%".format(self.corruption_rate))
+
+        if self.reordering_rate > 0:
+            item_list.append("reorder {:f}%".format(self.reordering_rate))
+
+        return " ".join(item_list)
+
     def calc_hash(self, extra=""):
         return hashlib.md5(six.b(self.make_param_name() + extra)).hexdigest()
 

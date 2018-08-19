@@ -13,8 +13,7 @@ import subprocrunner
 import typepy
 
 from .._common import run_command_helper
-from .._const import Tc, TcSubCommand, TrafficDirection
-from .._converter import HumanReadableTime
+from .._const import TcSubCommand, TrafficDirection
 from .._error import ParameterError
 from .._iptables import IptablesMangleMarkEntry
 from .._logger import logger
@@ -80,36 +79,8 @@ class AbstractShaper(ShaperInterface):
             "dev {:s}".format(self._tc_obj.get_tc_device()),
             "parent {:s}".format(parent),
             "handle {:s}".format(handle),
-            "netem",
+            self._tc_obj.netem_param.make_netem_command_parts(),
         ]
-
-        if self._tc_obj.netem_param.packet_loss_rate > 0:
-            command_item_list.append("loss {:f}%".format(self._tc_obj.netem_param.packet_loss_rate))
-
-        if self._tc_obj.netem_param.packet_duplicate_rate > 0:
-            command_item_list.append(
-                "duplicate {:f}%".format(self._tc_obj.netem_param.packet_duplicate_rate)
-            )
-
-        if self._tc_obj.netem_param.latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-            command_item_list.append("delay {}".format(self._tc_obj.netem_param.latency_time))
-
-            if self._tc_obj.netem_param.latency_distro_time > HumanReadableTime(
-                Tc.ValueRange.LatencyTime.MIN
-            ):
-                command_item_list.append(
-                    "{} distribution normal".format(self._tc_obj.netem_param.latency_distro_time)
-                )
-
-        if self._tc_obj.netem_param.corruption_rate > 0:
-            command_item_list.append(
-                "corrupt {:f}%".format(self._tc_obj.netem_param.corruption_rate)
-            )
-
-        if self._tc_obj.netem_param.reordering_rate > 0:
-            command_item_list.append(
-                "reorder {:f}%".format(self._tc_obj.netem_param.reordering_rate)
-            )
 
         return run_command_helper(
             " ".join(command_item_list),
