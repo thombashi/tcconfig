@@ -41,30 +41,6 @@ class NetemParameter(object):
         except (ParameterError, UnitNotFoundError, TypeError):
             return None
 
-    @property
-    def latency_time(self):
-        return self.__latency_time
-
-    @property
-    def latency_distro_time(self):
-        return self.__latency_distro_time
-
-    @property
-    def packet_loss_rate(self):
-        return self.__packet_loss_rate
-
-    @property
-    def packet_duplicate_rate(self):
-        return self.__packet_duplicate_rate
-
-    @property
-    def corruption_rate(self):
-        return self.__corruption_rate
-
-    @property
-    def reordering_rate(self):
-        return self.__reordering_rate
-
     def __init__(
         self,
         device,
@@ -97,10 +73,10 @@ class NetemParameter(object):
 
         netem_param_value_list = [
             self.bandwidth_rate,
-            self.packet_loss_rate,
-            self.packet_duplicate_rate,
-            self.corruption_rate,
-            self.reordering_rate,
+            self.__packet_loss_rate,
+            self.__packet_duplicate_rate,
+            self.__corruption_rate,
+            self.__reordering_rate,
         ]
 
         if all(
@@ -108,7 +84,7 @@ class NetemParameter(object):
                 not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
                 for netem_param_value in netem_param_value_list
             ]
-            + [self.latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)]
+            + [self.__latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)]
         ):
             raise ParameterError(
                 "there are no valid net emulation parameters found. "
@@ -143,46 +119,46 @@ class NetemParameter(object):
         if self.bandwidth_rate:
             item_list.append("rate{}".format(self.bandwidth_rate))
 
-        if self.latency_time.get_msec():
-            item_list.append("delay{}".format(self.latency_time))
+        if self.__latency_time.get_msec():
+            item_list.append("delay{}".format(self.__latency_time))
 
-        if self.latency_distro_time.get_msec():
-            item_list.append("distro{}".format(self.latency_distro_time))
+        if self.__latency_distro_time.get_msec():
+            item_list.append("distro{}".format(self.__latency_distro_time))
 
-        if self.packet_loss_rate:
-            item_list.append("loss{}".format(self.packet_loss_rate))
+        if self.__packet_loss_rate:
+            item_list.append("loss{}".format(self.__packet_loss_rate))
 
-        if self.packet_duplicate_rate:
-            item_list.append("duplicate{}".format(self.packet_duplicate_rate))
+        if self.__packet_duplicate_rate:
+            item_list.append("duplicate{}".format(self.__packet_duplicate_rate))
 
-        if self.corruption_rate:
-            item_list.append("corrupt{}".format(self.corruption_rate))
+        if self.__corruption_rate:
+            item_list.append("corrupt{}".format(self.__corruption_rate))
 
-        if self.reordering_rate:
-            item_list.append("reordering{}".format(self.reordering_rate))
+        if self.__reordering_rate:
+            item_list.append("reordering{}".format(self.__reordering_rate))
 
         return "_".join(item_list)
 
     def make_netem_command_parts(self):
         item_list = ["netem"]
 
-        if self.packet_loss_rate > 0:
-            item_list.append("loss {:f}%".format(self.packet_loss_rate))
+        if self.__packet_loss_rate > 0:
+            item_list.append("loss {:f}%".format(self.__packet_loss_rate))
 
-        if self.packet_duplicate_rate > 0:
-            item_list.append("duplicate {:f}%".format(self.packet_duplicate_rate))
+        if self.__packet_duplicate_rate > 0:
+            item_list.append("duplicate {:f}%".format(self.__packet_duplicate_rate))
 
-        if self.latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-            item_list.append("delay {}".format(self.latency_time))
+        if self.__latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+            item_list.append("delay {}".format(self.__latency_time))
 
-            if self.latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-                item_list.append("{} distribution normal".format(self.latency_distro_time))
+            if self.__latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
+                item_list.append("{} distribution normal".format(self.__latency_distro_time))
 
-        if self.corruption_rate > 0:
-            item_list.append("corrupt {:f}%".format(self.corruption_rate))
+        if self.__corruption_rate > 0:
+            item_list.append("corrupt {:f}%".format(self.__corruption_rate))
 
-        if self.reordering_rate > 0:
-            item_list.append("reorder {:f}%".format(self.reordering_rate))
+        if self.__reordering_rate > 0:
+            item_list.append("reorder {:f}%".format(self.__reordering_rate))
 
         return " ".join(item_list)
 
@@ -197,14 +173,14 @@ class NetemParameter(object):
 
     def __validate_network_delay(self):
         try:
-            self.latency_time.validate(
+            self.__latency_time.validate(
                 min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
             )
         except ParameterError as e:
             raise ParameterError("delay {}".format(e))
 
         try:
-            self.latency_distro_time.validate(
+            self.__latency_distro_time.validate(
                 min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
             )
         except ParameterError as e:
@@ -213,7 +189,7 @@ class NetemParameter(object):
     def __validate_packet_loss_rate(self):
         validate_within_min_max(
             "loss (packet loss rate)",
-            self.packet_loss_rate,
+            self.__packet_loss_rate,
             MIN_PACKET_LOSS_RATE,
             MAX_PACKET_LOSS_RATE,
             unit="%",
@@ -222,7 +198,7 @@ class NetemParameter(object):
     def __validate_packet_duplicate_rate(self):
         validate_within_min_max(
             "duplicate (packet duplicate rate)",
-            self.packet_duplicate_rate,
+            self.__packet_duplicate_rate,
             MIN_PACKET_DUPLICATE_RATE,
             MAX_PACKET_DUPLICATE_RATE,
             unit="%",
@@ -231,7 +207,7 @@ class NetemParameter(object):
     def __validate_corruption_rate(self):
         validate_within_min_max(
             "corruption (packet corruption rate)",
-            self.corruption_rate,
+            self.__corruption_rate,
             MIN_CORRUPTION_RATE,
             MAX_CORRUPTION_RATE,
             unit="%",
@@ -240,12 +216,12 @@ class NetemParameter(object):
     def __validate_reordering_rate(self):
         validate_within_min_max(
             "reordering (packet reordering rate)",
-            self.reordering_rate,
+            self.__reordering_rate,
             MIN_REORDERING_RATE,
             MAX_REORDERING_RATE,
             unit="%",
         )
 
     def __validate_reordering_and_delay(self):
-        if self.reordering_rate and self.latency_time.get_msec() <= 0:
+        if self.__reordering_rate and self.__latency_time.get_msec() <= 0:
             raise ParameterError("reordering needs latency to be specified: set latency > 0")
