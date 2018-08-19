@@ -86,7 +86,7 @@ setuptools.setup(
     extras_require={
         "build": build_requires,
         "docs": docs_requires,
-        "release": "releasecmd>=0.0.10",
+        "release": "releasecmd>=0.0.12",
         "test": tests_requires,
     },
 
