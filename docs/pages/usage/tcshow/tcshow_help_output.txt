@@ -27,5 +27,5 @@
       --ipv6        Display IPv6 shaping rules. Defaults to show IPv4 shaping
                     rules.
 
-    Documentation: http://tcconfig.rtfd.io/
+    Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues

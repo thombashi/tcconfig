@@ -115,5 +115,5 @@
       --exclude-src-port EXCLUDE_SRC_PORT
                             exclude a shaping rule for a specific source port.
 
-    Documentation: http://tcconfig.rtfd.io/
+    Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues

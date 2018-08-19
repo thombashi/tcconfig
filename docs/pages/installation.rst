@@ -47,6 +47,7 @@ Dependency python packages are automatically installed during
 - `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
 - `logbook <http://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
+- `Pygments <http://pygments.org/>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
 - `six <https://pypi.python.org/pypi/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__

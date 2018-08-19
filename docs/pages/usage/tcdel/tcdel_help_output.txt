@@ -51,5 +51,5 @@
       --ipv6                apply traffic control to IPv6 packets rather than
                             IPv4.
 
-    Documentation: http://tcconfig.rtfd.io/
+    Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues
