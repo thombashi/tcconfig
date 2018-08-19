@@ -20,17 +20,15 @@ class ArgparseWrapper(object):
     """
 
     def __init__(self, version, description=""):
-        epilog = dedent(
-            """\
-            Documentation: https://tcconfig.rtfd.io/
-            Issue tracker: https://github.com/thombashi/tcconfig/issues
-            """
-        )
-
         self.parser = argparse.ArgumentParser(
             formatter_class=argparse.RawDescriptionHelpFormatter,
             description=description,
-            epilog=epilog,
+            epilog=dedent(
+                """\
+            Documentation: https://tcconfig.rtfd.io/
+            Issue tracker: https://github.com/thombashi/tcconfig/issues
+            """
+            ),
         )
         self.parser.add_argument("--version", action="version", version="%(prog)s " + version)
         self.parser.add_argument(
