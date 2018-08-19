@@ -247,5 +247,5 @@ class NetemParameter(object):
         )
 
     def __validate_reordering_and_delay(self):
-        if self.reordering_rate and not self.latency_time:
+        if self.reordering_rate and self.latency_time.get_msec() <= 0:
             raise ParameterError("reordering needs latency to be specified: set latency > 0")

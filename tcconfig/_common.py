@@ -147,7 +147,7 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
     if ignore_error_msg_regexp:
         match = ignore_error_msg_regexp.search(proc.stderr)
         if match is None:
-            error_msg_format = "\n".join(
+            error_msg = "\n".join(
                 [
                     "command execution failed",
                     "  command={}".format(command),
@@ -156,10 +156,10 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
             )
 
             if re.search("RTNETLINK answers: Operation not permitted", proc.stderr):
-                logger.error(error_msg_format.format(command, proc.stderr))
+                logger.error(error_msg)
                 sys.exit(proc.returncode)
 
-            logger.error(error_msg_format.format(command, proc.stderr))
+            logger.error(error_msg)
 
             return proc.returncode
 
