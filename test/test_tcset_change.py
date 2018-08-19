@@ -40,22 +40,26 @@ class Test_tcset_change(object):
 
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        device_option,
-                        "--delay 100ms --rate 50k --network 192.168.1.2 --change",
-                    ]
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            device_option,
+                            "--delay 100ms --rate 50k --network 192.168.1.2 --change",
+                        ]
+                    )
                 ).run()
                 == 0
             )
 
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        device_option,
-                        "--delay 100ms --rate 50k --network 192.168.1.3 --change",
-                    ]
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            device_option,
+                            "--delay 100ms --rate 50k --network 192.168.1.3 --change",
+                        ]
+                    )
                 ).run()
                 == 0
             )
@@ -67,26 +71,38 @@ class Test_tcset_change(object):
             pytest.skip("device is null")
 
         for device_option in [device_value, "--device {}".format(device_value)]:
-            command_list = [
-                Tc.Command.TCSET,
-                device_option,
-                "--delay 100ms --rate 50k --network 192.168.1.2 --overwrite",
-            ]
-            assert SubprocessRunner(" ".join(command_list)).run() == 0
+            assert (
+                SubprocessRunner(
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            device_option,
+                            "--delay 100ms --rate 50k --network 192.168.1.2 --overwrite",
+                        ]
+                    )
+                ).run()
+                == 0
+            )
 
-            command_list = [
-                Tc.Command.TCSET,
-                device_option,
-                "--delay 200.0ms",
-                "--delay-distro 20",
-                "--rate 100k",
-                "--loss 0.01",
-                "--duplicate 5",
-                "--reorder 2",
-                "--network 192.168.1.3",
-                "--add",
-            ]
-            assert SubprocessRunner(" ".join(command_list)).run() == 0
+            assert (
+                SubprocessRunner(
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            device_option,
+                            "--delay 200.0ms",
+                            "--delay-distro 20",
+                            "--rate 100k",
+                            "--loss 0.01",
+                            "--duplicate 5",
+                            "--reorder 2",
+                            "--network 192.168.1.3",
+                            "--add",
+                        ]
+                    )
+                ).run()
+                == 0
+            )
 
             runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
             runner.run()
@@ -120,19 +136,25 @@ class Test_tcset_change(object):
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            command_list = [
-                Tc.Command.TCSET,
-                device_option,
-                "--delay 300ms",
-                "--delay-distro 30",
-                "--rate 200k",
-                "--loss 0.02",
-                "--duplicate 5.5",
-                "--reorder 0.2",
-                "--network 192.168.1.3",
-                "--change",
-            ]
-            assert SubprocessRunner(" ".join(command_list)).run() == 0
+            assert (
+                SubprocessRunner(
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            device_option,
+                            "--delay 300ms",
+                            "--delay-distro 30",
+                            "--rate 200k",
+                            "--loss 0.02",
+                            "--duplicate 5.5",
+                            "--reorder 0.2",
+                            "--network 192.168.1.3",
+                            "--change",
+                        ]
+                    )
+                ).run()
+                == 0
+            )
 
             runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
             runner.run()

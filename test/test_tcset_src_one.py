@@ -88,14 +88,20 @@ class Test_tcset_one_network(object):
             without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
             # w/ latency tc ---
-            command_list = [
-                Tc.Command.TCSET,
-                tc_target,
-                "--src-network {:s}".format(local_host_option),
-                "--delay {:d}ms".format(delay),
-                "--shaping-algo {:s}".format(shaping_algo),
-            ]
-            assert SubprocessRunner(" ".join(command_list)).run() == 0
+            assert (
+                SubprocessRunner(
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            tc_target,
+                            "--src-network {:s}".format(local_host_option),
+                            "--delay {:d}ms".format(delay),
+                            "--shaping-algo {:s}".format(shaping_algo),
+                        ]
+                    )
+                ).run()
+                == 0
+            )
 
             with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
@@ -153,16 +159,22 @@ class Test_tcset_exclude(object):
             without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
             # w/o latency tc (exclude network) ---
-            command_list = [
-                Tc.Command.TCSET,
-                tc_target,
-                "--direction {:s}".format(TrafficDirection.INCOMING),
-                "--exclude-dst-network {:s}".format(local_host_option),
-                "--exclude-src-network {:s}".format(dst_host_option),
-                "--delay {:d}ms".format(delay),
-                "--shaping-algo {:s}".format(shaping_algo),
-            ]
-            assert SubprocessRunner(" ".join(command_list)).run() == 0
+            assert (
+                SubprocessRunner(
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            tc_target,
+                            "--direction {:s}".format(TrafficDirection.INCOMING),
+                            "--exclude-dst-network {:s}".format(local_host_option),
+                            "--exclude-src-network {:s}".format(dst_host_option),
+                            "--delay {:d}ms".format(delay),
+                            "--shaping-algo {:s}".format(shaping_algo),
+                        ]
+                    )
+                ).run()
+                == 0
+            )
 
             exclude_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 

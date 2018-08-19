@@ -46,8 +46,7 @@ class Test_tcset_one_network(object):
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
 
-        python setup.py test --addopts \
-            "--device=<test device> --dst-host=<IP address>"
+        python setup.py test --addopts "--device=<test device> --dst-host=<IP address>"
 
     These tests expected to execute in the following environment:
        - Linux w/ iputils-ping package
@@ -78,12 +77,14 @@ class Test_tcset_one_network(object):
             # w/ latency tc ---
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        tc_target,
-                        "--delay {}ms".format(delay),
-                        "--shaping-algo {:s}".format(shaping_algo),
-                    ]
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            tc_target,
+                            "--delay {}ms".format(delay),
+                            "--shaping-algo {:s}".format(shaping_algo),
+                        ]
+                    )
                 ).run()
                 == 0
             )
@@ -120,12 +121,16 @@ class Test_tcset_one_network(object):
             # w/ latency tc ---
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        tc_target,
-                        "--delay {:d}ms".format(delay),
-                        "--delay-distro {:d}ms".format(delay_distro),
-                    ]
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            tc_target,
+                            "--delay",
+                            "{:d}ms".format(delay),
+                            "--delay-distro",
+                            "{:d}ms".format(delay_distro),
+                        ]
+                    )
                 ).run()
                 == 0
             )
@@ -165,7 +170,7 @@ class Test_tcset_one_network(object):
             # w/ traffic shaping ---
             assert (
                 SubprocessRunner(
-                    [Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)]
+                    " ".join([Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)])
                 ).run()
                 == 0
             )
@@ -200,7 +205,7 @@ class Test_tcset_one_network(object):
             # w/ packet duplicate tc ---
             assert (
                 SubprocessRunner(
-                    [Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)]
+                    " ".join([Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)])
                 ).run()
                 == 0
             )
@@ -241,15 +246,17 @@ class Test_tcset_one_network(object):
             # exclude certain network ---
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        tc_target,
-                        "--exclude-dst-network {:s}/24".format(
-                            ".".join(dst_host_option.split(".")[:3] + ["0"])
-                        ),
-                        "--delay {:d}ms".format(delay),
-                        "--overwrite",
-                    ]
+                    " ".join(
+                        [
+                            Tc.Command.TCSET,
+                            tc_target,
+                            "--exclude-dst-network {:s}/24".format(
+                                ".".join(dst_host_option.split(".")[:3] + ["0"])
+                            ),
+                            "--delay {:d}ms".format(delay),
+                            "--overwrite",
+                        ]
+                    )
                 ).run()
                 == 0
             )
