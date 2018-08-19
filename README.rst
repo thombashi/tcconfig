@@ -72,6 +72,7 @@ Set 100 milliseconds network latency
 
     # tcset eth0 --delay 100ms
 
+
 Set 10 seconds network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
@@ -163,7 +164,7 @@ Example
 For more information
 ----------------------
 More examples are available at 
-http://tcconfig.rtfd.io/en/latest/pages/usage/index.html
+https://tcconfig.rtfd.io/en/latest/pages/usage/index.html
 
 
 
@@ -216,6 +217,7 @@ Dependency python packages are automatically installed during
 - `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
 - `logbook <http://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
+- `Pygments <http://pygments.org/>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
 - `six <https://pypi.python.org/pypi/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
@@ -237,9 +239,9 @@ Test dependencies
 
 Documentation
 ===============
-http://tcconfig.rtfd.io/
+https://tcconfig.rtfd.io/
 
 Troubleshooting
 =================
-http://tcconfig.readthedocs.io/en/latest/pages/troubleshooting.html
+https://tcconfig.rtfd.io/en/latest/pages/troubleshooting.html
 
