@@ -22,7 +22,7 @@ class ArgparseWrapper(object):
     def __init__(self, version, description=""):
         epilog = dedent(
             """\
-            Documentation: http://tcconfig.rtfd.io/
+            Documentation: https://tcconfig.rtfd.io/
             Issue tracker: https://github.com/thombashi/tcconfig/issues
             """
         )
