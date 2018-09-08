@@ -196,17 +196,17 @@ def get_arg_parser():
     group = parser.add_routing_group()
     group.add_argument(
         "--exclude-dst-network",
-        help="exclude a shaping rule for a specific destination IP-address/network.",
+        help="exclude a specific destination IP-address/network from a shaping rule.",
     )
     group.add_argument(
         "--exclude-src-network",
-        help="exclude a shaping rule for a specific source IP-address/network.",
+        help="exclude a specific source IP-address/network from a shaping rule.",
     )
     group.add_argument(
-        "--exclude-dst-port", help="exclude a shaping rule for a specific destination port."
+        "--exclude-dst-port", help="exclude a specific destination port from a shaping rule."
     )
     group.add_argument(
-        "--exclude-src-port", help="exclude a shaping rule for a specific source port."
+        "--exclude-src-port", help="exclude a specific source port from a shaping rule."
     )
 
     return parser.parser

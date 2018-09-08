@@ -59,8 +59,8 @@ class ArgparseWrapper(object):
             "--direction",
             choices=TrafficDirection.LIST,
             default=TrafficDirection.OUTGOING,
-            help="""the direction of network communication that impose traffic control.
-            'incoming' requires Linux kernel version 2.6.20 or later.
+            help="""the direction of network communication that imposes traffic control.
+            'incoming' requires ifb kernel module and Linux kernel 2.6.20 or later.
             (default = %(default)s)
             """,
         )
@@ -68,15 +68,16 @@ class ArgparseWrapper(object):
             "--network",
             "--dst-network",
             dest="dst_network",
-            help="target IP-address/network to control traffic",
+            help="""specify destination IP-address/network that applies traffic control.
+            defaults to any.""",
         )
         group.add_argument(
             "--src-network",
-            help="""set a traffic shaping rule to specific packets that routed from
-            --src-network to --dst-network. this option required to execute
-            with the --iptables option when you use tbf.
-            the shaping rule only affect to outgoing packets
-            (no effect to if you execute with "--direction incoming" option)
+            help="""specify source IP-address/network that applies traffic control.
+            defaults to any.
+            this option has no effect when executing with "--direction incoming" option.
+            note: this option required to execute with the --iptables option when using tbf
+            algorithm.
             """,
         )
         group.add_argument(
@@ -84,10 +85,12 @@ class ArgparseWrapper(object):
             "--dst-port",
             dest="dst_port",
             type=int,
-            help="target destination port number to control traffic.",
+            help="specify destination port number that applies traffic control. defaults to any.",
         )
         group.add_argument(
-            "--src-port", type=int, help="target source port number to control traffic."
+            "--src-port",
+            type=int,
+            help="specify source port number that applies traffic control. defaults to any.",
         )
         group.add_argument(
             "--ipv6",
