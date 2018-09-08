@@ -30,7 +30,9 @@ class ArgparseWrapper(object):
             """
             ),
         )
-        self.parser.add_argument("--version", action="version", version="%(prog)s " + version)
+        self.parser.add_argument(
+            "-V", "--version", action="version", version="%(prog)s {}".format(version)
+        )
         self.parser.add_argument(
             "--docker",
             dest="use_docker",
