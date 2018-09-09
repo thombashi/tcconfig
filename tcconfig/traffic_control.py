@@ -284,7 +284,8 @@ class TrafficControl(object):
     def delete_all_tc(self):
         result_list = []
 
-        with logging_context("delete qdisc"):
+        logging_msg = "delete {} qdisc".format(self.device)
+        with logging_context(logging_msg):
             proc = spr.SubprocessRunner(
                 "{:s} del dev {:s} root".format(
                     get_tc_base_command(TcSubCommand.QDISC), self.device
@@ -297,9 +298,13 @@ class TrafficControl(object):
             elif re.search("Cannot find device", proc.stderr):
                 raise NetworkInterfaceNotFoundError(target=self.device)
             else:
-                result_list.append(proc.returncode == 0)
+                is_success = proc.returncode == 0
+                if is_success:
+                    logger.info(logging_msg)
+                result_list.append(is_success)
 
-        with logging_context("delete ingress qdisc"):
+        logging_msg = "delete {} ingress qdisc".format(self.device)
+        with logging_context(logging_msg):
             returncode = run_command_helper(
                 "{:s} del dev {:s} ingress".format(
                     get_tc_base_command(TcSubCommand.QDISC), self.device
@@ -314,14 +319,16 @@ class TrafficControl(object):
                 ),
                 notice_msg="no qdisc to delete for the incoming device.",
             )
-            result_list.append(returncode == 0)
+            is_success = returncode == 0
+            if is_success:
+                logger.info(logging_msg)
+            result_list.append(is_success)
 
-        with logging_context("delete ifb device"):
-            try:
-                result_list.append(self.__delete_ifb_device() == 0)
-            except NetworkInterfaceNotFoundError as e:
-                logger.debug(msgfy.to_debug_message(e))
-                result_list.append(False)
+        try:
+            result_list.append(self.__delete_ifb_device() == 0)
+        except NetworkInterfaceNotFoundError as e:
+            logger.debug(msgfy.to_debug_message(e))
+            result_list.append(False)
 
         with logging_context("delete iptables mangle table entries"):
             try:
@@ -337,17 +344,17 @@ class TrafficControl(object):
         """
 
         rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
-
         filter_param = rule_finder.find_filter_param()
-        logger.debug("delete_tc: pram={}".format(filter_param))
 
         if not filter_param:
-            message = "shaping rule not found."
+            message = "shaping rule not found ({}).".format(rule_finder.get_filter_string())
             if rule_finder.is_empty_filter_condition():
                 message += " you can delete all of the shaping rules with --all option."
             logger.error(message)
 
             return 1
+
+        logger.info("delete a shaping rule: {}".format(dict(filter_param)))
 
         filter_del_command = (
             "{command:s} del dev {dev:s} protocol {protocol:s} "
@@ -470,22 +477,26 @@ class TrafficControl(object):
     def __delete_ifb_device(self):
         from ._capabilities import has_execution_authority, get_permission_error_message
 
-        verify_network_interface(self.ifb_device, self.__tc_command_output)
+        logging_msg = "delete {} ifb device ({})".format(self.device, self.ifb_device)
+        with logging_context(logging_msg):
+            verify_network_interface(self.ifb_device, self.__tc_command_output)
 
-        if not has_execution_authority("ip"):
-            logger.warn(get_permission_error_message("ip"))
+            if not has_execution_authority("ip"):
+                logger.warn(get_permission_error_message("ip"))
 
-            return errno.EPERM
+                return errno.EPERM
 
-        command_list = [
-            "{:s} del dev {:s} root".format(
-                get_tc_base_command(TcSubCommand.QDISC), self.ifb_device
-            ),
-            "{:s} link set dev {:s} down".format(find_bin_path("ip"), self.ifb_device),
-            "{:s} link delete {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
-        ]
+            command_list = [
+                "{:s} del dev {:s} root".format(
+                    get_tc_base_command(TcSubCommand.QDISC), self.ifb_device
+                ),
+                "{:s} link set dev {:s} down".format(find_bin_path("ip"), self.ifb_device),
+                "{:s} link delete {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
+            ]
 
-        if all([spr.SubprocessRunner(command).run() != 0 for command in command_list]):
-            return 2
+            if all([spr.SubprocessRunner(command).run() != 0 for command in command_list]):
+                return 2
+
+        logger.info(logging_msg)
 
         return 0
