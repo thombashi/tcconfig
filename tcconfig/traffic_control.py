@@ -284,45 +284,8 @@ class TrafficControl(object):
     def delete_all_tc(self):
         result_list = []
 
-        logging_msg = "delete {} qdisc".format(self.device)
-        with logging_context(logging_msg):
-            proc = spr.SubprocessRunner(
-                "{:s} del dev {:s} root".format(
-                    get_tc_base_command(TcSubCommand.QDISC), self.device
-                )
-            )
-            proc.run()
-            if re.search("RTNETLINK answers: No such file or directory", proc.stderr):
-                logger.notice("no qdisc to delete for the outgoing device.")
-                result_list.append(False)
-            elif re.search("Cannot find device", proc.stderr):
-                raise NetworkInterfaceNotFoundError(target=self.device)
-            else:
-                is_success = proc.returncode == 0
-                if is_success:
-                    logger.info(logging_msg)
-                result_list.append(is_success)
-
-        logging_msg = "delete {} ingress qdisc".format(self.device)
-        with logging_context(logging_msg):
-            returncode = run_command_helper(
-                "{:s} del dev {:s} ingress".format(
-                    get_tc_base_command(TcSubCommand.QDISC), self.device
-                ),
-                ignore_error_msg_regexp=re.compile(
-                    "|".join(
-                        [
-                            "RTNETLINK answers: Invalid argument",
-                            "RTNETLINK answers: No such file or directory",
-                        ]
-                    )
-                ),
-                notice_msg="no qdisc to delete for the incoming device.",
-            )
-            is_success = returncode == 0
-            if is_success:
-                logger.info(logging_msg)
-            result_list.append(is_success)
+        result_list.append(self.__delete_qdisc())
+        result_list.append(self.__delete_ingress_qdisc())
 
         try:
             result_list.append(self.__delete_ifb_device() == 0)
@@ -473,6 +436,51 @@ class TrafficControl(object):
         ).run()
 
         return return_code
+
+    def __delete_qdisc(self):
+        logging_msg = "delete {} qdisc".format(self.device)
+
+        with logging_context(logging_msg):
+            runner = spr.SubprocessRunner(
+                "{:s} del dev {:s} root".format(
+                    get_tc_base_command(TcSubCommand.QDISC), self.device
+                )
+            )
+            runner.run()
+            if re.search("RTNETLINK answers: No such file or directory", runner.stderr):
+                logger.notice("no qdisc to delete for the outgoing device.")
+                return False
+            elif re.search("Cannot find device", runner.stderr):
+                raise NetworkInterfaceNotFoundError(target=self.device)
+            else:
+                is_success = runner.returncode == 0
+                if is_success:
+                    logger.info(logging_msg)
+                return is_success
+
+    def __delete_ingress_qdisc(self):
+        logging_msg = "delete {} ingress qdisc".format(self.device)
+
+        with logging_context(logging_msg):
+            returncode = run_command_helper(
+                "{:s} del dev {:s} ingress".format(
+                    get_tc_base_command(TcSubCommand.QDISC), self.device
+                ),
+                ignore_error_msg_regexp=re.compile(
+                    "|".join(
+                        [
+                            "RTNETLINK answers: Invalid argument",
+                            "RTNETLINK answers: No such file or directory",
+                        ]
+                    )
+                ),
+                notice_msg="no qdisc to delete for the incoming device.",
+            )
+            is_success = returncode == 0
+            if is_success:
+                logger.info(logging_msg)
+
+            return is_success
 
     def __delete_ifb_device(self):
         from ._capabilities import has_execution_authority, get_permission_error_message
