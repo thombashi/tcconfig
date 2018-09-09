@@ -5,7 +5,7 @@
 
 Summary
 =========
-A Simple tc command wrapper tool. Easy to set up traffic control of network bandwidth/latency/packet loss/packet-corruption to a network interface.
+A tc command wrapper. Easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth).
 
 .. image:: https://badge.fury.io/py/tcconfig.svg
     :target: https://badge.fury.io/py/tcconfig
@@ -21,19 +21,14 @@ A Simple tc command wrapper tool. Easy to set up traffic control of network band
    :target: https://github.com/thombashi/tcconfig
    :alt: GitHub repository
 
-Traffic control features
+Traffic control
 ------------------------
 
-Traffic shaping target
+Setup traffic shaping rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Apply traffic shaping rules to specific targets:
+Easy to apply traffic shaping rules to specific network:
 
 - Outgoing/Incoming packets
-- Source/Destination IP-address/network (IPv4/IPv6)
-- Source/Destination ports
-
-Moreover, exclude from shaping rules from specific targets:
-
 - Source/Destination IP-address/network (IPv4/IPv6)
 - Source/Destination ports
 
@@ -47,6 +42,11 @@ The following parameters can set to network interfaces:
 - Packet corruption rate ``[%]``
 - Packet duplicate rate ``[%]``
 - Packet reordering rate  ``[%]``
+
+Targets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- Network interfaces: e.g. ``eth0``
+- Docker container (veth corresponding with a container)
 
 .. image:: docs/gif/tcset_example.gif
 
@@ -143,19 +143,20 @@ Example
     {
         "eth0": {
             "outgoing": {
-                "dst-network=192.168.0.10/32, dst-port=8080": {
-                    "delay": "10.0",
-                    "loss": "0.01",
-                    "rate": "250K",
-                    "delay-distro": "2.0"
-                },
-                "dst-network=0.0.0.0/0": {}
+                "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
+                    "filter_id": "800::800",
+                    "delay": "10.0ms",
+                    "delay-distro": "2.0ms",
+                    "loss": 0.01,
+                    "rate": "250Kbps"
+                }
             },
             "incoming": {
-                "dst-network=0.0.0.0/0": {
-                    "delay": "1.0",
-                    "loss": "0.02",
-                    "rate": "500K"
+                "protocol=ip": {
+                    "filter_id": "800::800",
+                    "delay": "1.0ms",
+                    "loss": 0.02,
+                    "rate": "500Kbps"
                 }
             }
         }
@@ -215,7 +216,7 @@ Dependency python packages are automatically installed during
 
 - `DataPropery <https://github.com/thombashi/DataProperty>`__
 - `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
-- `logbook <http://logbook.readthedocs.io/en/stable/>`__
+- `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
 - `Pygments <http://pygments.org/>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
@@ -233,7 +234,7 @@ Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `allpairspy <https://github.com/thombashi/allpairspy>`__
 - `pingparsing <https://github.com/thombashi/pingparsing>`__
-- `pytest <http://pytest.org/latest/>`__
+- `pytest <https://docs.pytest.org/en/latest/>`__
 - `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
 - `tox <https://testrun.org/tox/latest/>`__
 
