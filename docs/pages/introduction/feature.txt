@@ -1,16 +1,11 @@
-Traffic control features
+Traffic control
 ------------------------
 
-Traffic shaping target
+Setup traffic shaping rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Apply traffic shaping rules to specific targets:
+Easy to apply traffic shaping rules to specific network:
 
 - Outgoing/Incoming packets
-- Source/Destination IP-address/network (IPv4/IPv6)
-- Source/Destination ports
-
-Moreover, exclude from shaping rules from specific targets:
-
 - Source/Destination IP-address/network (IPv4/IPv6)
 - Source/Destination ports
 
@@ -24,3 +19,8 @@ The following parameters can set to network interfaces:
 - Packet corruption rate ``[%]``
 - Packet duplicate rate ``[%]``
 - Packet reordering rate  ``[%]``
+
+Targets
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+- Network interfaces: e.g. ``eth0``
+- Docker container (veth corresponding with a container)
