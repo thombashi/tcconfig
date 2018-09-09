@@ -1,6 +1,6 @@
 ::
 
-    usage: tcdel [-h] [--version] [--docker] [--tc-command | --tc-script]
+    usage: tcdel [-h] [-V] [--docker] [--tc-command | --tc-script]
                  [--debug | --quiet] [--stacktrace] [-a] [--id FILTER_ID]
                  [--direction {outgoing,incoming}] [--network DST_NETWORK]
                  [--src-network SRC_NETWORK] [--port DST_PORT]
@@ -9,7 +9,7 @@
 
     optional arguments:
       -h, --help            show this help message and exit
-      --version             show program's version number and exit
+      -V, --version         show program's version number and exit
       --docker              apply traffic control to a docker container.
       --tc-command          display tc commands to be executed and exit. these
                             commands are not actually executed.
@@ -33,21 +33,23 @@
 
     Routing:
       --direction {outgoing,incoming}
-                            the direction of network communication that impose
-                            traffic control. 'incoming' requires Linux kernel
-                            version 2.6.20 or later. (default = outgoing)
+                            the direction of network communication that imposes
+                            traffic control. 'incoming' requires ifb kernel module
+                            and Linux kernel 2.6.20 or later. (default = outgoing)
       --network DST_NETWORK, --dst-network DST_NETWORK
-                            target IP-address/network to control traffic
+                            specify destination IP-address/network that applies
+                            traffic control. defaults to any.
       --src-network SRC_NETWORK
-                            set a traffic shaping rule to specific packets that
-                            routed from --src-network to --dst-network. this
-                            option required to execute with the --iptables option
-                            when you use tbf. the shaping rule only affect to
-                            outgoing packets (no effect to if you execute with "--
-                            direction incoming" option)
+                            specify source IP-address/network that applies traffic
+                            control. defaults to any. this option has no effect
+                            when executing with "--direction incoming" option.
+                            note: this option required to execute with the
+                            --iptables option when using tbf algorithm.
       --port DST_PORT, --dst-port DST_PORT
-                            target destination port number to control traffic.
-      --src-port SRC_PORT   target source port number to control traffic.
+                            specify destination port number that applies traffic
+                            control. defaults to any.
+      --src-port SRC_PORT   specify source port number that applies traffic
+                            control. defaults to any.
       --ipv6                apply traffic control to IPv6 packets rather than
                             IPv4.
 

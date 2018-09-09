@@ -4,27 +4,27 @@ You can delete a specific shaping rule by either network specifier or ``filter_i
 
 .. code-block:: console
 
-    # tcset ens33 --delay 10 --rate 10k --network 192.168.1.2 --overwrite
-    # tcset ens33 --delay 100 --rate 50k --network 192.168.1.3 --add
-    # tcset ens33 --delay 200 --rate 100k --network 192.168.0.0/24 --add
-    # tcshow ens33
+    # tcset eth0 --delay 10 --rate 10k --network 192.168.1.2 --overwrite
+    # tcset eth0 --delay 100 --rate 50k --network 192.168.1.3 --add
+    # tcset eth0 --delay 200 --rate 100k --network 192.168.0.0/24 --add
+    # tcshow eth0
     {
-        "ens33": {
+        "eth0": {
             "outgoing": {
                 "dst-network=192.168.1.2/32, protocol=ip": {
-                    "delay": 10,
-                    "rate": "10K",
-                    "filter_id": "800::800"
-                },
-                "dst-network=192.168.0.0/24, protocol=ip": {
-                    "delay": 200,
-                    "rate": "100K",
-                    "filter_id": "800::802"
+                    "filter_id": "800::800",
+                    "delay": "10.0ms",
+                    "rate": "10Kbps"
                 },
                 "dst-network=192.168.1.3/32, protocol=ip": {
-                    "delay": 100,
-                    "rate": "50K",
-                    "filter_id": "800::801"
+                    "filter_id": "800::801",
+                    "delay": "100.0ms",
+                    "rate": "50Kbps"
+                },
+                "dst-network=192.168.0.0/24, protocol=ip": {
+                    "filter_id": "800::802",
+                    "delay": "200.0ms",
+                    "rate": "100Kbps"
                 }
             },
             "incoming": {}
@@ -35,20 +35,20 @@ e.g. Delete a shaping rule with network specifier:
 
 .. code-block:: console
 
-    # tcdel ens33 --dst-network 192.168.1.2
-    # tcshow ens33
+    # tcdel eth0 --dst-network 192.168.1.2
+    # tcshow eth0
     {
-        "ens33": {
+        "eth0": {
             "outgoing": {
-                "dst-network=192.168.0.0/24, protocol=ip": {
-                    "delay": 200,
-                    "rate": "100K",
-                    "filter_id": "800::802"
-                },
                 "dst-network=192.168.1.3/32, protocol=ip": {
-                    "delay": 100,
-                    "rate": "50K",
-                    "filter_id": "800::801"
+                    "filter_id": "800::801",
+                    "delay": "100.0ms",
+                    "rate": "50Kbps"
+                },
+                "dst-network=192.168.0.0/24, protocol=ip": {
+                    "filter_id": "800::802",
+                    "delay": "200.0ms",
+                    "rate": "100Kbps"
                 }
             },
             "incoming": {}
@@ -59,15 +59,15 @@ e.g. Delete a shaping rule with filter id:
 
 .. code-block:: console
 
-    # tcdel ens33 --id 800::801
-    # tcshow ens33
+    # tcdel eth0 --id 800::801
+    # tcshow eth0
     {
-        "ens33": {
+        "eth0": {
             "outgoing": {
                 "dst-network=192.168.0.0/24, protocol=ip": {
-                    "delay": 200,
-                    "rate": "100K",
-                    "filter_id": "800::802"
+                    "filter_id": "800::802",
+                    "delay": "200.0ms",
+                    "rate": "100Kbps"
                 }
             },
             "incoming": {}

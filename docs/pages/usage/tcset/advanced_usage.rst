@@ -3,7 +3,7 @@ Advanced usage
 
 Traffic control of incoming packets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-You can set traffic shaping rule to incoming packets by executing ``tcset`` command with ``--direction incoming`` option.
+You can set traffic shaping rules to incoming packets by executing ``tcset`` command with ``--direction incoming`` option.
 Other options are the same as in the case of the basic usage.
 
 e.g. Set traffic control for both incoming and outgoing network
@@ -56,8 +56,9 @@ IPv6 addresses can be used at ``tcset``/``tcshow`` commands with ``--ipv6`` opti
         "eth0": {
             "outgoing": {
                 "dst-network=2001:db00::/24, protocol=ipv6": {
-                    "delay": "100.0",
-                    "rate": "1G"
+                    "filter_id": "800::800",
+                    "delay": "100.0ms",
+                    "rate": "1Gbps"
                 }
             },
             "incoming": {}

@@ -55,37 +55,38 @@ After restore
     {
         "eth1": {
             "outgoing": {
-                "dst-port=80": {
-                    "delay": "2.5",
-                    "loss": "0.01",
-                    "rate": "250K",
-                    "delay-distro": "1.2"
-                },
-                "dst-network=0.0.0.0/0": {}
+                "dst-port=80, protocol=ip": {
+                    "filter_id": "800::800",
+                    "delay": "2.5ms",
+                    "delay-distro": "1.2ms",
+                    "loss": 0.01,
+                    "rate": "250Kbps"
+                }
             },
             "incoming": {
-                "dst-network=192.168.10.0/24": {
-                    "corrupt": "0.02",
-                    "rate": "1500K"
-                },
-                "dst-network=0.0.0.0/0": {}
+                "dst-network=192.168.10.0/24, protocol=ip": {
+                    "filter_id": "800::800",
+                    "corrupt": 0.02,
+                    "rate": "1500Kbps"
+                }
             }
         },
         "eth0": {
             "outgoing": {
-                "dst-network=192.168.0.10/32, dst-port=8080": {
-                    "delay": "10.0",
-                    "loss": "0.01",
-                    "rate": "250K",
-                    "delay-distro": "2.0"
-                },
-                "dst-network=0.0.0.0/0": {}
+                "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
+                    "filter_id": "800::800",
+                    "delay": "10.0ms",
+                    "delay-distro": "2.0ms",
+                    "loss": 0.01,
+                    "rate": "250Kbps"
+                }
             },
             "incoming": {
-                "dst-network=0.0.0.0/0": {
-                    "delay": "1.0",
-                    "loss": "0.02",
-                    "rate": "500K"
+                "protocol=ip": {
+                    "filter_id": "800::800",
+                    "delay": "1.0ms",
+                    "loss": 0.02,
+                    "rate": "500Kbps"
                 }
             }
         }

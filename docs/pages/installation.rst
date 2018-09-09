@@ -45,7 +45,7 @@ Dependency python packages are automatically installed during
 
 - `DataPropery <https://github.com/thombashi/DataProperty>`__
 - `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
-- `logbook <http://logbook.readthedocs.io/en/stable/>`__
+- `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
 - `Pygments <http://pygments.org/>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
@@ -63,6 +63,6 @@ Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `allpairspy <https://github.com/thombashi/allpairspy>`__
 - `pingparsing <https://github.com/thombashi/pingparsing>`__
-- `pytest <http://pytest.org/latest/>`__
+- `pytest <https://docs.pytest.org/en/latest/>`__
 - `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
 - `tox <https://testrun.org/tox/latest/>`__
