@@ -116,7 +116,7 @@ class Test_tcset_change(object):
                             "dst-network=192.168.1.2/32, protocol=ip": {
                                 "filter_id": "800::800",
                                 "delay": "100.0ms",
-                                "rate": "50K"
+                                "rate": "50Kbps"
                             },
                             "dst-network=192.168.1.3/32, protocol=ip": {
                                 "filter_id": "800::801",
@@ -124,7 +124,7 @@ class Test_tcset_change(object):
                                 "loss": 0.01,
                                 "duplicate": 5,
                                 "delay-distro": "20.0ms",
-                                "rate": "100K",
+                                "rate": "100Kbps",
                                 "reorder": 2
                             }
                         },
@@ -168,7 +168,7 @@ class Test_tcset_change(object):
                             "dst-network=192.168.1.2/32, protocol=ip": {
                                 "filter_id": "800::800",
                                 "delay": "100.0ms",
-                                "rate": "50K"
+                                "rate": "50Kbps"
                             },
                             "dst-network=192.168.1.3/32, protocol=ip": {
                                 "filter_id": "800::801",
@@ -176,7 +176,7 @@ class Test_tcset_change(object):
                                 "loss": 0.02,
                                 "duplicate": 5.5,
                                 "delay-distro": "30.0ms",
-                                "rate": "200K",
+                                "rate": "200Kbps",
                                 "reorder": 0.2
                             }
                         },

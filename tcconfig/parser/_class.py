@@ -88,4 +88,6 @@ class TcClassParser(AbstractParser):
         if match is None:
             return
 
-        self.__parsed_param[self.Key.RATE] = re.search(self.Pattern.RATE, match.group()).group()
+        self.__parsed_param[self.Key.RATE] = (
+            re.search(self.Pattern.RATE, match.group()).group() + "bps"
+        )

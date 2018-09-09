@@ -36,20 +36,20 @@ class Test_tcconfig(object):
                 "filter_id": "800::800",
                 "delay": "10.0ms",
                 "loss": 0.01,
-                "rate": "250K",
+                "rate": "250Kbps",
                 "delay-distro": "2.0ms"
             },
             "src-port=1234, protocol=ip": {
                 "filter_id": "800::801",
                 "delay": "50.0ms",
-                "rate": "1G"
+                "rate": "1Gbps"
             }
         },
         "incoming": {
             "dst-network=192.168.10.0/24, protocol=ip": {
                 "filter_id": "800::800",
                 "corrupt": 0.02,
-                "rate": "1500K"
+                "rate": "1500Kbps"
             }
         }
     }
