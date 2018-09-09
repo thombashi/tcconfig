@@ -115,6 +115,11 @@ class TcShapingRuleFinder(object):
 
         return device
 
+    def get_filter_string(self):
+        return ", ".join(
+            [where.to_query() for where in self.__get_filter_where_condition_list() if where.value]
+        )
+
     def __get_filter_where_condition_list(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:
             device = self._parser.device
