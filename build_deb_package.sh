@@ -30,6 +30,7 @@ pyinstaller cli_tcshow.py --clean --onefile --distpath $DIST_DIR_PATH --name tcs
 cat << _CONTROL_ > "${DIST_DIR_NAME}/DEBIAN/control"
 Package: $PKG_NAME
 Version: $PKG_VERSION
+Depends: iproute2
 Maintainer: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 Architecture: amd64
 Description: $(cat docs/pages/introduction/summary.txt)
