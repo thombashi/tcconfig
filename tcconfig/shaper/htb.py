@@ -235,7 +235,7 @@ class HtbShaper(AbstractShaper):
             return self.__DEFAULT_CLASS_MINOR_ID + self.__qdisc_minor_id_count
 
         exist_class_item_list = re.findall(
-            "class {algorithm:s} {qdisc_major_id:s}[\:][0-9]+".format(
+            "class {algorithm:s} {qdisc_major_id:s}:[0-9]+".format(
                 algorithm=ShapingAlgorithm.HTB, qdisc_major_id=self._tc_obj.qdisc_major_id_str
             ),
             run_tc_show(TcSubCommand.CLASS, self._tc_device, self._tc_obj.tc_command_output),

@@ -164,12 +164,12 @@ class TcFilterParser(AbstractParser):
             return None
 
         match = re.search(
-            "Egress Redirect to device ifb[\d]+", self._to_unicode(text), re.MULTILINE
+            r"Egress Redirect to device ifb[\d]+", self._to_unicode(text), re.MULTILINE
         )
         if match is None:
             return None
 
-        return re.search("ifb[\d]+", match.group()).group()
+        return re.search(r"ifb[\d]+", match.group()).group()
 
     def _clear(self):
         self.__device = None

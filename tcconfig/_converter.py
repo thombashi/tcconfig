@@ -17,7 +17,7 @@ from ._logger import logger
 
 ByteUnit = namedtuple("ByteUnit", "regexp factor")
 
-_RE_NUMBER = re.compile("^[\-\+]?[0-9\.]+")
+_RE_NUMBER = re.compile(r"^[-\+]?[0-9\.]+")
 
 
 class Humanreadable(object):
