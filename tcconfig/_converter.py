@@ -153,7 +153,7 @@ class HumanReadableTime(object):
         if self.__unit == "sec":
             coef = 1000
         elif self.__unit == "us":
-            coef = .001
+            coef = 0.001
 
         return self.__number * coef
 

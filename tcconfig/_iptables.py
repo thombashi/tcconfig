@@ -134,7 +134,7 @@ class IptablesMangleController(object):
 
     __RE_CHAIN = re.compile("Chain {:s} |Chain {:s} |Chain {:s} ".format(*VALID_CHAIN_LIST))
     __RE_CHAIN_NAME = re.compile("{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))
-    __MAX_MARK_ID = 0xffffffff
+    __MAX_MARK_ID = 0xFFFFFFFF
     __MARK_ID_OFFSET = 100
 
     @property
