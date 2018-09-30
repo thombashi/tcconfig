@@ -14,7 +14,7 @@ from ._error import NetworkInterfaceNotFoundError
 
 
 def get_tc_base_command(tc_subcommand):
-    if tc_subcommand not in TcSubCommand:
+    if not isinstance(tc_subcommand, TcSubCommand):
         raise ValueError("the argument must be a TcSubCommand value")
 
     return "{:s} {:s}".format(find_bin_path("tc"), tc_subcommand.value)
