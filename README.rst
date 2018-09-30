@@ -11,7 +11,7 @@ A tc command wrapper. Easy to set up traffic control of network bandwidth/latenc
     :target: https://badge.fury.io/py/tcconfig
 
 .. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
-   :target: https://pypi.python.org/pypi/tcconfig
+   :target: https://pypi.org/project/tcconfig
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
@@ -215,12 +215,12 @@ Dependency python packages are automatically installed during
 ``tcconfig`` installation via pip.
 
 - `DataPropery <https://github.com/thombashi/DataProperty>`__
-- `ipaddress <https://pypi.python.org/pypi/ipaddress>`__
+- `ipaddress <https://pypi.org/project/ipaddress>`__
 - `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
 - `Pygments <http://pygments.org/>`__
 - `pyparsing <https://pyparsing.wikispaces.com/>`__
-- `six <https://pypi.python.org/pypi/six/>`__
+- `six <https://pypi.org/project/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
 - `typepy <https://github.com/thombashi/typepy>`__
 - `voluptuous <https://github.com/alecthomas/voluptuous>`__
@@ -235,7 +235,7 @@ Test dependencies
 - `allpairspy <https://github.com/thombashi/allpairspy>`__
 - `pingparsing <https://github.com/thombashi/pingparsing>`__
 - `pytest <https://docs.pytest.org/en/latest/>`__
-- `pytest-runner <https://pypi.python.org/pypi/pytest-runner>`__
+- `pytest-runner <https://github.com/pytest-dev/pytest-runner>`__
 - `tox <https://testrun.org/tox/latest/>`__
 
 Documentation
