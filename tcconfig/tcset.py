@@ -270,7 +270,7 @@ class Main(object):
                             "  (a) --overwrite option if you want to overwrite "
                             "the existing rules.",
                             "  (b) --change option if you want to change "
-                            "the existing rule parameter.",
+                            "the existing rule parameters.",
                         ]
                     )
                 )
