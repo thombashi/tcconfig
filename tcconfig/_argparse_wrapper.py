@@ -33,16 +33,19 @@ class ArgparseWrapper(object):
         self.parser.add_argument(
             "-V", "--version", action="version", version="%(prog)s {}".format(version)
         )
-        self.parser.add_argument(
+        self._add_tc_command_arg_group()
+        self._add_log_level_argument_group()
+
+        group = self.parser.add_argument_group("Docker")
+        group.add_argument(
             "--docker",
             dest="use_docker",
             action="store_true",
             default=False,
             help="apply traffic control to a docker container.",
         )
-
-        self._add_tc_command_arg_group()
-        self._add_log_level_argument_group()
+        group.add_argument("--src-container", help="")
+        group.add_argument("--dst-container", help="")
 
         group = self.parser.add_argument_group("Debug")
         group.add_argument(
