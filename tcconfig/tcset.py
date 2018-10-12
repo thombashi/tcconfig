@@ -268,17 +268,8 @@ class Main(object):
                 tc_command_output=options.tc_command_output,
             )
 
-            try:
-                tc.validate()
-            except (NetworkInterfaceNotFoundError, ContainerNotFoundError) as e:
-                logger.error(e)
-                return errno.EINVAL
-            except ipaddress.AddressValueError as e:
-                logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
-                return errno.EINVAL
-            except ParameterError as e:
-                logger.error(msgfy.to_error_message(e))
-                return errno.EINVAL
+            if self.__check_tc(tc) != 0:
+                continue
 
             normalize_tc_value(tc)
 
@@ -320,6 +311,21 @@ class Main(object):
             self.__dump_history(tc)
 
         return return_code
+
+    def __check_tc(self, tc):
+        try:
+            tc.validate()
+        except (NetworkInterfaceNotFoundError, ContainerNotFoundError) as e:
+            logger.error(e)
+            return errno.EINVAL
+        except ipaddress.AddressValueError as e:
+            logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
+            return errno.EINVAL
+        except ParameterError as e:
+            logger.error(msgfy.to_error_message(e))
+            return errno.EINVAL
+
+        return 0
 
     def __fetch_tc_target_list(self):
         if not self.__options.use_docker:
