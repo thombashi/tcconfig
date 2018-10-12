@@ -239,36 +239,11 @@ class Main(object):
         options = self.__options
 
         for device in self.__fetch_tc_target_list():
-            tc = TrafficControl(
-                device,
-                direction=options.direction,
-                netem_param=NetemParameter(
-                    device=device,
-                    bandwidth_rate=options.bandwidth_rate,
-                    latency_time=options.network_latency,
-                    latency_distro_time=options.latency_distro_time,
-                    packet_loss_rate=options.packet_loss_rate,
-                    packet_duplicate_rate=options.packet_duplicate_rate,
-                    corruption_rate=options.corruption_rate,
-                    reordering_rate=options.reordering_rate,
-                ),
-                dst_network=options.dst_network,
-                exclude_dst_network=options.exclude_dst_network,
-                src_network=options.src_network,
-                exclude_src_network=options.exclude_src_network,
-                src_port=options.src_port,
-                exclude_src_port=options.exclude_src_port,
-                dst_port=options.dst_port,
-                exclude_dst_port=options.exclude_dst_port,
-                is_ipv6=options.is_ipv6,
-                is_change_shaping_rule=options.is_change_shaping_rule,
-                is_add_shaping_rule=options.is_add_shaping_rule,
-                is_enable_iptables=options.is_enable_iptables,
-                shaping_algorithm=options.shaping_algorithm,
-                tc_command_output=options.tc_command_output,
-            )
+            tc = self.__create_tc(device)
 
-            if self.__check_tc(tc) != 0:
+            return_code = self.__check_tc(tc)
+
+            if return_code != 0:
                 continue
 
             normalize_tc_value(tc)
@@ -327,6 +302,38 @@ class Main(object):
 
         return 0
 
+    def __create_tc(self, device):
+        options = self.__options
+        
+        return TrafficControl(
+            device,
+            direction=options.direction,
+            netem_param=NetemParameter(
+                device=device,
+                bandwidth_rate=options.bandwidth_rate,
+                latency_time=options.network_latency,
+                latency_distro_time=options.latency_distro_time,
+                packet_loss_rate=options.packet_loss_rate,
+                packet_duplicate_rate=options.packet_duplicate_rate,
+                corruption_rate=options.corruption_rate,
+                reordering_rate=options.reordering_rate,
+            ),
+            dst_network=options.dst_network,
+            exclude_dst_network=options.exclude_dst_network,
+            src_network=options.src_network,
+            exclude_src_network=options.exclude_src_network,
+            src_port=options.src_port,
+            exclude_src_port=options.exclude_src_port,
+            dst_port=options.dst_port,
+            exclude_dst_port=options.exclude_dst_port,
+            is_ipv6=options.is_ipv6,
+            is_change_shaping_rule=options.is_change_shaping_rule,
+            is_add_shaping_rule=options.is_add_shaping_rule,
+            is_enable_iptables=options.is_enable_iptables,
+            shaping_algorithm=options.shaping_algorithm,
+            tc_command_output=options.tc_command_output,
+        )
+        
     def __fetch_tc_target_list(self):
         if not self.__options.use_docker:
             return [self.__options.device]
