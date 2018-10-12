@@ -311,6 +311,11 @@ class Main(object):
     def __create_tc(self, device):
         options = self.__options
 
+        if options.src_container:
+            src_network = self.__dclient.get_container_info(options.src_container).ipaddr
+        else:
+            src_network = options.src_network
+
         return TrafficControl(
             device,
             direction=options.direction,
@@ -326,7 +331,7 @@ class Main(object):
             ),
             dst_network=options.dst_network,
             exclude_dst_network=options.exclude_dst_network,
-            src_network=options.src_network,
+            src_network=src_network,
             exclude_src_network=options.exclude_src_network,
             src_port=options.src_port,
             exclude_src_port=options.exclude_src_port,
