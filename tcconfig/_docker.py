@@ -32,7 +32,7 @@ if six.PY2:
     PermissionError = OSError
 
 
-ContainerInfo = namedtuple("ContainerInfo", "id name pid image")
+ContainerInfo = namedtuple("ContainerInfo", "id name pid ipaddr image")
 
 
 class IfIndex(Model):
@@ -108,6 +108,7 @@ class DockerClient(object):
             id=container_map["Id"],
             name=container_name,
             pid=int(container_state["Pid"]),
+            ipaddr=container_map["NetworkSettings"]["IPAddress"],
             image=container_map["Config"]["Image"],
         )
 
