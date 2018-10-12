@@ -45,7 +45,10 @@ def parse_option():
     )
 
     parser.parser.add_argument(
-        "--color", action="store_true", default=False, help="colorize the output."
+        "--color",
+        action="store_true",
+        default=False,
+        help="colorize the output. require Pygments package.",
     )
 
     return parser.parser.parse_args()

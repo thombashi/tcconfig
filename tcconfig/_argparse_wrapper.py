@@ -38,7 +38,7 @@ class ArgparseWrapper(object):
             dest="use_docker",
             action="store_true",
             default=False,
-            help="apply traffic control to a docker container. require Pygments package.",
+            help="apply traffic control to a docker container.",
         )
 
         self._add_tc_command_arg_group()
