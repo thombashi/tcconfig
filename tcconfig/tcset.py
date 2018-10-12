@@ -236,7 +236,6 @@ class Main(object):
 
     def run(self):
         return_code = 0
-        options = self.__options
 
         for device in self.__fetch_tc_target_list():
             tc = self.__create_tc(device)
@@ -248,8 +247,8 @@ class Main(object):
 
             normalize_tc_value(tc)
 
-            if options.overwrite:
-                if options.log_level == logbook.INFO:
+            if self.__options.overwrite:
+                if self.__options.log_level == logbook.INFO:
                     set_log_level(logbook.ERROR)
 
                 try:
@@ -257,10 +256,10 @@ class Main(object):
                 except NetworkInterfaceNotFoundError:
                     pass
 
-                set_log_level(options.log_level)
+                set_log_level(self.__options.log_level)
 
             if (
-                options.is_add_shaping_rule
+                self.__options.is_add_shaping_rule
                 and TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()
             ):
                 logger.error(
