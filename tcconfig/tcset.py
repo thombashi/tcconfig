@@ -235,14 +235,14 @@ class Main(object):
         self.__dclient = DockerClient(options.tc_command_output)
 
     def run(self):
-        return_code = 0
+        return_code_list = []
 
         for device in self.__fetch_tc_target_list():
             tc = self.__create_tc(device)
-
             return_code = self.__check_tc(tc)
 
             if return_code != 0:
+                return_code_list.append(return_code)
                 continue
 
             normalize_tc_value(tc)
@@ -277,14 +277,21 @@ class Main(object):
                 return errno.EINVAL
 
             try:
-                return_code = tc.set_tc()
+                return_code_list.append(tc.set_tc())
             except NetworkInterfaceNotFoundError as e:
                 logger.error(e)
                 return errno.EINVAL
 
             self.__dump_history(tc)
 
-        return return_code
+        error_return_code = None
+        for return_code in return_code_list:
+            if return_code == 0:
+                return return_code
+
+            error_return_code = return_code
+
+        return error_return_code
 
     def __check_tc(self, tc):
         try:
@@ -303,7 +310,7 @@ class Main(object):
 
     def __create_tc(self, device):
         options = self.__options
-        
+
         return TrafficControl(
             device,
             direction=options.direction,
@@ -332,7 +339,7 @@ class Main(object):
             shaping_algorithm=options.shaping_algorithm,
             tc_command_output=options.tc_command_output,
         )
-        
+
     def __fetch_tc_target_list(self):
         if not self.__options.use_docker:
             return [self.__options.device]
