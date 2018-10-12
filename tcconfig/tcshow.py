@@ -52,11 +52,16 @@ def parse_option():
 
 
 def print_tc(text, is_colorize):
-    if is_colorize:
+    try:
         from pygments import highlight
         from pygments.lexers import JsonLexer
         from pygments.formatters import TerminalTrueColorFormatter
 
+        pygments_installed = True
+    except ImportError:
+        pygments_installed = False
+
+    if is_colorize and pygments_installed:
         print(
             highlight(
                 code=text, lexer=JsonLexer(), formatter=TerminalTrueColorFormatter(style="monokai")
