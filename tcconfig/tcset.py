@@ -340,21 +340,25 @@ def main():
             logger.error(e)
             return errno.EINVAL
 
-        command_history = "\n".join(tc.get_command_history())
-
-        if options.tc_command_output == TcCommandOutput.STDOUT:
-            print(command_history)
-            continue
-
-        if options.tc_command_output == TcCommandOutput.SCRIPT:
-            write_tc_script(
-                Tc.Command.TCSET, command_history, filename_suffix=tc.netem_param.make_param_name()
-            )
-            continue
-
-        logger.debug("command history\n{}".format(command_history))
+        dump_history(tc, options.tc_command_output)
 
     return return_code
+
+
+def dump_history(tc, command_output):
+    command_history = "\n".join(tc.get_command_history())
+
+    if command_output == TcCommandOutput.STDOUT:
+        print(command_history)
+        return
+
+    if command_output == TcCommandOutput.SCRIPT:
+        write_tc_script(
+            Tc.Command.TCSET, command_history, filename_suffix=tc.netem_param.make_param_name()
+        )
+        return
+
+    logger.debug("command history\n{}".format(command_history))
 
 
 if __name__ == "__main__":
