@@ -19,15 +19,8 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
-from ._const import (
-    IPV6_OPTION_ERROR_MSG_FORMAT,
-    ShapingAlgorithm,
-    Tc,
-    TcCommandOutput,
-    TrafficDirection,
-)
+from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, ShapingAlgorithm, Tc, TrafficDirection
 from ._converter import HumanReadableTime
-from ._docker import DockerClient
 from ._error import (
     ContainerNotFoundError,
     ModuleNotFoundError,
@@ -36,6 +29,7 @@ from ._error import (
 )
 from ._importer import set_tc_from_file
 from ._logger import logger, set_log_level
+from ._main import Main
 from ._netem_param import (
     MAX_CORRUPTION_RATE,
     MAX_PACKET_DUPLICATE_RATE,
@@ -48,7 +42,6 @@ from ._netem_param import (
     NetemParameter,
 )
 from ._shaping_rule_finder import TcShapingRuleFinder
-from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
 
 
@@ -229,15 +222,11 @@ def verify_netem_module():
             raise ModuleNotFoundError("sch_netem module not found")
 
 
-class Main(object):
-    def __init__(self, options):
-        self.__options = options
-        self.__dclient = DockerClient(options.tc_command_output)
-
+class TcSetMain(Main):
     def run(self):
         return_code_list = []
 
-        for device in self.__fetch_tc_target_list():
+        for device in self._fetch_tc_target_list():
             tc = self.__create_tc(device)
             return_code = self.__check_tc(tc)
 
@@ -247,8 +236,8 @@ class Main(object):
 
             normalize_tc_value(tc)
 
-            if self.__options.overwrite:
-                if self.__options.log_level == logbook.INFO:
+            if self._options.overwrite:
+                if self._options.log_level == logbook.INFO:
                     set_log_level(logbook.ERROR)
 
                 try:
@@ -256,10 +245,10 @@ class Main(object):
                 except NetworkInterfaceNotFoundError:
                     pass
 
-                set_log_level(self.__options.log_level)
+                set_log_level(self._options.log_level)
 
             if (
-                self.__options.is_add_shaping_rule
+                self._options.is_add_shaping_rule
                 and TcShapingRuleFinder(logger=logger, tc=tc).is_exist_rule()
             ):
                 logger.error(
@@ -282,7 +271,7 @@ class Main(object):
                 logger.error(e)
                 return errno.EINVAL
 
-            self.__dump_history(tc)
+            self._dump_history(tc, Tc.Command.TCSET)
 
         error_return_code = None
         for return_code in return_code_list:
@@ -309,10 +298,10 @@ class Main(object):
         return 0
 
     def __create_tc(self, device):
-        options = self.__options
+        options = self._options
 
         if options.src_container:
-            src_network = self.__dclient.get_container_info(options.src_container).ipaddr
+            src_network = self._dclient.get_container_info(options.src_container).ipaddr
         else:
             src_network = options.src_network
 
@@ -345,33 +334,6 @@ class Main(object):
             tc_command_output=options.tc_command_output,
         )
 
-    def __fetch_tc_target_list(self):
-        if not self.__options.use_docker:
-            return [self.__options.device]
-
-        container = self.__options.device
-
-        self.__dclient.verify_container(container, exit_on_exception=True)
-        self.__dclient.create_veth_table(container)
-
-        return self.__dclient.fetch_veth_list(self.__dclient.get_container_info(container).name)
-
-    def __dump_history(self, tc):
-        command_history = "\n".join(tc.get_command_history())
-        command_output = self.__options.tc_command_output
-
-        if command_output == TcCommandOutput.STDOUT:
-            print(command_history)
-            return
-
-        if command_output == TcCommandOutput.SCRIPT:
-            write_tc_script(
-                Tc.Command.TCSET, command_history, filename_suffix=tc.netem_param.make_param_name()
-            )
-            return
-
-        logger.debug("command history\n{}".format(command_history))
-
 
 def main():
     options = get_arg_parser().parse_args()
@@ -396,7 +358,7 @@ def main():
 
     spr.SubprocessRunner.clear_history()
 
-    main = Main(options)
+    main = TcSetMain(options)
 
     return main.run()
 
