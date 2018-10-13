@@ -173,17 +173,17 @@ class DockerClient(object):
 
         IfIndex.create()
 
+        proc = SubprocessRunner(
+            "ip netns exec {ns} ip link show type veth".format(ns=container_name), dry_run=False
+        )
+        if proc.run() != 0:
+            logger.error(proc.stderr)
+            return proc.returncode
+
+        veth_groups_regexp = re.compile("([0-9]+): ([a-z0-9]+)@([a-z0-9]+): ")
+        peer_ifindex_sub = re.compile("^if")
+
         try:
-            proc = SubprocessRunner(
-                "ip netns exec {ns} ip link show type veth".format(ns=container_name), dry_run=False
-            )
-            if proc.run() != 0:
-                logger.error(proc.stderr)
-                return proc.returncode
-
-            veth_groups_regexp = re.compile("([0-9]+): ([a-z0-9]+)@([a-z0-9]+): ")
-            peer_ifindex_sub = re.compile("^if")
-
             for line in proc.stdout.splitlines():
                 match = veth_groups_regexp.search(line)
                 if not match:
