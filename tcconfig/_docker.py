@@ -181,7 +181,7 @@ class DockerClient(object):
             return proc.returncode
 
         veth_groups_regexp = re.compile("([0-9]+): ([a-z0-9]+)@([a-z0-9]+): ")
-        peer_ifindex_sub = re.compile("^if")
+        peer_ifindex_prefix_regexp = re.compile("^if")
 
         try:
             for line in proc.stdout.splitlines():
@@ -195,7 +195,7 @@ class DockerClient(object):
                         host=container_name,
                         ifindex=int(ifindex),
                         ifname=ifname,
-                        peer_ifindex=int(peer_ifindex_sub.sub("", peer_ifindex)),
+                        peer_ifindex=int(peer_ifindex_prefix_regexp.sub("", peer_ifindex)),
                     )
                 )
 
@@ -215,7 +215,7 @@ class DockerClient(object):
                         host=self.__host_name,
                         ifindex=int(ifindex),
                         ifname=ifname,
-                        peer_ifindex=int(peer_ifindex_sub.sub("", peer_ifindex)),
+                        peer_ifindex=int(peer_ifindex_prefix_regexp.sub("", peer_ifindex)),
                     )
                 )
         finally:
