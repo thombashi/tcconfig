@@ -19,6 +19,7 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
+@pytest.mark.skipif("sys.version_info <= (3,4)")
 class Test_tcdel(object):
     """
     Tests in this class are not executable on CI services.
