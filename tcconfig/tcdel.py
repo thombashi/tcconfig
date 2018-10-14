@@ -51,6 +51,7 @@ def parse_option():
     )
 
     parser.add_routing_group()
+    parser.add_docker_group()
 
     return parser.parser.parse_args()
 

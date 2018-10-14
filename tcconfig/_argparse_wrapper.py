@@ -36,17 +36,6 @@ class ArgparseWrapper(object):
         self._add_tc_command_arg_group()
         self._add_log_level_argument_group()
 
-        group = self.parser.add_argument_group("Docker")
-        group.add_argument(
-            "--docker",
-            dest="use_docker",
-            action="store_true",
-            default=False,
-            help="apply traffic control to a docker container.",
-        )
-        group.add_argument("--src-container", help="")
-        group.add_argument("--dst-container", help="")
-
         group = self.parser.add_argument_group("Debug")
         group.add_argument(
             "--stacktrace",
@@ -128,6 +117,21 @@ class ArgparseWrapper(object):
             help="suppress execution log messages.",
         )
 
+        return group
+
+    def add_docker_group(self, is_add_srcdst=True):
+        group = self.parser.add_argument_group("Docker")
+        group.add_argument(
+            "--docker",
+            dest="use_docker",
+            action="store_true",
+            default=False,
+            help="apply traffic control to a docker container.",
+        )
+        if is_add_srcdst:
+            group.add_argument("--src-container", help="")
+            group.add_argument("--dst-container", help="")
+        
         return group
 
     def _add_tc_command_arg_group(self):

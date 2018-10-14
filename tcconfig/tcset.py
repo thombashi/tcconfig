@@ -202,6 +202,8 @@ def get_arg_parser():
         "--exclude-src-port", help="exclude a specific source port from a shaping rule."
     )
 
+    parser.add_docker_group()
+
     return parser.parser
 
 

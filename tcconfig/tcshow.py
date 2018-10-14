@@ -44,6 +44,8 @@ def parse_option():
         help="Display IPv6 shaping rules. Defaults to show IPv4 shaping rules.",
     )
 
+    parser.add_docker_group(is_add_srcdst=False)
+
     parser.parser.add_argument(
         "--color",
         action="store_true",
