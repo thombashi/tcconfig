@@ -155,9 +155,7 @@ def main():
 
     spr.SubprocessRunner.clear_history()
 
-    main = TcDelMain(options)
-
-    return main.run(is_delete_all)
+    return TcDelMain(options).run(is_delete_all)
 
 
 if __name__ == "__main__":

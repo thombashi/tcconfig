@@ -346,9 +346,7 @@ def main():
 
     spr.SubprocessRunner.clear_history()
 
-    main = TcSetMain(options)
-
-    return main.run()
+    return TcSetMain(options).run()
 
 
 if __name__ == "__main__":
