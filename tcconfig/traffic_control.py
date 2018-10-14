@@ -230,7 +230,7 @@ class TrafficControl(object):
         )
 
     def get_command_history(self):
-        def tc_filter(command):
+        def tc_command_filter(command):
             if get_iptables_base_command():
                 if re.search(
                     "^{:s} {:s}".format(
@@ -249,7 +249,7 @@ class TrafficControl(object):
 
             return True
 
-        return filter(tc_filter, spr.SubprocessRunner.get_history())
+        return filter(tc_command_filter, spr.SubprocessRunner.get_history())
 
     def make_srcdst_text(self):
         return "".join(
