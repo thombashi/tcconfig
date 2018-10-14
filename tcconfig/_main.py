@@ -36,6 +36,17 @@ class Main(object):
 
         return self._dclient.fetch_veth_list(self._dclient.extract_container_info(container).name)
 
+    def _get_return_code(self, return_code_list):
+        error_return_code = None
+
+        for return_code in return_code_list:
+            if return_code == 0:
+                return return_code
+
+            error_return_code = return_code
+
+        return error_return_code
+
     def _dump_history(self, tc, tc_command):
         command_history = "\n".join(tc.get_command_history())
         command_output = self._options.tc_command_output

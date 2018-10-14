@@ -273,14 +273,7 @@ class TcSetMain(Main):
 
             self._dump_history(tc, Tc.Command.TCSET)
 
-        error_return_code = None
-        for return_code in return_code_list:
-            if return_code == 0:
-                return return_code
-
-            error_return_code = return_code
-
-        return error_return_code
+        return self._get_return_code(return_code_list)
 
     def __check_tc(self, tc):
         try:
