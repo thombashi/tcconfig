@@ -243,6 +243,9 @@ class TrafficControl(object):
             if re.search("^{:s} .* show dev".format(find_bin_path("tc")), command):
                 return False
 
+            if re.search("^ip (netns exec |link show )", command):
+                return False
+
             if find_bin_path("getcap"):
                 if re.search("^{:s}".format(find_bin_path("getcap")), command):
                     return False
