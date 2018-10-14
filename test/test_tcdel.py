@@ -4,8 +4,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-import errno
-
 import pytest
 import simplejson as json
 from subprocrunner import SubprocessRunner
@@ -19,7 +17,6 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
-@pytest.mark.skipif("sys.version_info <= (3,4)")
 class Test_tcdel(object):
     """
     Tests in this class are not executable on CI services.
@@ -35,11 +32,13 @@ class Test_tcdel(object):
         for device_option in [[device_value], ["--device", device_value]]:
             execute_tcdel(device_value)
 
+            tcshow_cmd = [Tc.Command.TCSHOW] + device_option
+
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "10",
                         "--delay-distro",
@@ -63,9 +62,9 @@ class Test_tcdel(object):
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "1",
                         "--loss",
@@ -81,9 +80,9 @@ class Test_tcdel(object):
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "10",
                         "--delay-distro",
@@ -98,9 +97,9 @@ class Test_tcdel(object):
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "1",
                         "--loss",
@@ -123,7 +122,7 @@ class Test_tcdel(object):
                 == 0
             )
 
-            runner = SubprocessRunner([Tc.Command.TCSHOW, *device_option])
+            runner = SubprocessRunner(tcshow_cmd)
             runner.run()
             expected = (
                 "{"
@@ -172,24 +171,17 @@ class Test_tcdel(object):
             assert json.loads(runner.stdout) == json.loads(expected)
 
             tcdel_proc = SubprocessRunner(
-                [Tc.Command.TCDEL, *device_option, "--network", "192.168.1.0/24"]
+                [Tc.Command.TCDEL] + device_option + ["--network", "192.168.1.0/24"]
             )
             assert tcdel_proc.run() == 0, tcdel_proc.stderr
             tcdel_proc = SubprocessRunner(
-                [
-                    Tc.Command.TCDEL,
-                    *device_option,
-                    "--network",
-                    "192.168.11.0/24",
-                    "--port",
-                    "80",
-                    "--direction",
-                    "incoming",
-                ]
+                [Tc.Command.TCDEL]
+                + device_option
+                + ["--network", "192.168.11.0/24", "--port", "80", "--direction", "incoming"]
             )
             assert tcdel_proc.run() == 0, tcdel_proc.stderr
 
-            runner = SubprocessRunner([Tc.Command.TCSHOW, *device_option])
+            runner = SubprocessRunner(tcshow_cmd)
             runner.run()
             expected = (
                 "{"
@@ -223,23 +215,19 @@ class Test_tcdel(object):
             assert json.loads(runner.stdout) == json.loads(expected)
 
             assert (
-                SubprocessRunner([Tc.Command.TCDEL, *device_option, "--id", "800::800"]).run() == 0
+                SubprocessRunner([Tc.Command.TCDEL] + device_option + ["--id", "800::800"]).run()
+                == 0
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCDEL,
-                        *device_option,
-                        "--id",
-                        "800::800",
-                        "--direction",
-                        "incoming",
-                    ]
+                    [Tc.Command.TCDEL]
+                    + device_option
+                    + ["--id", "800::800", "--direction", "incoming"]
                 ).run()
                 == 0
             )
 
-            runner = SubprocessRunner([Tc.Command.TCSHOW, *device_option])
+            runner = SubprocessRunner(tcshow_cmd)
             runner.run()
             expected = (
                 "{"
@@ -265,10 +253,12 @@ class Test_tcdel(object):
         for device_option in [[device_value], ["--device", device_value]]:
             execute_tcdel(device_value)
 
+            tcshow_cmd = [Tc.Command.TCSHOW] + device_option
+
             proc = SubprocessRunner(
-                [
-                    Tc.Command.TCSET,
-                    *device_option,
+                [Tc.Command.TCSET]
+                + device_option
+                + [
                     "--delay",
                     "10",
                     "--delay-distro",
@@ -293,9 +283,9 @@ class Test_tcdel(object):
             assert proc.run() == 0
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "1",
                         "--loss",
@@ -312,9 +302,9 @@ class Test_tcdel(object):
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "10",
                         "--delay-distro",
@@ -330,9 +320,9 @@ class Test_tcdel(object):
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCSET,
-                        *device_option,
+                    [Tc.Command.TCSET]
+                    + device_option
+                    + [
                         "--delay",
                         "1",
                         "--loss",
@@ -356,7 +346,7 @@ class Test_tcdel(object):
                 == 0
             )
 
-            runner = SubprocessRunner(["tcshow", *device_option, "--ipv6"])
+            runner = SubprocessRunner(tcshow_cmd + ["--ipv6"])
             runner.run()
 
             expected = (
@@ -406,15 +396,15 @@ class Test_tcdel(object):
 
             assert (
                 SubprocessRunner(
-                    [Tc.Command.TCDEL, *device_option, "--network", "2001:db00::0/24", "--ipv6"]
+                    [Tc.Command.TCDEL] + device_option + ["--network", "2001:db00::0/24", "--ipv6"]
                 ).run()
                 == 0
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCDEL,
-                        *device_option,
+                    [Tc.Command.TCDEL]
+                    + device_option
+                    + [
                         "--network",
                         "2001:db00::0/25",
                         "--port",
@@ -427,7 +417,7 @@ class Test_tcdel(object):
                 == 0
             )
 
-            runner = SubprocessRunner([Tc.Command.TCSHOW, *device_option])
+            runner = SubprocessRunner(tcshow_cmd)
             runner.run()
             expected = (
                 "{"
@@ -462,26 +452,20 @@ class Test_tcdel(object):
 
             assert (
                 SubprocessRunner(
-                    [Tc.Command.TCDEL, *device_option, "--id", "800::800", "--ipv6"]
+                    [Tc.Command.TCDEL] + device_option + ["--id", "800::800", "--ipv6"]
                 ).run()
                 == 0
             )
             assert (
                 SubprocessRunner(
-                    [
-                        Tc.Command.TCDEL,
-                        *device_option,
-                        "--id",
-                        "800::800",
-                        "--direction",
-                        "incoming",
-                        "--ipv6",
-                    ]
+                    [Tc.Command.TCDEL]
+                    + device_option
+                    + ["--id", "800::800", "--direction", "incoming", "--ipv6"]
                 ).run()
                 == 0
             )
 
-            runner = SubprocessRunner([Tc.Command.TCSHOW, *device_option])
+            runner = SubprocessRunner(tcshow_cmd)
             runner.run()
             expected = (
                 "{"
