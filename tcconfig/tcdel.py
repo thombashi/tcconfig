@@ -17,12 +17,11 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
-from ._const import Tc, TcCommandOutput, TcSubCommand
-from ._docker import DockerClient
+from ._const import Tc, TcSubCommand
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger, set_logger
+from ._main import Main
 from ._network import verify_network_interface
-from ._tc_script import write_tc_script
 from .traffic_control import TrafficControl
 
 
@@ -108,6 +107,30 @@ def create_tc_obj(tc_target, options):
     )
 
 
+class TcDelMain(Main):
+    def run(self, is_delete_all):
+        return_code = 0
+
+        for tc_target in self._fetch_tc_target_list():
+            tc = create_tc_obj(tc_target, self._options)
+            if self._options.log_level == logbook.INFO:
+                spr.set_log_level(logbook.ERROR)
+            normalize_tc_value(tc)
+
+            try:
+                if is_delete_all:
+                    return_code = tc.delete_all_tc()
+                else:
+                    return_code = tc.delete_tc()
+            except NetworkInterfaceNotFoundError as e:
+                logger.error(e)
+                return errno.EINVAL
+
+            self._dump_history(tc, Tc.Command.TCDEL)
+
+        return return_code
+
+
 def main():
     options = parse_option()
 
@@ -131,45 +154,9 @@ def main():
 
     spr.SubprocessRunner.clear_history()
 
-    if options.use_docker:
-        dclient = DockerClient(options.tc_command_output)
-        container = options.device
+    main = TcDelMain(options)
 
-        dclient.verify_container(container, exit_on_exception=True)
-        dclient.create_veth_table(container)
-        tc_target_list = dclient.fetch_veth_list(dclient.extract_container_info(container).name)
-    else:
-        tc_target_list = [options.device]
-
-    for tc_target in tc_target_list:
-        tc = create_tc_obj(tc_target, options)
-        if options.log_level == logbook.INFO:
-            spr.set_log_level(logbook.ERROR)
-        normalize_tc_value(tc)
-
-        return_code = 0
-        try:
-            if is_delete_all:
-                return_code = tc.delete_all_tc()
-            else:
-                return_code = tc.delete_tc()
-        except NetworkInterfaceNotFoundError as e:
-            logger.error(e)
-            return errno.EINVAL
-
-        command_history = "\n".join(tc.get_command_history())
-
-        if options.tc_command_output == TcCommandOutput.STDOUT:
-            print(command_history)
-            return return_code
-        elif options.tc_command_output == TcCommandOutput.SCRIPT:
-            set_logger(True)
-            write_tc_script(Tc.Command.TCDEL, command_history, filename_suffix=tc_target)
-            return return_code
-
-        logger.debug("command history\n{}".format(command_history))
-
-    return return_code
+    return main.run(is_delete_all)
 
 
 if __name__ == "__main__":
