@@ -301,7 +301,7 @@ class TcSetMain(Main):
         options = self._options
 
         if options.src_container:
-            src_network = self._dclient.get_container_info(options.src_container).ipaddr
+            src_network = self._dclient.extract_container_info(options.src_container).ipaddr
         else:
             src_network = options.src_network
 

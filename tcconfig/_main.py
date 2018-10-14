@@ -22,7 +22,7 @@ class Main(object):
         self._dclient.verify_container(container, exit_on_exception=True)
         self._dclient.create_veth_table(container)
 
-        return self._dclient.fetch_veth_list(self._dclient.get_container_info(container).name)
+        return self._dclient.fetch_veth_list(self._dclient.extract_container_info(container).name)
 
     def _dump_history(self, tc, tc_command):
         command_history = "\n".join(tc.get_command_history())

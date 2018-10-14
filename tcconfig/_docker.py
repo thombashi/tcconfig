@@ -95,7 +95,7 @@ class DockerClient(object):
 
         return running_container_name_list
 
-    def get_container_info(self, container):
+    def extract_container_info(self, container):
         container_map = self.__client.inspect_container(container=container)
         container_name = container_map["Name"].lstrip("/")
         container_state = container_map["State"]
@@ -119,7 +119,7 @@ class DockerClient(object):
             logger.error(e)
             sys.exit(errno.EPERM)
 
-        container_info = self.get_container_info(container)
+        container_info = self.extract_container_info(container)
         logger.debug(
             "found container: name={}, pid={}".format(container_info.name, container_info.pid)
         )

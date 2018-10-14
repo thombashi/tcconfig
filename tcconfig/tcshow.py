@@ -93,7 +93,7 @@ def main():
 
                 dclient.verify_container(container)
                 dclient.create_veth_table(container)
-                container_info = dclient.get_container_info(container)
+                container_info = dclient.extract_container_info(container)
 
                 for veth in dclient.fetch_veth_list(container_info.name):
                     tc_param.update(

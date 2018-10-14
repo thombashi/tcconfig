@@ -137,7 +137,7 @@ def main():
 
         dclient.verify_container(container, exit_on_exception=True)
         dclient.create_veth_table(container)
-        tc_target_list = dclient.fetch_veth_list(dclient.get_container_info(container).name)
+        tc_target_list = dclient.fetch_veth_list(dclient.extract_container_info(container).name)
     else:
         tc_target_list = [options.device]
 
