@@ -174,7 +174,7 @@ class AbstractShaper(ShaperInterface):
             return "src"
 
         raise ParameterError(
-            "unknown direction", expected=TrafficDirection.LIST, value=self.direction
+            "unknown direction", expected=TrafficDirection.LIST, value=self._tc_obj.direction
         )
 
     def _get_tc_handle(self, default_handle):
