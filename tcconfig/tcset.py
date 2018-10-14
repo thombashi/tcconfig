@@ -297,6 +297,12 @@ class TcSetMain(Main):
 
         return 0
 
+    def __extract_dst_network(self):
+        if self._options.dst_container: 
+            return self._dclient.extract_container_info(self._options.dst_container).ipaddr
+
+        return self._options.dst_network
+
     def __create_tc(self, device):
         options = self._options
 
@@ -318,7 +324,7 @@ class TcSetMain(Main):
                 corruption_rate=options.corruption_rate,
                 reordering_rate=options.reordering_rate,
             ),
-            dst_network=options.dst_network,
+            dst_network=self.__extract_dst_network(),
             exclude_dst_network=options.exclude_dst_network,
             src_network=src_network,
             exclude_src_network=options.exclude_src_network,
