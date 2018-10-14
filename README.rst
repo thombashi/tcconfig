@@ -34,7 +34,7 @@ Easy to apply traffic shaping rules to specific network:
 
 Available parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The following parameters can set to network interfaces:
+The following parameters can be set to network interfaces:
 
 - Network bandwidth rate ``[G/M/K bps]``
 - Network latency ``[microseconds/milliseconds/seconds/minutes]``
@@ -46,7 +46,7 @@ The following parameters can set to network interfaces:
 Targets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - Network interfaces: e.g. ``eth0``
-- Docker container (veth corresponding with a container)
+- Docker container (``veth`` corresponding with a container)
 
 .. image:: docs/gif/tcset_example.gif
 
@@ -218,8 +218,7 @@ Dependency python packages are automatically installed during
 - `ipaddress <https://pypi.org/project/ipaddress>`__
 - `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
-- `Pygments <http://pygments.org/>`__
-- `pyparsing <https://pyparsing.wikispaces.com/>`__
+- `pyparsing <https://github.com/pyparsing/pyparsing//>`__
 - `six <https://pypi.org/project/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
 - `typepy <https://github.com/thombashi/typepy>`__
@@ -229,6 +228,7 @@ Optional Python packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `netifaces <https://github.com/al45tair/netifaces>`__
     - Suppress excessive error messages if this package installed
+- `Pygments <http://pygments.org/>`__
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -245,4 +245,8 @@ https://tcconfig.rtfd.io/
 Troubleshooting
 =================
 https://tcconfig.rtfd.io/en/latest/pages/troubleshooting.html
+
+Docker image
+==============
+https://hub.docker.com/r/thombashi/tcconfig/
 
