@@ -497,4 +497,4 @@ class Test_tcdel(object):
             execute_tcdel(device_value)
 
     def test_abnormal(self):
-        assert execute_tcdel("not_exist_device") == errno.EINVAL
+        assert execute_tcdel("not_exist_device") != 0
