@@ -47,8 +47,7 @@ Dependency python packages are automatically installed during
 - `ipaddress <https://pypi.org/project/ipaddress>`__
 - `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
-- `Pygments <http://pygments.org/>`__
-- `pyparsing <https://pyparsing.wikispaces.com/>`__
+- `pyparsing <https://github.com/pyparsing/pyparsing//>`__
 - `six <https://pypi.org/project/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
 - `typepy <https://github.com/thombashi/typepy>`__
@@ -58,6 +57,7 @@ Optional Python packages
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - `netifaces <https://github.com/al45tair/netifaces>`__
     - Suppress excessive error messages if this package installed
+- `Pygments <http://pygments.org/>`__
 
 Test dependencies
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

@@ -11,7 +11,7 @@ Easy to apply traffic shaping rules to specific network:
 
 Available parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-The following parameters can set to network interfaces:
+The following parameters can be set to network interfaces:
 
 - Network bandwidth rate ``[G/M/K bps]``
 - Network latency ``[microseconds/milliseconds/seconds/minutes]``
@@ -23,4 +23,4 @@ The following parameters can set to network interfaces:
 Targets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 - Network interfaces: e.g. ``eth0``
-- Docker container (veth corresponding with a container)
+- Docker container (``veth`` corresponding with a container)

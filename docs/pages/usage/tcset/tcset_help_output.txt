@@ -1,7 +1,7 @@
 ::
 
-    usage: tcset [-h] [-V] [--docker] [--tc-command | --tc-script]
-                 [--debug | --quiet] [--stacktrace] [--import-setting]
+    usage: tcset [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
+                 [--stacktrace] [--import-setting]
                  [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
                  [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_TIME]
                  [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
@@ -13,7 +13,8 @@
                  [--exclude-dst-network EXCLUDE_DST_NETWORK]
                  [--exclude-src-network EXCLUDE_SRC_NETWORK]
                  [--exclude-dst-port EXCLUDE_DST_PORT]
-                 [--exclude-src-port EXCLUDE_SRC_PORT]
+                 [--exclude-src-port EXCLUDE_SRC_PORT] [--docker]
+                 [--src-container SRC_CONTAINER] [--dst-container DST_CONTAINER]
                  device
 
     positional arguments:
@@ -22,7 +23,6 @@
     optional arguments:
       -h, --help            show this help message and exit
       -V, --version         show program's version number and exit
-      --docker              apply traffic control to a docker container.
       --tc-command          display tc commands to be executed and exit. these
                             commands are not actually executed.
       --tc-script           generate a shell script file that described tc
@@ -116,6 +116,11 @@
                             rule.
       --exclude-src-port EXCLUDE_SRC_PORT
                             exclude a specific source port from a shaping rule.
+
+    Docker:
+      --docker              apply traffic control to a docker container.
+      --src-container SRC_CONTAINER
+      --dst-container DST_CONTAINER
 
     Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues
