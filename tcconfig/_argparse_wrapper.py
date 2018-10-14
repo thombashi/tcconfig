@@ -25,9 +25,9 @@ class ArgparseWrapper(object):
             description=description,
             epilog=dedent(
                 """\
-            Documentation: https://tcconfig.rtfd.io/
-            Issue tracker: https://github.com/thombashi/tcconfig/issues
-            """
+                Documentation: https://tcconfig.rtfd.io/
+                Issue tracker: https://github.com/thombashi/tcconfig/issues
+                """
             ),
         )
         self.parser.add_argument(
