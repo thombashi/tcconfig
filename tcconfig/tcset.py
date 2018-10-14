@@ -298,7 +298,7 @@ class TcSetMain(Main):
         return 0
 
     def __extract_dst_network(self):
-        if self._options.dst_container: 
+        if self._options.dst_container:
             return self._dclient.extract_container_info(self._options.dst_container).ipaddr
 
         return self._options.dst_network
