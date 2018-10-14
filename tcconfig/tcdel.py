@@ -57,7 +57,7 @@ def parse_option():
 
 class TcDelMain(Main):
     def run(self, is_delete_all):
-        return_code = 0
+        return_code_list = []
 
         for tc_target in self._fetch_tc_target_list():
             tc = self.__create_tc_obj(tc_target)
@@ -67,16 +67,16 @@ class TcDelMain(Main):
 
             try:
                 if is_delete_all:
-                    return_code = tc.delete_all_tc()
+                    return_code_list.append(tc.delete_all_tc())
                 else:
-                    return_code = tc.delete_tc()
+                    return_code_list.append(tc.delete_tc())
             except NetworkInterfaceNotFoundError as e:
                 logger.error(e)
                 return errno.EINVAL
 
             self._dump_history(tc, Tc.Command.TCDEL)
 
-        return return_code
+        return self._get_return_code(return_code_list)
 
     def __create_tc_obj(self, tc_target):
         from .parser.shaping_rule import TcShapingRuleParser
