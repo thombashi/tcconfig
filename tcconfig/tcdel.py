@@ -115,8 +115,8 @@ class TcDelMain(Main):
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             src_port = filter_param.get(Tc.Param.SRC_PORT)
         else:
-            dst_network = options.dst_network
-            src_network = options.src_network
+            dst_network = self._extract_dst_network()
+            src_network = self._extract_src_network()
             dst_port = options.dst_port
             src_port = options.src_port
 
