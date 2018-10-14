@@ -84,7 +84,7 @@ class DockerClient(object):
 
             raise
 
-    def get_running_container_name_list(self):
+    def extract_running_container_name_list(self):
         running_container_name_list = []
 
         for container in self.__client.containers():
