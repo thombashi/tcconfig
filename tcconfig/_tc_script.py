@@ -29,17 +29,17 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     if tcconfig_command != Tc.Command.TCSHOW:
         script_line_list.extend(
             [
-                "# command sequence in this script attempt to simulate the following command:",
-                "# '{:s}'.".format(org_tcconfig_cmd),
+                "# command sequence in this script attempt to simulate the following "
+                "tcconfig command:",
+                "#",
+                "#   {:s}".format(org_tcconfig_cmd),
             ]
         )
 
     script_line_list.extend(
         [
             "#",
-            "# note: the command sequence execution may result different, compared to '{}.'".format(
-                org_tcconfig_cmd
-            ),
+            "# the script execution result may different from '{}'".format(org_tcconfig_cmd),
             "#",
             "# created by {:s} on {:s}.".format(
                 tcconfig_command, datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")
