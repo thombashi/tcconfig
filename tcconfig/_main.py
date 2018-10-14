@@ -32,10 +32,13 @@ class Main(object):
             print(command_history)
             return
 
+        try:
+            filename_suffix = tc.netem_param.make_param_name()
+        except AttributeError:
+            filename_suffix = None
+
         if command_output == TcCommandOutput.SCRIPT:
-            write_tc_script(
-                tc_command, command_history, filename_suffix=tc.netem_param.make_param_name()
-            )
+            write_tc_script(tc_command, command_history, filename_suffix=filename_suffix)
             return
 
         logger.debug("command history\n{}".format(command_history))
