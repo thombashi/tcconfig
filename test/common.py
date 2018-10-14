@@ -50,6 +50,4 @@ def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reorde
 
 
 def execute_tcdel(device):
-    return SubprocessRunner(
-        "{command:s} {target} --all".format(command=Tc.Command.TCDEL, target=device), dry_run=False
-    ).run()
+    return SubprocessRunner([Tc.Command.TCDEL, device, "--all"], dry_run=False).run()
