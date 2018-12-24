@@ -84,6 +84,7 @@ setuptools.setup(
     setup_requires=setuptools_require + pytest_runner,
     tests_require=tests_requires,
     extras_require={
+        "all": ["netifaces", "Pygments>=2.2.0"],
         "build": build_requires,
         "docs": docs_requires,
         "release": ["releasecmd>=0.0.12"],
