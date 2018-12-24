@@ -24,7 +24,7 @@ os:
   - linux
 
 install:
-  - bash -x .travis/install.sh
+  - travis_retry bash -x .travis/install.sh
 
 script:
   - bash -x .travis/run_test.sh
