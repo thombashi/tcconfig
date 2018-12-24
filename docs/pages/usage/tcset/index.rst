@@ -9,3 +9,5 @@ Examples of outgoing packet traffic control settings are as follows.
 .. include:: basic_usage.rst
 
 .. include:: advanced_usage.rst
+
+.. include:: docker_usage.rst

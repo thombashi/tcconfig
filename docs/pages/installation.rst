@@ -43,7 +43,7 @@ Python packages
 Dependency python packages are automatically installed during
 ``tcconfig`` installation via pip.
 
-- `DataPropery <https://github.com/thombashi/DataProperty>`__
+- `DataProperty <https://github.com/thombashi/DataProperty>`__
 - `ipaddress <https://pypi.org/project/ipaddress>`__
 - `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
