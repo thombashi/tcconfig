@@ -27,6 +27,7 @@ def write_examples(maker):
     maker.write_chapter("Set traffic control (``tcset`` command)")
     maker.write_file(usage_root.joinpath("tcset", "description.txt"))
     maker.write_file(usage_root.joinpath("tcset", "basic_usage.rst"))
+    maker.write_file(usage_root.joinpath("tcset", "docker_usage.rst"))
 
     maker.write_file(usage_root.joinpath("tcdel", "header.rst"))
     maker.write_file(usage_root.joinpath("tcdel", "usage.rst"))
