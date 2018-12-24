@@ -1,6 +1,6 @@
 colorama>=0.4.0
-DataProperty>=0.35.0
-docker>=3.5.0
+DataProperty>=0.36.0
+docker>=3.5.1
 enum34;python_version<"3.4"
 ipaddress;python_version<"3.3"
 logbook
@@ -8,8 +8,8 @@ msgfy>=0.0.4
 path.py
 pyparsing>=2.2.2
 simplejson>=3.16.0
-SimpleSQLite>=0.33.1
+SimpleSQLite>=0.33.3
 six
-subprocrunner>=0.15.3
-typepy>=0.2.4
+subprocrunner>=0.15.4
+typepy>=0.3.0
 voluptuous
