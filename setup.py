@@ -67,8 +67,7 @@ setuptools.setup(
     author_email=pkg_info["__email__"],
     description=summary,
     keywords=[
-        "traffic control", "tc", "traffic shaping", "bandwidth",
-        "latency", "packet loss",
+        "network", "traffic control", "tc", "traffic shaping", "docker",
     ],
     long_description=long_description,
     license=pkg_info["__license__"],
