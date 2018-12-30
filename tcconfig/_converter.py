@@ -144,7 +144,11 @@ class HumanReadableTime(object):
     def get_value(self):
         self.__preprocess()
 
-        return "{:f}{:s}".format(self.__number, self.__unit)
+        value_fmt = "{:f}{:s}"
+        if typepy.Integer(self.__number, strict_level=typepy.StrictLevel.MAX).is_type():
+            value_fmt = "{:d}{:s}"
+
+        return value_fmt.format(self.__number, self.__unit)
 
     def get_msec(self):
         self.__preprocess()
@@ -188,6 +192,10 @@ class HumanReadableTime(object):
             )
 
     def __normalize(self):
+        number = typepy.Integer(self.__number).try_convert()
+        if number is not None:
+            self.__number = number
+
         if self.__unit in self.__VALID_SEC_UNIT_LIST:
             self.__unit = "sec"
         elif self.__unit in self.__VALID_MSEC_UNIT_LIST:
