@@ -1,19 +1,22 @@
+PACKAGE := tcconfig
+BUILD_DIR := build
 DOCS_DIR := docs
-BUILD_DIR := _build
+DOCS_BUILD_DIR := $(DOCS_DIR)/_build
+
 
 .PHONY: build
 build:
 	@make clean
 	@python setup.py build
-	@rm -rf build/
+	@rm -rf $(BUILD_DIR)/
 
 .PHONY: clean
 clean:
-	@rm -rf build dist $(DOCS_DIR)/$(BUILD_DIR) .eggs/ .pytest_cache/ **/*/__pycache__/ *.egg-info/
+	@rm -rf $(PACKAGE)-*.*.*/ $(BUILD_DIR)/ dist/ $(DOCS_BUILD_DIR)/ .eggs/ .pytest_cache/ .tox/ **/*/__pycache__/ *.egg-info/
 
 .PHONY: docs
 docs:
-	@python setup.py build_sphinx --source-dir=$(DOCS_DIR)/ --build-dir=$(DOCS_DIR)/$(BUILD_DIR) --all-files
+	@python setup.py build_sphinx --source-dir=$(DOCS_DIR)/ --build-dir=$(DOCS_BUILD_DIR) --all-files
 
 .PHONY: fmt
 fmt:
