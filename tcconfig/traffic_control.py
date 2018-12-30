@@ -273,7 +273,7 @@ class TrafficControl(object):
 
     def set_tc(self):
         rule_finder = TcShapingRuleFinder(logger=logger, tc=self)
-        if self.__is_change_shaping_rule:
+        if self.__is_change_shaping_rule and self.tc_command_output == TcCommandOutput.NOT_SET:
             if rule_finder.find_filter_param() is not None:
                 self.__is_change_shaping_rule = True
             else:
