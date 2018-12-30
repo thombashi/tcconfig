@@ -32,6 +32,13 @@ MIN_REORDERING_RATE = 0  # [%]
 MAX_REORDERING_RATE = 100  # [%]
 
 
+def convert_rate_to_f(rate):
+    if typepy.is_not_null_string(rate):
+        return float(rate.rstrip("% "))
+
+    return rate
+
+
 class NetemParameter(object):
     @property
     def bandwidth_rate(self):
@@ -57,10 +64,10 @@ class NetemParameter(object):
         self.__bandwidth_rate = bandwidth_rate
         self.__latency_time = HumanReadableTime(latency_time)
         self.__latency_distro_time = HumanReadableTime(latency_distro_time)
-        self.__packet_loss_rate = packet_loss_rate  # [%]
-        self.__packet_duplicate_rate = packet_duplicate_rate  # [%]
-        self.__corruption_rate = corruption_rate  # [%]
-        self.__reordering_rate = reordering_rate
+        self.__packet_loss_rate = convert_rate_to_f(packet_loss_rate)  # [%]
+        self.__packet_duplicate_rate = convert_rate_to_f(packet_duplicate_rate)  # [%]
+        self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
+        self.__reordering_rate = convert_rate_to_f(reordering_rate)  # [%]
 
     def validate_netem_parameter(self):
         self.validate_bandwidth_rate()

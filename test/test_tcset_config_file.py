@@ -35,7 +35,7 @@ class Test_tcconfig(object):
             "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                 "filter_id": "800::800",
                 "delay": "10.0ms",
-                "loss": 0.01,
+                "loss": "0.01%",
                 "rate": "250Kbps",
                 "delay-distro": "2.0ms"
             },
@@ -48,7 +48,7 @@ class Test_tcconfig(object):
         "incoming": {
             "dst-network=192.168.10.0/24, protocol=ip": {
                 "filter_id": "800::800",
-                "corrupt": 0.02,
+                "corrupt": "0.02%",
                 "rate": "1500Kbps"
             }
         }

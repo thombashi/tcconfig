@@ -93,9 +93,9 @@ class Test_tcset_change(object):
                             "--delay 200.0ms",
                             "--delay-distro 20",
                             "--rate 100k",
-                            "--loss 0.01",
-                            "--duplicate 5",
-                            "--reorder 2",
+                            "--loss 0.01%",
+                            "--duplicate 5%",
+                            "--reorder 2%",
                             "--network 192.168.1.3",
                             "--add",
                         ]
@@ -121,11 +121,11 @@ class Test_tcset_change(object):
                             "dst-network=192.168.1.3/32, protocol=ip": {
                                 "filter_id": "800::801",
                                 "delay": "200.0ms",
-                                "loss": 0.01,
-                                "duplicate": 5,
+                                "loss": "0.01%",
+                                "duplicate": "5%",
                                 "delay-distro": "20.0ms",
                                 "rate": "100Kbps",
-                                "reorder": 2
+                                "reorder": "2%"
                             }
                         },
                         "incoming": {}
@@ -145,9 +145,9 @@ class Test_tcset_change(object):
                             "--delay 300ms",
                             "--delay-distro 30",
                             "--rate 200k",
-                            "--loss 0.02",
-                            "--duplicate 5.5",
-                            "--reorder 0.2",
+                            "--loss 0.02%",
+                            "--duplicate 5.5%",
+                            "--reorder 0.2%",
                             "--network 192.168.1.3",
                             "--change",
                         ]
@@ -173,11 +173,11 @@ class Test_tcset_change(object):
                             "dst-network=192.168.1.3/32, protocol=ip": {
                                 "filter_id": "800::801",
                                 "delay": "300.0ms",
-                                "loss": 0.02,
-                                "duplicate": 5.5,
+                                "loss": "0.02%",
+                                "duplicate": "5.5%",
                                 "delay-distro": "30.0ms",
                                 "rate": "200Kbps",
-                                "reorder": 0.2
+                                "reorder": "0.2%"
                             }
                         },
                         "incoming": {}

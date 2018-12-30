@@ -133,16 +133,16 @@ class Test_tcdel(object):
                         "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                                 "filter_id": "800::800",
                                 "delay": "10.0ms",
-                                "loss": 0.01,
-                                "duplicate": 0.5,
-                                "reorder": 0.2,
+                                "loss": "0.01%",
+                                "duplicate": "0.5%",
+                                "reorder": "0.2%",
                                 "rate": "248bps",
                                 "delay-distro": "2.0ms"
                             },
                             "dst-network=192.168.1.0/24, protocol=ip": {
                                 "filter_id": "800::801",
                                 "delay": "1.0ms",
-                                "loss": 1,
+                                "loss": "1%",
                                 "rate": "100Mbps"
                             }
                         },
@@ -150,9 +150,9 @@ class Test_tcdel(object):
                             "dst-network=192.168.11.0/24, dst-port=80, protocol=ip": {
                                 "filter_id": "800::801",
                                 "delay": "1.0ms",
-                                "loss": 0.02,
-                                "duplicate": 0.5,
-                                "reorder": 0.2,
+                                "loss": "0.02%",
+                                "duplicate": "0.5%",
+                                "reorder": "0.2%",
                                 "rate": "100Kbps"
                             },
                             "protocol=ip": {
@@ -191,12 +191,12 @@ class Test_tcdel(object):
                         "outgoing": {
                             "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
                                 "delay": "10.0ms",
-                                "loss": 0.01,
-                                "duplicate": 0.5,
+                                "loss": "0.01%",
+                                "duplicate": "0.5%",
                                 "filter_id": "800::800",
                                 "delay-distro": "2.0ms",
                                 "rate": "248bps",
-                                "reorder": 0.2
+                                "reorder": "0.2%"
                             }
                         },
                         "incoming": {
@@ -358,16 +358,16 @@ class Test_tcdel(object):
                             "dst-network=::1/128, dst-port=8080, protocol=ipv6": {
                                 "filter_id": "800::800",
                                 "delay": "10.0ms",
-                                "loss": 0.01,
-                                "duplicate": 5,
-                                "reorder": 2,
+                                "loss": "0.01%",
+                                "duplicate": "5%",
+                                "reorder": "2%",
                                 "rate": "248bps",
                                 "delay-distro": "2.0ms"
                             },
                             "dst-network=2001:db00::/24, protocol=ipv6": {
                                 "filter_id": "800::801",
                                 "delay": "1.0ms",
-                                "loss": 1,
+                                "loss": "1%",
                                 "rate": "100Mbps"
                             }
                         },
@@ -375,9 +375,9 @@ class Test_tcdel(object):
                             "dst-network=2001:db00::/25, dst-port=80, protocol=ipv6": {
                                 "filter_id": "800::801",
                                 "delay": "1.0ms",
-                                "loss": 0.02,
-                                "duplicate": 5,
-                                "reorder": 2,
+                                "loss": "0.02%",
+                                "duplicate": "5%",
+                                "reorder": "2%",
                                 "rate": "100Kbps"
                             },
                             "protocol=ipv6": {
@@ -427,12 +427,12 @@ class Test_tcdel(object):
                         "outgoing": {
                             "protocol=ipv6": {
                                 "delay": "10.0ms",
-                                "loss": 0.01,
-                                "duplicate": 5,
+                                "loss": "0.01%",
+                                "duplicate": "5%",
                                 "filter_id": "800::800",
                                 "delay-distro": "2.0ms",
                                 "rate": "248bps",
-                                "reorder": 2
+                                "reorder": "2%"
                             }
                         },
                         "incoming": {

@@ -129,7 +129,6 @@ def get_arg_parser():
     group.add_argument(
         "--loss",
         dest="packet_loss_rate",
-        type=float,
         default=0,
         help="""round trip packet loss rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
@@ -140,7 +139,6 @@ def get_arg_parser():
     group.add_argument(
         "--duplicate",
         dest="packet_duplicate_rate",
-        type=float,
         default=0,
         help="""round trip packet duplicate rate [%%]. the valid range is
         from {:d} to {:d}. (default=%(default)s)
@@ -151,7 +149,6 @@ def get_arg_parser():
     group.add_argument(
         "--corrupt",
         dest="corruption_rate",
-        type=float,
         default=0,
         help="""packet corruption rate [%%]. the valid range is from {:d} to {:d}.
         packet corruption means single bit error at a random offset in the packet.
@@ -163,7 +160,6 @@ def get_arg_parser():
     group.add_argument(
         "--reordering",
         dest="reordering_rate",
-        type=float,
         default=0,
         help="""packet reordering rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)

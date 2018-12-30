@@ -13,6 +13,7 @@ import pytest
 import typepy
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
+from tcconfig._netem_param import convert_rate_to_f
 
 from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
 
@@ -186,7 +187,7 @@ class Test_tcset_one_network(object):
             # finalize ---
             execute_tcdel(tc_target)
 
-    @pytest.mark.parametrize(["option", "value"], [["--duplicate", 50]])
+    @pytest.mark.parametrize(["option", "value"], [["--duplicate", 50], ["--duplicate", "10%"]])
     def test_dst_net_packet_duplicate(
         self, device_option, dst_host_option, transmitter, pingparser, option, value
     ):
@@ -205,7 +206,7 @@ class Test_tcset_one_network(object):
             # w/ packet duplicate tc ---
             assert (
                 SubprocessRunner(
-                    " ".join([Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)])
+                    " ".join([Tc.Command.TCSET, tc_target, "{:s} {}".format(option, value)])
                 ).run()
                 == 0
             )
@@ -216,7 +217,7 @@ class Test_tcset_one_network(object):
 
             # assertion ---
             duplicate_rate_diff = with_tc_duplicate_rate - without_tc_duplicate_rate
-            assert duplicate_rate_diff > (value * ASSERT_MARGIN)
+            assert duplicate_rate_diff > (convert_rate_to_f(value) * ASSERT_MARGIN)
 
             # finalize ---
             execute_tcdel(tc_target)
