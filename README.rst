@@ -5,7 +5,7 @@
 
 Summary
 =========
-A tc command wrapper. Easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth).
+A tc command wrapper. Make it easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth).
 
 .. image:: https://badge.fury.io/py/tcconfig.svg
     :target: https://badge.fury.io/py/tcconfig
@@ -96,13 +96,13 @@ e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset eth0 --loss 0.1
+    # tcset eth0 --loss 0.1%
 
 e.g. All of the above settings at once
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset eth0 --rate 100Kbps --delay 100ms --loss 0.1
+    # tcset eth0 --rate 100Kbps --delay 100ms --loss 0.1%
 
 e.g. Specify the IP address of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -123,6 +123,8 @@ Execute ``tcconfig`` with ``--docker`` option on a Docker host:
 .. code-block:: console
 
     # tcset <container name or ID> --docker ...
+
+You could use ``--src-container``/``--dst-container`` options to specify source/destination container.
 
 
 Set traffic control within a docker container
@@ -157,8 +159,8 @@ Example
 
 .. code-block:: console
 
-    # tcset eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
-    # tcset eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
+    # tcset eth0 --delay 10ms --delay-distro 2  --loss 0.01% --rate 0.25Mbps --network 192.168.0.10 --port 8080
+    # tcset eth0 --delay 1ms --loss 0.02% --rate 500Kbps --direction incoming
     # tcshow eth0
     {
         "eth0": {
@@ -167,7 +169,7 @@ Example
                     "filter_id": "800::800",
                     "delay": "10.0ms",
                     "delay-distro": "2.0ms",
-                    "loss": 0.01,
+                    "loss": "0.01%",
                     "rate": "250Kbps"
                 }
             },
@@ -175,7 +177,7 @@ Example
                 "protocol=ip": {
                     "filter_id": "800::800",
                     "delay": "1.0ms",
-                    "loss": 0.02,
+                    "loss": "0.02%",
                     "rate": "500Kbps"
                 }
             }
