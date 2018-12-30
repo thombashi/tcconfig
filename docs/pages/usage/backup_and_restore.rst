@@ -10,10 +10,10 @@ e.g. Backup configurations
 
 .. code-block:: console
 
-    # tcset eth0 --delay 10 --delay-distro 2  --loss 0.01 --rate 0.25M --network 192.168.0.10 --port 8080
-    # tcset eth0 --delay 1 --loss 0.02 --rate 500K --direction incoming
-    # tcset eth1 --delay 2.5 --delay-distro 1.2 --loss 0.01 --rate 0.25M --port 80
-    # tcset eth1 --corrupt 0.02 --rate 1.5M --direction incoming --network 192.168.10.0/24
+    # tcset eth0 --delay 10ms --delay-distro 2  --loss 0.01% --rate 0.25Mbps --network 192.168.0.10 --port 8080
+    # tcset eth0 --delay 1ms --loss 0.02% --rate 500Kbps --direction incoming
+    # tcset eth1 --delay 2.5ms --delay-distro 1.2 --loss 0.01% --rate 0.25Mbps --port 80
+    # tcset eth1 --corrupt 0.02% --rate 1.5Mbps --direction incoming --network 192.168.10.0/24
 
 Redirect configurations to the ``tcconfig.json`` file.
 
@@ -59,14 +59,14 @@ After restore
                     "filter_id": "800::800",
                     "delay": "2.5ms",
                     "delay-distro": "1.2ms",
-                    "loss": 0.01,
+                    "loss": "0.01%",
                     "rate": "250Kbps"
                 }
             },
             "incoming": {
                 "dst-network=192.168.10.0/24, protocol=ip": {
                     "filter_id": "800::800",
-                    "corrupt": 0.02,
+                    "corrupt": "0.02%",
                     "rate": "1500Kbps"
                 }
             }
@@ -77,7 +77,7 @@ After restore
                     "filter_id": "800::800",
                     "delay": "10.0ms",
                     "delay-distro": "2.0ms",
-                    "loss": 0.01,
+                    "loss": "0.01%",
                     "rate": "250Kbps"
                 }
             },
@@ -85,7 +85,7 @@ After restore
                 "protocol=ip": {
                     "filter_id": "800::800",
                     "delay": "1.0ms",
-                    "loss": 0.02,
+                    "loss": "0.02%",
                     "rate": "500Kbps"
                 }
             }

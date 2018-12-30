@@ -27,7 +27,7 @@ Set 0.5 minutes (30 seconds) network latency
 
     # tcset eth0 --delay 0.5min
 
-You can also use the following units:
+You can also use the following time units:
 
 - m/min/mins/minute/minutes
 - s/sec/secs/second/seconds
@@ -38,13 +38,13 @@ e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset eth0 --loss 0.1
+    # tcset eth0 --loss 0.1%
 
 e.g. All of the above settings at once
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
-    # tcset eth0 --rate 100Kbps --delay 100ms --loss 0.1
+    # tcset eth0 --rate 100Kbps --delay 100ms --loss 0.1%
 
 e.g. Specify the IP address of traffic control
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

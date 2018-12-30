@@ -4,9 +4,9 @@ You can delete a specific shaping rule by either network specifier or ``filter_i
 
 .. code-block:: console
 
-    # tcset eth0 --delay 10 --rate 10k --network 192.168.1.2 --overwrite
-    # tcset eth0 --delay 100 --rate 50k --network 192.168.1.3 --add
-    # tcset eth0 --delay 200 --rate 100k --network 192.168.0.0/24 --add
+    # tcset eth0 --delay 10ms --rate 10k --network 192.168.1.2 --overwrite
+    # tcset eth0 --delay 100ms --rate 50k --network 192.168.1.3 --add
+    # tcset eth0 --delay 200ms --rate 100k --network 192.168.0.0/24 --add
     # tcshow eth0
     {
         "eth0": {
