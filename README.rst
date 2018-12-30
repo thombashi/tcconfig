@@ -85,7 +85,7 @@ Set 0.5 minutes (30 seconds) network latency
 
     # tcset eth0 --delay 0.5min
 
-You can also use the following units:
+You can also use the following time units:
 
 - m/min/mins/minute/minutes
 - s/sec/secs/second/seconds
@@ -116,10 +116,7 @@ e.g. Specify the IP network and port of traffic control
 
     # tcset eth0 --delay 100ms --network 192.168.0.0/24 --port 80
 
-Docker container
-~~~~~~~~~~~~~~~~~~~~~~~~~~~~
-
-Set traffic control to a container
+Set traffic control to a docker container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Execute ``tcconfig`` with ``--docker`` option on a Docker host:
 
@@ -128,7 +125,7 @@ Execute ``tcconfig`` with ``--docker`` option on a Docker host:
     # tcset <container name or ID> --docker ...
 
 
-Set traffic control within a container
+Set traffic control within a docker container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You need to run a container with ``--cap-add NET_ADMIN`` option
 if you you would like to set a tc rule within a container:
