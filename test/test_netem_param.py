@@ -3,6 +3,7 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
+
 from tcconfig._netem_param import convert_rate_to_f
 
 
