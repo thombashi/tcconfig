@@ -142,7 +142,7 @@ Shaping rules for between multiple hosts
 Example Environment
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 Existed multiple networks (``192.168.0.0/24``, ``192.168.10.1/24``).
-Host ``A (192.168.0.100)`` and host ``C (192.168.0.100)`` belong to a different network.
+Host ``A (192.168.0.100)`` and host ``C (192.168.1.10)`` belong to a different network.
 Host ``B (192.168.0.2/192.168.1.2)`` belong to both networks.
 
 .. code-block:: console
