@@ -34,14 +34,14 @@ e.g. Set 100ms +- 20ms network latency with normal distribution
     # tcset eth0 --delay 100ms --delay-distro 20
 
 
-Set multiple traffic shaping rules per interface
+Set multiple traffic shaping rules to an interface
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can set multiple shaping rules to a network interface with ``--add`` option.
 
 .. code-block:: console
 
-    tcset eth0 --rate 500Mbps --network 192.168.2.0/24
-    tcset eth0 --rate 100Mbps --network 192.168.0.0/24 --add
+    tcset eth0 --rate 500Mbps --network 192.168.2.1/32
+    tcset eth0 --rate 100Mbps --network 192.168.2.2/32 --add
 
 
 Using IPv6
@@ -75,12 +75,13 @@ executing with ``--tc-command`` option
 :Example:
     .. code-block:: console
 
-        # tcset eth0 --delay 10ms --tc-command
+        $ tcset eth0 --delay 10ms --tc-command
         /sbin/tc qdisc add dev eth0 root handle 1a1a: htb default 1
         /sbin/tc class add dev eth0 parent 1a1a: classid 1a1a:1 htb rate 1000000kbit
-        /sbin/tc class add dev eth0 parent 1a1a: classid 1a1a:2 htb rate 1000000Kbit ceil 1000000Kbit
-        /sbin/tc qdisc add dev eth0 parent 1a1a:2 handle 1a9a: netem delay 10.000000ms
-        /sbin/tc filter add dev eth0 protocol ip parent 1a1a: prio 2 u32 match ip dst 0.0.0.0/0 match ip src 0.0.0.0/0 flowid 1a1a:2
+        /sbin/tc class add dev eth0 parent 1a1a: classid 1a1a:254 htb rate 1000000Kbit ceil 1000000Kbit
+        /sbin/tc qdisc add dev eth0 parent 1a1a:254 handle 2873: netem delay 10ms
+        /sbin/tc filter add dev eth0 protocol ip parent 1a1a: prio 2 u32 match ip dst 0.0.0.0/0 match ip src 0.0.0.0/0 flowid 1a1a:254
+
 
 
 Generate a ``tc`` script file
@@ -93,11 +94,11 @@ The created script can execute at other servers where tcconfig not installed
 :Example:
     .. code-block:: console
 
-        # tcset eth0 --delay 10ms --tc-script
-        [INFO] tcconfig: written a tc script to 'tcset_eth0.sh'
+        $ tcset eth0 --delay 10ms --tc-script
+        [INFO] tcconfig: written a tc script to 'tcset_eth0_delay10ms.sh'
 
         (copy the script to a remote server)
-        $ sudo ./tcset_eth0.sh
+        $ sudo ./tcset_eth0_delay10ms.sh
 
 
 Set a shaping rule for multiple destinations
@@ -141,7 +142,7 @@ Shaping rules for between multiple hosts
 
 Example Environment
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-Existed multiple networks (``192.168.0.0/24``, ``192.168.10.1/24``).
+Existed multiple networks (``192.168.0.0/24``, ``192.168.1.0/24``).
 Host ``A (192.168.0.100)`` and host ``C (192.168.1.10)`` belong to a different network.
 Host ``B (192.168.0.2/192.168.1.2)`` belong to both networks.
 
