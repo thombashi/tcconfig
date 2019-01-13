@@ -1,13 +1,15 @@
 .. image:: https://badge.fury.io/py/tcconfig.svg
     :target: https://badge.fury.io/py/tcconfig
+    :alt: PyPI package version
 
 .. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
-   :target: https://pypi.org/project/tcconfig
+    :target: https://pypi.org/project/tcconfig
+    :alt: Supported Python versions
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
-   :alt: Linux CI test status
+   :alt: Linux CI status
 
 .. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
-   :target: https://github.com/thombashi/tcconfig
-   :alt: GitHub repository
+    :target: https://github.com/thombashi/tcconfig
+    :alt: GitHub stars
