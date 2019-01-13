@@ -1,25 +1,26 @@
-**tcconfig**
-
-.. contents:: Table of Contents
+.. contents:: **tcconfig**
+   :backlinks: top
    :depth: 2
 
 Summary
 =========
-A tc command wrapper. Make it easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth).
+`tcconfig <https://github.com/thombashi/tcconfig>`__ is a tc command wrapper. Make it easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth).
 
 .. image:: https://badge.fury.io/py/tcconfig.svg
     :target: https://badge.fury.io/py/tcconfig
+    :alt: PyPI package version
 
 .. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
-   :target: https://pypi.org/project/tcconfig
+    :target: https://pypi.org/project/tcconfig
+    :alt: Supported Python versions
 
 .. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
    :target: https://travis-ci.org/thombashi/tcconfig
-   :alt: Linux CI test status
+   :alt: Linux CI status
 
 .. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
-   :target: https://github.com/thombashi/tcconfig
-   :alt: GitHub repository
+    :target: https://github.com/thombashi/tcconfig
+    :alt: GitHub stars
 
 Traffic control
 ------------------------
@@ -237,7 +238,7 @@ Dependency python packages are automatically installed during
 ``tcconfig`` installation via pip.
 
 - `DataProperty <https://github.com/thombashi/DataProperty>`__
-- `ipaddress <https://pypi.org/project/ipaddress>`__
+- `docker <https://github.com/docker/docker-py>`__
 - `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
 - `pyparsing <https://github.com/pyparsing/pyparsing//>`__

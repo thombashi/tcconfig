@@ -9,8 +9,8 @@ from __future__ import unicode_literals
 
 import sys
 
-import readmemaker
 from path import Path
+from readmemaker import ReadmeMaker
 
 
 PROJECT_NAME = "tcconfig"
@@ -36,7 +36,7 @@ def write_examples(maker):
     maker.write_file(usage_root.joinpath("tcshow", "usage.rst"))
 
     maker.write_chapter("For more information")
-    maker.write_line_list(
+    maker.write_lines(
         [
             "More examples are available at ",
             "https://{:s}.rtfd.io/en/latest/pages/usage/index.html".format(PROJECT_NAME),
@@ -45,7 +45,12 @@ def write_examples(maker):
 
 
 def main():
-    maker = readmemaker.ReadmeMaker(PROJECT_NAME, OUTPUT_DIR, is_make_toc=True)
+    maker = ReadmeMaker(
+        PROJECT_NAME,
+        OUTPUT_DIR,
+        is_make_toc=True,
+        project_url="https://github.com/thombashi/{}".format(PROJECT_NAME),
+    )
     maker.examples_dir_name = "usage"
 
     maker.write_chapter("Summary")
@@ -53,24 +58,24 @@ def main():
     maker.write_introduction_file("badges.txt")
     maker.write_introduction_file("feature.txt")
 
-    maker.write_line_list([".. image:: docs/gif/tcset_example.gif"])
+    maker.write_lines([".. image:: docs/gif/tcset_example.gif"])
 
     write_examples(maker)
 
-    maker.write_line_list([])
+    maker.write_lines([])
     maker.write_file(maker.doc_page_root_dir_path.joinpath("installation.rst"))
 
     maker.set_indent_level(0)
     maker.write_chapter("Documentation")
-    maker.write_line_list(["https://{:s}.rtfd.io/".format(PROJECT_NAME)])
+    maker.write_lines(["https://{:s}.rtfd.io/".format(PROJECT_NAME)])
 
     maker.write_chapter("Troubleshooting")
-    maker.write_line_list(
+    maker.write_lines(
         ["https://{:s}.rtfd.io/en/latest/pages/troubleshooting.html".format(PROJECT_NAME)]
     )
 
     maker.write_chapter("Docker image")
-    maker.write_line_list(["https://hub.docker.com/r/thombashi/tcconfig/"])
+    maker.write_lines(["https://hub.docker.com/r/thombashi/tcconfig/"])
 
     return 0
 
