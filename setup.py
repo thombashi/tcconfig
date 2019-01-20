@@ -79,7 +79,7 @@ setuptools.setup(
         "Tracker": "{:s}/issues".format(REPOSITORY_URL),
     },
 
-    python_requires='>=2.7,!=3.0.*,!=3.1.*,!=3.2.*',
+    python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*",
     install_requires=setuptools_require + install_requires,
     setup_requires=setuptools_require + pytest_runner,
     tests_require=tests_requires,
@@ -108,8 +108,10 @@ setuptools.setup(
         "Programming Language :: Python :: 3.5",
         "Programming Language :: Python :: 3.6",
         "Programming Language :: Python :: 3.7",
+        "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: System :: Networking",
         "Topic :: System :: Systems Administration",
+        "Topic :: Software Development :: Testing",
     ],
     entry_points={
         "console_scripts": [
