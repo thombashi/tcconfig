@@ -65,8 +65,8 @@ class TcQdiscParser(AbstractParser):
 
         if entry_list:
             self.__con.create_table_from_data_matrix(
-                table_name=self._tc_subcommand,
-                attr_name_list=[
+                self._tc_subcommand,
+                [
                     Tc.Param.DEVICE,
                     "parent",
                     "handle",
@@ -78,7 +78,7 @@ class TcQdiscParser(AbstractParser):
                     "reorder",
                     "rate",
                 ],
-                data_matrix=entry_list,
+                entry_list,
             )
 
         logger.debug(

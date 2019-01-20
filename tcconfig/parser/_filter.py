@@ -146,9 +146,7 @@ class TcFilterParser(AbstractParser):
 
         if filter_data_matrix:
             self.__con.create_table_from_data_matrix(
-                table_name=self._tc_subcommand,
-                attr_name_list=list(self.__get_filter()),
-                data_matrix=filter_data_matrix,
+                self._tc_subcommand, list(self.__get_filter()), filter_data_matrix
             )
 
         logger.debug(
