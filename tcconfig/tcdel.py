@@ -96,7 +96,7 @@ class TcDelMain(Main):
             shaping_rule_parser.parse()
             result = shaping_rule_parser.con.select_as_dict(
                 table_name=TcSubCommand.FILTER.value,
-                column_list=[
+                columns=[
                     Tc.Param.SRC_NETWORK,
                     Tc.Param.DST_NETWORK,
                     Tc.Param.SRC_PORT,

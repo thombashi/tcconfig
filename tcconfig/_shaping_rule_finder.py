@@ -50,7 +50,7 @@ class TcShapingRuleFinder(object):
 
         try:
             result = self._parser.con.select_as_dict(
-                column_list=[Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
+                columns=[Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
                 table_name=table_name,
                 where=where_query,
             )
