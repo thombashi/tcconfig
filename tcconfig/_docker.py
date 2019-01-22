@@ -55,15 +55,6 @@ class DockerClient(object):
         self.__con = connect_memdb()
         IfIndex.attach(self.__con)
 
-    def __verify_container(self, container):
-        if len(self.__client.containers()) == 0:
-            raise ContainerNotFoundError()
-
-        try:
-            self.__client.inspect_container(container=container)
-        except NotFound:
-            raise ContainerNotFoundError(target=container)
-
     def exist_container(self, container):
         try:
             self.__verify_container(container)
@@ -158,6 +149,15 @@ class DockerClient(object):
 
     def fetch_veth_list(self, container_name):
         return [veth_record.ifname for veth_record in self.select_veth(container_name)]
+
+    def __verify_container(self, container):
+        if len(self.__client.containers()) == 0:
+            raise ContainerNotFoundError()
+
+        try:
+            self.__client.inspect_container(container=container)
+        except NotFound:
+            raise ContainerNotFoundError(target=container)
 
     def __get_netns_path(self, container_name):
         return self.__netns_root_path / container_name
