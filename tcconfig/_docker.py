@@ -199,11 +199,12 @@ class DockerClient(object):
         peer_ifindex_prefix_regexp = re.compile("^if")
 
         try:
-            for line in proc.stdout.splitlines():
+            for i, line in enumerate(proc.stdout.splitlines()):
                 match = veth_groups_regexp.search(line)
                 if not match:
                     continue
 
+                logger.debug("[veth {:02d}] {}".format(i, line))
                 ifindex, ifname, peer_ifindex = match.groups()
                 IfIndex.insert(
                     IfIndex(
