@@ -48,7 +48,7 @@ class DockerClient(object):
         return Path("/var/run/netns")
 
     def __init__(self, tc_command_output=TcCommandOutput.NOT_SET):
-        self.__client = APIClient()
+        self.__client = APIClient(version="auto")
         self.__host_name = os.uname()[1]
         self.__tc_command_output = tc_command_output
 
