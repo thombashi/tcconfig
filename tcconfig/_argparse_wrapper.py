@@ -38,6 +38,9 @@ class ArgparseWrapper(object):
 
         group = self.parser.add_argument_group("Debug")
         group.add_argument(
+            "--debug-query", action="store_true", default=False, help="for debug print."
+        )
+        group.add_argument(
             "--stacktrace",
             dest="is_output_stacktrace",
             action="store_true",

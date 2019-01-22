@@ -18,6 +18,7 @@ import msgfy
 import subprocrunner as spr
 import typepy
 from path import Path
+from simplesqlite import SimpleSQLite
 
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
 from ._error import ParameterError
@@ -92,6 +93,8 @@ def initialize_cli(options):
 
     if options.is_output_stacktrace:
         spr.SubprocessRunner.is_output_stacktrace = options.is_output_stacktrace
+
+    SimpleSQLite.global_debug_query = options.debug_query
 
 
 def is_execute_tc_command(tc_command_output):
