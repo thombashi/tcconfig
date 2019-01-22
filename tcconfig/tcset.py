@@ -111,7 +111,7 @@ def get_arg_parser():
         """.format(
             min_value=Tc.ValueRange.LatencyTime.MIN,
             max_value=Tc.ValueRange.LatencyTime.MAX,
-            unit="/".join(HumanReadableTime.get_valid_unit_list()),
+            unit="/".join(HumanReadableTime.get_valid_units()),
         ),
     )
     group.add_argument(
@@ -123,7 +123,7 @@ def get_arg_parser():
         network latency distribution is uniform, without this option. valid time units are: {unit}.
         if no unit string found, considered milliseconds as the time unit.
         """.format(
-            unit="/".join(HumanReadableTime.get_valid_unit_list())
+            unit="/".join(HumanReadableTime.get_valid_units())
         ),
     )
     group.add_argument(

@@ -138,7 +138,7 @@ class HumanReadableTime(object):
         return self.get_value()
 
     @classmethod
-    def get_valid_unit_list(cls):
+    def get_valid_units(cls):
         return cls.__VALID_UNIT_LIST
 
     def get_value(self):
