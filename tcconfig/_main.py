@@ -25,7 +25,7 @@ class Main(object):
 
         return self._options.src_network
 
-    def _fetch_tc_target_list(self):
+    def _fetch_tc_targets(self):
         if not self._options.use_docker:
             return [self._options.device]
 

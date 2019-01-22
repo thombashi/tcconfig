@@ -224,7 +224,7 @@ class TcSetMain(Main):
     def run(self):
         return_code_list = []
 
-        for device in self._fetch_tc_target_list():
+        for device in self._fetch_tc_targets():
             tc = self.__create_tc(device)
             return_code = self.__check_tc(tc)
 

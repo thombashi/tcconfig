@@ -60,7 +60,7 @@ class TcDelMain(Main):
     def run(self, is_delete_all):
         return_code_list = []
 
-        for tc_target in self._fetch_tc_target_list():
+        for tc_target in self._fetch_tc_targets():
             tc = self.__create_tc_obj(tc_target)
             if self._options.log_level == logbook.INFO:
                 spr.set_log_level(logbook.ERROR)
