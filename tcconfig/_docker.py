@@ -15,7 +15,7 @@ from collections import namedtuple
 import msgfy
 import six
 from docker import APIClient
-from docker.errors import NotFound
+from docker.errors import APIError, NotFound
 from path import Path
 from simplesqlite import connect_memdb
 from simplesqlite.model import Integer, Model, Text
@@ -78,7 +78,7 @@ class DockerClient(object):
     def extract_running_container_name_list(self):
         running_container_name_list = []
 
-        for container in self.__client.containers():
+        for container in self.__get_containers():
             if container.get("State") != "running":
                 continue
 
@@ -87,7 +87,12 @@ class DockerClient(object):
         return running_container_name_list
 
     def extract_container_info(self, container):
-        container_map = self.__client.inspect_container(container=container)
+        try:
+            container_map = self.__client.inspect_container(container=container)
+        except APIError as e:
+            logger.error(e)
+            sys.exit(1)
+
         container_name = container_map["Name"].lstrip("/")
         container_state = container_map["State"]
 
@@ -151,13 +156,23 @@ class DockerClient(object):
         return [veth_record.ifname for veth_record in self.select_veth(container_name)]
 
     def __verify_container(self, container):
-        if len(self.__client.containers()) == 0:
+        if len(self.__get_containers()) == 0:
             raise ContainerNotFoundError()
 
         try:
             self.__client.inspect_container(container=container)
         except NotFound:
             raise ContainerNotFoundError(target=container)
+        except APIError as e:
+            logger.error(e)
+            sys.exit(1)
+
+    def __get_containers(self):
+        try:
+            return self.__client.containers()
+        except APIError as e:
+            logger.error(e)
+            sys.exit(1)
 
     def __get_netns_path(self, container_name):
         return self.__netns_root_path / container_name
