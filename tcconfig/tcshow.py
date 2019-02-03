@@ -141,7 +141,7 @@ def main():
 
     logger.debug("command history\n{}".format(command_history))
 
-    print_tc(json.dumps(tc_param, ensure_ascii=False, indent=4), options.color)
+    print_tc(json.dumps(tc_params, ensure_ascii=False, indent=4), options.color)
 
     return 0
 
