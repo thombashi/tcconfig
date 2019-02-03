@@ -76,18 +76,10 @@ def print_tc(text, is_colorize):
         print(text)
 
 
-def main():
-    options = parse_option()
-
-    initialize_cli(options)
-    check_command_installation("tc")
-
-    if options.tc_command_output != TcCommandOutput.NOT_SET:
-        spr.SubprocessRunner.default_is_dry_run = True
-
+def extract_tc_params(options):
     dclient = DockerClient(options.tc_command_output)
+    tc_params = {}
 
-    tc_param = {}
     for device in options.device:
         try:
             if options.use_docker and dclient.exist_container(container=device):
@@ -98,20 +90,19 @@ def main():
                 container_info = dclient.extract_container_info(container)
 
                 for veth in dclient.fetch_veth_list(container_info.name):
-                    tc_param.update(
+                    tc_params.update(
                         TcShapingRuleParser(
                             veth, options.ip_version, options.tc_command_output, logger
                         ).get_tc_parameter()
                     )
-                    tc_param[
-                        "{veth} (container_id={id}, image={image})".format(
-                            veth=veth, id=container_info.id[:12], image=container_info.image
-                        )
-                    ] = tc_param.pop(veth)
+                    key = "{veth} (container_id={id}, image={image})".format(
+                        veth=veth, id=container_info.id[:12], image=container_info.image
+                    )
+                    tc_params[key] = tc_params.pop(veth)
             else:
                 verify_network_interface(device, options.tc_command_output)
 
-                tc_param.update(
+                tc_params.update(
                     TcShapingRuleParser(
                         device, options.ip_version, options.tc_command_output, logger
                     ).get_tc_parameter()
@@ -120,6 +111,19 @@ def main():
             logger.warn(e)
             continue
 
+    return tc_params
+
+
+def main():
+    options = parse_option()
+
+    initialize_cli(options)
+    check_command_installation("tc")
+
+    if options.tc_command_output != TcCommandOutput.NOT_SET:
+        spr.SubprocessRunner.default_is_dry_run = True
+
+    tc_params = extract_tc_params(options)
     command_history = "\n".join(spr.SubprocessRunner.get_history())
 
     if options.tc_command_output == TcCommandOutput.STDOUT:
