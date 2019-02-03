@@ -2,6 +2,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import sys
+
+import msgfy
+from docker.errors import DockerException
+
 from ._const import TcCommandOutput
 from ._docker import DockerClient
 from ._logger import logger
@@ -14,7 +19,11 @@ class Main(object):
 
         self._dclient = None
         if self._options.use_docker:
-            self._dclient = DockerClient(options.tc_command_output)
+            try:
+                self._dclient = DockerClient(options.tc_command_output)
+            except DockerException as e:
+                logger.error(msgfy.to_error_message(e))
+                sys.exit(1)
 
     def _extract_dst_network(self):
         if self._options.dst_container:

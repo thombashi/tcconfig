@@ -9,8 +9,10 @@ from __future__ import absolute_import, print_function, unicode_literals
 
 import sys
 
+import msgfy
 import simplejson as json
 import subprocrunner as spr
+from docker.errors import DockerException
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
@@ -79,7 +81,11 @@ def print_tc(text, is_colorize):
 def extract_tc_params(options):
     dclient = None
     if options.use_docker:
-        dclient = DockerClient(options.tc_command_output)
+        try:
+            dclient = DockerClient(options.tc_command_output)
+        except DockerException as e:
+            logger.error(msgfy.to_error_message(e))
+            sys.exit(1)
 
     tc_params = {}
 
