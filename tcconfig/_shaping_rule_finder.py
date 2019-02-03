@@ -43,7 +43,7 @@ class TcShapingRuleFinder(object):
     def find_filter_param(self):
         import simplesqlite
 
-        where_list = self.__get_filter_where_condition_list()
+        where_list = self.__get_filter_conditions()
         where_query = And(where_list)
         table_name = TcSubCommand.FILTER.value
         self.__logger.debug("find filter param: table={}, where={}".format(table_name, where_query))
@@ -75,7 +75,7 @@ class TcShapingRuleFinder(object):
         return param
 
     def find_parent(self):
-        where_list = self.__get_filter_where_condition_list()
+        where_list = self.__get_filter_conditions()
         table_name = TcSubCommand.FILTER.value
         parent = self._parser.con.fetch_value(
             select=Tc.Param.FLOW_ID, table_name=table_name, where=And(where_list)
@@ -117,10 +117,10 @@ class TcShapingRuleFinder(object):
 
     def get_filter_string(self):
         return ", ".join(
-            [where.to_query() for where in self.__get_filter_where_condition_list() if where.value]
+            [where.to_query() for where in self.__get_filter_conditions() if where.value]
         )
 
-    def __get_filter_where_condition_list(self):
+    def __get_filter_conditions(self):
         if self.__tc.direction == TrafficDirection.OUTGOING:
             device = self._parser.device
         elif self.__tc.direction == TrafficDirection.INCOMING:
