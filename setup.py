@@ -87,7 +87,7 @@ setuptools.setup(
         "all": ["netifaces", "Pygments>=2.2.0"],
         "build": build_requires,
         "docs": docs_requires,
-        "release": ["releasecmd>=0.0.13,<0.1.0"],
+        "release": ["releasecmd>=0.0.18,<0.1.0"],
         "test": tests_requires,
     },
 
