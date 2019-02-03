@@ -8,6 +8,7 @@ DOCS_BUILD_DIR := $(DOCS_DIR)/_build
 build:
 	@make clean
 	@python setup.py build
+	@twine check dist/*
 	@rm -rf $(BUILD_DIR)/
 
 .PHONY: clean
