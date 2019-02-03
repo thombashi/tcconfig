@@ -49,7 +49,7 @@ def get_arg_parser():
     parser = ArgparseWrapper(__version__)
 
     if set(["-d", "--device"]).intersection(set(sys.argv)):
-        # [deprecated] for backward compatibility
+        # deprecated: remain for backward compatibility
         parser.parser.add_argument(
             "-d", "--device", required=True, help="network device name (e.g. eth0)"
         )
