@@ -1,7 +1,7 @@
 ::
 
     usage: tcshow [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
-                  [--stacktrace] [--ipv6] [--docker] [--color]
+                  [--debug-query] [--stacktrace] [--ipv6] [--docker] [--color]
                   device [device ...]
 
     optional arguments:
@@ -18,6 +18,7 @@
       --color        colorize the output. require Pygments package.
 
     Debug:
+      --debug-query  for debug print.
       --stacktrace   print stack trace for debug information. --debug option
                      required to see the debug print.
 

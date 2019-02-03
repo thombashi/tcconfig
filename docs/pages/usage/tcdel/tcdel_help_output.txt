@@ -1,7 +1,7 @@
 ::
 
     usage: tcdel [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--stacktrace] [-a] [--id FILTER_ID]
+                 [--debug-query] [--stacktrace] [-a] [--id FILTER_ID]
                  [--direction {outgoing,incoming}] [--network DST_NETWORK]
                  [--src-network SRC_NETWORK] [--port DST_PORT]
                  [--src-port SRC_PORT] [--ipv6] [--docker]
@@ -21,6 +21,7 @@
       --quiet               suppress execution log messages.
 
     Debug:
+      --debug-query         for debug print.
       --stacktrace          print stack trace for debug information. --debug
                             option required to see the debug print.
 
@@ -56,7 +57,9 @@
     Docker:
       --docker              apply traffic control to a docker container.
       --src-container SRC_CONTAINER
+                            specify source container id or name.
       --dst-container DST_CONTAINER
+                            specify destination container id or name.
 
     Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues

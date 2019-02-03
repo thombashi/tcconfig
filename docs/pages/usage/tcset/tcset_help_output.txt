@@ -1,7 +1,7 @@
 ::
 
     usage: tcset [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--stacktrace] [--import-setting]
+                 [--debug-query] [--stacktrace] [--import-setting]
                  [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
                  [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_TIME]
                  [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
@@ -43,6 +43,7 @@
                             rules.
 
     Debug:
+      --debug-query         for debug print.
       --stacktrace          print stack trace for debug information. --debug
                             option required to see the debug print.
 
@@ -120,7 +121,9 @@
     Docker:
       --docker              apply traffic control to a docker container.
       --src-container SRC_CONTAINER
+                            specify source container id or name.
       --dst-container DST_CONTAINER
+                            specify destination container id or name.
 
     Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues
