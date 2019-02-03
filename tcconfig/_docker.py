@@ -17,7 +17,7 @@ import six
 from docker import APIClient
 from docker.errors import APIError, NotFound
 from path import Path
-from simplesqlite import connect_memdb
+from simplesqlite import OperationalError, connect_memdb
 from simplesqlite.model import Integer, Model, Text
 from simplesqlite.query import And, Where
 from subprocrunner import SubprocessRunner
@@ -227,14 +227,17 @@ class DockerClient(object):
                     continue
 
                 ifindex, ifname, peer_ifindex = match.groups()
-                IfIndex.insert(
-                    IfIndex(
-                        host=self.__host_name,
-                        ifindex=int(ifindex),
-                        ifname=ifname,
-                        peer_ifindex=int(peer_ifindex_prefix_regexp.sub("", peer_ifindex)),
+                try:
+                    IfIndex.insert(
+                        IfIndex(
+                            host=self.__host_name,
+                            ifindex=int(ifindex),
+                            ifname=ifname,
+                            peer_ifindex=int(peer_ifindex_prefix_regexp.sub("", peer_ifindex)),
+                        )
                     )
-                )
+                except OperationalError as e:
+                    logger.error(msgfy.to_error_message(e))
         finally:
             IfIndex.commit()
 
