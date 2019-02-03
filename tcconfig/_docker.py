@@ -204,7 +204,7 @@ class DockerClient(object):
                 if not match:
                     continue
 
-                logger.debug("[veth {:02d}] {}".format(i, line))
+                logger.debug("parse veth @{} [{:02d}] {}".format(container_name, i, line))
                 ifindex, ifname, peer_ifindex = match.groups()
                 IfIndex.insert(
                     IfIndex(
@@ -221,6 +221,7 @@ class DockerClient(object):
                 return proc.returncode
 
             for line in proc.stdout.splitlines():
+                logger.debug("parse veth @docker-host [{:02d}] {}".format(i, line))
                 match = veth_groups_regexp.search(line)
                 if not match:
                     continue
