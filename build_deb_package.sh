@@ -12,7 +12,7 @@ PKG_NAME="tcconfig"
 rm -rf $DIST_DIR_NAME
 mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 
-pip install --upgrade pip
+pip install --upgrade "pip<19"
 pip install --upgrade .[build]
 
 PKG_VERSION=$(python -c "import tcconfig; print(tcconfig.__version__)")
