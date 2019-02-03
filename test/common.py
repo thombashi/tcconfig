@@ -9,10 +9,9 @@ from __future__ import absolute_import, print_function
 import sys
 
 from subprocrunner import SubprocessRunner
-from typepy import RealNumber
-
 from tcconfig._const import Tc
 from tcconfig._converter import Humanreadable, HumanReadableTime
+from typepy import RealNumber
 
 
 DEADLINE_TIME = 3  # [sec]

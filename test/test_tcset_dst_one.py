@@ -12,7 +12,6 @@ import pingparsing
 import pytest
 import typepy
 from subprocrunner import SubprocessRunner
-
 from tcconfig._const import Tc
 from tcconfig._netem_param import convert_rate_to_f
 

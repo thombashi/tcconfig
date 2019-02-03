@@ -9,7 +9,6 @@ from __future__ import absolute_import
 import pytest
 import simplejson as json
 from subprocrunner import SubprocessRunner
-
 from tcconfig._const import Tc
 
 from .common import execute_tcdel, print_test_result

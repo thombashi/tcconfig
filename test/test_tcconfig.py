@@ -10,7 +10,6 @@ import pytest
 import typepy
 from allpairspy import AllPairs
 from subprocrunner import SubprocessRunner
-
 from tcconfig._const import Tc
 
 from .common import execute_tcdel

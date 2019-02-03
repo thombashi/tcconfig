@@ -9,7 +9,6 @@ from __future__ import unicode_literals
 import random
 
 import pytest
-
 from tcconfig._iptables import (
     VALID_CHAIN_LIST,
     IptablesMangleController,

@@ -10,7 +10,6 @@ import pingparsing
 import pytest
 import typepy
 from subprocrunner import SubprocessRunner
-
 from tcconfig._const import Tc
 
 from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
