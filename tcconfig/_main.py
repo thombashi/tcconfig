@@ -11,7 +11,10 @@ from ._tc_script import write_tc_script
 class Main(object):
     def __init__(self, options):
         self._options = options
-        self._dclient = DockerClient(options.tc_command_output)
+
+        self._dclient = None
+        if self._options.use_docker:
+            self._dclient = DockerClient(options.tc_command_output)
 
     def _extract_dst_network(self):
         if self._options.dst_container:

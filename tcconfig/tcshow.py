@@ -77,7 +77,10 @@ def print_tc(text, is_colorize):
 
 
 def extract_tc_params(options):
-    dclient = DockerClient(options.tc_command_output)
+    dclient = None
+    if options.use_docker:
+        dclient = DockerClient(options.tc_command_output)
+
     tc_params = {}
 
     for device in options.device:
