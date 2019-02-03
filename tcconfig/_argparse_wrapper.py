@@ -132,8 +132,8 @@ class ArgparseWrapper(object):
             help="apply traffic control to a docker container.",
         )
         if is_add_srcdst:
-            group.add_argument("--src-container", help="")
-            group.add_argument("--dst-container", help="")
+            group.add_argument("--src-container", help="specify source container id or name.")
+            group.add_argument("--dst-container", help="specify destination container id or name.")
 
         return group
 
