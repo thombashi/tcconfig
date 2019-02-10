@@ -56,6 +56,7 @@ build_exe_requires = ["pyinstaller>=3.4"]
 build_wheel_requires = ["twine", "wheel"]
 build_requires = build_exe_requires + build_wheel_requires
 
+color_requires = ["Pygments>=2.2.0"]
 setuptools_require = ["setuptools>=38.3.0"]
 pytest_runner = ["pytest-runner"] if need_pytest() else []
 
@@ -85,10 +86,11 @@ setuptools.setup(
     setup_requires=setuptools_require + pytest_runner,
     tests_require=tests_requires,
     extras_require={
-        "all": ["netifaces", "Pygments>=2.2.0"],
+        "all": ["netifaces"] + color_requires,
         "build": build_requires,
         "buildexe": build_exe_requires,
         "buildwhl": build_wheel_requires,
+        "color": color_requires,
         "docs": docs_requires,
         "release": ["releasecmd>=0.0.18,<0.1.0"],
         "test": tests_requires,
