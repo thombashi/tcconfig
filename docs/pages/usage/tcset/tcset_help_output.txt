@@ -49,8 +49,9 @@
 
     Traffic Control Parameters:
       --rate BANDWIDTH_RATE, --bandwidth-rate BANDWIDTH_RATE
-                            network bandwidth rate [bit per second]. valid units
-                            are either: K/M/G/Kbps/Mbps/Gbps e.g. --rate 10Mbps
+                            network bandwidth rate [bit per second]. the minimum
+                            bandwidth rate is 8 bps. valid units are either:
+                            K/M/G/Kbps/Mbps/Gbps. e.g. tcset eth0 --rate 10Mbps
       --delay NETWORK_LATENCY
                             round trip network delay. the valid range is from 0ms
                             to 60min. valid time units are: m/min/mins/minute/minu
