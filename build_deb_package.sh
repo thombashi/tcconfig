@@ -35,7 +35,7 @@ Maintainer: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 Architecture: amd64
 Description: $(cat docs/pages/introduction/summary.txt)
 Homepage: https://github.com/thombashi/tcconfig
-Priority: extra
+Priority: optional
 _CONTROL_
 
 fakeroot dpkg-deb --build $DIST_DIR_NAME $DIST_DIR_NAME
