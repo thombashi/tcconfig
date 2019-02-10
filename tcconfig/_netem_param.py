@@ -44,7 +44,7 @@ class NetemParameter(object):
     def bandwidth_rate(self):
         # convert bandwidth string [K/M/G bit per second] to a number
         try:
-            return HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+            return HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilobits()
         except (ParameterError, UnitNotFoundError, TypeError):
             return None
 
@@ -104,7 +104,7 @@ class NetemParameter(object):
             return
 
         # convert bandwidth string [K/M/G bit per second] to a number
-        bandwidth_rate = HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        bandwidth_rate = HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilobits()
 
         if not RealNumber(bandwidth_rate).is_type():
             raise ParameterError("bandwidth_rate must be a number", value=bandwidth_rate)

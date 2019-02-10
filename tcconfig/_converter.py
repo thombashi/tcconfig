@@ -74,7 +74,7 @@ class HumanReadableBits(object):
 
         return size * self.__get_coefficient(unit)
 
-    def to_kilo_bit(self):
+    def to_kilobits(self):
         """
         :param str readable_size: human readable size (bytes). e.g. 256 M
         :raises ValueError:

@@ -37,7 +37,7 @@ def _get_iproute2_upper_limite_rate():
     # bits per second older than 3.14.0
     # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
-    return HumanReadableBits("32G", kilo_size=KILO_SIZE).to_kilo_bit()
+    return HumanReadableBits("32G", kilo_size=KILO_SIZE).to_kilobits()
 
 
 def _read_iface_speed(tc_device):

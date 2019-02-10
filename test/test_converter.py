@@ -92,7 +92,7 @@ class Test_to_kilo_bit(object):
         ],
     )
     def test_normal(self, value, kilo_size, expected):
-        assert HumanReadableBits(value, kilo_size).to_kilo_bit() == expected
+        assert HumanReadableBits(value, kilo_size).to_kilobits() == expected
 
 
 class Test_HumanReadableTime_get_value(object):
