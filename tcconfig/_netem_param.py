@@ -104,19 +104,18 @@ class NetemParameter(object):
             return
 
         # convert bandwidth string [K/M/G bit per second] to a number
-        bandwidth_rate = HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilobits()
+        hr_bits = HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE)
 
-        if not RealNumber(bandwidth_rate).is_type():
-            raise ParameterError("bandwidth_rate must be a number", value=bandwidth_rate)
-
-        if bandwidth_rate <= 0:
-            raise ParameterError("bandwidth_rate must be greater than zero", value=bandwidth_rate)
+        if hr_bits.to_bits() < 8:
+            raise ParameterError(
+                "bandwidth rate must be greater or equals to 8bps", value=hr_bits.to_bits()
+            )
 
         no_limit_kbits = get_no_limit_kbits(self.__device)
-        if bandwidth_rate > no_limit_kbits:
+        if hr_bits.to_kilobits() > no_limit_kbits:
             raise ParameterError(
                 "exceed bandwidth rate limit",
-                value="{} kbps".format(bandwidth_rate),
+                value="{} kbps".format(hr_bits.to_kilobits()),
                 expected="less than {} kbps".format(no_limit_kbits),
             )
 
