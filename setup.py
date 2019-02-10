@@ -49,11 +49,12 @@ with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
 with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
     tests_requires = [line.strip() for line in f if line.strip()]
 
-with open(os.path.join(REQUIREMENT_DIR, "build_requirements.txt")) as f:
-    build_requires = [line.strip() for line in f if line.strip()]
-
 with open(os.path.join(REQUIREMENT_DIR, "docs_requirements.txt")) as f:
     docs_requires = [line.strip() for line in f if line.strip()]
+
+build_exe_requires = ["pyinstaller>=3.4"]
+build_wheel_requires = ["twine", "wheel"]
+build_requires = build_exe_requires + build_wheel_requires
 
 setuptools_require = ["setuptools>=38.3.0"]
 pytest_runner = ["pytest-runner"] if need_pytest() else []
@@ -86,6 +87,8 @@ setuptools.setup(
     extras_require={
         "all": ["netifaces", "Pygments>=2.2.0"],
         "build": build_requires,
+        "buildexe": build_exe_requires,
+        "buildwhl": build_wheel_requires,
         "docs": docs_requires,
         "release": ["releasecmd>=0.0.18,<0.1.0"],
         "test": tests_requires,
