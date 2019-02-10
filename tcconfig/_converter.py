@@ -68,7 +68,7 @@ class HumanReadableBits(object):
         try:
             size = _RE_NUMBER.search(self.__readable_size).group()
         except AttributeError:
-            raise ParameterError("invalid value", value=self.__readable_size)
+            raise ParameterError("readable_size require number", value=self.__readable_size)
         size = float(size)
         if size < 0:
             raise ParameterError("size must be greater or equals to zero", value=size)
