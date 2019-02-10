@@ -66,7 +66,7 @@ class ContainerNotFoundError(TargetNotFoundError):
         from ._docker import DockerClient
 
         dclient = DockerClient()
-        container_list = dclient.extract_running_container_name_list()
+        container_list = dclient.extract_running_container_names()
         item_list = [super(ContainerNotFoundError, self).__str__(*args, **kwargs)]
 
         if container_list:
