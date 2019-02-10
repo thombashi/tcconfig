@@ -21,7 +21,7 @@ _RE_NUMBER = re.compile(r"^[-\+]?[0-9\.]+")
 
 
 class Humanreadable(object):
-    __UNIT_LIST = [
+    __UNITS = [
         ByteUnit(regexp=re.compile("^b$", re.IGNORECASE), factor=0),
         ByteUnit(regexp=re.compile("^bps$", re.IGNORECASE), factor=0),
         ByteUnit(regexp=re.compile("^k$", re.IGNORECASE), factor=1),
@@ -92,7 +92,7 @@ class Humanreadable(object):
     def __get_coefficient(self, unit_str):
         self.__validate_kilo_size()
 
-        for unit in self.__UNIT_LIST:
+        for unit in self.__UNITS:
             if unit.regexp.search(unit_str):
                 return self.kilo_size ** unit.factor
 
@@ -102,15 +102,12 @@ class Humanreadable(object):
 
 
 class HumanReadableTime(object):
-    __VALID_MINUTE_UNIT_LIST = ["m", "min", "mins", "minute", "minutes"]
-    __VALID_SEC_UNIT_LIST = ["s", "sec", "secs", "second", "seconds"]
-    __VALID_MSEC_UNIT_LIST = ["ms", "msec", "msecs", "millisecond", "milliseconds"]
-    __VALID_USEC_UNIT_LIST = ["us", "usec", "usecs", "microsecond", "microseconds"]
+    __VALID_MINUTE_UNITS = ["m", "min", "mins", "minute", "minutes"]
+    __VALID_SEC_UNITS = ["s", "sec", "secs", "second", "seconds"]
+    __VALID_MSEC_UNITS = ["ms", "msec", "msecs", "millisecond", "milliseconds"]
+    __VALID_USEC_UNITS = ["us", "usec", "usecs", "microsecond", "microseconds"]
     __VALID_UNIT_LIST = (
-        __VALID_MINUTE_UNIT_LIST
-        + __VALID_SEC_UNIT_LIST
-        + __VALID_MSEC_UNIT_LIST
-        + __VALID_USEC_UNIT_LIST
+        __VALID_MINUTE_UNITS + __VALID_SEC_UNITS + __VALID_MSEC_UNITS + __VALID_USEC_UNITS
     )
 
     def __init__(self, readable_time):
@@ -196,13 +193,13 @@ class HumanReadableTime(object):
         if number is not None:
             self.__number = number
 
-        if self.__unit in self.__VALID_SEC_UNIT_LIST:
+        if self.__unit in self.__VALID_SEC_UNITS:
             self.__unit = "sec"
-        elif self.__unit in self.__VALID_MSEC_UNIT_LIST:
+        elif self.__unit in self.__VALID_MSEC_UNITS:
             self.__unit = "ms"
-        elif self.__unit in self.__VALID_USEC_UNIT_LIST:
+        elif self.__unit in self.__VALID_USEC_UNITS:
             self.__unit = "us"
-        elif self.__unit in self.__VALID_MINUTE_UNIT_LIST:
+        elif self.__unit in self.__VALID_MINUTE_UNITS:
             self.__number *= 60
             self.__unit = "sec"
 
