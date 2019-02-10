@@ -51,10 +51,15 @@ class HumanReadableBits(object):
                 "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.__kilo_size
             )
 
+        self.__bits = None
+
     def to_bits(self):
         """
         :raises ParameterError:
         """
+
+        if self.__bits is not None:
+            return self.__bits
 
         logger.debug("human readable size to bit: {}".format(self.__readable_size))
 
@@ -72,7 +77,9 @@ class HumanReadableBits(object):
 
         unit = _RE_NUMBER.sub("", self.__readable_size).strip().lower()
 
-        return size * self.__get_coefficient(unit)
+        self.__bits = size * self.__get_coefficient(unit)
+
+        return self.__bits
 
     def to_kilobits(self):
         """
