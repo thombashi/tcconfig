@@ -7,7 +7,7 @@
 from __future__ import division
 
 import pytest
-from tcconfig._converter import Humanreadable, HumanReadableTime
+from tcconfig._converter import HumanReadableBits, HumanReadableTime
 from tcconfig._error import ParameterError, UnitNotFoundError
 
 
@@ -52,7 +52,7 @@ class Test_to_bit(object):
         ],
     )
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(value, kilo_size).to_bit() == expected
+        assert HumanReadableBits(value, kilo_size).to_bit() == expected
 
     @pytest.mark.parametrize(
         ["value", "kilo_size", "exception"],
@@ -72,7 +72,7 @@ class Test_to_bit(object):
     )
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
-            Humanreadable(value, kilo_size).to_bit()
+            HumanReadableBits(value, kilo_size).to_bit()
 
 
 class Test_to_kilo_bit(object):
@@ -92,7 +92,7 @@ class Test_to_kilo_bit(object):
         ],
     )
     def test_normal(self, value, kilo_size, expected):
-        assert Humanreadable(value, kilo_size).to_kilo_bit() == expected
+        assert HumanReadableBits(value, kilo_size).to_kilo_bit() == expected
 
 
 class Test_HumanReadableTime_get_value(object):

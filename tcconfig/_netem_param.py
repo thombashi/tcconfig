@@ -14,7 +14,7 @@ from typepy import RealNumber
 
 from ._common import validate_within_min_max
 from ._const import KILO_SIZE, Tc
-from ._converter import Humanreadable, HumanReadableTime
+from ._converter import HumanReadableBits, HumanReadableTime
 from ._error import ParameterError, UnitNotFoundError
 from ._network import get_no_limit_kbits
 
@@ -44,7 +44,7 @@ class NetemParameter(object):
     def bandwidth_rate(self):
         # convert bandwidth string [K/M/G bit per second] to a number
         try:
-            return Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+            return HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
         except (ParameterError, UnitNotFoundError, TypeError):
             return None
 
@@ -104,7 +104,7 @@ class NetemParameter(object):
             return
 
         # convert bandwidth string [K/M/G bit per second] to a number
-        bandwidth_rate = Humanreadable(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
+        bandwidth_rate = HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilo_bit()
 
         if not RealNumber(bandwidth_rate).is_type():
             raise ParameterError("bandwidth_rate must be a number", value=bandwidth_rate)

@@ -20,7 +20,7 @@ ByteUnit = namedtuple("ByteUnit", "regexp factor")
 _RE_NUMBER = re.compile(r"^[-\+]?[0-9\.]+")
 
 
-class Humanreadable(object):
+class HumanReadableBits(object):
     __UNITS = [
         ByteUnit(regexp=re.compile("^b$", re.IGNORECASE), factor=0),
         ByteUnit(regexp=re.compile("^bps$", re.IGNORECASE), factor=0),

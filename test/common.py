@@ -10,7 +10,7 @@ import sys
 
 from subprocrunner import SubprocessRunner
 from tcconfig._const import Tc
-from tcconfig._converter import Humanreadable, HumanReadableTime
+from tcconfig._converter import HumanReadableBits, HumanReadableTime
 from typepy import RealNumber
 
 
@@ -40,7 +40,7 @@ def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reorde
     )
 
     try:
-        Humanreadable(rate, kilo_size=1000).to_bit()
+        HumanReadableBits(rate, kilo_size=1000).to_bit()
     except (TypeError, ValueError):
         pass
     else:
