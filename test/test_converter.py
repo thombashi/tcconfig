@@ -52,7 +52,7 @@ class Test_to_bit(object):
         ],
     )
     def test_normal(self, value, kilo_size, expected):
-        assert HumanReadableBits(value, kilo_size).to_bit() == expected
+        assert HumanReadableBits(value, kilo_size).to_bits() == expected
 
     @pytest.mark.parametrize(
         ["value", "kilo_size", "exception"],
@@ -72,7 +72,7 @@ class Test_to_bit(object):
     )
     def test_exception(self, value, kilo_size, exception):
         with pytest.raises(exception):
-            HumanReadableBits(value, kilo_size).to_bit()
+            HumanReadableBits(value, kilo_size).to_bits()
 
 
 class Test_to_kilo_bit(object):

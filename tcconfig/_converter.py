@@ -51,7 +51,7 @@ class HumanReadableBits(object):
                 "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.__kilo_size
             )
 
-    def to_bit(self):
+    def to_bits(self):
         """
         :raises ParameterError:
         """
@@ -80,7 +80,7 @@ class HumanReadableBits(object):
         :raises ValueError:
         """
 
-        return self.to_bit() / self.__kilo_size
+        return self.to_bits() / self.__kilo_size
 
     def __get_coefficient(self, unit_str):
         for unit in self.__UNITS:
