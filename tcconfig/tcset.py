@@ -97,8 +97,9 @@ def get_arg_parser():
         "--bandwidth-rate",
         dest="bandwidth_rate",
         help="""network bandwidth rate [bit per second].
-        valid units are either: K/M/G/Kbps/Mbps/Gbps
-        e.g. --rate 10Mbps
+        the minimum bandwidth rate is 8 bps.
+        valid units are either: K/M/G/Kbps/Mbps/Gbps.
+        e.g. tcset eth0 --rate 10Mbps
         """,
     )
     group.add_argument(
