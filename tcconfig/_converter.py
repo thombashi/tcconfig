@@ -43,7 +43,7 @@ class HumanReadableBits(object):
         """
 
         self.__readable_size = readable_size
-        self.kilo_size = kilo_size
+        self.__kilo_size = kilo_size
 
         self.__validate_kilo_size()
 
@@ -79,14 +79,14 @@ class HumanReadableBits(object):
         :raises ValueError:
         """
 
-        return self.to_bit() / self.kilo_size
+        return self.to_bit() / self.__kilo_size
 
     def __validate_kilo_size(self):
         VALID_KILLO_SIZE = [1000, 1024]
 
-        if self.kilo_size not in VALID_KILLO_SIZE:
+        if self.__kilo_size not in VALID_KILLO_SIZE:
             raise ParameterError(
-                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.kilo_size
+                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.__kilo_size
             )
 
     def __get_coefficient(self, unit_str):
@@ -94,7 +94,7 @@ class HumanReadableBits(object):
 
         for unit in self.__UNITS:
             if unit.regexp.search(unit_str):
-                return self.kilo_size ** unit.factor
+                return self.__kilo_size ** unit.factor
 
         raise UnitNotFoundError(
             "unit not found", value=unit_str, available_unit="b/bps/k/kbps/m/mbps/g/gbps/t/tbps"
