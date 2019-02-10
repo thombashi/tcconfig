@@ -45,7 +45,11 @@ class HumanReadableBits(object):
         self.__readable_size = readable_size
         self.__kilo_size = kilo_size
 
-        self.__validate_kilo_size()
+        VALID_KILLO_SIZE = (1000, 1024)
+        if self.__kilo_size not in VALID_KILLO_SIZE:
+            raise ParameterError(
+                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.__kilo_size
+            )
 
     def to_bit(self):
         """
@@ -81,17 +85,7 @@ class HumanReadableBits(object):
 
         return self.to_bit() / self.__kilo_size
 
-    def __validate_kilo_size(self):
-        VALID_KILLO_SIZE = [1000, 1024]
-
-        if self.__kilo_size not in VALID_KILLO_SIZE:
-            raise ParameterError(
-                "invalid kilo size", expected=VALID_KILLO_SIZE, value=self.__kilo_size
-            )
-
     def __get_coefficient(self, unit_str):
-        self.__validate_kilo_size()
-
         for unit in self.__UNITS:
             if unit.regexp.search(unit_str):
                 return self.__kilo_size ** unit.factor
