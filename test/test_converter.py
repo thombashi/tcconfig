@@ -58,10 +58,10 @@ class Test_to_bit(object):
         ["value", "kilo_size", "exception"],
         [
             ["10", 1000, UnitNotFoundError],
-            ["", 1000, TypeError],
             [None, 1000, TypeError],
             [True, 1000, TypeError],
             [float("nan"), 1000, TypeError],
+            ["", 1000, ParameterError],
             ["a", 1000, ParameterError],
             ["1k0 ", 1000, ParameterError],
             ["10kb", 1000, ParameterError],

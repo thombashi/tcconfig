@@ -58,10 +58,7 @@ class HumanReadableBits(object):
 
         logger.debug("human readable size to bit: {}".format(self.__readable_size))
 
-        if not typepy.is_not_null_string(self.__readable_size):
-            raise TypeError(
-                "readable_size must be a string: actual={}".format(self.__readable_size)
-            )
+        typepy.String(self.__readable_size).validate(error_message="readable_size must be a string")
 
         self.__readable_size = self.__readable_size.strip()
 
