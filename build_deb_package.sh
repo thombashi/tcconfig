@@ -20,7 +20,7 @@ PKG_VERSION=$(python -c "import tcconfig; print(tcconfig.__version__)")
 echo "$PKG_NAME $PKG_VERSION"
 
 
-# build an executable binary file
+# build executable binary files
 pyinstaller cli_tcset.py --clean --onefile --distpath $DIST_DIR_PATH --name tcset
 pyinstaller cli_tcdel.py --clean --onefile --distpath $DIST_DIR_PATH --name tcdel
 pyinstaller cli_tcshow.py --clean --onefile --distpath $DIST_DIR_PATH --name tcshow
