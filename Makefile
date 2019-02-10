@@ -15,6 +15,7 @@ clean:
 	@rm -rf $(PACKAGE)-*.*.*/ \
 		$(DOCS_BUILD_DIR) \
 		dist/ \
+		pip-wheel-metadata/ \
 		.eggs/ \
 		.pytest_cache/ \
 		.tox/ \
