@@ -66,11 +66,13 @@ class ContainerNotFoundError(TargetNotFoundError):
         from ._docker import DockerClient
 
         dclient = DockerClient()
-        container_list = dclient.extract_running_container_names()
+        container_names = dclient.extract_running_container_names()
         item_list = [super(ContainerNotFoundError, self).__str__(*args, **kwargs)]
 
-        if container_list:
-            item_list.append("(available running containers: {})".format(", ".join(container_list)))
+        if container_names:
+            item_list.append(
+                "(available running containers: {})".format(", ".join(container_names))
+            )
         else:
             item_list.append("(running container not found)")
 
