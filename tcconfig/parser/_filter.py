@@ -15,10 +15,10 @@ import simplejson as json
 import typepy
 from six import text_type
 
+from ._interface import AbstractParser
 from .._const import Tc, TcSubCommand
 from .._logger import logger
 from .._network import sanitize_network
-from ._interface import AbstractParser
 
 
 class TcFilterParser(AbstractParser):

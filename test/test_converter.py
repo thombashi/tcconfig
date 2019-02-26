@@ -7,6 +7,7 @@
 from __future__ import division
 
 import pytest
+
 from tcconfig._converter import HumanReadableBits, HumanReadableTime
 from tcconfig._error import ParameterError, UnitNotFoundError
 

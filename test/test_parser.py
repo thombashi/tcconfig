@@ -8,10 +8,11 @@ from __future__ import print_function, unicode_literals
 
 import pytest
 import six
+from simplesqlite import connect_memdb
+
 import tcconfig.parser._filter
 import tcconfig.parser._qdisc
 import tcconfig.parser.shaping_rule
-from simplesqlite import connect_memdb
 from tcconfig._const import Tc
 
 from .common import print_test_result

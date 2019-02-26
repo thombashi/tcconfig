@@ -5,6 +5,7 @@
 """
 
 import pytest
+
 import tcconfig._common
 from tcconfig._const import TcSubCommand
 from tcconfig._tc_command_helper import get_tc_base_command

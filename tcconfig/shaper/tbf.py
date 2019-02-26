@@ -9,11 +9,11 @@ from __future__ import absolute_import, unicode_literals
 import typepy
 from subprocrunner import SubprocessRunner
 
+from ._interface import AbstractShaper
 from .._common import logging_context, run_command_helper
 from .._const import ShapingAlgorithm, TcSubCommand, TrafficDirection
 from .._error import ParameterError
 from .._network import get_anywhere_network, get_no_limit_kbits
-from ._interface import AbstractShaper
 
 
 class TbfShaper(AbstractShaper):

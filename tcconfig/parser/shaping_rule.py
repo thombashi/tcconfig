@@ -14,15 +14,15 @@ import subprocrunner
 import typepy
 from typepy import Integer
 
+from ._class import TcClassParser
+from ._filter import TcFilterParser
+from ._qdisc import TcQdiscParser
 from .._common import is_execute_tc_command
 from .._const import Tc, TcSubCommand, TrafficDirection
 from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
 from .._network import is_anywhere_network
 from .._tc_command_helper import get_tc_base_command, run_tc_show
-from ._class import TcClassParser
-from ._filter import TcFilterParser
-from ._qdisc import TcQdiscParser
 
 
 class TcShapingRuleParser(object):

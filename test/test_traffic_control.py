@@ -8,6 +8,7 @@ import itertools
 
 import pytest
 from allpairspy import AllPairs
+
 from tcconfig._const import ShapingAlgorithm, Tc, TrafficDirection
 from tcconfig._error import ParameterError, UnitNotFoundError
 from tcconfig._netem_param import (

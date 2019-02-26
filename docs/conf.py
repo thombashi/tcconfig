@@ -4,6 +4,7 @@ import os
 import sys
 
 import sphinx_rtd_theme
+
 from tcconfig import __author__, __copyright__, __version__
 
 

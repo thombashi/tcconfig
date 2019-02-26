@@ -11,9 +11,9 @@ import re
 import simplejson as json
 import typepy
 
+from ._interface import AbstractParser
 from .._const import ShapingAlgorithm, Tc, TcSubCommand
 from .._logger import logger
-from ._interface import AbstractParser
 
 
 class TcClassParser(AbstractParser):
