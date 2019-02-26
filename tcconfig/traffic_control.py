@@ -472,8 +472,9 @@ class TrafficControl(object):
                 ignore_error_msg_regexp=re.compile(
                     "|".join(
                         [
-                            "RTNETLINK answers: Invalid argument",
-                            "RTNETLINK answers: No such file or directory",
+                            "RTNETLINK answers: Invalid argument",  # debian/ubuntu
+                            "RTNETLINK answers: No such file or directory",  # debian/ubuntu
+                            "Error: Cannot find specified qdisc on specified device",  # RHEL/fedora
                         ]
                     )
                 ),
