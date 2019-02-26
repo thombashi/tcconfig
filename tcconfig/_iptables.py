@@ -24,8 +24,14 @@ VALID_CHAIN_LIST = ["PREROUTING", "INPUT", "OUTPUT"]
 
 
 def get_iptables_base_command():
-    if find_bin_path("iptables"):
-        return "{:s} iptables".format(find_bin_path("iptables"))
+    iptables_path = find_bin_path("iptables")
+
+    if iptables_path:
+        if re.search("iptables$", iptables_path):
+            return iptables_path
+
+        # debian/ubuntu may return /sbin/xtables-multi
+        return "{:s} iptables".format(iptables_path)
 
     return None
 
