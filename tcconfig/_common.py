@@ -72,20 +72,20 @@ def check_command_installation(command):
 def initialize_cli(options):
     from ._logger import set_log_level
 
-    debug_format_str = (
+    debug_level_format_str = (
         "[{record.level_name}] {record.channel} {record.func_name} "
         "({record.lineno}): {record.message}"
     )
     if options.log_level == logbook.DEBUG:
-        info_format_str = debug_format_str
+        info_level_format_str = debug_level_format_str
     else:
-        info_format_str = "[{record.level_name}] {record.channel}: {record.message}"
+        info_level_format_str = "[{record.level_name}] {record.channel}: {record.message}"
 
     logbook.more.ColorizedStderrHandler(
-        level=logbook.DEBUG, format_string=debug_format_str
+        level=logbook.DEBUG, format_string=debug_level_format_str
     ).push_application()
     logbook.more.ColorizedStderrHandler(
-        level=logbook.INFO, format_string=info_format_str
+        level=logbook.INFO, format_string=info_level_format_str
     ).push_application()
 
     set_log_level(options.log_level)
