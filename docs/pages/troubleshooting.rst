@@ -18,10 +18,8 @@ Phenomenon
 
 Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Load ``sch_netem`` module solves the problem.
-
-The cause of the error is ``sch_netem`` kernel module not loaded in your system.
-Execute the following command to load ``sch_netem`` module:
+Execute the following command to load ``sch_netem`` module.
+The cause of the error is ``sch_netem`` kernel module not loaded in your system which required to set up traffic control. 
 
 .. code:: console
 
