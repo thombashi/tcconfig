@@ -6,15 +6,19 @@ RTNETLINK answers: No such file or directory
 
 Phenomenon
 ~~~~~~~~~~~~~~~~~~~~~~~~
-``tcset`` command failed with an error message ``RTNETLINK answers: No such file or directory``.
+``tcset`` command failed with an error message:
+
+    - ``RTNETLINK answers: No such file or directory``
+    - ``Error: Specified qdisc not found``
 
 :Example:
 
     .. code:: console
 
-        # tcset eth0 --rate 1M
-        [ERROR] tcconfig: RTNETLINK answers: No such file or directory
-
+        $ sudo tcset eth0 --rate 1Mbps
+        [ERROR] tcconfig: command execution failed
+          command=/usr/sbin/tc qdisc add dev eth0 parent 1a1a:2 handle 2873: netem delay 10ms
+          stderr=Error: Specified qdisc not found.
 
 Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~
@@ -23,7 +27,7 @@ The cause of the error is ``sch_netem`` kernel module not loaded in your system 
 
 .. code:: console
 
-    # modprobe sch_netem
+    $ sudo modprobe sch_netem
 
 If the command failed with the below message, you need to install additional kernel module.
 
@@ -31,8 +35,8 @@ If the command failed with the below message, you need to install additional ker
 
     .. code:: console
 
-        # modprobe sch_netem
-        modprobe: FATAL: Module sch_netem not found in directory /lib/modules/4.11.3-202.fc25.x86_64
+        $ sudo modprobe sch_netem
+        modprobe: FATAL: Module sch_netem not found in directory /lib/modules/4.20.11-200.fc29.x86_64
 
 In that case, install ``kernel-modules-extra`` package.
 This package includes the ``sch_netem`` module.
@@ -41,14 +45,14 @@ This package includes the ``sch_netem`` module.
 
     .. code:: console
 
-        # dnf install kernel-modules-extra
+        $ sudo dnf install -y kernel-modules-extra
 
 Load ``sch_netem`` module after the package installation.
 
 .. code:: console
 
-    # modprobe sch_netem
-    #
+    $ sudo modprobe sch_netem
+    $
 
 
 RTNETLINK answers: Operation not supported
