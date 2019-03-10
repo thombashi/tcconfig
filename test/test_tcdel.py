@@ -280,7 +280,7 @@ class Test_tcdel(object):
                     "--ipv6",
                 ]
             )
-            print(proc.command)
+            print(proc.command_str)
             assert proc.run() == 0
             assert (
                 SubprocessRunner(
