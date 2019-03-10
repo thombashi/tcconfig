@@ -11,13 +11,13 @@ import re
 
 import typepy
 
-from ._interface import AbstractShaper
 from .._common import is_execute_tc_command, logging_context, run_command_helper
 from .._const import ShapingAlgorithm, TcSubCommand
 from .._error import TcAlreadyExist
 from .._logger import logger
 from .._network import get_no_limit_kbits
 from .._tc_command_helper import run_tc_show
+from ._interface import AbstractShaper
 
 
 class HtbShaper(AbstractShaper):

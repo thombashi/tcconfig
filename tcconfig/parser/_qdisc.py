@@ -12,9 +12,9 @@ import pyparsing as pp
 import simplejson as json
 import typepy
 
-from ._interface import AbstractParser
 from .._const import Tc, TcSubCommand
 from .._logger import logger
+from ._interface import AbstractParser
 
 
 class TcQdiscParser(AbstractParser):
