@@ -45,6 +45,7 @@ Dependency python packages are automatically installed during
 
 - `DataProperty <https://github.com/thombashi/DataProperty>`__
 - `docker <https://github.com/docker/docker-py>`__
+- `humanreadable <https://github.com/thombashi/humanreadable>`__
 - `logbook <https://logbook.readthedocs.io/en/stable/>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
 - `pyparsing <https://github.com/pyparsing/pyparsing//>`__
