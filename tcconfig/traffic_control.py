@@ -499,7 +499,7 @@ class TrafficControl(object):
 
                 return errno.EPERM
 
-            command_list = [
+            commands = [
                 "{:s} del dev {:s} root".format(
                     get_tc_base_command(TcSubCommand.QDISC), self.ifb_device
                 ),
@@ -507,7 +507,7 @@ class TrafficControl(object):
                 "{:s} link delete {:s} type ifb".format(find_bin_path("ip"), self.ifb_device),
             ]
 
-            if all([spr.SubprocessRunner(command).run() != 0 for command in command_list]):
+            if all([spr.SubprocessRunner(command).run() != 0 for command in commands]):
                 return 2
 
         logger.info(logging_msg)
