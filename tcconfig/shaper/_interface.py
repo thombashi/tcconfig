@@ -11,10 +11,10 @@ import abc
 import six
 import subprocrunner
 import typepy
+from humanreadable import ParameterError
 
 from .._common import run_command_helper
 from .._const import TcSubCommand, TrafficDirection
-from .._error import ParameterError
 from .._iptables import IptablesMangleMarkEntry
 from .._logger import logger
 from .._network import get_anywhere_network

@@ -8,14 +8,13 @@ from __future__ import absolute_import, unicode_literals
 
 import hashlib
 
+import humanreadable as hr
 import six
 import typepy
 from typepy import RealNumber
 
 from ._common import validate_within_min_max
-from ._const import KILO_SIZE, Tc
-from ._converter import HumanReadableBits, HumanReadableTime
-from ._error import ParameterError, UnitNotFoundError
+from ._const import Tc
 from ._network import get_no_limit_kbits
 
 
@@ -42,10 +41,12 @@ def convert_rate_to_f(rate):
 class NetemParameter(object):
     @property
     def bandwidth_rate(self):
-        # convert bandwidth string [K/M/G bit per second] to a number
+        if self.__bandwidth_rate is None:
+            return None
+
         try:
-            return HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE).to_kilobits()
-        except (ParameterError, UnitNotFoundError, TypeError):
+            return hr.BitPerSecond(self.__bandwidth_rate).kilo_bps
+        except (hr.ParameterError, hr.UnitNotFoundError, TypeError):
             return None
 
     def __init__(
@@ -62,12 +63,18 @@ class NetemParameter(object):
         self.__device = device
 
         self.__bandwidth_rate = bandwidth_rate
-        self.__latency_time = HumanReadableTime(latency_time)
-        self.__latency_distro_time = HumanReadableTime(latency_distro_time)
         self.__packet_loss_rate = convert_rate_to_f(packet_loss_rate)  # [%]
         self.__packet_duplicate_rate = convert_rate_to_f(packet_duplicate_rate)  # [%]
         self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
         self.__reordering_rate = convert_rate_to_f(reordering_rate)  # [%]
+
+        self.__latency_time = None
+        if latency_time:
+            self.__latency_time = hr.Time(latency_time, hr.Time.Unit.MILLISECOND)
+
+        self.__latency_distro_time = None
+        if latency_distro_time:
+            self.__latency_distro_time = hr.Time(latency_distro_time, hr.Time.Unit.MILLISECOND)
 
     def validate_netem_parameter(self):
         self.validate_bandwidth_rate()
@@ -86,14 +93,16 @@ class NetemParameter(object):
             self.__reordering_rate,
         ]
 
-        if all(
-            [
-                not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
-                for netem_param_value in netem_param_value_list
-            ]
-            + [self.__latency_time <= HumanReadableTime(Tc.ValueRange.LatencyTime.MIN)]
-        ):
-            raise ParameterError(
+        check_results = [
+            not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
+            for netem_param_value in netem_param_value_list
+        ]
+
+        if self.__latency_time:
+            check_results.append(self.__latency_time <= hr.Time(Tc.ValueRange.LatencyTime.MIN))
+
+        if all(check_results):
+            raise hr.ParameterError(
                 "there are no valid net emulation parameters found. "
                 "at least one or more following parameters are required: "
                 "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
@@ -103,19 +112,18 @@ class NetemParameter(object):
         if typepy.is_null_string(self.__bandwidth_rate):
             return
 
-        # convert bandwidth string [K/M/G bit per second] to a number
-        hr_bits = HumanReadableBits(self.__bandwidth_rate, kilo_size=KILO_SIZE)
+        hr_bps = hr.BitPerSecond(self.__bandwidth_rate)
 
-        if hr_bits.to_bits() < 8:
-            raise ParameterError(
-                "bandwidth rate must be greater or equals to 8bps", value=hr_bits.to_bits()
+        if hr_bps.bps < 8:
+            raise hr.ParameterError(
+                "bandwidth rate must be greater or equals to 8bps", value=hr_bps.bps
             )
 
         no_limit_kbits = get_no_limit_kbits(self.__device)
-        if hr_bits.to_kilobits() > no_limit_kbits:
-            raise ParameterError(
+        if hr_bps.kilo_bps > no_limit_kbits:
+            raise hr.ParameterError(
                 "exceed bandwidth rate limit",
-                value="{} kbps".format(hr_bits.to_kilobits()),
+                value="{} kbps".format(hr_bps.kilo_bps),
                 expected="less than {} kbps".format(no_limit_kbits),
             )
 
@@ -125,11 +133,11 @@ class NetemParameter(object):
         if self.bandwidth_rate:
             item_list.append("rate{}".format(self.bandwidth_rate))
 
-        if self.__latency_time.get_msec():
-            item_list.append("delay{}".format(self.__latency_time))
+        if self.__latency_time and self.__latency_time.milliseconds > 0:
+            item_list.append("delay{}".format(self.__latency_time.milliseconds))
 
-        if self.__latency_distro_time.get_msec():
-            item_list.append("distro{}".format(self.__latency_distro_time))
+        if self.__latency_distro_time and self.__latency_distro_time.milliseconds > 0:
+            item_list.append("distro{}".format(self.__latency_distro_time.milliseconds))
 
         if self.__packet_loss_rate:
             item_list.append("loss{}".format(self.__packet_loss_rate))
@@ -154,11 +162,15 @@ class NetemParameter(object):
         if self.__packet_duplicate_rate > 0:
             item_list.append("duplicate {:f}%".format(self.__packet_duplicate_rate))
 
-        if self.__latency_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-            item_list.append("delay {}".format(self.__latency_time))
+        if self.__latency_time and self.__latency_time > hr.Time(Tc.ValueRange.LatencyTime.MIN):
+            item_list.append("delay {}ms".format(self.__latency_time.milliseconds))
 
-            if self.__latency_distro_time > HumanReadableTime(Tc.ValueRange.LatencyTime.MIN):
-                item_list.append("{} distribution normal".format(self.__latency_distro_time))
+            if self.__latency_distro_time and self.__latency_distro_time > hr.Time(
+                Tc.ValueRange.LatencyTime.MIN
+            ):
+                item_list.append(
+                    "{}ms distribution normal".format(self.__latency_distro_time.milliseconds)
+                )
 
         if self.__corruption_rate > 0:
             item_list.append("corrupt {:f}%".format(self.__corruption_rate))
@@ -178,19 +190,21 @@ class NetemParameter(object):
         return int(device_hash_prefix + base_device_hash, 16)
 
     def __validate_network_delay(self):
-        try:
-            self.__latency_time.validate(
-                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
-            )
-        except ParameterError as e:
-            raise ParameterError("delay {}".format(e))
+        if self.__latency_time:
+            try:
+                self.__latency_time.validate(
+                    min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+                )
+            except hr.ParameterError as e:
+                raise hr.ParameterError("delay {}".format(e))
 
-        try:
-            self.__latency_distro_time.validate(
-                min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
-            )
-        except ParameterError as e:
-            raise ParameterError("delay-distro {}".format(e))
+        if self.__latency_distro_time:
+            try:
+                self.__latency_distro_time.validate(
+                    min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+                )
+            except hr.ParameterError as e:
+                raise hr.ParameterError("delay-distro {}".format(e))
 
     def __validate_packet_loss_rate(self):
         validate_within_min_max(
@@ -229,5 +243,5 @@ class NetemParameter(object):
         )
 
     def __validate_reordering_and_delay(self):
-        if self.__reordering_rate and self.__latency_time.get_msec() <= 0:
-            raise ParameterError("reordering needs latency to be specified: set latency > 0")
+        if self.__reordering_rate and self.__latency_time and self.__latency_time.milliseconds <= 0:
+            raise hr.ParameterError("reordering needs latency to be specified: set latency > 0")

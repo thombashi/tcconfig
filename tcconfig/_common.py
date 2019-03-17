@@ -17,11 +17,11 @@ import logbook.more
 import msgfy
 import subprocrunner as spr
 import typepy
+from humanreadable import ParameterError
 from path import Path
 from simplesqlite import SimpleSQLite
 
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
-from ._error import ParameterError
 from ._logger import logger
 
 

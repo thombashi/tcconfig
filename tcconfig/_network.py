@@ -31,13 +31,13 @@ def _get_iproute2_upper_limite_rate():
     :rtype: int
     """
 
-    from ._converter import HumanReadableBits
+    import humanreadable as hr
 
     # upper bandwidth rate limit of iproute2 was 34,359,738,360
     # bits per second older than 3.14.0
     # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
-    return HumanReadableBits("32G", kilo_size=KILO_SIZE).to_kilobits()
+    return hr.BitPerSecond("32Gbps").kilo_bps
 
 
 def _read_iface_speed(tc_device):

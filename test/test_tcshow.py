@@ -10,7 +10,7 @@ from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
 
-from .common import execute_tcdel, print_test_result
+from .common import execute_tcdel, print_test_result, runner_helper
 
 
 @pytest.fixture
@@ -35,7 +35,6 @@ class Test_tcshow(object):
             execute_tcdel(tc_target)
 
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
-
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -48,9 +47,12 @@ class Test_tcshow(object):
                     }
                 }"""
             )
-            print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
 
-            assert runner.run() == 0
+            print(runner.command_str)
+            runner.run()
+
+            print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.returncode == 0
             assert json.loads(runner.stdout) == json.loads(expected)
 
     @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
@@ -59,105 +61,92 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         for tc_target in [device_value, "--device {}".format(device_value)]:
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "10",
-                            "--delay-distro",
-                            "2",
-                            "--loss",
-                            "0.01",
-                            "--duplicate",
-                            "0.5",
-                            "--reorder",
-                            "0.2",
-                            "--rate",
-                            "0.25K",
-                            "--network",
-                            "192.168.0.10",
-                            "--port",
-                            "8080",
-                            "--overwrite",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--loss",
+                        "0.01",
+                        "--duplicate",
+                        "0.5",
+                        "--reorder",
+                        "0.2",
+                        "--rate",
+                        "0.25Kbps",
+                        "--network",
+                        "192.168.0.10",
+                        "--port",
+                        "8080",
+                        "--overwrite",
+                    ]
+                )
             )
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "1",
-                            "--loss",
-                            "1",
-                            "--rate",
-                            "100M",
-                            "--network",
-                            "192.168.1.0/24",
-                            "--add",
-                        ]
-                    )
-                ).run()
-                == 0
+
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "1",
+                        "--rate",
+                        "100Mbit/s",
+                        "--network",
+                        "192.168.1.0/24",
+                        "--add",
+                    ]
+                )
             )
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "10",
-                            "--delay-distro",
-                            "2",
-                            "--rate",
-                            "500K",
-                            "--direction",
-                            "incoming",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--rate",
+                        "500Kbit/s",
+                        "--direction",
+                        "incoming",
+                    ]
+                )
             )
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "1",
-                            "--loss",
-                            "0.02",
-                            "--duplicate",
-                            "0.5",
-                            "--reorder",
-                            "0.2",
-                            "--rate",
-                            "0.1M",
-                            "--network",
-                            "192.168.11.0/24",
-                            "--port",
-                            "80",
-                            "--direction",
-                            "incoming",
-                            "--add",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "0.02",
+                        "--duplicate",
+                        "0.5",
+                        "--reorder",
+                        "0.2",
+                        "--rate",
+                        "0.1Mbit/s",
+                        "--network",
+                        "192.168.11.0/24",
+                        "--port",
+                        "80",
+                        "--direction",
+                        "incoming",
+                        "--add",
+                    ]
+                )
             )
 
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
-            runner.run()
-
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -200,6 +189,7 @@ class Test_tcshow(object):
                 }"""
             )
 
+            runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
 
             assert json.loads(runner.stdout) == json.loads(expected)
@@ -212,111 +202,97 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         for tc_target in [device_value, "--device {}".format(device_value)]:
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "10",
-                            "--delay-distro",
-                            "2",
-                            "--loss",
-                            "0.01",
-                            "--duplicate",
-                            "5",
-                            "--reorder",
-                            "2",
-                            "--rate",
-                            "0.25K",
-                            "--network",
-                            "::1",
-                            "--port",
-                            "8080",
-                            "--overwrite",
-                            "--ipv6",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--loss",
+                        "0.01",
+                        "--duplicate",
+                        "5",
+                        "--reorder",
+                        "2",
+                        "--rate",
+                        "0.25Kbps",
+                        "--network",
+                        "::1",
+                        "--port",
+                        "8080",
+                        "--overwrite",
+                        "--ipv6",
+                    ]
+                )
             )
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "1",
-                            "--loss",
-                            "1",
-                            "--rate",
-                            "100M",
-                            "--network",
-                            "2001:db00::0/24",
-                            "--add",
-                            "--ipv6",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "1",
+                        "--rate",
+                        "100Mbit/s",
+                        "--network",
+                        "2001:db00::0/24",
+                        "--add",
+                        "--ipv6",
+                    ]
+                )
             )
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "10",
-                            "--delay-distro",
-                            "2",
-                            "--rate",
-                            "500K",
-                            "--direction",
-                            "incoming",
-                            "--ipv6",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "10",
+                        "--delay-distro",
+                        "2",
+                        "--rate",
+                        "500Kbit/s",
+                        "--direction",
+                        "incoming",
+                        "--ipv6",
+                    ]
+                )
             )
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "1",
-                            "--loss",
-                            "0.02",
-                            "--duplicate",
-                            "5",
-                            "--reorder",
-                            "2",
-                            "--rate",
-                            "0.1M",
-                            "--network",
-                            "2001:db00::0/25",
-                            "--port",
-                            "80",
-                            "--direction",
-                            "incoming",
-                            "--add",
-                            "--ipv6",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "1",
+                        "--loss",
+                        "0.02",
+                        "--duplicate",
+                        "5",
+                        "--reorder",
+                        "2",
+                        "--rate",
+                        "0.1Mbit/s",
+                        "--network",
+                        "2001:db00::0/25",
+                        "--port",
+                        "80",
+                        "--direction",
+                        "incoming",
+                        "--add",
+                        "--ipv6",
+                    ]
+                )
             )
 
             runner = SubprocessRunner(
                 " ".join([Tc.Command.TCSHOW, tc_target, "--ipv6", colorize_option])
             )
-            runner.run()
-
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -359,6 +335,7 @@ class Test_tcshow(object):
                 }"""
             )
 
+            runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
 
             assert json.loads(runner.stdout) == json.loads(expected)

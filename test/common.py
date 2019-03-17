@@ -8,11 +8,11 @@ from __future__ import absolute_import, print_function
 
 import sys
 
+import humanreadable as hr
 from subprocrunner import SubprocessRunner
 from typepy import RealNumber
 
 from tcconfig._const import Tc
-from tcconfig._converter import HumanReadableBits, HumanReadableTime
 
 
 DEADLINE_TIME = 3  # [sec]
@@ -28,20 +28,17 @@ def print_test_result(expected, actual, error=None):
 
 
 def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reordering):
-    param_value_list = [packet_loss, packet_duplicate, corrupt, reordering]
+    param_values = [packet_loss, packet_duplicate, corrupt, reordering]
 
-    print(param_value_list)
+    print(param_values)
 
     is_invalid = all(
-        [
-            not RealNumber(param_value).is_type() or param_value <= 0
-            for param_value in param_value_list
-        ]
-        + [HumanReadableTime(delay) <= HumanReadableTime("0ms")]
+        [not RealNumber(param_value).is_type() or param_value <= 0 for param_value in param_values]
+        + [hr.Time(delay, hr.Time.Unit.MILLISECOND).milliseconds <= 0]
     )
 
     try:
-        HumanReadableBits(rate, kilo_size=1000).to_bits()
+        hr.BitPerSecond(rate).bps
     except (TypeError, ValueError):
         pass
     else:
@@ -52,3 +49,14 @@ def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reorde
 
 def execute_tcdel(device):
     return SubprocessRunner([Tc.Command.TCDEL, device, "--all"], dry_run=False).run()
+
+
+def runner_helper(command):
+    proc_runner = SubprocessRunner(command)
+    proc_runner.run()
+
+    print("{}\n{}\n".format(proc_runner.command_str, proc_runner.stderr), file=sys.stderr)
+
+    assert proc_runner.returncode == 0
+
+    return proc_runner

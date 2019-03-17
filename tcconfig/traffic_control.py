@@ -13,6 +13,7 @@ import msgfy
 import six
 import subprocrunner as spr
 import typepy
+from humanreadable import ParameterError
 
 from ._common import find_bin_path, logging_context, run_command_helper, validate_within_min_max
 from ._const import (
@@ -23,7 +24,7 @@ from ._const import (
     TcSubCommand,
     TrafficDirection,
 )
-from ._error import NetworkInterfaceNotFoundError, ParameterError
+from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController, get_iptables_base_command
 from ._logger import logger
 from ._network import sanitize_network, verify_network_interface

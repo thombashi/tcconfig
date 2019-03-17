@@ -12,7 +12,7 @@ from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
 
-from .common import execute_tcdel, print_test_result
+from .common import execute_tcdel, print_test_result, runner_helper
 
 
 @pytest.fixture
@@ -39,30 +39,23 @@ class Test_tcset_change(object):
         for device_option in [device_value, "--device {}".format(device_value)]:
             execute_tcdel(device_option)
 
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            device_option,
-                            "--delay 100ms --rate 50k --network 192.168.1.2 --change",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay 100ms --rate 50Kbps --network 192.168.1.2 --change",
+                    ]
+                )
             )
-
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            device_option,
-                            "--delay 100ms --rate 50k --network 192.168.1.3 --change",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay 100ms --rate 50Kbps --network 192.168.1.3 --change",
+                    ]
+                )
             )
 
             execute_tcdel(device_option)
@@ -72,42 +65,33 @@ class Test_tcset_change(object):
             pytest.skip("device is null")
 
         for device_option in [device_value, "--device {}".format(device_value)]:
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            device_option,
-                            "--delay 100ms --rate 50k --network 192.168.1.2 --overwrite",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay 100ms --rate 50Kbps --network 192.168.1.2 --overwrite",
+                    ]
+                )
             )
-
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            device_option,
-                            "--delay 200.0ms",
-                            "--delay-distro 20",
-                            "--rate 100k",
-                            "--loss 0.01%",
-                            "--duplicate 5%",
-                            "--reorder 2%",
-                            "--network 192.168.1.3",
-                            "--add",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay 200.0ms",
+                        "--delay-distro 20",
+                        "--rate 100Kbps",
+                        "--loss 0.01%",
+                        "--duplicate 5%",
+                        "--reorder 2%",
+                        "--network 192.168.1.3",
+                        "--add",
+                    ]
+                )
             )
 
             runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
-            runner.run()
-
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -133,33 +117,28 @@ class Test_tcset_change(object):
                     }
                 }"""
             )
-
+            runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            device_option,
-                            "--delay 300ms",
-                            "--delay-distro 30",
-                            "--rate 200k",
-                            "--loss 0.02%",
-                            "--duplicate 5.5%",
-                            "--reorder 0.2%",
-                            "--network 192.168.1.3",
-                            "--change",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        device_option,
+                        "--delay 300ms",
+                        "--delay-distro 30",
+                        "--rate 200Kbps",
+                        "--loss 0.02%",
+                        "--duplicate 5.5%",
+                        "--reorder 0.2%",
+                        "--network 192.168.1.3",
+                        "--change",
+                    ]
+                )
             )
 
             runner = SubprocessRunner("{:s} {:s}".format(Tc.Command.TCSHOW, device_option))
-            runner.run()
-
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -185,7 +164,7 @@ class Test_tcset_change(object):
                     }
                 }"""
             )
-
+            runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
             assert json.loads(runner.stdout) == json.loads(expected)
 

@@ -11,6 +11,7 @@ import errno
 import ipaddress
 import sys
 
+import humanreadable as hr
 import logbook
 import msgfy
 import subprocrunner as spr
@@ -20,13 +21,7 @@ from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, ShapingAlgorithm, Tc, TrafficDirection
-from ._converter import HumanReadableTime
-from ._error import (
-    ContainerNotFoundError,
-    ModuleNotFoundError,
-    NetworkInterfaceNotFoundError,
-    ParameterError,
-)
+from ._error import ContainerNotFoundError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._importer import set_tc_from_file
 from ._logger import logger, set_log_level
 from ._main import Main
@@ -43,6 +38,10 @@ from ._netem_param import (
 )
 from ._shaping_rule_finder import TcShapingRuleFinder
 from .traffic_control import TrafficControl
+
+
+def _get_unit_help_msg():
+    return ", ".join(["/".join(values) for values in hr.Time.get_text_units().values()])
 
 
 def get_arg_parser():
@@ -98,9 +97,11 @@ def get_arg_parser():
         dest="bandwidth_rate",
         help="""network bandwidth rate [bit per second].
         the minimum bandwidth rate is 8 bps.
-        valid units are either: K/M/G/Kbps/Mbps/Gbps.
+        valid units are either: {}.
         e.g. tcset eth0 --rate 10Mbps
-        """,
+        """.format(
+            ", ".join([", ".join(values) for values in hr.BitPerSecond.get_text_units().values()])
+        ),
     )
     group.add_argument(
         "--delay",
@@ -112,7 +113,7 @@ def get_arg_parser():
         """.format(
             min_value=Tc.ValueRange.LatencyTime.MIN,
             max_value=Tc.ValueRange.LatencyTime.MAX,
-            unit="/".join(HumanReadableTime.get_valid_units()),
+            unit=_get_unit_help_msg(),
         ),
     )
     group.add_argument(
@@ -124,7 +125,7 @@ def get_arg_parser():
         network latency distribution is uniform, without this option. valid time units are: {unit}.
         if no unit string found, considered milliseconds as the time unit.
         """.format(
-            unit="/".join(HumanReadableTime.get_valid_units())
+            unit=_get_unit_help_msg()
         ),
     )
     group.add_argument(
@@ -283,7 +284,7 @@ class TcSetMain(Main):
         except ipaddress.AddressValueError as e:
             logger.error(IPV6_OPTION_ERROR_MSG_FORMAT.format(e))
             return errno.EINVAL
-        except ParameterError as e:
+        except hr.ParameterError as e:
             logger.error(msgfy.to_error_message(e))
             return errno.EINVAL
 

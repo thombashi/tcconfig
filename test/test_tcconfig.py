@@ -38,7 +38,7 @@ def is_invalid_param(rate, delay, loss, corrupt):
 
 
 class NormalTestValue(object):
-    RATE_LIST = ["", "--rate 100K", "--rate 0.5M"]
+    RATE_LIST = ["", "--rate 100Kbps", "--rate 0.5Mbps"]
     DELAY_LIST = ["", "--delay 100ms"]
     DELAY_DISTRO_LIST = ["", "--delay-distro 20ms"]
     PACKET_LOSS_RATE_LIST = ["", "--loss 0.1", "--loss 10%"]

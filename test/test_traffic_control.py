@@ -8,9 +8,9 @@ import itertools
 
 import pytest
 from allpairspy import AllPairs
+from humanreadable import ParameterError
 
 from tcconfig._const import ShapingAlgorithm, Tc, TrafficDirection
-from tcconfig._error import ParameterError, UnitNotFoundError
 from tcconfig._netem_param import (
     MAX_CORRUPTION_RATE,
     MAX_PACKET_DUPLICATE_RATE,
@@ -42,26 +42,7 @@ def device_option(request):
         for opt_list in AllPairs(
             [
                 ["0.1", "+1.25", "30"],
-                [
-                    "k",
-                    " k ",
-                    "K",
-                    " K ",
-                    "kbps",
-                    "Kbps",
-                    "m",
-                    " m ",
-                    "M",
-                    " M ",
-                    "mbps",
-                    "Mbps",
-                    "g",
-                    " g ",
-                    "G",
-                    " G ",
-                    "gbps",
-                    "Gbps",
-                ],
+                ["kbps", "Kbps", " Kibps", "mbps", "Mbps", " Mibps", "gbps", "Gbps", " Gibps"],
             ]
         )
     ],
@@ -79,25 +60,25 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
 @pytest.mark.parametrize(
     ["value", "expected"],
     [
-        ["".join(opt_list), UnitNotFoundError]
+        ["".join(opt_list), ParameterError]
         for opt_list in AllPairs([["0.1", "1"], ["", "kb", "KB", "mb", "MB", "gb", "GB"]])
     ]
     + [["".join(value), ParameterError] for value in ("B", "K", "M", "G")]
     + [["0bps", ParameterError], ["34359738361bps", ParameterError]],
 )
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
-    with pytest.raises(expected):
-        tc_obj = TrafficControl(
+    tc_obj = TrafficControl(
+        "dummy",
+        netem_param=NetemParameter(
             "dummy",
-            netem_param=NetemParameter(
-                "dummy",
-                bandwidth_rate=value,
-                latency_time=Tc.ValueRange.LatencyTime.MIN,
-                latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
-            ),
-            direction=TrafficDirection.OUTGOING,
-            shaping_algorithm=ShapingAlgorithm.HTB,
-        )
+            bandwidth_rate=value,
+            latency_time=Tc.ValueRange.LatencyTime.MIN,
+            latency_distro_time=Tc.ValueRange.LatencyTime.MIN,
+        ),
+        direction=TrafficDirection.OUTGOING,
+        shaping_algorithm=ShapingAlgorithm.HTB,
+    )
+    with pytest.raises(expected):
         tc_obj.netem_param.validate_bandwidth_rate()
 
 
@@ -105,7 +86,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     ["value", "expected"],
     [
         ["".join(opt_list), ParameterError]
-        for opt_list in itertools.product(["-1", "0", "0.0"], ["k", "K", "m", "M", "g", "G"])
+        for opt_list in itertools.product(["-1", "0", "0.0"], ["bps", "Kbps", "MKbps", "GKbps"])
     ],
 )
 def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
@@ -147,7 +128,7 @@ class Test_TrafficControl_validate(object):
             opt_list
             for opt_list in AllPairs(
                 [
-                    [None, "", "100K", "0.5M", "0.1G"],  # rate
+                    [None, "", "100Kbps", "0.5Mbps", "0.1Gbps"],  # rate
                     [TrafficDirection.OUTGOING],
                     [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay
                     [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay_distro

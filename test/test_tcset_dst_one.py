@@ -11,12 +11,11 @@ import itertools
 import pingparsing
 import pytest
 import typepy
-from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
 from tcconfig._netem_param import convert_rate_to_f
 
-from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
+from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel, runner_helper
 
 
 @pytest.fixture
@@ -77,18 +76,15 @@ class Test_tcset_one_network(object):
             without_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
             # w/ latency tc ---
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay {}ms".format(delay),
-                            "--shaping-algo {:s}".format(shaping_algo),
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay {}ms".format(delay),
+                        "--shaping-algo {:s}".format(shaping_algo),
+                    ]
+                )
             )
 
             ping_result = transmitter.ping()
@@ -121,20 +117,17 @@ class Test_tcset_one_network(object):
             without_tc_rtt_mdev = ping_stats.rtt_mdev
 
             # w/ latency tc ---
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--delay",
-                            "{:d}ms".format(delay),
-                            "--delay-distro",
-                            "{:d}ms".format(delay_distro),
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "{:d}ms".format(delay),
+                        "--delay-distro",
+                        "{:d}ms".format(delay_distro),
+                    ]
+                )
             )
 
             ping_result = transmitter.ping()
@@ -170,11 +163,8 @@ class Test_tcset_one_network(object):
             without_tc_loss_rate = pingparser.parse(ping_result).packet_loss_rate
 
             # w/ traffic shaping ---
-            assert (
-                SubprocessRunner(
-                    " ".join([Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)])
-                ).run()
-                == 0
+            runner_helper(
+                " ".join([Tc.Command.TCSET, tc_target, "{:s} {:f}".format(option, value)])
             )
 
             ping_result = transmitter.ping()
@@ -205,12 +195,7 @@ class Test_tcset_one_network(object):
             without_tc_duplicate_rate = pingparser.parse(ping_result).packet_duplicate_rate
 
             # w/ packet duplicate tc ---
-            assert (
-                SubprocessRunner(
-                    " ".join([Tc.Command.TCSET, tc_target, "{:s} {}".format(option, value)])
-                ).run()
-                == 0
-            )
+            runner_helper(" ".join([Tc.Command.TCSET, tc_target, "{:s} {}".format(option, value)]))
 
             ping_result = transmitter.ping()
             assert ping_result.returncode == 0
@@ -233,34 +218,30 @@ class Test_tcset_one_network(object):
 
         delay = 100
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option]:
             execute_tcdel(tc_target)
             transmitter.destination_host = dst_host_option
 
             # w/ latency tc ---
-            command_list = [Tc.Command.TCSET, tc_target, "--delay {:d}ms".format(delay)]
-            assert SubprocessRunner(" ".join(command_list)).run() == 0
+            runner_helper([Tc.Command.TCSET, tc_target, "--delay", "{:d}ms".format(delay)])
 
             ping_result = transmitter.ping()
             assert ping_result.returncode == 0
             with_tc_rtt_avg = pingparser.parse(ping_result).rtt_avg
 
             # exclude certain network ---
-            assert (
-                SubprocessRunner(
-                    " ".join(
-                        [
-                            Tc.Command.TCSET,
-                            tc_target,
-                            "--exclude-dst-network {:s}/24".format(
-                                ".".join(dst_host_option.split(".")[:3] + ["0"])
-                            ),
-                            "--delay {:d}ms".format(delay),
-                            "--overwrite",
-                        ]
-                    )
-                ).run()
-                == 0
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--exclude-dst-network {:s}/24".format(
+                            ".".join(dst_host_option.split(".")[:3] + ["0"])
+                        ),
+                        "--delay {:d}ms".format(delay),
+                        "--overwrite",
+                    ]
+                )
             )
             without_tc_rtt_avg = pingparser.parse(transmitter.ping()).rtt_avg
 

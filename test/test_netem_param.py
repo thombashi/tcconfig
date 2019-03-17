@@ -3,8 +3,8 @@
 from __future__ import absolute_import, print_function, unicode_literals
 
 import pytest
+from humanreadable import ParameterError
 
-from tcconfig._error import ParameterError
 from tcconfig._netem_param import NetemParameter, convert_rate_to_f
 
 
