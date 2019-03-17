@@ -18,6 +18,8 @@ from ._interface import AbstractParser
 
 
 class TcQdiscParser(AbstractParser):
+    __RE_DIRECT_QLEN = re.compile("direct_qlen (?P<number>[0-9]+)")
+
     @property
     def _tc_subcommand(self):
         return TcSubCommand.QDISC.value
@@ -26,6 +28,13 @@ class TcQdiscParser(AbstractParser):
         super(TcQdiscParser, self).__init__()
 
         self.__con = con
+
+    def __parse_direct_qlen(self, line):
+        m = self.__RE_DIRECT_QLEN.search(line)
+        if m is None:
+            return
+
+        self.__parsed_param["direct_qlen"] = int(m.group("number"))
 
     def parse(self, device, text):
         self._clear()
@@ -42,12 +51,14 @@ class TcQdiscParser(AbstractParser):
 
             line = self._to_unicode(line.lstrip())
 
-            if re.search("qdisc netem|qdisc tbf", line) is None:
+            if re.search("^qdisc netem |^qdisc htb |^qdisc tbf ", line) is None:
                 continue
 
-            self._clear()
+            if re.search("^qdisc htb ", line) is not None:
+                self.__parse_direct_qlen(line)
+                continue
 
-            if re.search("qdisc netem", line) is not None:
+            if re.search("^qdisc netem ", line) is not None:
                 self.__parse_netem_param(line, "parent", pp.hexnums + ":")
 
             self.__parsed_param[Tc.Param.DEVICE] = device
@@ -61,7 +72,10 @@ class TcQdiscParser(AbstractParser):
             self.__parse_bandwidth_rate(line)
 
             logger.debug("parse a qdisc entry: {}".format(self.__parsed_param))
+
             entry_list.append(self.__parsed_param)
+
+            self._clear()
 
         if entry_list:
             self.__con.create_table_from_data_matrix(
