@@ -29,10 +29,21 @@ Set 0.5 minutes (30 seconds) network latency
 
 You can also use the following time units:
 
-- m/min/mins/minute/minutes
-- s/sec/secs/second/seconds
-- ms/msec/msecs/millisecond/milliseconds
-- us/usec/usecs/microsecond/microseconds
+.. table:: 
+
+    +------------+----------------------------------------------------------+
+    |    Unit    |                Available specifiers (str)                |
+    +============+==========================================================+
+    |hours       |``h``/``hour``/``hours``                                  |
+    +------------+----------------------------------------------------------+
+    |minutes     |``m``/``min``/``mins``/``minute``/``minutes``             |
+    +------------+----------------------------------------------------------+
+    |seconds     |``s``/``sec``/``secs``/``second``/``seconds``             |
+    +------------+----------------------------------------------------------+
+    |milliseconds|``ms``/``msec``/``msecs``/``millisecond``/``milliseconds``|
+    +------------+----------------------------------------------------------+
+    |microseconds|``us``/``usec``/``usecs``/``microsecond``/``microseconds``|
+    +------------+----------------------------------------------------------+
 
 e.g. Set 0.1% packet loss
 ^^^^^^^^^^^^^^^^^^^^^^^^^
