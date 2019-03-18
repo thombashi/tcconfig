@@ -7,6 +7,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import hashlib
+from textwrap import dedent
 
 import humanreadable as hr
 import six
@@ -77,6 +78,19 @@ class NetemParameter(object):
 
         hr_bps = hr.BitPerSecond(bandwidth_rate)
         upper_limit_rate = get_upper_limit_rate(self.__device)
+
+        if hr_bps > upper_limit_rate:
+            logger.info(
+                dedent(
+                    """\
+                    clipping specified bandwidth rate limit with the {device} maximum bandwidth rate
+                    ({value}Mbps -> {limit}Mbps)
+                    """
+                ).format(
+                    value=hr_bps.mega_bps, limit=upper_limit_rate.mega_bps, device=self.__device
+                )
+            )
+            hr_bps = upper_limit_rate
 
         return hr_bps
 
