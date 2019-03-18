@@ -46,7 +46,7 @@ class TcConfigLoader(object):
             "tc config file: {:s}".format(json.dumps(self.__config_table, indent=4))
         )
 
-    def get_tcconfig_command_list(self):
+    def get_tcconfig_commands(self):
         from .tcset import get_arg_parser
 
         command_list = []
@@ -142,7 +142,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
         logger.error(msgfy.to_error_message(e))
         return errno.EIO
 
-    for tcconfig_command in loader.get_tcconfig_command_list():
+    for tcconfig_command in loader.get_tcconfig_commands():
         return_code |= spr.SubprocessRunner(tcconfig_command).run()
 
     return return_code
