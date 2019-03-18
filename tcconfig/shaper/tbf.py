@@ -12,7 +12,7 @@ from subprocrunner import SubprocessRunner
 
 from .._common import logging_context, run_command_helper
 from .._const import ShapingAlgorithm, TcSubCommand, TrafficDirection
-from .._network import get_anywhere_network, get_no_limit_kbits
+from .._network import get_anywhere_network, get_upper_limit_rate
 from ._interface import AbstractShaper
 
 
@@ -77,11 +77,11 @@ class TbfShaper(AbstractShaper):
             self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id), self._get_qdisc_minor_id()
         )
         handle = "{:d}:".format(20)
-        no_limit_kbits = get_no_limit_kbits(self._tc_device)
+        upper_limit_rate = get_upper_limit_rate(self._tc_device)
 
-        kbits = self._tc_obj.netem_param.bandwidth_rate
-        if kbits is None:
-            kbits = no_limit_kbits
+        bandwidth = self._tc_obj.netem_param.bandwidth_rate
+        if bandwidth is None:
+            bandwidth = upper_limit_rate
 
         command = " ".join(
             [
@@ -90,8 +90,10 @@ class TbfShaper(AbstractShaper):
                 "parent {:s}".format(parent),
                 "handle {:s}".format(handle),
                 self.algorithm_name,
-                "rate {}kbit".format(kbits),
-                "buffer {:d}".format(max(int(kbits), self.__MIN_BUFFER_BYTE)),  # [byte]
+                "rate {}kbit".format(bandwidth.kilo_bps),
+                "buffer {:d}".format(
+                    max(int(bandwidth.kilo_bps), self.__MIN_BUFFER_BYTE)
+                ),  # [byte]
                 "limit 10000",
             ]
         )

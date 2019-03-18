@@ -15,7 +15,8 @@ from typepy import RealNumber
 
 from ._common import validate_within_min_max
 from ._const import Tc
-from ._network import get_no_limit_kbits
+from ._logger import logger
+from ._network import get_upper_limit_rate
 
 
 MIN_PACKET_LOSS_RATE = 0  # [%]
@@ -41,13 +42,7 @@ def convert_rate_to_f(rate):
 class NetemParameter(object):
     @property
     def bandwidth_rate(self):
-        if self.__bandwidth_rate is None:
-            return None
-
-        try:
-            return hr.BitPerSecond(self.__bandwidth_rate).kilo_bps
-        except (hr.ParameterError, hr.UnitNotFoundError, TypeError):
-            return None
+        return self.__bandwidth_rate
 
     def __init__(
         self,
@@ -62,7 +57,7 @@ class NetemParameter(object):
     ):
         self.__device = device
 
-        self.__bandwidth_rate = bandwidth_rate
+        self.__bandwidth_rate = self.__normalize_bandwidth_rate(bandwidth_rate)
         self.__packet_loss_rate = convert_rate_to_f(packet_loss_rate)  # [%]
         self.__packet_duplicate_rate = convert_rate_to_f(packet_duplicate_rate)  # [%]
         self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
@@ -76,6 +71,15 @@ class NetemParameter(object):
         if latency_distro_time:
             self.__latency_distro_time = hr.Time(latency_distro_time, hr.Time.Unit.MILLISECOND)
 
+    def __normalize_bandwidth_rate(self, bandwidth_rate):
+        if not bandwidth_rate:
+            return None
+
+        hr_bps = hr.BitPerSecond(bandwidth_rate)
+        upper_limit_rate = get_upper_limit_rate(self.__device)
+
+        return hr_bps
+
     def validate_netem_parameter(self):
         self.validate_bandwidth_rate()
         self.__validate_network_delay()
@@ -86,12 +90,13 @@ class NetemParameter(object):
         self.__validate_reordering_and_delay()
 
         netem_param_values = [
-            self.bandwidth_rate,
             self.__packet_loss_rate,
             self.__packet_duplicate_rate,
             self.__corruption_rate,
             self.__reordering_rate,
         ]
+        if self.__bandwidth_rate:
+            netem_param_values.append(self.__bandwidth_rate.kilo_bps)
 
         check_results = [
             not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
@@ -109,29 +114,29 @@ class NetemParameter(object):
             )
 
     def validate_bandwidth_rate(self):
-        if typepy.is_null_string(self.__bandwidth_rate):
-            return
+        hr_bps = self.__bandwidth_rate
 
-        hr_bps = hr.BitPerSecond(self.__bandwidth_rate)
+        if not hr_bps:
+            return
 
         if hr_bps.bps < 8:
             raise hr.ParameterError(
                 "bandwidth rate must be greater or equals to 8bps", value="{}bps".format(hr_bps.bps)
             )
 
-        no_limit_kbits = get_no_limit_kbits(self.__device)
-        if hr_bps.kilo_bps > no_limit_kbits:
+        upper_limit_rate = get_upper_limit_rate(self.__device)
+        if hr_bps > upper_limit_rate:
             raise hr.ParameterError(
                 "exceed bandwidth rate limit",
                 value="{} kbps".format(hr_bps.kilo_bps),
-                expected="less than {} kbps".format(no_limit_kbits),
+                expected="less than {} kbps".format(upper_limit_rate.kilo_bps),
             )
 
     def make_param_name(self):
         item_list = [self.__device]
 
         if self.bandwidth_rate:
-            item_list.append("rate{}".format(self.bandwidth_rate))
+            item_list.append("rate{}kbps".format(int(self.bandwidth_rate.kilo_bps)))
 
         if self.__latency_time and self.__latency_time.milliseconds > 0:
             item_list.append("delay{}".format(self.__latency_time.milliseconds))

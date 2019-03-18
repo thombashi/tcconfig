@@ -9,7 +9,6 @@ from __future__ import absolute_import, unicode_literals
 import enum
 
 
-KILO_SIZE = 1000
 LIST_MANGLE_TABLE_OPTION = "-t mangle --line-numbers -L"
 IPV6_OPTION_ERROR_MSG_FORMAT = "{}. --ipv6 option required to use IPv6 address."
 

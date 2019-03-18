@@ -15,7 +15,7 @@ from .._common import is_execute_tc_command, logging_context, run_command_helper
 from .._const import ShapingAlgorithm, TcSubCommand
 from .._error import TcAlreadyExist
 from .._logger import logger
-from .._network import get_no_limit_kbits
+from .._network import get_upper_limit_rate
 from .._tc_command_helper import run_tc_show
 from ._interface import AbstractShaper
 
@@ -98,11 +98,11 @@ class HtbShaper(AbstractShaper):
         classid = self._get_tc_parent(
             "{:s}:{:d}".format(self._tc_obj.qdisc_major_id_str, self._get_qdisc_minor_id())
         )
-        no_limit_kbits = get_no_limit_kbits(self._tc_device)
+        upper_limit_rate = get_upper_limit_rate(self._tc_device)
 
-        kbits = self._tc_obj.netem_param.bandwidth_rate
-        if kbits is None:
-            kbits = no_limit_kbits
+        bandwidth = self._tc_obj.netem_param.bandwidth_rate
+        if bandwidth is None:
+            bandwidth = upper_limit_rate
 
         command_item_list = [
             base_command,
@@ -110,13 +110,16 @@ class HtbShaper(AbstractShaper):
             "parent {:s}".format(parent),
             "classid {:s}".format(classid),
             self.algorithm_name,
-            "rate {}Kbit".format(kbits),
-            "ceil {}Kbit".format(kbits),
+            "rate {}Kbit".format(bandwidth.kilo_bps),
+            "ceil {}Kbit".format(bandwidth.kilo_bps),
         ]
 
-        if kbits != no_limit_kbits:
+        if bandwidth != upper_limit_rate:
             command_item_list.extend(
-                ["burst {}KB".format(kbits / (10 * 8)), "cburst {}KB".format(kbits / (10 * 8))]
+                [
+                    "burst {}KB".format(bandwidth.kilo_byte_per_sec),
+                    "cburst {}KB".format(bandwidth.kilo_byte_per_sec),
+                ]
             )
 
         run_command_helper(
@@ -319,7 +322,7 @@ class HtbShaper(AbstractShaper):
                     "parent {:s}".format(parent),
                     "classid {:s}".format(classid),
                     self.algorithm_name,
-                    "rate {}kbit".format(get_no_limit_kbits(self._tc_device)),
+                    "rate {}kbit".format(get_upper_limit_rate(self._tc_device).kilo_bps),
                 ]
             ),
             ignore_error_msg_regexp=self._tc_obj.REGEXP_FILE_EXISTS,

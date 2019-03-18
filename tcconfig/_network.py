@@ -6,10 +6,11 @@
 
 from __future__ import absolute_import, unicode_literals
 
+import humanreadable as hr
 import six
 import typepy
 
-from ._const import KILO_SIZE, Network
+from ._const import Network
 from ._error import NetworkInterfaceNotFoundError
 
 
@@ -31,13 +32,11 @@ def _get_iproute2_upper_limite_rate():
     :rtype: int
     """
 
-    import humanreadable as hr
-
     # upper bandwidth rate limit of iproute2 was 34,359,738,360
     # bits per second older than 3.14.0
     # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
-    return hr.BitPerSecond("32Gbps").kilo_bps
+    return hr.BitPerSecond("32Gbps")
 
 
 def _read_iface_speed(tc_device):
@@ -45,7 +44,7 @@ def _read_iface_speed(tc_device):
         return int(f.read().strip())
 
 
-def get_no_limit_kbits(tc_device):
+def get_upper_limit_rate(tc_device):
     if typepy.is_null_string(tc_device):
         return _get_iproute2_upper_limite_rate()
 
@@ -58,7 +57,8 @@ def get_no_limit_kbits(tc_device):
         # default to the iproute2 upper limit when speed value is -1 in
         # paravirtualized network interfaces
         return _get_iproute2_upper_limite_rate()
-    return min(speed_value * KILO_SIZE, _get_iproute2_upper_limite_rate())
+
+    return min(hr.BitPerSecond("{}Mbps".format(speed_value)), _get_iproute2_upper_limite_rate())
 
 
 def is_anywhere_network(network, ip_version):

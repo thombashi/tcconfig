@@ -30,7 +30,7 @@ def print_test_result(expected, actual, error=None):
 def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reordering):
     param_values = [packet_loss, packet_duplicate, corrupt, reordering]
 
-    print(param_values)
+    print("rate={}, params={}".format(rate, param_values))
 
     is_invalid = all(
         [not RealNumber(param_value).is_type() or param_value <= 0 for param_value in param_values]
