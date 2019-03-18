@@ -64,7 +64,7 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
         for opt_list in AllPairs([["0.1", "1"], ["", "kb", "KB", "mb", "MB", "gb", "GB"]])
     ]
     + [["".join(value), ParameterError] for value in ("B", "K", "M", "G")]
-    + [["0bps", ParameterError], ["34359738361bps", ParameterError]],
+    + [["0bps", ParameterError]],
 )
 def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
     with pytest.raises(expected):
