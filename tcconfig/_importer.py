@@ -7,6 +7,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import errno
+import io
 
 import msgfy
 import pyparsing as pp
@@ -37,7 +38,7 @@ class TcConfigLoader(object):
             extra=ALLOW_EXTRA,
         )
 
-        with open(config_file_path) as fp:
+        with io.open(config_file_path, encoding="utf-8") as fp:
             self.__config_table = json.load(fp)
 
         schema(self.__config_table)
