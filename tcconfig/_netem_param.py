@@ -85,7 +85,7 @@ class NetemParameter(object):
         self.__validate_reordering_rate()
         self.__validate_reordering_and_delay()
 
-        netem_param_value_list = [
+        netem_param_values = [
             self.bandwidth_rate,
             self.__packet_loss_rate,
             self.__packet_duplicate_rate,
@@ -95,7 +95,7 @@ class NetemParameter(object):
 
         check_results = [
             not RealNumber(netem_param_value).is_type() or netem_param_value <= 0
-            for netem_param_value in netem_param_value_list
+            for netem_param_value in netem_param_values
         ]
 
         if self.__latency_time:
