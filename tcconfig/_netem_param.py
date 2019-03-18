@@ -116,7 +116,7 @@ class NetemParameter(object):
 
         if hr_bps.bps < 8:
             raise hr.ParameterError(
-                "bandwidth rate must be greater or equals to 8bps", value=hr_bps.bps
+                "bandwidth rate must be greater or equals to 8bps", value="{}bps".format(hr_bps.bps)
             )
 
         no_limit_kbits = get_no_limit_kbits(self.__device)
