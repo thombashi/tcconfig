@@ -13,6 +13,8 @@ import msgfy
 import simplejson as json
 import subprocrunner as spr
 from docker.errors import DockerException
+from simplesqlite import SimpleSQLite
+from simplesqlite.model import Integer, Model, Text
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
@@ -24,6 +26,25 @@ from ._logger import logger
 from ._network import verify_network_interface
 from ._tc_script import write_tc_script
 from .parser.shaping_rule import TcShapingRuleParser
+
+
+class ShapingRuleModel(Model):
+    device = Text(not_null=True)
+    direction = Text(not_null=True)
+    filter_id = Text(not_null=True)
+    dst_network = Text()
+    dst_port = Integer()
+    src_network = Text()
+    src_port = Integer()
+    protocol = Text(not_null=True)
+
+    delay = Text()
+    delay_distro = Text()
+    loss = Text()
+    duplicate = Text()
+    corrupt = Text()
+    reorder = Text()
+    rate = Text()
 
 
 def parse_option():
@@ -54,6 +75,7 @@ def parse_option():
         default=False,
         help="colorize the output. require Pygments package.",
     )
+    parser.parser.add_argument("--export", dest="export_path", help="[experimental]")
 
     return parser.parser.parse_args()
 
@@ -78,6 +100,18 @@ def print_tc(text, is_colorize):
         print(text)
 
 
+def export_settings(export_path, out_rules, in_rules):
+    with SimpleSQLite(export_path, mode="a") as con:
+        ShapingRuleModel.attach(con)
+        ShapingRuleModel.create()
+
+        for out_rule in out_rules:
+            ShapingRuleModel.insert(ShapingRuleModel(**out_rule))
+
+        for in_rule in in_rules:
+            ShapingRuleModel.insert(ShapingRuleModel(**in_rule))
+
+
 def extract_tc_params(options):
     dclient = None
     if options.use_docker:
@@ -99,23 +133,42 @@ def extract_tc_params(options):
                 container_info = dclient.extract_container_info(container)
 
                 for veth in dclient.fetch_veth_list(container_info.name):
-                    tc_params.update(
-                        TcShapingRuleParser(
-                            veth, options.ip_version, options.tc_command_output, logger
-                        ).get_tc_parameter()
+                    rule_parser = TcShapingRuleParser(
+                        device=veth,
+                        ip_version=options.ip_version,
+                        tc_command_output=options.tc_command_output,
+                        logger=logger,
+                        export_path=options.export_path,
                     )
+                    rule_parser.parse()
+
+                    if options.export_path:
+                        rule_parser.con.dump(options.export_path)
+                        out_rules, in_rules = rule_parser.extract_export_parameters()
+                        export_settings(options.export_path, out_rules, in_rules)
+
+                    tc_params.update(rule_parser.get_tc_parameter())
                     key = "{veth} (container_id={id}, image={image})".format(
                         veth=veth, id=container_info.id[:12], image=container_info.image
                     )
                     tc_params[key] = tc_params.pop(veth)
             else:
                 verify_network_interface(device, options.tc_command_output)
-
-                tc_params.update(
-                    TcShapingRuleParser(
-                        device, options.ip_version, options.tc_command_output, logger
-                    ).get_tc_parameter()
+                rule_parser = TcShapingRuleParser(
+                    device=device,
+                    ip_version=options.ip_version,
+                    tc_command_output=options.tc_command_output,
+                    logger=logger,
+                    export_path=options.export_path,
                 )
+                rule_parser.parse()
+
+                if options.export_path:
+                    rule_parser.con.dump(options.export_path)
+                    out_rules, in_rules = rule_parser.extract_export_parameters()
+                    export_settings(options.export_path, out_rules, in_rules)
+
+                tc_params.update(rule_parser.get_tc_parameter())
         except TargetNotFoundError as e:
             logger.warn(e)
             continue

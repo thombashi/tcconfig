@@ -14,7 +14,6 @@ import subprocrunner
 import typepy
 from simplesqlite import TableNotFoundError, connect_memdb
 from simplesqlite.query import Where
-from typepy import Integer
 
 from .._common import is_execute_tc_command
 from .._const import Tc, TcSubCommand, TrafficDirection
@@ -40,11 +39,12 @@ class TcShapingRuleParser(object):
     def ifb_device(self):
         return self.__ifb_device
 
-    def __init__(self, device, ip_version, logger, tc_command_output):
+    def __init__(self, device, ip_version, logger, tc_command_output, export_path=None):
         self.__device = device
         self.__ip_version = ip_version
         self.__tc_command_output = tc_command_output
         self.__logger = logger
+        self.__export_path = export_path
 
         self.clear()
         self.__ifb_device = self.__get_ifb_from_device()
@@ -56,11 +56,30 @@ class TcShapingRuleParser(object):
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__parsed_mappings = {}
 
+    def extract_export_parameters(self):
+        _, out_rules = self.__get_shaping_rule(self.device)
+        _, in_rules = self.__get_shaping_rule(self.ifb_device)
+
+        for out_rule in out_rules:
+            out_rule.update(
+                {Tc.Param.DEVICE: self.device, Tc.Param.DIRECTION: TrafficDirection.OUTGOING}
+            )
+
+        for in_rule in in_rules:
+            in_rule.update(
+                {Tc.Param.DEVICE: self.ifb_device, Tc.Param.DIRECTION: TrafficDirection.INCOMING}
+            )
+
+        return (out_rules, in_rules)
+
     def get_tc_parameter(self):
+        out_rule_maps, _ = self.__get_shaping_rule(self.device)
+        in_rule_maps, _ = self.__get_shaping_rule(self.ifb_device)
+
         return {
             self.device: {
-                TrafficDirection.OUTGOING: self.__get_shaping_rule(self.device),
-                TrafficDirection.INCOMING: self.__get_shaping_rule(self.ifb_device),
+                TrafficDirection.OUTGOING: out_rule_maps,
+                TrafficDirection.INCOMING: in_rule_maps,
             }
         }
 
@@ -109,7 +128,7 @@ class TcShapingRuleParser(object):
 
         if Tc.Param.HANDLE in filter_param:
             handle = filter_param.get(Tc.Param.HANDLE)
-            Integer(handle).validate()
+            typepy.Integer(handle).validate()
             handle = int(handle)
 
             for mangle in self.__iptables_ctrl.parse():
@@ -138,11 +157,11 @@ class TcShapingRuleParser(object):
                 key_items[Tc.Param.DST_NETWORK] = dst_network
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
-            if Integer(src_port).is_type():
+            if typepy.Integer(src_port).is_type():
                 key_items[Tc.Param.SRC_PORT] = "{:d}".format(src_port)
 
             dst_port = filter_param.get(Tc.Param.DST_PORT)
-            if Integer(dst_port).is_type():
+            if typepy.Integer(dst_port).is_type():
                 key_items[Tc.Param.DST_PORT] = "{:d}".format(dst_port)
 
             protocol = filter_param.get(Tc.Param.PROTOCOL)
@@ -155,7 +174,7 @@ class TcShapingRuleParser(object):
 
     def __get_shaping_rule(self, device):
         if typepy.is_null_string(device):
-            return {}
+            return ({}, [])
 
         self.__parse_device(device)
         where_query = Where(Tc.Param.DEVICE, device)
@@ -182,12 +201,13 @@ class TcShapingRuleParser(object):
             qdisc_params = []
 
         shaping_rule_mapping = {}
+        shaping_rules = []
 
         for filter_param in filter_params:
             self.__logger.debug("{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
             shaping_rule = {}
 
-            filter_key, _ = self.__get_filter_key(filter_param)
+            filter_key, rule_with_keys = self.__get_filter_key(filter_param)
             if typepy.is_null_string(filter_key):
                 self.__logger.debug("empty filter key: {}".format(filter_param))
                 continue
@@ -232,9 +252,12 @@ class TcShapingRuleParser(object):
 
             self.__logger.debug("shaping rule found: {} {}".format(filter_key, shaping_rule))
 
+            rule_with_keys.update(shaping_rule)
+            shaping_rules.append(rule_with_keys)
+
             shaping_rule_mapping[filter_key] = shaping_rule
 
-        return shaping_rule_mapping
+        return (shaping_rule_mapping, shaping_rules)
 
     def __parse_tc_qdisc(self, device):
         return TcQdiscParser(self.__con).parse(
