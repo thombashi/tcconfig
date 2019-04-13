@@ -178,11 +178,11 @@ class TcShapingRuleParser(object):
             filter_params = []
 
         try:
-            qdisc_param_list = self.__con.select_as_dict(
+            qdisc_params = self.__con.select_as_dict(
                 table_name=TcSubCommand.QDISC.value, where=where_query
             )
         except simplesqlite.TableNotFoundError:
-            qdisc_param_list = []
+            qdisc_params = []
 
         shaping_rule_mapping = {}
 
@@ -195,7 +195,7 @@ class TcShapingRuleParser(object):
                 self.__logger.debug("empty filter key: {}".format(filter_param))
                 continue
 
-            for qdisc_param in qdisc_param_list:
+            for qdisc_param in qdisc_params:
                 self.__logger.debug("{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
 
                 if qdisc_param.get(Tc.Param.PARENT) not in (
