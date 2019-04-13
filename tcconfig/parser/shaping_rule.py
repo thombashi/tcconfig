@@ -164,11 +164,11 @@ class TcShapingRuleParser(object):
         where_query = Where(Tc.Param.DEVICE, device)
 
         try:
-            class_param_list = self.__con.select_as_dict(
+            class_params = self.__con.select_as_dict(
                 table_name=TcSubCommand.CLASS.value, where=where_query
             )
         except simplesqlite.TableNotFoundError:
-            class_param_list = []
+            class_params = []
 
         try:
             filter_params = self.__con.select_as_dict(
@@ -213,7 +213,7 @@ class TcShapingRuleParser(object):
                     )
                 )
 
-            for class_param in class_param_list:
+            for class_param in class_params:
                 self.__logger.debug("{:s} param: {}".format(TcSubCommand.CLASS, class_param))
 
                 if class_param.get(Tc.Param.CLASS_ID) not in (
