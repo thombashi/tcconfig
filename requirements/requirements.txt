@@ -9,7 +9,7 @@ msgfy>=0.0.5,<0.1.0
 path.py
 pyparsing>=2.2.2,<3.0.0
 simplejson>=3.16.0,<4.0.0
-SimpleSQLite>=0.41.1,<1.0.0
+SimpleSQLite>=0.44.0,<1.0.0
 six>=1.11.0,<2.0.0
 subprocrunner>=0.16.0,<1.0.0
 typepy>=0.4.0,<1.0.0
