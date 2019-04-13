@@ -106,7 +106,7 @@ class TcShapingRuleParser(object):
         src_network_format = Tc.Param.SRC_NETWORK + "={:s}"
         dst_network_format = Tc.Param.DST_NETWORK + "={:s}"
         protocol_format = Tc.Param.PROTOCOL + "={:s}"
-        key_item_list = []
+        key_items = []
 
         if Tc.Param.HANDLE in filter_param:
             handle = filter_param.get(Tc.Param.HANDLE)
@@ -117,10 +117,10 @@ class TcShapingRuleParser(object):
                 if mangle.mark_id != handle:
                     continue
 
-                key_item_list.append(dst_network_format.format(mangle.destination))
+                key_items.append(dst_network_format.format(mangle.destination))
                 if typepy.is_not_null_string(mangle.source):
-                    key_item_list.append("{:s}={:s}".format(Tc.Param.SRC_NETWORK, mangle.source))
-                key_item_list.append(protocol_format.format(mangle.protocol))
+                    key_items.append("{:s}={:s}".format(Tc.Param.SRC_NETWORK, mangle.source))
+                key_items.append(protocol_format.format(mangle.protocol))
 
                 break
             else:
@@ -130,29 +130,29 @@ class TcShapingRuleParser(object):
             if typepy.is_not_null_string(src_network) and not is_anywhere_network(
                 src_network, self.__ip_version
             ):
-                key_item_list.append(src_network_format.format(src_network))
+                key_items.append(src_network_format.format(src_network))
 
             dst_network = filter_param.get(Tc.Param.DST_NETWORK)
             if typepy.is_not_null_string(dst_network) and not is_anywhere_network(
                 dst_network, self.__ip_version
             ):
-                key_item_list.append(dst_network_format.format(dst_network))
+                key_items.append(dst_network_format.format(dst_network))
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
             if Integer(src_port).is_type():
                 port_format = Tc.Param.SRC_PORT + "={:d}"
-                key_item_list.append(port_format.format(src_port))
+                key_items.append(port_format.format(src_port))
 
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             if Integer(dst_port).is_type():
                 port_format = Tc.Param.DST_PORT + "={:d}"
-                key_item_list.append(port_format.format(dst_port))
+                key_items.append(port_format.format(dst_port))
 
             protocol = filter_param.get(Tc.Param.PROTOCOL)
             if typepy.is_not_null_string(protocol):
-                key_item_list.append(protocol_format.format(protocol))
+                key_items.append(protocol_format.format(protocol))
 
-        return ", ".join(key_item_list)
+        return ", ".join(key_items)
 
     def __get_shaping_rule(self, device):
         from simplesqlite.query import Where
