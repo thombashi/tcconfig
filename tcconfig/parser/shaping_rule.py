@@ -10,9 +10,10 @@ import copy
 from collections import OrderedDict
 
 import logbook
-import simplesqlite
 import subprocrunner
 import typepy
+from simplesqlite import TableNotFoundError, connect_memdb
+from simplesqlite.query import Where
 from typepy import Integer
 
 from .._common import is_execute_tc_command
@@ -51,7 +52,7 @@ class TcShapingRuleParser(object):
         self.__iptables_ctrl = IptablesMangleController(True, ip_version)
 
     def clear(self):
-        self.__con = simplesqlite.connect_memdb()
+        self.__con = connect_memdb()
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__parsed_mappings = {}
 
@@ -153,8 +154,6 @@ class TcShapingRuleParser(object):
         return key, key_items
 
     def __get_shaping_rule(self, device):
-        from simplesqlite.query import Where
-
         if typepy.is_null_string(device):
             return {}
 
@@ -165,21 +164,21 @@ class TcShapingRuleParser(object):
             class_params = self.__con.select_as_dict(
                 table_name=TcSubCommand.CLASS.value, where=where_query
             )
-        except simplesqlite.TableNotFoundError:
+        except TableNotFoundError:
             class_params = []
 
         try:
             filter_params = self.__con.select_as_dict(
                 table_name=TcSubCommand.FILTER.value, where=where_query
             )
-        except simplesqlite.TableNotFoundError:
+        except TableNotFoundError:
             filter_params = []
 
         try:
             qdisc_params = self.__con.select_as_dict(
                 table_name=TcSubCommand.QDISC.value, where=where_query
             )
-        except simplesqlite.TableNotFoundError:
+        except TableNotFoundError:
             qdisc_params = []
 
         shaping_rule_mapping = {}
