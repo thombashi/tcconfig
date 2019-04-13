@@ -7,6 +7,7 @@
 from __future__ import absolute_import, unicode_literals
 
 import copy
+from collections import OrderedDict
 
 import logbook
 import simplesqlite
@@ -38,7 +39,7 @@ class TcShapingRuleParser(object):
     def ifb_device(self):
         return self.__ifb_device
 
-    def __init__(self, device, ip_version, tc_command_output, logger):
+    def __init__(self, device, ip_version, logger, tc_command_output):
         self.__device = device
         self.__ip_version = ip_version
         self.__tc_command_output = tc_command_output
@@ -103,10 +104,7 @@ class TcShapingRuleParser(object):
         return self.__filter_parser.parse_incoming_device(filter_runner.stdout)
 
     def __get_filter_key(self, filter_param):
-        src_network_format = Tc.Param.SRC_NETWORK + "={:s}"
-        dst_network_format = Tc.Param.DST_NETWORK + "={:s}"
-        protocol_format = Tc.Param.PROTOCOL + "={:s}"
-        key_items = []
+        key_items = OrderedDict()
 
         if Tc.Param.HANDLE in filter_param:
             handle = filter_param.get(Tc.Param.HANDLE)
@@ -117,10 +115,10 @@ class TcShapingRuleParser(object):
                 if mangle.mark_id != handle:
                     continue
 
-                key_items.append(dst_network_format.format(mangle.destination))
+                key_items[Tc.Param.DST_NETWORK] = mangle.destination
                 if typepy.is_not_null_string(mangle.source):
-                    key_items.append("{:s}={:s}".format(Tc.Param.SRC_NETWORK, mangle.source))
-                key_items.append(protocol_format.format(mangle.protocol))
+                    key_items[Tc.Param.SRC_NETWORK] = mangle.source
+                key_items[Tc.Param.PROTOCOL] = mangle.protocol
 
                 break
             else:
@@ -130,29 +128,29 @@ class TcShapingRuleParser(object):
             if typepy.is_not_null_string(src_network) and not is_anywhere_network(
                 src_network, self.__ip_version
             ):
-                key_items.append(src_network_format.format(src_network))
+                key_items[Tc.Param.SRC_NETWORK] = src_network
 
             dst_network = filter_param.get(Tc.Param.DST_NETWORK)
             if typepy.is_not_null_string(dst_network) and not is_anywhere_network(
                 dst_network, self.__ip_version
             ):
-                key_items.append(dst_network_format.format(dst_network))
+                key_items[Tc.Param.DST_NETWORK] = dst_network
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
             if Integer(src_port).is_type():
-                port_format = Tc.Param.SRC_PORT + "={:d}"
-                key_items.append(port_format.format(src_port))
+                key_items[Tc.Param.SRC_PORT] = "{:d}".format(src_port)
 
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             if Integer(dst_port).is_type():
-                port_format = Tc.Param.DST_PORT + "={:d}"
-                key_items.append(port_format.format(dst_port))
+                key_items[Tc.Param.DST_PORT] = "{:d}".format(dst_port)
 
             protocol = filter_param.get(Tc.Param.PROTOCOL)
             if typepy.is_not_null_string(protocol):
-                key_items.append(protocol_format.format(protocol))
+                key_items[Tc.Param.PROTOCOL] = protocol
 
-        return ", ".join(key_items)
+        key = ", ".join(["{}={}".format(key, value) for key, value in key_items.items()])
+
+        return key, key_items
 
     def __get_shaping_rule(self, device):
         from simplesqlite.query import Where
@@ -190,7 +188,7 @@ class TcShapingRuleParser(object):
             self.__logger.debug("{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
             shaping_rule = {}
 
-            filter_key = self.__get_filter_key(filter_param)
+            filter_key, _ = self.__get_filter_key(filter_param)
             if typepy.is_null_string(filter_key):
                 self.__logger.debug("empty filter key: {}".format(filter_param))
                 continue
