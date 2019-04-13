@@ -12,3 +12,14 @@ exclude = """
 | docs/conf.py
 | setup.py
 """
+
+[tool.isort]
+dont_skip="*/**/__init__.py"
+known_third_party= """
+humanreadable
+"""
+include_trailing_comma = true
+line_length=100
+lines_after_imports=2
+multi_line_output=3
+skip_glob="*/.eggs/*,*/.tox*,opencv/*"
