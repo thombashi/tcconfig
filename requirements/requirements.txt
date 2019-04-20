@@ -1,15 +1,16 @@
 colorama>=0.4.1,<1.0.0
-DataProperty>=0.42.1,<1.0.0
+DataProperty>=0.42.2,<1.0.0
 docker>=3.5.1,<4.0.0
 enum34;python_version<"3.4"
 humanreadable>=0.0.4,<0.1.0
 ipaddress;python_version<"3.3"
 Logbook>=1.1.0,<2.0.0
 msgfy>=0.0.5,<0.1.0
-path.py
+path.py<12; python_version <= "3.4"
+path.py>=12.0.1,<13; python_version > "3.4"
 pyparsing>=2.2.2,<3.0.0
 simplejson>=3.16.0,<4.0.0
-SimpleSQLite>=0.44.0,<1.0.0
+SimpleSQLite>=0.44.1,<1.0.0
 six>=1.11.0,<2.0.0
 subprocrunner>=0.16.0,<1.0.0
 typepy>=0.4.0,<1.0.0
