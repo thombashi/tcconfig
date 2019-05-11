@@ -6,8 +6,6 @@ matrix:
   include:
     - python: 2.7
       env: TOXENV=python2.7
-    - python: 3.4
-      env: TOXENV=python3.4
     - python: 3.5
       env: TOXENV=python3.5
     - python: 3.6
