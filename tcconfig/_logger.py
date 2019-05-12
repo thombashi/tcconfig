@@ -11,8 +11,15 @@ import simplesqlite
 import subprocrunner
 
 
+def _disable_logger(l):
+    try:
+        l.disable()
+    except AttributeError:
+        l.disabled = True  # to support Logbook<1.0.0
+
+
 logger = logbook.Logger("tcconfig")
-logger.disable()
+_disable_logger(logger)
 
 
 def set_logger(is_enable):
@@ -21,9 +28,12 @@ def set_logger(is_enable):
         return
 
     if is_enable:
-        logger.enable()
+        try:
+            logger.enable()
+        except AttributeError:
+            logger.disabled = False  # to support Logbook<1.0.0
     else:
-        logger.disable()
+        _disable_logger(logger)
 
     simplesqlite.set_logger(is_enable)
     subprocrunner.set_logger(is_enable)

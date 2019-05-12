@@ -4,8 +4,8 @@ docker>=3.5.1,<4.0.0
 enum34;python_version<"3.4"
 humanreadable>=0.0.4,<0.1.0
 ipaddress;python_version<"3.3"
-Logbook>=1.1.0,<2.0.0
 msgfy>=0.0.5,<0.1.0
+Logbook>=0.12.3,<2.0.0
 path.py<12; python_version <= "3.4"
 path.py>=12.0.1,<13; python_version > "3.4"
 pyparsing>=2.2.2,<3.0.0
