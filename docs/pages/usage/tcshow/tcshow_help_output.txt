@@ -2,33 +2,35 @@
 
     usage: tcshow [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
                   [--debug-query] [--stacktrace] [--ipv6] [--docker] [--color]
+                  [--export EXPORT_PATH]
                   device [device ...]
 
     optional arguments:
-      -h, --help     show this help message and exit
-      -V, --version  show program's version number and exit
-      --tc-command   display tc commands to be executed and exit. these commands
-                     are not actually executed.
-      --tc-script    generate a shell script file that described tc commands. this
-                     tc script execution result nearly equivalent with the
-                     tcconfig command. the script can be executed without tcconfig
-                     package installation.
-      --debug        for debug print.
-      --quiet        suppress execution log messages.
-      --color        colorize the output. require Pygments package.
+      -h, --help            show this help message and exit
+      -V, --version         show program's version number and exit
+      --tc-command          display tc commands to be executed and exit. these
+                            commands are not actually executed.
+      --tc-script           generate a shell script file that described tc
+                            commands. this tc script execution result nearly
+                            equivalent with the tcconfig command. the script can
+                            be executed without tcconfig package installation.
+      --debug               for debug print.
+      --quiet               suppress execution log messages.
+      --color               colorize the output. require Pygments package.
+      --export EXPORT_PATH  [experimental]
 
     Debug:
-      --debug-query  for debug print.
-      --stacktrace   print stack trace for debug information. --debug option
-                     required to see the debug print.
+      --debug-query         for debug print.
+      --stacktrace          print stack trace for debug information. --debug
+                            option required to see the debug print.
 
     Traffic Control:
-      device         network device name (e.g. eth0)
-      --ipv6         Display IPv6 shaping rules. Defaults to show IPv4 shaping
-                     rules.
+      device                network device name (e.g. eth0)
+      --ipv6                Display IPv6 shaping rules. Defaults to show IPv4
+                            shaping rules.
 
     Docker:
-      --docker       apply traffic control to a docker container.
+      --docker              apply traffic control to a docker container.
 
     Documentation: https://tcconfig.rtfd.io/
     Issue tracker: https://github.com/thombashi/tcconfig/issues

@@ -24,7 +24,7 @@ Install in Debian/Ubuntu from a deb package
 
 Dependencies
 ============
-Python 2.7+ or 3.4+
+Python 2.7+ or 3.5+
 
 Linux packages
 --------------
