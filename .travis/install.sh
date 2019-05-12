@@ -3,5 +3,5 @@
 pip install setuptools --upgrade
 
 if [ "$TOXENV" != "build" ] ; then
-    pip install .[test] --upgrade
+    pip install tox --upgrade
 fi
