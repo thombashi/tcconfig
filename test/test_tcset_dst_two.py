@@ -88,11 +88,11 @@ class Test_tcset_two_network(object):
             assert SubprocessRunner(" ".join(command_list)).run() == 0
 
             # w/o tc network ---
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
             without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
             # w/ tc network ---
-            transmitter.destination_host = dst_host_ex_option
+            transmitter.destination = dst_host_ex_option
             with_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
 
             # assertion ---

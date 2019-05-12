@@ -83,7 +83,7 @@ class Test_tcset_one_network(object):
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/o latency tc ---
             without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg
@@ -154,7 +154,7 @@ class Test_tcset_exclude(object):
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/o latency tc ---
             without_tc_rtt_avg = pingparser.parse(transmitter.ping().stdout).rtt_avg

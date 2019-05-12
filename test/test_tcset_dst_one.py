@@ -68,7 +68,7 @@ class Test_tcset_one_network(object):
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/o latency tc ---
             ping_result = transmitter.ping()
@@ -107,7 +107,7 @@ class Test_tcset_one_network(object):
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/o latency tc ---
             ping_result = transmitter.ping()
@@ -155,7 +155,7 @@ class Test_tcset_one_network(object):
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/o traffic shaping ---
             ping_result = transmitter.ping()
@@ -187,7 +187,7 @@ class Test_tcset_one_network(object):
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/o packet duplicate tc ---
             ping_result = transmitter.ping()
@@ -220,7 +220,7 @@ class Test_tcset_one_network(object):
 
         for tc_target in [device_option]:
             execute_tcdel(tc_target)
-            transmitter.destination_host = dst_host_option
+            transmitter.destination = dst_host_option
 
             # w/ latency tc ---
             runner_helper([Tc.Command.TCSET, tc_target, "--delay", "{:d}ms".format(delay)])
