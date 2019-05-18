@@ -217,14 +217,13 @@ Install via pip (recommended)
 
 Install in Debian/Ubuntu from a deb package
 --------------------------------------------
-#. ``wget https://github.com/thombashi/tcconfig/releases/download/<version>/tcconfig_<version>_amd64.deb``
-#. ``dpkg -iv tcconfig_<version>_amd64.deb``
+.. code:: console
 
-:Example:
-    .. code:: console
-
-        $ wget https://github.com/thombashi/tcconfig/releases/download/v0.19.0/tcconfig_0.19.0_amd64.deb
-        $ sudo dpkg -i tcconfig_0.19.0_amd64.deb
+    ARCHIVE_URL=$(curl -sL https://api.github.com/repos/thombashi/tcconfig/releases/latest | jq -r '.assets[].browser_download_url') &&
+    TEMP_DEB="$(mktemp)" &&
+    wget -O "${TEMP_DEB}" "${ARCHIVE_URL}" &&
+    sudo dpkg -i "${TEMP_DEB}"
+    rm -f "${TEMP_DEB}"
 
 
 Dependencies
