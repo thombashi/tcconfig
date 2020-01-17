@@ -1,25 +1,31 @@
 [tool.black]
 line-length = 100
-exclude = """
-.eggs/
-| .git/
-| .tox/
-| .venv/
-| _build/
-| build/
-| dist/
-| _sandbox/
+exclude = '''
+/(
+      \.eggs
+    | \.git
+    | \.mypy_cache
+    | \.tox
+    | \.venv
+    | \.pytype
+    | _build
+    | buck-out
+    | build
+    | dist
+)/
 | docs/conf.py
-| setup.py
-"""
+'''
 
 [tool.isort]
-dont_skip="*/**/__init__.py"
-known_third_party= """
-humanreadable
-"""
+dont_skip = "*/**/__init__.py"
+known_third_party = [
+]
 include_trailing_comma = true
-line_length=100
-lines_after_imports=2
-multi_line_output=3
-skip_glob="*/.eggs/*,*/.tox*"
+line_length = 100
+lines_after_imports = 2
+multi_line_output = 3
+skip_glob = [
+    '*/.eggs/*',
+    '*/.pytype/*',
+    '*/.tox/*',
+]
