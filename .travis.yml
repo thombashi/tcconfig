@@ -11,14 +11,11 @@ matrix:
     - python: 3.6
       env: TOXENV=py36
     - python: 3.7
-      dist: xenial
       env: TOXENV=py37
-    - python: 3.8-dev
-      dist: xenial
+    - python: 3.8
       env: TOXENV=py38
 
-    - python: 3.6
-      dist: xenial
+    - python: 3.7
       env: TOXENV=build
 
 os:
@@ -43,7 +40,7 @@ deploy:
     api_key:
       secure: "WM4FcDAD+QLP6+fgmDimd48PHJb+tr+0K6N6jNIdnh8TkQjLn5f/MJiu8UXW+J6wTDWgHKGlmC71xS8K2qNmp/lkrzRAHO7wSSNo9aeAFqFT1k/d0lmORmHvtIHQUO5S7VZFEQ2FeUFlXp0gV2ulpIdnZQHPZkDL75ioQfMIlBYLogiRs/rq/o7Si63rKAIVrT5sGYPaO47LXNaADqpGv7zBS07zsQCUgUwy5qwPEhCG+jPSesPJ5RVoegjUMon2zrT0k+iX6LiMAUnyUL+bkrqsn2eX+lonVSKQ9qSqXQhGPTirEHmGGAmNe6LmYrVHcABR7Dw5/Ea2CqwQU9PDPKYDgrevBiy2evyocv1I65d4Ry7vEX7/Gbj/ez81IBU4R/O/Br4Ik5F+NAw3N0OVrunsliy0IYDBoWy8k782oX9qSq0gWKTmIyTUhFh7yhpaJgmP4bvA+v9EJ6uv1NzTX0tQIFzeT0lAJSic3d8y7jyYQc77uQW2gHrv4i2M20sH5IHbud7jDq176eJvn5qLzCQOcTg4F8hz5s0A+p2Vm3t7pyCGtFXhkiQB9SA9d6flZ/uM3uhK9GxI9M7cQNPJ5IzSqcLGIWDkoGmVopklzoDafurYFDYPmTTbMhh6JP9BIeP0KgpfaYb/lRsNAh9l5sAw1570sOpVCJXqzFF+Jis="
     file_glob: true
-    file: 'dist/tcconfig_*.deb'
+    file: "dist/tcconfig_*.deb"
     on:
       tags: true
       branch: master
