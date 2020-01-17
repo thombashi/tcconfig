@@ -72,6 +72,7 @@ setuptools.setup(
         "network", "traffic control", "tc", "traffic shaping", "docker",
     ],
     long_description=long_description,
+    long_description_content_type="text/x-rst",
     license=pkg_info["__license__"],
     include_package_data=True,
     packages=setuptools.find_packages(exclude=['test*']),
