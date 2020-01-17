@@ -64,24 +64,20 @@ setuptools.setup(
     name=MODULE_NAME,
     version=pkg_info["__version__"],
     url=REPOSITORY_URL,
-
     author=pkg_info["__author__"],
     author_email=pkg_info["__email__"],
     description=summary,
-    keywords=[
-        "network", "traffic control", "tc", "traffic shaping", "docker",
-    ],
+    keywords=["network", "traffic control", "tc", "traffic shaping", "docker",],
     long_description=long_description,
     long_description_content_type="text/x-rst",
     license=pkg_info["__license__"],
     include_package_data=True,
-    packages=setuptools.find_packages(exclude=['test*']),
+    packages=setuptools.find_packages(exclude=["test*"]),
     project_urls={
         "Documentation": "https://{:s}.rtfd.io/".format(MODULE_NAME),
         "Source": REPOSITORY_URL,
         "Tracker": "{:s}/issues".format(REPOSITORY_URL),
     },
-
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     install_requires=setuptools_require + install_requires,
     setup_requires=setuptools_require + pytest_runner,
@@ -96,7 +92,6 @@ setuptools.setup(
         "release": ["releasecmd>=0.0.18,<0.1.0"],
         "test": tests_requires,
     },
-
     classifiers=[
         "Development Status :: 4 - Beta",
         "Environment :: Console",
@@ -126,4 +121,5 @@ setuptools.setup(
             "tcshow=tcconfig.tcshow:main",
         ],
     },
-    cmdclass=get_release_command_class())
+    cmdclass=get_release_command_class(),
+)
