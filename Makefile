@@ -42,7 +42,7 @@ fmt:
 
 .PHONY: readme
 readme:
-	@cd $(DOCS_DIR); python make_readme.py
+	@tox -e readme
 
 .PHONY: release
 release:
