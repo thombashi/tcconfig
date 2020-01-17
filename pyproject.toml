@@ -19,6 +19,11 @@ exclude = '''
 [tool.isort]
 dont_skip = "*/**/__init__.py"
 known_third_party = [
+    'allpairspy',
+    'pingparsing',
+    'pytest',
+    'readmemaker',
+    'sphinx_rtd_theme',
 ]
 include_trailing_comma = true
 line_length = 100
