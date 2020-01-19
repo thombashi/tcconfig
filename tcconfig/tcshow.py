@@ -76,6 +76,12 @@ def parse_option():
         help="colorize the output. require Pygments package.",
     )
     parser.parser.add_argument("--export", dest="export_path", help="[experimental]")
+    parser.parser.add_argument(
+        "--exclude-filter-id",
+        action="store_true",
+        default=False,
+        help="[experimental] not display filter_id.",
+    )
 
     return parser.parser.parse_args()
 
@@ -148,6 +154,7 @@ def extract_tc_params(options):
                         tc_command_output=options.tc_command_output,
                         logger=logger,
                         export_path=options.export_path,
+                        is_parse_filter_id=not options.exclude_filter_id,
                     )
                     rule_parser.parse()
 
@@ -167,6 +174,7 @@ def extract_tc_params(options):
                     tc_command_output=options.tc_command_output,
                     logger=logger,
                     export_path=options.export_path,
+                    is_parse_filter_id=not options.exclude_filter_id,
                 )
                 rule_parser.parse()
 
