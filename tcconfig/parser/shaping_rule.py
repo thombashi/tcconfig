@@ -169,7 +169,7 @@ class TcShapingRuleParser(object):
             src_port = filter_param.get(Tc.Param.SRC_PORT)
             if typepy.Integer(src_port).is_type():
                 key_items[Tc.Param.SRC_PORT] = "{}".format(src_port)
-            else:
+            elif src_port is not None:
                 self.__logger.warn(
                     "expected a integer value for {}, actual {}".format(
                         Tc.Param.SRC_PORT, type(src_port)
@@ -179,7 +179,7 @@ class TcShapingRuleParser(object):
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             if typepy.Integer(dst_port).is_type():
                 key_items[Tc.Param.DST_PORT] = "{}".format(dst_port)
-            else:
+            elif src_port is not None:
                 self.__logger.warn(
                     "expected a integer value for {}, actual {}".format(
                         Tc.Param.DST_PORT, type(dst_port)
