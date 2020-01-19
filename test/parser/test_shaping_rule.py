@@ -20,6 +20,9 @@ def device_value(request):
 
 class Test_TcShapingRuleParser(object):
     def test_normal(self, device_value):
+        if device_value is None:
+            pytest.skip("device option is null")
+
         delete_all_rules(device_value)
 
         tc = TrafficControl(
