@@ -32,7 +32,7 @@ if six.PY2:
     PermissionError = OSError
 
 
-ContainerInfo = namedtuple("ContainerInfo", "id name pid ipaddr image")
+ContainerInfo = namedtuple("ContainerInfo", "id name pid ipaddr image state")
 
 
 class IfIndex(Model):
@@ -95,18 +95,18 @@ class DockerClient(object):
 
         container_name = container_map["Name"].lstrip("/")
         container_state = container_map["State"]
-
-        if not container_state["Running"]:
-            logger.error("{} not running".format(container_name))
-            return ContainerInfo(name=container_name)
-
-        return ContainerInfo(
+        container_info = ContainerInfo(
             id=container_map["Id"],
             name=container_name,
             pid=int(container_state["Pid"]),
             ipaddr=container_map["NetworkSettings"]["IPAddress"],
             image=container_map["Config"]["Image"],
+            state=namedtuple("ContainerState", (k.lower() for k in container_state.keys()))(
+                *container_state.values()
+            ),
         )
+
+        return container_info
 
     def create_veth_table(self, container):
         try:
