@@ -125,12 +125,21 @@ def extract_tc_params(options):
 
     for device in options.device:
         try:
-            if options.use_docker and dclient.exist_container(container=device):
+            if options.use_docker:
                 container = device
-
-                dclient.verify_container(container)
-                dclient.create_veth_table(container)
                 container_info = dclient.extract_container_info(container)
+
+                if not container_info.state.running:
+                    logger.error(
+                        "{id} ({name}) not running (current status: {status})".format(
+                            id=container,
+                            name=container_info.name,
+                            status=container_info.state.status,
+                        )
+                    )
+                    continue
+
+                dclient.create_veth_table(container)
 
                 for veth in dclient.fetch_veth_list(container_info.name):
                     rule_parser = TcShapingRuleParser(
