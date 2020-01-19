@@ -205,7 +205,7 @@ https://tcconfig.rtfd.io/en/latest/pages/usage/index.html
 
 Installation
 ============
-Install via pip (recommended)
+Installation: pip
 ------------------------------
 ``tcconfig`` can be installed from `PyPI <https://pypi.python.org/pypi>`__ via
 `pip <https://pip.pypa.io/en/stable/installing/>`__ (Python package manager) command.
@@ -215,15 +215,11 @@ Install via pip (recommended)
     sudo pip install tcconfig
 
 
-Install in Debian/Ubuntu from a deb package
+Installation: dpkg (Debian/Ubuntu)
 --------------------------------------------
 .. code:: console
 
-    ARCHIVE_URL=$(curl -sL https://api.github.com/repos/thombashi/tcconfig/releases/latest | jq -r '.assets[].browser_download_url') &&
-    TEMP_DEB="$(mktemp)" &&
-    wget -O "${TEMP_DEB}" "${ARCHIVE_URL}" &&
-    sudo dpkg -i "${TEMP_DEB}"
-    rm -f "${TEMP_DEB}"
+    curl -sL https://raw.githubusercontent.com/thombashi/tcconfig/master/scripts/installer.sh | sudo bash
 
 
 Dependencies
