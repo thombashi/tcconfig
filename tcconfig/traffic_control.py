@@ -513,3 +513,7 @@ class TrafficControl(object):
         logger.info(logging_msg)
 
         return 0
+
+
+def delete_all_rules(device):
+    TrafficControl(device).delete_all_rules()
