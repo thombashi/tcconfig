@@ -67,7 +67,7 @@ setuptools.setup(
     author=pkg_info["__author__"],
     author_email=pkg_info["__email__"],
     description=summary,
-    keywords=["network", "traffic control", "tc", "traffic shaping", "docker",],
+    keywords=["network", "traffic control", "tc", "traffic shaping", "docker"],
     long_description=long_description,
     long_description_content_type="text/x-rst",
     license=pkg_info["__license__"],
