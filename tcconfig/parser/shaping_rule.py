@@ -244,7 +244,7 @@ class TcShapingRuleParser(object):
                     continue
 
                 if self.is_parse_filter_id:
-                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
+                    shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
 
                 # shaping_rule[Tc.Param.PRIORITY] = filter_param.get(
                 #    Tc.Param.PRIORITY)
@@ -265,7 +265,7 @@ class TcShapingRuleParser(object):
                     continue
 
                 if self.is_parse_filter_id:
-                shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
+                    shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
 
                 # shaping_rule[Tc.Param.PRIORITY] = filter_param.get(
                 #    Tc.Param.PRIORITY)
