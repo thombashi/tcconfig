@@ -14,6 +14,7 @@ import tcconfig.parser._filter
 import tcconfig.parser._qdisc
 import tcconfig.parser.shaping_rule
 from tcconfig._const import Tc
+from tcconfig.parser._class import TcClassParser
 
 from .common import print_test_result
 
@@ -34,6 +35,11 @@ def filter_parser_ipv6():
 @pytest.fixture
 def qdisc_parser():
     return tcconfig.parser._qdisc.TcQdiscParser(connect_memdb())
+
+
+@pytest.fixture
+def class_parser():
+    return TcClassParser(connect_memdb())
 
 
 class Test_TcFilterParser_parse_filter_ipv4(object):
@@ -453,6 +459,64 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 0.5s  1.0ms loss 5%
     )
     def test_normal(self, qdisc_parser, value, expected):
         actual = qdisc_parser.parse(DEVICE, value)
+
+        import json
+
+        print_test_result(
+            expected=json.dumps(expected, indent=4), actual=json.dumps(actual, indent=4)
+        )
+
+        assert actual == expected
+
+
+class Test_TcClassParser_parse(object):
+    @pytest.mark.parametrize(
+        ["value", "expected"],
+        [
+            [
+                six.b(
+                    """
+class htb 120a:1 root prio rate 32Gbit ceil 32Gbit burst 0b cburst 0b
+class htb 120a:2 root leaf 2946: prio rate 1Gbit ceil 1Gbit burst 125000Kb cburst 125000Kb
+"""
+                ),
+                [
+                    {
+                        TcClassParser.Key.RATE: "32Gbps",
+                        TcClassParser.Key.CLASS_ID: "120a:1",
+                        TcClassParser.Key.DEVICE: "eth0",
+                    },
+                    {
+                        TcClassParser.Key.RATE: "1Gbps",
+                        TcClassParser.Key.CLASS_ID: "120a:2",
+                        TcClassParser.Key.DEVICE: "eth0",
+                    },
+                ],
+            ],
+            [
+                six.b(
+                    """
+class htb 120a:1 root prio rate 32Gbit ceil 32Gbit burst 0b cburst 0b
+class htb 120a:2 root leaf 2518: prio rate 200Kbit ceil 200Kbit burst 25Kb cburst 25Kb
+                    """
+                ),
+                [
+                    {
+                        TcClassParser.Key.RATE: "32Gbps",
+                        TcClassParser.Key.DEVICE: "eth0",
+                        TcClassParser.Key.CLASS_ID: "120a:1",
+                    },
+                    {
+                        TcClassParser.Key.RATE: "200Kbps",
+                        TcClassParser.Key.DEVICE: "eth0",
+                        TcClassParser.Key.CLASS_ID: "120a:2",
+                    },
+                ],
+            ],
+        ],
+    )
+    def test_normal(self, class_parser, value, expected):
+        actual = class_parser.parse(DEVICE, value)
 
         import json
 
