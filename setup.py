@@ -21,8 +21,11 @@ ENCODING = "utf8"
 pkg_info = {}
 
 
-def need_pytest():
-    return set(["pytest", "test", "ptr"]).intersection(sys.argv)
+def pytest_runner_requires():
+    if set(["pytest", "test", "ptr"]).intersection(sys.argv):
+        return ["pytest-runner"]
+
+    return []
 
 
 def get_release_command_class():
@@ -58,7 +61,6 @@ build_requires = build_exe_requires + build_wheel_requires
 
 color_requires = ["Pygments>=2.2.0"]
 setuptools_require = ["setuptools>=38.3.0"]
-pytest_runner = ["pytest-runner"] if need_pytest() else []
 
 setuptools.setup(
     name=MODULE_NAME,
@@ -80,7 +82,7 @@ setuptools.setup(
     },
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     install_requires=setuptools_require + install_requires,
-    setup_requires=setuptools_require + pytest_runner,
+    setup_requires=setuptools_require + pytest_runner_requires(),
     tests_require=tests_requires,
     extras_require={
         "all": ["netifaces"] + color_requires,
