@@ -14,8 +14,6 @@ import humanreadable as hr
 from subprocrunner import SubprocessRunner
 from typepy import RealNumber
 
-from tcconfig._const import Tc
-
 
 DEADLINE_TIME = 3  # [sec]
 ASSERT_MARGIN = 0.5
@@ -52,10 +50,6 @@ def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reorde
         is_invalid = False
 
     return is_invalid
-
-
-def execute_tcdel(device):
-    return SubprocessRunner([Tc.Command.TCDEL, device, "--all"], dry_run=False).run()
 
 
 def runner_helper(command):

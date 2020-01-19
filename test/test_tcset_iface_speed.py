@@ -10,8 +10,7 @@ import pytest
 from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
-
-from .common import execute_tcdel
+from tcconfig.traffic_control import delete_all_rules
 
 
 @pytest.fixture
@@ -34,7 +33,7 @@ class Test_tcset_iface_speed(object):
             assert runner.run() == 0, (runner.command_str, runner.returncode, runner.stderr)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
     @pytest.mark.parametrize(["rate"], [["990Gbps"]])
     def test_normal_exceed_max_rate(self, monkeypatch, device_option, rate):
@@ -48,7 +47,7 @@ class Test_tcset_iface_speed(object):
             assert runner.run() == 0, (runner.command_str, runner.returncode, runner.stderr)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
     @pytest.mark.parametrize(["rate"], [["0kbps"]])
     def test_abnormal(self, monkeypatch, device_option, rate):
@@ -64,4 +63,4 @@ class Test_tcset_iface_speed(object):
             assert runner.run() != 0, (runner.command_str, runner.returncode, runner.stderr)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)

@@ -11,8 +11,9 @@ import simplejson as json
 from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
+from tcconfig.traffic_control import delete_all_rules
 
-from .common import execute_tcdel, print_test_result, runner_helper
+from .common import print_test_result, runner_helper
 
 
 @pytest.fixture
@@ -37,7 +38,7 @@ class Test_tcset_change(object):
             pytest.skip("device is null")
 
         for device_option in [device_value, "--device {}".format(device_value)]:
-            execute_tcdel(device_option)
+            delete_all_rules(device_option)
 
             runner_helper(
                 " ".join(
@@ -58,7 +59,7 @@ class Test_tcset_change(object):
                 )
             )
 
-            execute_tcdel(device_option)
+            delete_all_rules(device_option)
 
     def test_normal(self, device_value):
         if device_value is None:
@@ -169,4 +170,4 @@ class Test_tcset_change(object):
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # finalize ---
-            execute_tcdel(device_option)
+            delete_all_rules(device_option)

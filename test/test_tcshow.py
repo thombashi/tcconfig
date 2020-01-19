@@ -9,8 +9,9 @@ import simplejson as json
 from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
+from tcconfig.traffic_control import delete_all_rules
 
-from .common import execute_tcdel, print_test_result, runner_helper
+from .common import print_test_result, runner_helper
 
 
 @pytest.fixture
@@ -32,7 +33,7 @@ class Test_tcshow(object):
             pytest.skip("device option is null")
 
         for tc_target in [device_value, "--device {}".format(device_value)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
             expected = (
@@ -194,7 +195,7 @@ class Test_tcshow(object):
 
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
     @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
     def test_normal_ipv6(self, device_value, colorize_option):
@@ -340,4 +341,4 @@ class Test_tcshow(object):
 
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)

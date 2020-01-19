@@ -14,8 +14,9 @@ import typepy
 
 from tcconfig._const import Tc
 from tcconfig._netem_param import convert_rate_to_f
+from tcconfig.traffic_control import delete_all_rules
 
-from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel, runner_helper
+from .common import ASSERT_MARGIN, DEADLINE_TIME, runner_helper
 
 
 @pytest.fixture
@@ -67,7 +68,7 @@ class Test_tcset_one_network(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/o latency tc ---
@@ -96,7 +97,7 @@ class Test_tcset_one_network(object):
             assert rtt_diff > (delay * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(device_option)
+            delete_all_rules(device_option)
 
     @pytest.mark.parametrize(["delay", "delay_distro"], [[100, 50]])
     def test_dst_net_latency_distro(
@@ -106,7 +107,7 @@ class Test_tcset_one_network(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/o latency tc ---
@@ -144,7 +145,7 @@ class Test_tcset_one_network(object):
             assert rtt_diff > (delay_distro * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
     @pytest.mark.parametrize(["option", "value"], [["--loss", 10], ["--corrupt", 10]])
     def test_dst_net_packet_loss(
@@ -154,7 +155,7 @@ class Test_tcset_one_network(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/o traffic shaping ---
@@ -176,7 +177,7 @@ class Test_tcset_one_network(object):
             assert loss_diff > (value * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
     @pytest.mark.parametrize(["option", "value"], [["--duplicate", 50], ["--duplicate", "10%"]])
     def test_dst_net_packet_duplicate(
@@ -186,7 +187,7 @@ class Test_tcset_one_network(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/o packet duplicate tc ---
@@ -206,7 +207,7 @@ class Test_tcset_one_network(object):
             assert duplicate_rate_diff > (convert_rate_to_f(value) * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
     def test_dst_net_exclude_dst_network(
         self, device_option, dst_host_option, transmitter, pingparser
@@ -219,7 +220,7 @@ class Test_tcset_one_network(object):
         delay = 100
 
         for tc_target in [device_option]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/ latency tc ---
@@ -250,4 +251,4 @@ class Test_tcset_one_network(object):
             assert rtt_diff > (delay * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)

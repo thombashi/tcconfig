@@ -12,8 +12,7 @@ from allpairspy import AllPairs
 from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
-
-from .common import execute_tcdel
+from tcconfig.traffic_control import delete_all_rules
 
 
 SKIP_TEST = False
@@ -116,7 +115,7 @@ class Test_tcconfig(object):
             pytest.skip("skip null parameters")
 
         for device_option in [device_value, "--device {}".format(device_value)]:
-            execute_tcdel(device_value)
+            delete_all_rules(device_value)
 
             command = " ".join(
                 [
@@ -138,4 +137,4 @@ class Test_tcconfig(object):
             tcset_proc = SubprocessRunner(command)
             assert tcset_proc.run() == 0, tcset_proc.stderr
 
-            execute_tcdel(device_value)
+            delete_all_rules(device_value)

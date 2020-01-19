@@ -14,8 +14,9 @@ import typepy
 from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc, TrafficDirection
+from tcconfig.traffic_control import delete_all_rules
 
-from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
+from .common import ASSERT_MARGIN, DEADLINE_TIME
 
 
 @pytest.fixture
@@ -82,7 +83,7 @@ class Test_tcset_one_network(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/o latency tc ---
@@ -115,7 +116,7 @@ class Test_tcset_one_network(object):
             assert rtt_diff > (delay * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
 
 
 class Test_tcset_exclude(object):
@@ -153,7 +154,7 @@ class Test_tcset_exclude(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
             # w/o latency tc ---
@@ -188,4 +189,4 @@ class Test_tcset_exclude(object):
             assert rtt_diff < (delay / 10)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)

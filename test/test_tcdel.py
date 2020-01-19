@@ -10,12 +10,16 @@ from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
 
-from .common import execute_tcdel, print_test_result, runner_helper
+from .common import print_test_result, runner_helper
 
 
 @pytest.fixture
 def device_value(request):
     return request.config.getoption("--device")
+
+
+def execute_tcdel(device):
+    return SubprocessRunner([Tc.Command.TCDEL, device, "--all"], dry_run=False).run()
 
 
 class Test_tcdel(object):

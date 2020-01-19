@@ -12,8 +12,9 @@ import typepy
 from subprocrunner import SubprocessRunner
 
 from tcconfig._const import Tc
+from tcconfig.traffic_control import delete_all_rules
 
-from .common import ASSERT_MARGIN, DEADLINE_TIME, execute_tcdel
+from .common import ASSERT_MARGIN, DEADLINE_TIME
 
 
 @pytest.fixture
@@ -74,7 +75,7 @@ class Test_tcset_two_network(object):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option, "--device {}".format(device_option)]:
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
             delay = 100
 
             # tc to specific network ---
@@ -100,4 +101,4 @@ class Test_tcset_two_network(object):
             assert rtt_diff > (delay * ASSERT_MARGIN)
 
             # finalize ---
-            execute_tcdel(tc_target)
+            delete_all_rules(tc_target)
