@@ -266,7 +266,7 @@ class TcSetMain(Main):
                 return errno.EINVAL
 
             try:
-                return_code_list.append(tc.set_tc())
+                return_code_list.append(tc.set_shaping_rule())
             except NetworkInterfaceNotFoundError as e:
                 logger.error(e)
                 return errno.EINVAL
