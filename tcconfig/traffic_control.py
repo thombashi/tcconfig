@@ -157,7 +157,7 @@ class TrafficControl(object):
         is_ipv6=False,
         is_change_shaping_rule=False,
         is_add_shaping_rule=False,
-        is_enable_iptables=True,
+        is_enable_iptables=False,
         shaping_algorithm=None,
         tc_command_output=TcCommandOutput.NOT_SET,
     ):
