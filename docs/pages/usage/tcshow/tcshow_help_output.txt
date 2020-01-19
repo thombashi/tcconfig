@@ -2,7 +2,7 @@
 
     usage: tcshow [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
                   [--debug-query] [--stacktrace] [--ipv6] [--docker] [--color]
-                  [--export EXPORT_PATH]
+                  [--export EXPORT_PATH] [--exclude-filter-id]
                   device [device ...]
 
     optional arguments:
@@ -18,6 +18,7 @@
       --quiet               suppress execution log messages.
       --color               colorize the output. require Pygments package.
       --export EXPORT_PATH  [experimental]
+      --exclude-filter-id   [experimental] not display filter_id.
 
     Debug:
       --debug-query         for debug print.
