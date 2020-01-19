@@ -91,7 +91,7 @@ setuptools.setup(
         "buildwhl": build_wheel_requires,
         "color": color_requires,
         "docs": docs_requires,
-        "release": ["releasecmd>=0.0.18,<0.1.0"],
+        "release": ["releasecmd>=0.2.0,<1"],
         "test": tests_requires,
     },
     classifiers=[
