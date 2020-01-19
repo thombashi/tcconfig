@@ -6,7 +6,9 @@
 
 from __future__ import absolute_import, print_function
 
+import json
 import sys
+from collections import OrderedDict
 
 import humanreadable as hr
 from subprocrunner import SubprocessRunner
@@ -20,7 +22,12 @@ ASSERT_MARGIN = 0.5
 
 
 def print_test_result(expected, actual, error=None):
+    if isinstance(expected, (dict, OrderedDict)):
+        expected = json.dumps(expected, indent=4)
     print("[expected]\n{}\n".format(expected))
+
+    if isinstance(actual, (dict, OrderedDict)):
+        actual = json.dumps(actual, indent=4)
     print("[actual]\n{}\n".format(actual))
 
     if error:
