@@ -8,6 +8,7 @@ from __future__ import absolute_import, unicode_literals
 
 import errno
 import io
+import re
 
 import msgfy
 import pyparsing as pp
@@ -16,6 +17,10 @@ import six
 import subprocrunner as spr
 
 from ._const import Network, Tc, TrafficDirection
+
+
+RE_CONTAINER_ID = re.compile(r"[a-z0-9]{12}\s+\(device=[a-z0-9]+\)")
+# e.g. edfd9dbb3969 (device=veth6f7b798)
 
 
 class TcConfigLoader(object):
@@ -52,8 +57,16 @@ class TcConfigLoader(object):
         command_list = []
 
         for device, device_table in six.iteritems(self.__config_table):
+            is_container = RE_CONTAINER_ID.search(device) is not None
+            if is_container:
+                device = device.split()[0]
+
             if self.is_overwrite:
-                command_list.append(" ".join([Tc.Command.TCDEL, device, "--all"]))
+                command_list.append(
+                    " ".join(
+                        [Tc.Command.TCDEL, device, "--all"] + (["--docker"] if is_container else [])
+                    )
+                )
 
             for direction, direction_table in six.iteritems(device_table):
                 is_first_set = True
@@ -68,7 +81,10 @@ class TcConfigLoader(object):
                     if not filter_table:
                         continue
 
-                    option_list = [device, "--direction={:s}".format(direction)]
+                    option_list = [device, "--direction={:s}".format(direction)] + (
+                        ["--docker"] if is_container else []
+                    )
+
                     for key, value in six.iteritems(filter_table):
                         arg_item = "--{:s}={}".format(key, value)
 
