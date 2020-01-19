@@ -241,7 +241,7 @@ class TcSetMain(Main):
                     set_log_level(logbook.ERROR)
 
                 try:
-                    tc.delete_all_tc()
+                    tc.delete_all_rules()
                 except NetworkInterfaceNotFoundError:
                     pass
 

@@ -285,7 +285,7 @@ class TrafficControl(object):
 
         return self.__shaper.set_shaping()
 
-    def delete_all_tc(self):
+    def delete_all_rules(self):
         result_list = []
 
         result_list.append(self.__delete_qdisc())
@@ -342,7 +342,7 @@ class TrafficControl(object):
         rule_finder.clear()
         if not rule_finder.is_any_filter():
             logger.debug("there are no filters remain. delete qdiscs.")
-            self.delete_all_tc()
+            self.delete_all_rules()
 
         return result
 

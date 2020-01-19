@@ -68,7 +68,7 @@ class TcDelMain(Main):
 
             try:
                 if is_delete_all:
-                    return_code_list.append(tc.delete_all_tc())
+                    return_code_list.append(tc.delete_all_rules())
                 else:
                     return_code_list.append(tc.delete_tc())
             except NetworkInterfaceNotFoundError as e:
