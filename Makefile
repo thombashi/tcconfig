@@ -17,18 +17,7 @@ check:
 
 .PHONY: clean
 clean:
-	@rm -rf $(PACKAGE)-*.*.*/ \
-		$(DOCS_BUILD_DIR) \
-		dist/ \
-		pip-wheel-metadata/ \
-		.eggs/ \
-		.pytest_cache/ \
-		.tox/ \
-		*.egg-info/
-	@python setup.py clean
-	@find . -name "__pycache__" -type d -exec rm -rf "{}" \;
-	@find . -name "*.pyc" -delete
-	@find . -not -path '*/\.*' -type f | grep -E .+\.py\.[a-z0-9]{32,}\.py$ | xargs -r rm
+	@tox -e clean
 
 .PHONY: docs
 docs:
