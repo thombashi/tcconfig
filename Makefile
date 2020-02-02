@@ -33,8 +33,7 @@ readme:
 
 .PHONY: release
 release:
-	@python setup.py release --sign
-	@make clean
+	@tox -e release
 
 .PHONY: setup
 setup:
