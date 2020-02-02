@@ -1,3 +1,5 @@
 allpairspy>=2.5
+mock<4; python_version<"3"
 pingparsing>=0.18.2
-pytest
+pytest<5; python_version<"3"
+pytest>=5; python_version>="3"

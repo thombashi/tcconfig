@@ -9,6 +9,7 @@ msgfy>=0.0.6,<1
 path.py<12; python_version <= "3.4"
 path.py>=12.0.1,<13; python_version > "3.4"
 pyparsing>=2.0.3,<3
+pyroute2>=0.5.7,<1
 simplejson>=3.8.1,<4
 SimpleSQLite>=0.45.4,<2
 six>=1.10.0,<2
