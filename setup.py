@@ -53,8 +53,6 @@ with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
     tests_requires = [line.strip() for line in f if line.strip()]
 
 build_exe_requires = ["pyinstaller>=3.4"]
-build_requires = build_exe_requires
-
 color_requires = ["Pygments>=2.2.0"]
 setuptools_require = ["setuptools>=38.3.0"]
 
@@ -82,7 +80,6 @@ setuptools.setup(
     tests_require=tests_requires,
     extras_require={
         "all": ["netifaces"] + color_requires,
-        "build": build_requires,
         "buildexe": build_exe_requires,
         "color": color_requires,
         "test": tests_requires,
