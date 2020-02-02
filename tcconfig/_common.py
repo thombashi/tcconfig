@@ -58,7 +58,8 @@ def find_bin_path(command):
             _bin_path_cache[command] = _to_regular_bin_path(sbin_path)
             return _bin_path_cache[command]
 
-    return None
+    # return the command as it is when binary file not found
+    return command
 
 
 def check_command_installation(command):
