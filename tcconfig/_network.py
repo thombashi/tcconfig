@@ -9,6 +9,7 @@ from __future__ import absolute_import, unicode_literals
 import humanreadable as hr
 import six
 import typepy
+from pyroute2 import IPRoute
 
 from ._const import Network
 from ._error import NetworkInterfaceNotFoundError
@@ -110,15 +111,13 @@ def sanitize_network(network, ip_version):
 
 
 def verify_network_interface(device, tc_command_output):
-    try:
-        import netifaces
-    except ImportError:
-        return
-
     from ._common import is_execute_tc_command
 
     if not is_execute_tc_command(tc_command_output):
         return
 
-    if device not in netifaces.interfaces():
+    with IPRoute() as ipr:
+        avail_interfaces = [link.get_attr("IFLA_IFNAME") for link in ipr.get_links()]
+
+    if device not in avail_interfaces:
         raise NetworkInterfaceNotFoundError(target=device)

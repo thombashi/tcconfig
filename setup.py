@@ -79,7 +79,7 @@ setuptools.setup(
     setup_requires=setuptools_require + pytest_runner_requires(),
     tests_require=tests_requires,
     extras_require={
-        "all": ["netifaces"] + color_requires,
+        "all": color_requires,
         "buildexe": build_exe_requires,
         "color": color_requires,
         "test": tests_requires,

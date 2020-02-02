@@ -8,6 +8,8 @@ from __future__ import absolute_import
 
 import abc
 
+from pyroute2 import IPRoute
+
 
 class TargetNotFoundError(Exception):
     @abc.abstractproperty
@@ -43,12 +45,10 @@ class NetworkInterfaceNotFoundError(TargetNotFoundError):
     def __str__(self, *args, **kwargs):
         item_list = [super(NetworkInterfaceNotFoundError, self).__str__(*args, **kwargs)]
 
-        try:
-            import netifaces
+        with IPRoute() as ipr:
+            avail_interfaces = [link.get_attr("IFLA_IFNAME") for link in ipr.get_links()]
 
-            item_list.append("(available interfaces: {})".format(", ".join(netifaces.interfaces())))
-        except ImportError:
-            pass
+        item_list.append("(available interfaces: {})".format(", ".join(avail_interfaces)))
 
         return " ".join(item_list).strip()
 
