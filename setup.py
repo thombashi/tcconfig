@@ -85,7 +85,6 @@ setuptools.setup(
         "build": build_requires,
         "buildexe": build_exe_requires,
         "color": color_requires,
-        "release": ["releasecmd>=0.2.0,<1"],
         "test": tests_requires,
     },
     classifiers=[
