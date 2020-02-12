@@ -8,7 +8,6 @@ from __future__ import unicode_literals
 
 import io
 import os.path
-import sys
 
 import setuptools
 
@@ -19,13 +18,6 @@ REQUIREMENT_DIR = "requirements"
 ENCODING = "utf8"
 
 pkg_info = {}
-
-
-def pytest_runner_requires():
-    if set(["pytest", "test", "ptr"]).intersection(sys.argv):
-        return ["pytest-runner"]
-
-    return []
 
 
 def get_release_command_class():
@@ -76,8 +68,7 @@ setuptools.setup(
     },
     python_requires=">=2.7, !=3.0.*, !=3.1.*, !=3.2.*, !=3.3.*, !=3.4.*",
     install_requires=setuptools_require + install_requires,
-    setup_requires=setuptools_require + pytest_runner_requires(),
-    tests_require=tests_requires,
+    setup_requires=setuptools_require,
     extras_require={
         "all": color_requires,
         "buildexe": build_exe_requires,

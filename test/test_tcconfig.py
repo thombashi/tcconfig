@@ -53,7 +53,8 @@ class Test_tcconfig(object):
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
-      python setup.py test --addopts "--runxfail --device=<test device>"
+
+      pytest --runxfail --device=<test device>
 
     These tests are expected to execute on following environment:
        - Linux w/ iputils-ping package

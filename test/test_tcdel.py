@@ -27,7 +27,7 @@ class Test_tcdel(object):
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
 
-        python setup.py test --addopts "--runxfail --device=<test device>"
+        pytest --runxfail --device=<test device>
     """
 
     def test_normal_ipv4(self, device_value):
