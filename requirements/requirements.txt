@@ -1,5 +1,5 @@
 colorama>=0.3.7,<1
-DataProperty>=0.43.2,<2
+DataProperty>=0.46.3,<2
 docker>=1.9.0,<5
 enum34;python_version<"3.4"
 humanreadable>=0.0.9,<1
@@ -11,8 +11,8 @@ path.py<13; python_version > "3.4"
 pyparsing>=2.0.3,<3
 pyroute2>=0.5.7,<1
 simplejson>=3.8.1,<4
-SimpleSQLite>=0.45.4,<2
+SimpleSQLite>=0.47.3,<2
 six>=1.10.0,<2
-subprocrunner>=0.17.0,<2
+subprocrunner>=1.0.1,<2
 typepy>=0.6.4,<2
 voluptuous<1
