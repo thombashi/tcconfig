@@ -1,3 +1,2 @@
-path.py
 sphinx_rtd_theme
 Sphinx
