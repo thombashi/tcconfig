@@ -249,7 +249,7 @@ class TcFilterParser(AbstractParser):
         elif match_id == self.FilterMatchIdIpv4.OUTGOING_NETWORK:
             self.__filter_dst_network = network
         else:
-            logger.warn("unknown match id: {}".format(match_id))
+            logger.warning("unknown match id: {}".format(match_id))
 
     def __parse_filter_ipv6_network(self, value_hex, mask_hex, match_id):
         from collections import namedtuple
@@ -334,6 +334,8 @@ class TcFilterParser(AbstractParser):
         if len(value_hex) != 8:
             raise ValueError("invalid port filter value: {}".format(value_hex))
 
+        logger.error(value_hex)
+
         src_port_hex = value_hex[:4]
         dst_port_hex = value_hex[4:]
 
@@ -362,7 +364,7 @@ class TcFilterParser(AbstractParser):
             + self.FilterMatchIdIpv6.OUTGOING_NETWORK_LIST
             + [self.FilterMatchIdIpv6.PORT]
         ):
-            logger.warn(
+            logger.warning(
                 "unknown match id for an IPv4 filter: might be an IPv6 filter. "
                 "try to use --ipv6 option. (id={})".format(match_id)
             )

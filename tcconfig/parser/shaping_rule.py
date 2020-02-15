@@ -6,7 +6,6 @@
 import copy
 from collections import OrderedDict
 
-import logbook
 import subprocrunner
 import typepy
 from simplesqlite import TableNotFoundError, connect_memdb
@@ -122,7 +121,7 @@ class TcShapingRuleParser:
 
         filter_runner = subprocrunner.SubprocessRunner(
             "{:s} show dev {:s} root".format(get_tc_base_command(TcSubCommand.FILTER), self.device),
-            error_log_level=logbook.NOTSET,
+            error_log_level="QUIET",
             dry_run=False,
         )
         if filter_runner.run() != 0 and filter_runner.stderr.find("Cannot find device") != -1:
@@ -167,9 +166,9 @@ class TcShapingRuleParser:
             if typepy.Integer(src_port).is_type():
                 key_items[Tc.Param.SRC_PORT] = "{}".format(src_port)
             elif src_port is not None:
-                self.__logger.warn(
-                    "expected a integer value for {}, actual {}".format(
-                        Tc.Param.SRC_PORT, type(src_port)
+                self.__logger.warning(
+                    "expected a integer value for {}, actual {}: {}".format(
+                        Tc.Param.SRC_PORT, type(src_port), src_port,
                     )
                 )
 
@@ -177,7 +176,7 @@ class TcShapingRuleParser:
             if typepy.Integer(dst_port).is_type():
                 key_items[Tc.Param.DST_PORT] = "{}".format(dst_port)
             elif src_port is not None:
-                self.__logger.warn(
+                self.__logger.warning(
                     "expected a integer value for {}, actual {}".format(
                         Tc.Param.DST_PORT, type(dst_port)
                     )

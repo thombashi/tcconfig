@@ -1,8 +1,7 @@
-colorama>=0.3.7,<1
 DataProperty>=0.46.3,<2
 docker>=1.9.0,<5
 humanreadable>=0.0.9,<1
-Logbook>=0.12.3,<2
+loguru>=0.4.1,<1
 msgfy>=0.0.6,<1
 path.py<13
 pyparsing>=2.0.3,<3

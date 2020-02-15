@@ -8,7 +8,6 @@
 import errno
 import sys
 
-import logbook
 import subprocrunner as spr
 
 from .__version__ import __version__
@@ -60,8 +59,8 @@ class TcDelMain(Main):
 
         for tc_target in self._fetch_tc_targets():
             tc = self.__create_tc_obj(tc_target)
-            if self._options.log_level == logbook.INFO:
-                spr.set_log_level(logbook.ERROR)
+            if self._options.log_level == "INFO":
+                spr.set_log_level("ERROR")
             normalize_tc_value(tc)
 
             try:

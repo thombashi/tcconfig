@@ -298,7 +298,7 @@ class TrafficControl:
             try:
                 self.iptables_ctrl.clear()
             except OSError as e:
-                logger.warn("{} (can not delete iptables entries)".format(e))
+                logger.warning("{} (can not delete iptables entries)".format(e))
 
         return any(result_list)
 
@@ -449,7 +449,7 @@ class TrafficControl:
             )
             runner.run()
             if re.search("RTNETLINK answers: No such file or directory", runner.stderr):
-                logger.notice("no qdisc to delete for the outgoing device.")
+                logger.info("no qdisc to delete for the outgoing device.")
                 return False
             elif re.search("Cannot find device", runner.stderr):
                 raise NetworkInterfaceNotFoundError(target=self.device)
@@ -492,7 +492,7 @@ class TrafficControl:
             verify_network_interface(self.ifb_device, self.__tc_command_output)
 
             if not has_execution_authority("ip"):
-                logger.warn(get_permission_error_message("ip"))
+                logger.warning(get_permission_error_message("ip"))
 
                 return errno.EPERM
 

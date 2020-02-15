@@ -10,9 +10,9 @@ import ipaddress
 import sys
 
 import humanreadable as hr
-import logbook
 import msgfy
 import subprocrunner as spr
+from loguru import logger
 
 from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
@@ -235,8 +235,8 @@ class TcSetMain(Main):
             normalize_tc_value(tc)
 
             if self._options.overwrite:
-                if self._options.log_level == logbook.INFO:
-                    set_log_level(logbook.ERROR)
+                if self._options.log_level == "INFO":
+                    set_log_level("ERROR")
 
                 try:
                     tc.delete_all_rules()

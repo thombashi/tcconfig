@@ -9,8 +9,6 @@ import os
 import re
 import sys
 
-import logbook
-import logbook.more
 import msgfy
 import subprocrunner as spr
 import typepy
@@ -19,7 +17,7 @@ from path import Path
 from simplesqlite import SimpleSQLite
 
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, TcCommandOutput
-from ._logger import logger
+from ._logger import logger, set_log_level
 
 
 _bin_path_cache = {}
@@ -68,25 +66,8 @@ def check_command_installation(command):
 
 
 def initialize_cli(options):
-    from ._logger import set_log_level
-
-    debug_level_format_str = (
-        "[{record.level_name}] {record.channel} {record.func_name} "
-        "({record.lineno}): {record.message}"
-    )
-    if options.log_level == logbook.DEBUG:
-        info_level_format_str = debug_level_format_str
-    else:
-        info_level_format_str = "[{record.level_name}] {record.channel}: {record.message}"
-
-    logbook.more.ColorizedStderrHandler(
-        level=logbook.DEBUG, format_string=debug_level_format_str
-    ).push_application()
-    logbook.more.ColorizedStderrHandler(
-        level=logbook.INFO, format_string=info_level_format_str
-    ).push_application()
-
     set_log_level(options.log_level)
+
     spr.SubprocessRunner.is_save_history = True
 
     if options.is_output_stacktrace:
@@ -139,7 +120,7 @@ def normalize_tc_value(tc_obj):
 
 
 def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_class=None):
-    proc = spr.SubprocessRunner(command, error_log_level=logbook.NOTSET)
+    proc = spr.SubprocessRunner(command, error_log_level="QUIET")
     proc.run()
 
     if proc.returncode == 0:
@@ -165,7 +146,7 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
             return proc.returncode
 
     if typepy.is_not_null_string(notice_msg):
-        logger.notice(notice_msg)
+        logger.warning(notice_msg)
 
     if exception_class is not None:
         raise exception_class(command)
