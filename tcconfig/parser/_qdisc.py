@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -25,7 +22,7 @@ class TcQdiscParser(AbstractParser):
         return TcSubCommand.QDISC.value
 
     def __init__(self, con):
-        super(TcQdiscParser, self).__init__()
+        super().__init__()
 
         self.__con = con
 

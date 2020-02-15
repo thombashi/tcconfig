@@ -1,14 +1,10 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, print_function, unicode_literals
-
 import pytest
 from humanreadable import ParameterError
 
 from tcconfig._netem_param import NetemParameter, convert_rate_to_f
 
 
-class Test_convert_rate_to_f(object):
+class Test_convert_rate_to_f:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [[0, 0], [100.0, 100.0], ["1", 1.0], ["100", 100.0], ["0.1%", 0.1], [" 10 % ", 10.0]],
@@ -24,7 +20,7 @@ class Test_convert_rate_to_f(object):
             convert_rate_to_f(value)
 
 
-class Test_NetemParameter_validate_bandwidth_rate(object):
+class Test_NetemParameter_validate_bandwidth_rate:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [["1bps", ParameterError], ["7bps", ParameterError], ["8bps", None], ["1Gbps", None]],

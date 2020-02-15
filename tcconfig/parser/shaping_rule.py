@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import copy
 from collections import OrderedDict
@@ -26,7 +23,7 @@ from ._filter import TcFilterParser
 from ._qdisc import TcQdiscParser
 
 
-class TcShapingRuleParser(object):
+class TcShapingRuleParser:
     @property
     def con(self):
         return self.__con

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
@@ -11,7 +9,7 @@ from tcconfig._const import TcSubCommand
 from tcconfig._tc_command_helper import get_tc_base_command
 
 
-class Test_get_tc_base_command(object):
+class Test_get_tc_base_command:
     @pytest.mark.parametrize(
         ["subcommand", "expected"],
         [

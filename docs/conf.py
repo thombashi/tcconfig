@@ -1,5 +1,3 @@
-# -*- coding: utf-8 -*-
-
 import os
 import sys
 
@@ -45,7 +43,7 @@ source_suffix = '.rst'
 master_doc = 'index'
 
 # General information about the project.
-project = u'tcconfig'
+project = 'tcconfig'
 copyright = __copyright__
 author = __author__
 
@@ -221,7 +219,7 @@ latex_elements = {
 # (source start file, target name, title,
 #  author, documentclass [howto, manual, or own class]).
 latex_documents = [
-    (master_doc, 'tcconfig.tex', u'tcconfig Documentation',
+    (master_doc, 'tcconfig.tex', 'tcconfig Documentation',
      __author__, 'manual'),
 ]
 
@@ -251,7 +249,7 @@ latex_documents = [
 # One entry per manual page. List of tuples
 # (source start file, name, description, authors, manual section).
 man_pages = [
-    (master_doc, 'tcconfig', u'tcconfig Documentation',
+    (master_doc, 'tcconfig', 'tcconfig Documentation',
      [author], 1)
 ]
 
@@ -265,7 +263,7 @@ man_pages = [
 # (source start file, target name, title, author,
 #  dir menu entry, description, category)
 texinfo_documents = [
-    (master_doc, 'tcconfig', u'tcconfig Documentation',
+    (master_doc, 'tcconfig', 'tcconfig Documentation',
      author, 'tcconfig', 'One line description of project.',
      'Miscellaneous'),
 ]

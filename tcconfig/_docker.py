@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 import errno
 import os
@@ -42,7 +39,7 @@ class IfIndex(Model):
     peer_ifindex = Integer(not_null=True, unique=True)
 
 
-class DockerClient(object):
+class DockerClient:
     @property
     def __netns_root_path(self):
         return Path("/var/run/netns")
@@ -142,15 +139,14 @@ class DockerClient(object):
 
     def select_veth(self, container_name):
         for container_record in IfIndex.select(where=Where("host", container_name)):
-            for veth_record in IfIndex.select(
+            yield from IfIndex.select(
                 where=And(
                     [
                         Where("host", self.__host_name),
                         Where("ifindex", container_record.peer_ifindex),
                     ]
                 )
-            ):
-                yield veth_record
+            )
 
     def fetch_veth_list(self, container_name):
         return [veth_record.ifname for veth_record in self.select_veth(container_name)]

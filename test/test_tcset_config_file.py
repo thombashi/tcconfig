@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import division, print_function
 
 import pytest
 import simplejson as json
@@ -22,7 +19,7 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
-class Test_tcconfig(object):
+class Test_tcconfig:
     @pytest.mark.parametrize(["overwrite"], [[""], ["--overwrite"]])
     def test_config_file_smoke(self, tmpdir, device_value, overwrite):
         if device_value is None:

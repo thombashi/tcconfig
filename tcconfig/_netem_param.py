@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import hashlib
 from textwrap import dedent
@@ -40,7 +37,7 @@ def convert_rate_to_f(rate):
     return rate
 
 
-class NetemParameter(object):
+class NetemParameter:
     @property
     def bandwidth_rate(self):
         return self.__bandwidth_rate

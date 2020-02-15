@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-# encoding: utf-8
+#!/usr/bin/env python3
 
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, print_function
 
 import errno
 import sys
@@ -29,7 +27,7 @@ def parse_option():
     parser = ArgparseWrapper(__version__)
 
     group = parser.parser.add_argument_group("Traffic Control")
-    if set(["-d", "--device"]).intersection(set(sys.argv)):
+    if {"-d", "--device"}.intersection(set(sys.argv)):
         # deprecated: remain for backward compatibility
         group.add_argument("-d", "--device", required=True, help="network device name (e.g. eth0)")
     else:

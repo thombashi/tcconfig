@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import re
 
@@ -17,11 +14,11 @@ from ._interface import AbstractParser
 
 
 class TcClassParser(AbstractParser):
-    class Pattern(object):
+    class Pattern:
         CLASS_ID = "[0-9a-z:]+"
         RATE = "[0-9]+[KMGT]?"
 
-    class Key(object):
+    class Key:
         DEVICE = Tc.Param.DEVICE
         CLASS_ID = Tc.Param.CLASS_ID
         RATE = "rate"
@@ -33,7 +30,7 @@ class TcClassParser(AbstractParser):
         return TcSubCommand.CLASS.value
 
     def __init__(self, con):
-        super(TcClassParser, self).__init__()
+        super().__init__()
 
         self.__con = con
 

@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import unicode_literals
 
 import random
 
@@ -86,13 +83,13 @@ def iptables_ctrl_ipv4():
     return IptablesMangleController(True, ip_version=4)
 
 
-class Test_IptablesMangleMark_repr(object):
+class Test_IptablesMangleMark_repr:
     def test_smoke(self):
         for mangle_mark in mangle_mark_list:
             assert len(str(mangle_mark)) > 0
 
 
-class Test_IptablesMangleMark_to_append_command(object):
+class Test_IptablesMangleMark_to_append_command:
     _CMD_PREFIX = get_iptables_base_command() + " -A {:s} -t mangle -j MARK"
 
     @pytest.mark.parametrize(
@@ -173,7 +170,7 @@ class Test_IptablesMangleMark_to_append_command(object):
         assert mark.to_append_command() == expected
 
 
-class Test_IptablesMangleMark_to_delete_command(object):
+class Test_IptablesMangleMark_to_delete_command:
     @pytest.mark.parametrize(
         ["mark_id", "source", "destination", "chain", "protocol", "line_number", "expected"],
         [
@@ -227,7 +224,7 @@ class Test_IptablesMangleMark_to_delete_command(object):
             mark.to_delete_command()
 
 
-class Test_IptablesMangleController_get_unique_mark_id(object):
+class Test_IptablesMangleController_get_unique_mark_id:
     @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
@@ -248,7 +245,7 @@ class Test_IptablesMangleController_get_unique_mark_id(object):
             assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
 
-class Test_IptablesMangleController_add(object):
+class Test_IptablesMangleController_add:
     @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
@@ -260,7 +257,7 @@ class Test_IptablesMangleController_add(object):
         assert len(iptables_ctrl_ipv4.get_iptables()) > initial_len
 
 
-class Test_IptablesMangleController_clear(object):
+class Test_IptablesMangleController_clear:
     @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()
@@ -277,7 +274,7 @@ class Test_IptablesMangleController_clear(object):
         assert len(iptables_ctrl_ipv4.get_iptables()) == initial_len
 
 
-class Test_IptablesMangleController_parse(object):
+class Test_IptablesMangleController_parse:
     @pytest.mark.xfail(run=False)
     def test_normal(self, iptables_ctrl_ipv4):
         iptables_ctrl_ipv4.clear()

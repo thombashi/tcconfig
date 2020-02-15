@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import ipaddress
 import re
@@ -13,7 +10,6 @@ from collections import OrderedDict
 import pyparsing as pp
 import simplejson as json
 import typepy
-from six import text_type
 
 from .._const import Tc, TcSubCommand
 from .._logger import logger
@@ -22,12 +18,12 @@ from ._interface import AbstractParser
 
 
 class TcFilterParser(AbstractParser):
-    class FilterMatchIdIpv4(object):
+    class FilterMatchIdIpv4:
         INCOMING_NETWORK = 12
         OUTGOING_NETWORK = 16
         PORT = 20
 
-    class FilterMatchIdIpv6(object):
+    class FilterMatchIdIpv6:
         INCOMING_NETWORK_LIST = [8, 12, 16, 20]
         OUTGOING_NETWORK_LIST = [24, 28, 32, 36]
         PORT = 40
@@ -64,7 +60,7 @@ class TcFilterParser(AbstractParser):
         return TcSubCommand.FILTER.value
 
     def __init__(self, con, ip_version):
-        super(TcFilterParser, self).__init__()
+        super().__init__()
 
         self.__con = con
         self.__ip_version = ip_version
@@ -244,9 +240,7 @@ class TcFilterParser(AbstractParser):
         return (value_hex, mask_hex, match_id)
 
     def __parse_filter_ipv4_network(self, value_hex, mask_hex, match_id):
-        ipaddr = ".".join(
-            [text_type(int(value_hex[i : i + 2], 16)) for i in range(0, len(value_hex), 2)]
-        )
+        ipaddr = ".".join([str(int(value_hex[i : i + 2], 16)) for i in range(0, len(value_hex), 2)])
         netmask = bin(int(mask_hex, 16)).count("1")
         network = "{:s}/{:d}".format(ipaddr, netmask)
 

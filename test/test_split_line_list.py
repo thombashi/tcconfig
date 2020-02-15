@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import unicode_literals
 
 import re
 
@@ -13,7 +10,7 @@ import pytest
 from tcconfig._split_line_list import split_line_list
 
 
-class Test_split_line_list(object):
+class Test_split_line_list:
     @pytest.mark.parametrize(
         ["value", "separator", "is_include_matched_line", "is_strip", "expected"],
         [

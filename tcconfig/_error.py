@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
 
 import abc
 
@@ -19,7 +16,7 @@ class TargetNotFoundError(Exception):
     def __init__(self, *args, **kwargs):
         self._target = kwargs.pop("target", None)
 
-        super(TargetNotFoundError, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
 
     def __str__(self, *args, **kwargs):
         item_list = [Exception.__str__(self, *args, **kwargs)]
@@ -43,7 +40,7 @@ class NetworkInterfaceNotFoundError(TargetNotFoundError):
         return "network interface"
 
     def __str__(self, *args, **kwargs):
-        item_list = [super(NetworkInterfaceNotFoundError, self).__str__(*args, **kwargs)]
+        item_list = [super().__str__(*args, **kwargs)]
 
         with IPRoute() as ipr:
             avail_interfaces = [link.get_attr("IFLA_IFNAME") for link in ipr.get_links()]
@@ -67,7 +64,7 @@ class ContainerNotFoundError(TargetNotFoundError):
 
         dclient = DockerClient()
         container_names = dclient.extract_running_container_names()
-        item_list = [super(ContainerNotFoundError, self).__str__(*args, **kwargs)]
+        item_list = [super().__str__(*args, **kwargs)]
 
         if container_names:
             item_list.append(

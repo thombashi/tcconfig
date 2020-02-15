@@ -1,6 +1,3 @@
-# encoding: utf-8
-
-
 __author__ = "Tsuyoshi Hombashi"
 __copyright__ = "Copyright 2016, {}".format(__author__)
 __license__ = "MIT License"

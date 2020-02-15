@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
 
 from simplesqlite.query import And, Where
 
@@ -13,7 +10,7 @@ from ._network import is_anywhere_network
 from .parser.shaping_rule import TcShapingRuleParser
 
 
-class TcShapingRuleFinder(object):
+class TcShapingRuleFinder:
     @property
     def _parser(self):
         self.__shaping_rule_parser.parse()

@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
@@ -104,7 +102,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
         tc_obj.netem_param.validate_bandwidth_rate()
 
 
-class Test_TrafficControl_validate(object):
+class Test_TrafficControl_validate:
     @pytest.mark.parametrize(
         [
             "rate",
@@ -304,7 +302,7 @@ class Test_TrafficControl_validate(object):
             tc_obj.validate()
 
 
-class Test_TrafficControl_ipv4(object):
+class Test_TrafficControl_ipv4:
     @pytest.mark.parametrize(
         ["network", "is_ipv6", "expected_ip_ver", "expected_protocol", "expected_protocol_match"],
         [

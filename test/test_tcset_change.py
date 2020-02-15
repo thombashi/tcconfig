@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
 
 import pytest
 import simplejson as json
@@ -21,7 +18,7 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
-class Test_tcset_change(object):
+class Test_tcset_change:
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:

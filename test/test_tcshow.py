@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
@@ -19,7 +17,7 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
-class Test_tcshow(object):
+class Test_tcshow:
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:

@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, division, print_function
 
 import itertools
 
@@ -48,7 +45,7 @@ def pingparser():
     return pingparsing.PingParsing()
 
 
-class Test_tcset_one_network(object):
+class Test_tcset_one_network:
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:
@@ -118,7 +115,7 @@ class Test_tcset_one_network(object):
             delete_all_rules(tc_target)
 
 
-class Test_tcset_exclude(object):
+class Test_tcset_exclude:
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:

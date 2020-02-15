@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import division, print_function, unicode_literals
 
 import pytest
 import typepy
@@ -36,7 +33,7 @@ def is_invalid_param(rate, delay, loss, corrupt):
     return all([typepy.is_null_string(param) for param in params])
 
 
-class NormalTestValue(object):
+class NormalTestValue:
     RATE_LIST = ["", "--rate 100Kbps", "--rate 0.5Mbps"]
     DELAY_LIST = ["", "--delay 100ms"]
     DELAY_DISTRO_LIST = ["", "--delay-distro 20ms"]
@@ -49,7 +46,7 @@ class NormalTestValue(object):
     IPTABLES_LIST = ["", "--iptables"]
 
 
-class Test_tcconfig(object):
+class Test_tcconfig:
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:

@@ -1,11 +1,9 @@
-#!/usr/bin/env python
-# encoding: utf-8
+#!/usr/bin/env python3
 
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, print_function, unicode_literals
 
 import errno
 import ipaddress
@@ -47,7 +45,7 @@ def _get_unit_help_msg():
 def get_arg_parser():
     parser = ArgparseWrapper(__version__)
 
-    if set(["-d", "--device"]).intersection(set(sys.argv)):
+    if {"-d", "--device"}.intersection(set(sys.argv)):
         # deprecated: remain for backward compatibility
         parser.parser.add_argument(
             "-d", "--device", required=True, help="network device name (e.g. eth0)"

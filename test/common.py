@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, print_function
 
 import json
 import sys
@@ -63,7 +60,7 @@ def runner_helper(command):
     return proc_runner
 
 
-class NullLogger(object):
+class NullLogger:
     level_name = None
 
     def catch_exceptions(self, *args, **kwargs):  # pragma: no cover

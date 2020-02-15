@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import enum
 
@@ -20,27 +17,27 @@ class TcSubCommand(enum.Enum):
     QDISC = "qdisc"
 
 
-class Network(object):
-    class Ipv4(object):
+class Network:
+    class Ipv4:
         ANYWHERE = "0.0.0.0/0"
 
-    class Ipv6(object):
+    class Ipv6:
         ANYWHERE = "::/0"
 
 
-class ShapingAlgorithm(object):
+class ShapingAlgorithm:
     HTB = "htb"
     TBF = "tbf"
     LIST = [HTB, TBF]
 
 
-class Tc(object):
-    class Command(object):
+class Tc:
+    class Command:
         TCSET = "tcset"
         TCDEL = "tcdel"
         TCSHOW = "tcshow"
 
-    class Param(object):
+    class Param:
         DEVICE = "device"
         DIRECTION = "direction"
         FILTER_ID = "filter_id"
@@ -55,25 +52,25 @@ class Tc(object):
         SRC_NETWORK = "src-network"
         SRC_PORT = "src-port"
 
-    class ValueRange(object):
-        class LatencyTime(object):
+    class ValueRange:
+        class LatencyTime:
             MIN = "0ms"
             MAX = "60min"
 
-    class Min(object):
+    class Min:
         LATENCY_TIME = "0ms"
 
-    class Max(object):
+    class Max:
         LATENCY_TIME = "60min"
 
 
-class TcCommandOutput(object):
+class TcCommandOutput:
     NOT_SET = None
     STDOUT = "STDOUT"
     SCRIPT = "SCRIPT"
 
 
-class TrafficDirection(object):
+class TrafficDirection:
     OUTGOING = "outgoing"
     INCOMING = "incoming"
     LIST = [OUTGOING, INCOMING]

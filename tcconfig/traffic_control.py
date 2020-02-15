@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, division
 
 import errno
 import re
@@ -34,7 +31,7 @@ from .shaper.htb import HtbShaper
 from .shaper.tbf import TbfShaper
 
 
-class TrafficControl(object):
+class TrafficControl:
     __MIN_PORT = 0
     __MAX_PORT = 65535
 
@@ -258,7 +255,7 @@ class TrafficControl(object):
     def make_srcdst_text(self):
         return "".join(
             [
-                six.text_type(item)
+                str(item)
                 for item in [
                     self.dst_network,
                     self.exclude_dst_network,

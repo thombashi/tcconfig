@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, division, unicode_literals
 
 import errno
 import re
@@ -23,7 +20,7 @@ from ._interface import AbstractShaper
 class HtbShaper(AbstractShaper):
     __DEFAULT_CLASS_MINOR_ID = 1
 
-    class MinQdiscMinorId(object):
+    class MinQdiscMinorId:
         OUTGOING = 40
         INCOMING = 20
 
@@ -32,7 +29,7 @@ class HtbShaper(AbstractShaper):
         return ShapingAlgorithm.HTB
 
     def __init__(self, tc_obj):
-        super(HtbShaper, self).__init__(tc_obj)
+        super().__init__(tc_obj)
 
         self.__qdisc_minor_id = None
         self.__qdisc_minor_id_count = 0

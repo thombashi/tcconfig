@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import
 
 import argparse
 from textwrap import dedent
@@ -14,7 +11,7 @@ import logbook
 from ._const import TcCommandOutput, TrafficDirection
 
 
-class ArgparseWrapper(object):
+class ArgparseWrapper:
     """
     Wrapper class for argparse
     """

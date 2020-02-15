@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import print_function, unicode_literals
 
 import pytest
 import six
@@ -42,7 +39,7 @@ def class_parser():
     return TcClassParser(connect_memdb())
 
 
-class Test_TcFilterParser_parse_filter_ipv4(object):
+class Test_TcFilterParser_parse_filter_ipv4:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [
@@ -198,7 +195,7 @@ filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""
         assert actual == expected
 
 
-class Test_TcFilterParser_parse_filter_ipv6(object):
+class Test_TcFilterParser_parse_filter_ipv6:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [
@@ -333,7 +330,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
         assert actual == expected
 
 
-class Test_TcFilterParser_parse_incoming_device(object):
+class Test_TcFilterParser_parse_incoming_device:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [
@@ -367,7 +364,7 @@ filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800
         assert filter_parser_ipv4.parse_incoming_device(value) == expected
 
 
-class Test_TcQdiscParser_parse(object):
+class Test_TcQdiscParser_parse:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [
@@ -469,7 +466,7 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 0.5s  1.0ms loss 5%
         assert actual == expected
 
 
-class Test_TcClassParser_parse(object):
+class Test_TcClassParser_parse:
     @pytest.mark.parametrize(
         ["value", "expected"],
         [

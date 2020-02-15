@@ -1,25 +1,18 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import abc
 
-import six
 
-
-@six.add_metaclass(abc.ABCMeta)
-class ParserInterface(object):
+class ParserInterface(metaclass=abc.ABCMeta):
     @abc.abstractmethod
     def parse(self, device, text):  # pragma: no cover
         pass
 
 
-@six.add_metaclass(abc.ABCMeta)
-class AbstractParser(ParserInterface):
+class AbstractParser(ParserInterface, metaclass=abc.ABCMeta):
     def __init__(self):
         self._clear()
 

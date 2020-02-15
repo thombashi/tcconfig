@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, division, print_function
-
 import pytest
 import simplejson as json
 
@@ -18,7 +14,7 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
-class Test_TcShapingRuleParser(object):
+class Test_TcShapingRuleParser:
     def test_normal(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")

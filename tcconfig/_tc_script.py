@@ -1,13 +1,9 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import datetime
-import io
 import os
 import sys
 
@@ -50,7 +46,7 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
     )
 
     filename = "_".join(filename_item_list) + ".sh"
-    with io.open(filename, "w", encoding="utf8") as fp:
+    with open(filename, "w", encoding="utf8") as fp:
         fp.write("\n".join(script_line_list) + "\n")
 
     os.chmod(filename, 0o755)

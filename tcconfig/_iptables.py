@@ -1,10 +1,7 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import errno
 import re
@@ -36,7 +33,7 @@ def get_iptables_base_command():
     return None
 
 
-class IptablesMangleMarkEntry(object):
+class IptablesMangleMarkEntry:
     @property
     def line_number(self):
         return self.__line_number
@@ -136,7 +133,7 @@ class IptablesMangleMarkEntry(object):
         )
 
 
-class IptablesMangleController(object):
+class IptablesMangleController:
 
     __RE_CHAIN = re.compile("Chain {:s} |Chain {:s} |Chain {:s} ".format(*VALID_CHAIN_LIST))
     __RE_CHAIN_NAME = re.compile("{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))

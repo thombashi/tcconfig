@@ -1,14 +1,10 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import abc
 
-import six
 import subprocrunner
 import typepy
 from humanreadable import ParameterError
@@ -21,8 +17,7 @@ from .._network import get_anywhere_network
 from .._shaping_rule_finder import TcShapingRuleFinder
 
 
-@six.add_metaclass(abc.ABCMeta)
-class ShaperInterface(object):
+class ShaperInterface(metaclass=abc.ABCMeta):
     @abc.abstractproperty
     def algorithm_name(self):  # pragma: no cover
         pass

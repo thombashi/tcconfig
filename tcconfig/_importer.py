@@ -1,19 +1,14 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import errno
-import io
 import re
 
 import msgfy
 import pyparsing as pp
 import simplejson as json
-import six
 import subprocrunner as spr
 
 from ._const import Network, Tc, TrafficDirection
@@ -23,7 +18,7 @@ RE_CONTAINER_ID = re.compile(r"[a-z0-9]{12}\s+\(device=[a-z0-9]+\)")
 # e.g. edfd9dbb3969 (device=veth6f7b798)
 
 
-class TcConfigLoader(object):
+class TcConfigLoader:
     def __init__(self, logger):
         self.__logger = logger
         self.__config_table = None
@@ -33,17 +28,11 @@ class TcConfigLoader(object):
         from voluptuous import Schema, Required, Any, ALLOW_EXTRA
 
         schema = Schema(
-            {
-                Required(six.text_type): {
-                    Any(*TrafficDirection.LIST): {
-                        six.text_type: {six.text_type: Any(six.text_type, int, float)}
-                    }
-                }
-            },
+            {Required(str): {Any(*TrafficDirection.LIST): {str: {str: Any(str, int, float)}}}},
             extra=ALLOW_EXTRA,
         )
 
-        with io.open(config_file_path, encoding="utf-8") as fp:
+        with open(config_file_path, encoding="utf-8") as fp:
             self.__config_table = json.load(fp)
 
         schema(self.__config_table)
@@ -56,7 +45,7 @@ class TcConfigLoader(object):
 
         command_list = []
 
-        for device, device_table in six.iteritems(self.__config_table):
+        for device, device_table in self.__config_table.items():
             is_container = RE_CONTAINER_ID.search(device) is not None
             if is_container:
                 device = device.split()[0]
@@ -68,10 +57,10 @@ class TcConfigLoader(object):
                     )
                 )
 
-            for direction, direction_table in six.iteritems(device_table):
+            for direction, direction_table in device_table.items():
                 is_first_set = True
 
-                for tc_filter, filter_table in six.iteritems(direction_table):
+                for tc_filter, filter_table in direction_table.items():
                     self.__logger.debug(
                         "is_first_set={}, filter='{}', table={}".format(
                             is_first_set, tc_filter, filter_table
@@ -85,7 +74,7 @@ class TcConfigLoader(object):
                         ["--docker"] if is_container else []
                     )
 
-                    for key, value in six.iteritems(filter_table):
+                    for key, value in filter_table.items():
                         arg_item = "--{:s}={}".format(key, value)
 
                         parse_result = get_arg_parser().parse_known_args(["dummy", arg_item])
@@ -154,7 +143,7 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
 
     try:
         loader.load_tcconfig(config_file_path)
-    except IOError as e:
+    except OSError as e:
         logger.error(msgfy.to_error_message(e))
         return errno.EIO
 

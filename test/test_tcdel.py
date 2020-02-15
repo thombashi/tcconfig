@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
@@ -22,7 +20,7 @@ def execute_tcdel(device):
     return SubprocessRunner([Tc.Command.TCDEL, device, "--all"], dry_run=False).run()
 
 
-class Test_tcdel(object):
+class Test_tcdel:
     """
     Tests in this class are not executable on CI services.
     Execute the following command at the local environment to running tests:

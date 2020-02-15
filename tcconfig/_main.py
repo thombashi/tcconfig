@@ -1,7 +1,3 @@
-# encoding: utf-8
-
-from __future__ import absolute_import, unicode_literals
-
 import sys
 
 import msgfy
@@ -13,7 +9,7 @@ from ._logger import logger
 from ._tc_script import write_tc_script
 
 
-class Main(object):
+class Main:
     def __init__(self, options):
         self._options = options
 

@@ -1,13 +1,9 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-from __future__ import absolute_import, unicode_literals
 
 import humanreadable as hr
-import six
 import typepy
 from pyroute2 import IPRoute
 
@@ -51,7 +47,7 @@ def get_upper_limit_rate(tc_device):
 
     try:
         speed_value = _read_iface_speed(tc_device)
-    except IOError:
+    except OSError:
         return _get_iproute2_upper_limite_rate()
 
     if speed_value < 0:
@@ -102,10 +98,10 @@ def sanitize_network(network, ip_version):
     # validate network str ---
 
     if ip_version == 4:
-        return ipaddress.IPv4Network(six.text_type(network)).compressed
+        return ipaddress.IPv4Network(str(network)).compressed
 
     if ip_version == 6:
-        return ipaddress.IPv6Network(six.text_type(network)).compressed
+        return ipaddress.IPv6Network(str(network)).compressed
 
     raise ValueError("unexpected ip version: {}".format(ip_version))
 

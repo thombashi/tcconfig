@@ -1,5 +1,3 @@
-# encoding: utf-8
-
 """
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
@@ -21,7 +19,7 @@ def device_option(request):
     return request.config.getoption("--device")
 
 
-class Test_is_anywhere_network(object):
+class Test_is_anywhere_network:
     @pytest.mark.parametrize(
         ["network", "ip_version", "expected"],
         [
@@ -44,12 +42,12 @@ class Test_is_anywhere_network(object):
             is_anywhere_network(network, ip_version)
 
 
-class Test_get_iproute2_upper_limite_rate(object):
+class Test_get_iproute2_upper_limite_rate:
     def test_normal(self):
         assert _get_iproute2_upper_limite_rate() == hr.BitPerSecond("32Gbps")
 
 
-class Test_get_anywhere_network(object):
+class Test_get_anywhere_network:
     @pytest.mark.parametrize(
         ["value", "expected"], [[4, "0.0.0.0/0"], ["4", "0.0.0.0/0"], [6, "::/0"], ["6", "::/0"]]
     )
@@ -62,7 +60,7 @@ class Test_get_anywhere_network(object):
             get_anywhere_network(value)
 
 
-class Test_get_upper_limit_rate(object):
+class Test_get_upper_limit_rate:
     @pytest.mark.parametrize(["speed", "expected"], [[1, 1000], [0, 0]])
     def test_normal(self, monkeypatch, device_option, speed, expected):
         if device_option is None:
@@ -83,7 +81,7 @@ class Test_get_upper_limit_rate(object):
 
     @staticmethod
     def raise_ioerror(tc_device):
-        raise IOError()
+        raise OSError()
 
     def test_exception(self, monkeypatch, device_option):
         if device_option is None:
@@ -94,7 +92,7 @@ class Test_get_upper_limit_rate(object):
         assert get_upper_limit_rate(device_option) == _get_iproute2_upper_limite_rate()
 
 
-class Test_sanitize_network(object):
+class Test_sanitize_network:
     @pytest.mark.parametrize(
         ["value", "ip_version", "expected"],
         [
