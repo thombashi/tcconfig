@@ -299,10 +299,10 @@ class TcShapingRuleParser:
         )
 
     @staticmethod
-    def __strip_param(params, strip_param_list):
+    def __strip_param(params, strip_params):
         work_params = copy.deepcopy(params)
 
-        for strip_param in strip_param_list:
+        for strip_param in strip_params:
             try:
                 del work_params[strip_param]
             except KeyError:
