@@ -320,10 +320,10 @@ class TcFilterParser(AbstractParser):
             dst_octet_list.append("0000")
 
         self.__filter_dst_network = ipaddress.IPv6Network(
-            "{:s}/{:d}".format(":".join(dst_octet_list), dst_netmask)
+            "{:s}/{:d}".format(":".join(dst_octet_list), dst_netmask), strict=False
         ).compressed
         self.__filter_src_network = ipaddress.IPv6Network(
-            "{:s}/{:d}".format(":".join(src_octet_list), src_netmask)
+            "{:s}/{:d}".format(":".join(src_octet_list), src_netmask), strict=False
         ).compressed
 
     def __parse_filter_port(self, value_hex):
