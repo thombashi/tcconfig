@@ -80,6 +80,11 @@ def parse_option():
         default=False,
         help="[experimental] not display filter_id.",
     )
+    parser.parser.add_argument(
+        "--dump-db",
+        dest="dump_db_path",
+        help="[experimental] dump parsed results to a SQLite database file",
+    )
 
     return parser.parser.parse_args()
 
@@ -153,6 +158,7 @@ def extract_tc_params(options):
                         logger=logger,
                         export_path=options.export_path,
                         is_parse_filter_id=not options.exclude_filter_id,
+                        dump_db_path=options.dump_db_path,
                     )
                     rule_parser.parse()
 
@@ -173,6 +179,7 @@ def extract_tc_params(options):
                     logger=logger,
                     export_path=options.export_path,
                     is_parse_filter_id=not options.exclude_filter_id,
+                    dump_db_path=options.dump_db_path,
                 )
                 rule_parser.parse()
 

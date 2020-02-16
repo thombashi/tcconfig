@@ -8,8 +8,7 @@ from collections import OrderedDict
 
 import subprocrunner
 import typepy
-from simplesqlite import TableNotFoundError, connect_memdb
-from simplesqlite.query import Where
+from simplesqlite import SimpleSQLite, TableNotFoundError, connect_memdb
 
 from .._common import is_execute_tc_command
 from .._const import Tc, TcSubCommand, TrafficDirection
@@ -43,7 +42,13 @@ class TcShapingRuleParser:
         tc_command_output,
         export_path=None,
         is_parse_filter_id=True,
+        dump_db_path=None,
     ):
+        if dump_db_path is None:
+            self.__con = connect_memdb()
+        else:
+            self.__con = SimpleSQLite(dump_db_path, "w")
+
         self.__device = device
         self.__ip_version = ip_version
         self.__tc_command_output = tc_command_output
@@ -58,7 +63,6 @@ class TcShapingRuleParser:
         self.is_parse_filter_id = is_parse_filter_id
 
     def clear(self):
-        self.__con = connect_memdb()
         self.__filter_parser = TcFilterParser(self.__con, self.__ip_version)
         self.__parsed_mappings = {}
 
