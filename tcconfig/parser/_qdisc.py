@@ -18,17 +18,8 @@ class TcQdiscParser(AbstractParser):
     __RE_DIRECT_QLEN = re.compile("direct_qlen (?P<number>[0-9]+)")
 
     @property
-    def con(self):
-        return self.__con
-
-    @property
     def _tc_subcommand(self):
         return TcSubCommand.QDISC.value
-
-    def __init__(self, con):
-        super().__init__()
-
-        self.__con = con
 
     def __parse_direct_qlen(self, line):
         m = self.__RE_DIRECT_QLEN.search(line)

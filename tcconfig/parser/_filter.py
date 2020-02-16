@@ -5,15 +5,16 @@
 
 import ipaddress
 import re
+from collections import OrderedDict
 
 import pyparsing as pp
+import simplejson as json
 import typepy
 
 from .._const import Tc, TcSubCommand
 from .._logger import logger
 from .._network import sanitize_network
 from ._interface import AbstractParser
-from ._model import Filter
 
 
 class TcFilterParser(AbstractParser):
@@ -51,10 +52,6 @@ class TcFilterParser(AbstractParser):
     )
 
     @property
-    def con(self):
-        return self.__con
-
-    @property
     def protocol(self):
         return self.__protocol
 
@@ -63,9 +60,8 @@ class TcFilterParser(AbstractParser):
         return TcSubCommand.FILTER.value
 
     def __init__(self, con, ip_version):
-        super().__init__()
+        super().__init__(con)
 
-        self.__con = con
         self.__ip_version = ip_version
         self.__buffer = None
         self.__parse_idx = 0
@@ -80,6 +76,7 @@ class TcFilterParser(AbstractParser):
         if typepy.is_null_string(text):
             return []
 
+        filter_data_matrix = []
         self.__buffer = self._to_unicode(text).splitlines()
         self.__parse_idx = 0
 
@@ -97,14 +94,12 @@ class TcFilterParser(AbstractParser):
             except pp.ParseException:
                 logger.debug("failed to parse mangle: {}".format(line))
             else:
-                Filter.insert(
-                    Filter(
-                        **{
-                            Tc.Param.DEVICE: self.__device,
-                            Tc.Param.CLASS_ID: self.__classid,
-                            Tc.Param.HANDLE: self.__handle,
-                        }
-                    )
+                filter_data_matrix.append(
+                    {
+                        Tc.Param.DEVICE: self.__device,
+                        Tc.Param.CLASS_ID: self.__classid,
+                        Tc.Param.HANDLE: self.__handle,
+                    }
                 )
                 self._clear()
                 continue
@@ -117,9 +112,9 @@ class TcFilterParser(AbstractParser):
                 self.__parse_priority(line)
                 self.__parse_filter_id(line)
 
-                if tc_filter.flowid:
+                if tc_filter.get(Tc.Param.FLOW_ID):
                     logger.debug("store filter: {}".format(tc_filter))
-                    Filter.insert(tc_filter)
+                    filter_data_matrix.append(tc_filter)
                     self._clear()
 
                     self.__parse_flow_id(line)
@@ -142,7 +137,20 @@ class TcFilterParser(AbstractParser):
                 logger.debug("failed to parse filter: {}".format(line))
 
         if self.__flow_id:
-            Filter.insert(self.__get_filter())
+            filter_data_matrix.append(self.__get_filter())
+
+        if filter_data_matrix:
+            self.__con.create_table_from_data_matrix(
+                self._tc_subcommand, list(self.__get_filter()), filter_data_matrix
+            )
+
+        logger.debug(
+            "tc {:s} parse result: {}".format(
+                self._tc_subcommand, json.dumps(filter_data_matrix, indent=4)
+            )
+        )
+
+        return filter_data_matrix
 
     def parse_incoming_device(self, text):
         if typepy.is_null_string(text):
@@ -171,17 +179,22 @@ class TcFilterParser(AbstractParser):
         self.__classid = None
 
     def __get_filter(self):
-        return Filter(
-            device=self.__device,
-            filter_id=self.__filter_id,
-            flowid=self.__flow_id,
-            protocol=self.protocol,
-            priority=self.__priority,
-            src_network=sanitize_network(self.__filter_src_network, self.__ip_version),
-            dst_network=sanitize_network(self.__filter_dst_network, self.__ip_version),
-            src_port=self.__filter_src_port,
-            dst_port=self.__filter_dst_port,
+        tc_filter = OrderedDict()
+        tc_filter[Tc.Param.DEVICE] = self.__device
+        tc_filter[Tc.Param.FILTER_ID] = self.__filter_id
+        tc_filter[Tc.Param.FLOW_ID] = self.__flow_id
+        tc_filter[Tc.Param.PROTOCOL] = self.protocol
+        tc_filter[Tc.Param.PRIORITY] = self.__priority
+        tc_filter[Tc.Param.SRC_NETWORK] = sanitize_network(
+            self.__filter_src_network, self.__ip_version
         )
+        tc_filter[Tc.Param.DST_NETWORK] = sanitize_network(
+            self.__filter_dst_network, self.__ip_version
+        )
+        tc_filter[Tc.Param.SRC_PORT] = self.__filter_src_port
+        tc_filter[Tc.Param.DST_PORT] = self.__filter_dst_port
+
+        return tc_filter
 
     def __parse_flow_id(self, line):
         parsed_list = self.__FILTER_FLOWID_PATTERN.parseString(line)

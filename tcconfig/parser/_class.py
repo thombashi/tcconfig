@@ -29,11 +29,6 @@ class TcClassParser(AbstractParser):
     def _tc_subcommand(self):
         return TcSubCommand.CLASS.value
 
-    def __init__(self, con):
-        super().__init__()
-
-        self.__con = con
-
     def parse(self, device, text):
         entry_list = []
 
@@ -53,7 +48,7 @@ class TcClassParser(AbstractParser):
             entry_list.append(self.__parsed_param)
 
         if entry_list:
-            self.__con.create_table_from_data_matrix(self._tc_subcommand, self.Key.LIST, entry_list)
+            self._con.create_table_from_data_matrix(self._tc_subcommand, self.Key.LIST, entry_list)
 
         logger.debug(
             "tc {:s} parse result: {}".format(self._tc_subcommand, json.dumps(entry_list, indent=4))

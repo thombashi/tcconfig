@@ -13,8 +13,13 @@ class ParserInterface(metaclass=abc.ABCMeta):
 
 
 class AbstractParser(ParserInterface, metaclass=abc.ABCMeta):
-    def __init__(self):
+    def __init__(self, con):
+        self._con = con
         self._clear()
+
+    @property
+    def con(self):
+        return self._con
 
     @abc.abstractproperty
     def _tc_subcommand(self):  # pragma: no cover
