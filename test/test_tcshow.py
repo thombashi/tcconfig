@@ -25,15 +25,14 @@ class Test_tcshow:
         pytest --runxfail --device=<test device>
     """
 
-    @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
-    def test_normal_empty(self, device_value, colorize_option):
+    def test_normal_empty(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
 
         for tc_target in [device_value, "--device {}".format(device_value)]:
             delete_all_rules(tc_target)
 
-            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target]))
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -54,8 +53,11 @@ class Test_tcshow:
             assert runner.returncode == 0
             assert json.loads(runner.stdout) == json.loads(expected)
 
-    @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
-    def test_normal_ipv4(self, device_value, colorize_option):
+            # smoe test for --color option
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
+            assert runner.run() == 0, runner.stderr
+
+    def test_normal_ipv4(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
 
@@ -145,7 +147,7 @@ class Test_tcshow:
                 )
             )
 
-            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, colorize_option]))
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target]))
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -190,13 +192,15 @@ class Test_tcshow:
 
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
-
             assert json.loads(runner.stdout) == json.loads(expected)
+
+            # smoe test for --color option
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
+            assert runner.run() == 0, runner.stderr
 
             delete_all_rules(tc_target)
 
-    @pytest.mark.parametrize(["colorize_option"], [[""], ["--color"]])
-    def test_normal_ipv6(self, device_value, colorize_option):
+    def test_normal_ipv6(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
 
@@ -289,9 +293,7 @@ class Test_tcshow:
                 )
             )
 
-            runner = SubprocessRunner(
-                " ".join([Tc.Command.TCSHOW, tc_target, "--ipv6", colorize_option])
-            )
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--ipv6"]))
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -336,7 +338,10 @@ class Test_tcshow:
 
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
-
             assert json.loads(runner.stdout) == json.loads(expected)
+
+            # smoe test for --color option
+            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
+            assert runner.run() == 0, runner.stderr
 
             delete_all_rules(tc_target)
