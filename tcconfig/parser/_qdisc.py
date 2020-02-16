@@ -6,16 +6,20 @@
 import re
 
 import pyparsing as pp
-import simplejson as json
 import typepy
 
 from .._const import Tc, TcSubCommand
 from .._logger import logger
 from ._interface import AbstractParser
+from ._model import Qdisc
 
 
 class TcQdiscParser(AbstractParser):
     __RE_DIRECT_QLEN = re.compile("direct_qlen (?P<number>[0-9]+)")
+
+    @property
+    def con(self):
+        return self.__con
 
     @property
     def _tc_subcommand(self):
@@ -40,7 +44,6 @@ class TcQdiscParser(AbstractParser):
             return []
 
         text = text.strip()
-        entry_list = []
 
         for line in text.splitlines():
             if typepy.is_null_string(line):
@@ -70,33 +73,9 @@ class TcQdiscParser(AbstractParser):
 
             logger.debug("parse a qdisc entry: {}".format(self.__parsed_param))
 
-            entry_list.append(self.__parsed_param)
+            Qdisc.insert(Qdisc(**self.__parsed_param))
 
             self._clear()
-
-        if entry_list:
-            self.__con.create_table_from_data_matrix(
-                self._tc_subcommand,
-                [
-                    Tc.Param.DEVICE,
-                    "parent",
-                    "handle",
-                    "delay",
-                    "delay-distro",
-                    "loss",
-                    "duplicate",
-                    "corrupt",
-                    "reorder",
-                    "rate",
-                ],
-                entry_list,
-            )
-
-        logger.debug(
-            "tc {:s} parse result: {}".format(self._tc_subcommand, json.dumps(entry_list, indent=4))
-        )
-
-        return entry_list
 
     def _clear(self):
         self.__parsed_param = {}

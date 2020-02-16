@@ -9,15 +9,18 @@ from collections import OrderedDict
 import subprocrunner
 import typepy
 from simplesqlite import SimpleSQLite, TableNotFoundError, connect_memdb
+from simplesqlite.query import And, Where
 
 from .._common import is_execute_tc_command
 from .._const import Tc, TcSubCommand, TrafficDirection
 from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
+from .._logger import logger
 from .._network import is_anywhere_network
 from .._tc_command_helper import get_tc_base_command, run_tc_show
 from ._class import TcClassParser
 from ._filter import TcFilterParser
+from ._model import Filter, Qdisc
 from ._qdisc import TcQdiscParser
 
 
@@ -48,6 +51,12 @@ class TcShapingRuleParser:
             self.__con = connect_memdb()
         else:
             self.__con = SimpleSQLite(dump_db_path, "w")
+
+        Filter.attach(self.__con)
+        Filter.create()
+
+        Qdisc.attach(self.__con)
+        Qdisc.create()
 
         self.__device = device
         self.__ip_version = ip_version
@@ -200,23 +209,15 @@ class TcShapingRuleParser:
             class_params = []
 
         try:
-            filter_params = self.__con.select_as_dict(
-                table_name=TcSubCommand.FILTER.value, where=where_query
-            )
+            filter_params = Filter.select(where=where_query)
         except TableNotFoundError:
             filter_params = []
-
-        try:
-            qdisc_params = self.__con.select_as_dict(
-                table_name=TcSubCommand.QDISC.value, where=where_query
-            )
-        except TableNotFoundError:
-            qdisc_params = []
 
         shaping_rule_mapping = {}
         shaping_rules = []
 
         for filter_param in filter_params:
+            filter_param = filter_param.as_dict()
             self.__logger.debug("{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
             shaping_rule = {}
 
@@ -225,14 +226,22 @@ class TcShapingRuleParser:
                 self.__logger.debug("empty filter key: {}".format(filter_param))
                 continue
 
-            for qdisc_param in qdisc_params:
-                self.__logger.debug("{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
+            qdisc_id = filter_param.get(Tc.Param.FLOW_ID)
+            if qdisc_id is None:
+                qdisc_id = filter_param.get(Tc.Param.CLASS_ID)
 
-                if qdisc_param.get(Tc.Param.PARENT) not in (
-                    filter_param.get(Tc.Param.FLOW_ID),
-                    filter_param.get(Tc.Param.CLASS_ID),
-                ):
-                    continue
+            logger.error(f"qdisc_id: {qdisc_id}")
+
+            try:
+                qdisc_params = Qdisc.select(
+                    where=And([where_query, Where(Tc.Param.PARENT, qdisc_id)])
+                )
+            except TableNotFoundError:
+                qdisc_params = []
+
+            for qdisc_param in qdisc_params:
+                qdisc_param = qdisc_param.as_dict()
+                self.__logger.debug("{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
 
                 if self.is_parse_filter_id:
                     shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
@@ -242,7 +251,8 @@ class TcShapingRuleParser:
 
                 shaping_rule.update(
                     self.__strip_param(
-                        qdisc_param, [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE]
+                        qdisc_param,
+                        [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE, "direct_qlen"],
                     )
                 )
 
