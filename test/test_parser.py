@@ -4,7 +4,6 @@
 
 
 import pytest
-import six
 from simplesqlite import connect_memdb
 
 import tcconfig.parser._filter
@@ -40,6 +39,10 @@ def class_parser():
     return TcClassParser(connect_memdb())
 
 
+def six_b(s):
+    return s.encode("latin-1")
+
+
 class Test_TcFilterParser_parse_filter_ipv4:
     @pytest.mark.parametrize(
         ["value", "expected"],
@@ -47,7 +50,7 @@ class Test_TcFilterParser_parse_filter_ipv4:
             [None, []],
             ["", []],
             [
-                six.b(
+                six_b(
                     """filter parent 1: protocol ip pref 1 u32
 filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
 filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
@@ -87,7 +90,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1: protocol ip pref 1 u32
 filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
 filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:1
@@ -129,7 +132,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1: protocol ip pref 1 u32
 filter parent 1: protocol ip pref 1 u32 fh 801: ht divisor 1
 filter parent 1: protocol ip pref 1 u32 fh 801::800 order 2048 key ht 801 bkt 0 flowid 1:3
@@ -170,7 +173,7 @@ filter parent 1: protocol ip pref 2 u32 fh 800::800 order 2048 key ht 800 bkt 0 
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1a1a: protocol ip pref 1 u32
 filter parent 1a1a: protocol ip pref 1 u32 fh 800: ht divisor 1
 filter parent 1a1a: protocol ip pref 1 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1a1a:2
@@ -194,7 +197,7 @@ filter parent 1a1a: protocol ip pref 1 u32 fh 800::800 order 2048 key ht 800 bkt
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1f1c: protocol ip pref 1 fw
 filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""
                 ),
@@ -218,7 +221,7 @@ class Test_TcFilterParser_parse_filter_ipv6:
             [None, []],
             ["", []],
             [
-                six.b(
+                six_b(
                     """filter parent 1f87: protocol ipv6 pref 1 u32
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800: ht divisor 1
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1f87:2
@@ -244,7 +247,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1f87: protocol ipv6 pref 1 u32
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800: ht divisor 1
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1f87:2
@@ -270,7 +273,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 b
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1f87: protocol ipv6 pref 1 u32
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800: ht divisor 1
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1f87:2
@@ -326,7 +329,7 @@ filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 b
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """filter parent 1f87: protocol ipv6 pref 1 u32
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800: ht divisor 1
 filter parent 1f87: protocol ipv6 pref 1 u32 fh 800::802 order 2050 key ht 800 bkt 0 flowid 1f87:4
@@ -366,7 +369,7 @@ class Test_TcFilterParser_parse_incoming_device:
             ["", None],
             [None, None],
             [
-                six.b(
+                six_b(
                     """filter parent ffff: protocol ip pref 49152 u32
 filter parent ffff: protocol ip pref 49152 u32 fh 800: ht divisor 1
 filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1f87:
@@ -377,7 +380,7 @@ filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800
                 "ifb8071",
             ],
             [
-                six.b(
+                six_b(
                     """filter parent ffff: protocol ip pref 49152 u32
 filter parent ffff: protocol ip pref 49152 u32 fh 800: ht divisor 1
 filter parent ffff: protocol ip pref 49152 u32 fh 800::800 order 2048 key ht 800 bkt 0 flowid 1:
@@ -398,7 +401,7 @@ class Test_TcQdiscParser_parse:
         ["value", "expected"],
         [
             [
-                six.b(
+                six_b(
                     """qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 1 direct_qlen 1000
 qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
 """
@@ -417,7 +420,7 @@ qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """qdisc htb 1a1a: root refcnt 2 r2q 10 default 1 direct_packets_stat 4 direct_qlen 1000
 qdisc netem 1a9a: parent 1a1a:2 limit 1000
 """
@@ -434,7 +437,7 @@ qdisc netem 1a9a: parent 1a1a:2 limit 1000
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """
 qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 0 direct_qlen 1000
 qdisc netem 2007: parent 1f87:2 limit 1000 delay 5.0ms
@@ -464,7 +467,7 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 50.0ms  1.0ms loss 5%
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """
 qdisc htb 1f87: root refcnt 2 r2q 10 default 1 direct_packets_stat 0 direct_qlen 1000
 qdisc netem 2007: parent 1f87:2 limit 1000 delay 2.5s
@@ -509,7 +512,7 @@ class Test_TcClassParser_parse:
         ["value", "expected"],
         [
             [
-                six.b(
+                six_b(
                     """
 class htb 120a:1 root prio rate 32Gbit ceil 32Gbit burst 0b cburst 0b
 class htb 120a:2 root leaf 2946: prio rate 1Gbit ceil 1Gbit burst 125000Kb cburst 125000Kb
@@ -529,7 +532,7 @@ class htb 120a:2 root leaf 2946: prio rate 1Gbit ceil 1Gbit burst 125000Kb cburs
                 ],
             ],
             [
-                six.b(
+                six_b(
                     """
 class htb 120a:1 root prio rate 32Gbit ceil 32Gbit burst 0b cburst 0b
 class htb 120a:2 root leaf 2518: prio rate 200Kbit ceil 200Kbit burst 25Kb cburst 25Kb

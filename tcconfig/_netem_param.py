@@ -7,7 +7,6 @@ import hashlib
 from textwrap import dedent
 
 import humanreadable as hr
-import six
 import typepy
 from typepy import RealNumber
 
@@ -197,7 +196,7 @@ class NetemParameter:
         return " ".join(item_list)
 
     def calc_hash(self, extra=""):
-        return hashlib.md5(six.b(self.make_param_name() + extra)).hexdigest()
+        return hashlib.md5((self.make_param_name() + extra).encode("latin-1")).hexdigest()
 
     def calc_device_qdisc_major_id(self):
         base_device_hash = self.calc_hash()[:3]

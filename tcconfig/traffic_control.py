@@ -7,7 +7,6 @@ import errno
 import re
 
 import msgfy
-import six
 import subprocrunner as spr
 import typepy
 from humanreadable import ParameterError
@@ -372,7 +371,7 @@ class TrafficControl:
     def __get_device_qdisc_major_id(self):
         import hashlib
 
-        base_device_hash = hashlib.md5(six.b(self.device)).hexdigest()[:3]
+        base_device_hash = hashlib.md5(self.device.encode("latin-1")).hexdigest()[:3]
         device_hash_prefix = "1"
 
         return int(device_hash_prefix + base_device_hash, 16)

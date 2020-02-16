@@ -10,7 +10,6 @@ import sys
 from collections import namedtuple
 
 import msgfy
-import six
 from docker import APIClient
 from docker.errors import APIError, NotFound
 from path import Path
@@ -23,10 +22,6 @@ from ._common import is_execute_tc_command
 from ._const import TcCommandOutput
 from ._error import ContainerNotFoundError
 from ._logger import logger
-
-
-if six.PY2:
-    PermissionError = OSError
 
 
 ContainerInfo = namedtuple("ContainerInfo", "id name pid ipaddr image state")
