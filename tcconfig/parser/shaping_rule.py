@@ -89,15 +89,6 @@ class TcShapingRuleParser:
             }
         }
 
-    def get_outgoing_tc_filter(self):
-        return self.__parse_tc_filter(self.device)
-
-    def get_incoming_tc_filter(self):
-        if not self.ifb_device:
-            return []
-
-        return self.__parse_tc_filter(self.ifb_device)
-
     def parse(self):
         self.__parse_device(self.device)
         self.__parse_device(self.ifb_device)
