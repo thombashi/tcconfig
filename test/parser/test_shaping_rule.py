@@ -61,8 +61,7 @@ class Test_TcShapingRuleParser:
             tc_command_output=None,
             is_parse_filter_id=False,
         ).get_tc_parameter()
-        print_test_result(expected={}, actual=result)
-        assert result == json.loads(
+        expected = json.loads(
             """\
             {
                 "enp0s3": {
@@ -80,3 +79,6 @@ class Test_TcShapingRuleParser:
             }
             """
         )
+
+        print_test_result(expected=expected, actual=result)
+        assert result == expected
