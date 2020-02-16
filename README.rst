@@ -224,7 +224,7 @@ Installation: dpkg (Debian/Ubuntu)
 
 Dependencies
 ============
-Python 2.7+ or 3.5+
+Python 3.5+
 
 Linux packages
 --------------
@@ -246,11 +246,10 @@ Dependency python packages are automatically installed during
 - `DataProperty <https://github.com/thombashi/DataProperty>`__
 - `docker <https://github.com/docker/docker-py>`__
 - `humanreadable <https://github.com/thombashi/humanreadable>`__
-- `logbook <https://logbook.readthedocs.io/en/stable/>`__
+- `loguru <https://github.com/Delgan/loguru>`__
 - `msgfy <https://github.com/thombashi/msgfy>`__
 - `pyparsing <https://github.com/pyparsing/pyparsing>`__
 - `pyroute2 <https://github.com/svinota/pyroute2>`__
-- `six <https://pypi.org/project/six/>`__
 - `subprocrunner <https://github.com/thombashi/subprocrunner>`__
 - `typepy <https://github.com/thombashi/typepy>`__
 - `voluptuous <https://github.com/alecthomas/voluptuous>`__
@@ -264,7 +263,6 @@ Test dependencies
 - `allpairspy <https://github.com/thombashi/allpairspy>`__
 - `pingparsing <https://github.com/thombashi/pingparsing>`__
 - `pytest <https://docs.pytest.org/en/latest/>`__
-- `pytest-runner <https://github.com/pytest-dev/pytest-runner>`__
 - `tox <https://testrun.org/tox/latest/>`__
 
 Documentation
