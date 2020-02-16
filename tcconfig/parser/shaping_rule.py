@@ -303,4 +303,4 @@ class TcShapingRuleParser:
             except KeyError:
                 pass
 
-        return work_params
+        return {key: value for key, value in work_params.items() if value is not None}
