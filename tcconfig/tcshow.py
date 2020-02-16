@@ -190,7 +190,7 @@ def extract_tc_params(options):
 
                 tc_params.update(rule_parser.get_tc_parameter())
         except TargetNotFoundError as e:
-            logger.warn(e)
+            logger.warning(e)
             continue
 
     return tc_params
