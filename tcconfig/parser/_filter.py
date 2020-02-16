@@ -315,8 +315,6 @@ class TcFilterParser(AbstractParser):
         if len(value_hex) != 8:
             raise ValueError("invalid port filter value: {}".format(value_hex))
 
-        logger.error(value_hex)
-
         src_port_hex = value_hex[:4]
         dst_port_hex = value_hex[4:]
 
