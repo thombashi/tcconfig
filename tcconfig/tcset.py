@@ -21,7 +21,7 @@ from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, ShapingAlgorithm, Tc, TrafficDirection
 from ._error import ContainerNotFoundError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._importer import set_tc_from_file
-from ._logger import logger, set_log_level
+from ._logger import set_log_level
 from ._main import Main
 from ._netem_param import (
     MAX_CORRUPTION_RATE,
