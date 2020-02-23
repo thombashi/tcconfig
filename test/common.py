@@ -66,7 +66,7 @@ class NullLogger:
     def remove(self, handler_id=None):  # pragma: no cover
         pass
 
-    def add(self, **kwargs):  # pragma: no cover
+    def add(self, sink, **kwargs):  # pragma: no cover
         pass
 
     def disable(self, name):  # pragma: no cover
