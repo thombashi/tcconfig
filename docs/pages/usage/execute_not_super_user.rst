@@ -1,4 +1,4 @@
-Execute with not super-user
+Execute with not a super-user
 -------------------------------------------------
 You can execute tcconfig commands with not super-user by using Linux capabilities.
 Setup Linux capabilities as follows:
