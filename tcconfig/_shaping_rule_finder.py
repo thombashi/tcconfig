@@ -5,8 +5,9 @@
 
 from simplesqlite.query import And, Where
 
-from ._const import Tc, TcSubCommand, TrafficDirection
+from ._const import Tc, TrafficDirection
 from ._network import is_anywhere_network
+from .parser._model import Filter, Qdisc
 from .parser.shaping_rule import TcShapingRuleParser
 
 
@@ -31,66 +32,36 @@ class TcShapingRuleFinder:
         self.__shaping_rule_parser.clear()
 
     def find_qdisc_handle(self, parent):
-        return self._parser.con.fetch_value(
-            select=Tc.Param.HANDLE,
-            table_name=TcSubCommand.QDISC.value,
-            where=Where(Tc.Param.PARENT, parent),
-        )
+        for qdisc in Qdisc.select(where=Where(Tc.Param.PARENT, parent)):
+            return qdisc.handle
+
+        return None
 
     def find_filter_param(self):
-        import simplesqlite
-
-        where_list = self.__get_filter_conditions()
-        where_query = And(where_list)
-        table_name = TcSubCommand.FILTER.value
+        where_query = And(self.__get_filter_conditions())
+        table_name = Filter.get_table_name()
         self.__logger.debug("find filter param: table={}, where={}".format(table_name, where_query))
 
-        try:
-            result = self._parser.con.select_as_dict(
-                columns=[Tc.Param.FILTER_ID, Tc.Param.PRIORITY, Tc.Param.PROTOCOL],
-                table_name=table_name,
-                where=where_query,
-            )
-        except simplesqlite.TableNotFoundError:
-            return None
+        for record in Filter.select(where=where_query):
+            return record.as_dict()
 
-        if not result:
-            self.__logger.debug(
-                "find filter param: empty result (table={}, where={})".format(
-                    table_name, where_query
-                )
-            )
-            return None
-
-        param = result[0]
         self.__logger.debug(
-            "find filter param: result={}, table={}, where={}".format(
-                param, table_name, where_query
-            )
+            "find filter param: empty result (table={}, where={})".format(table_name, where_query)
         )
 
-        return param
+        return None
 
     def find_parent(self):
-        where_list = self.__get_filter_conditions()
-        table_name = TcSubCommand.FILTER.value
-        parent = self._parser.con.fetch_value(
-            select=Tc.Param.FLOW_ID, table_name=table_name, where=And(where_list)
-        )
+        for record in Filter.select(where=And(self.__get_filter_conditions())):
+            return record.flowid
 
-        self.__logger.debug(
-            "find parent: result={}, table={}, where={}".format(parent, table_name, where_list)
-        )
-
-        return parent
+        return None
 
     def is_exist_rule(self):
         return self.find_parent() is not None
 
     def is_any_filter(self):
-        num_records = self._parser.con.fetch_num_records(table_name=TcSubCommand.FILTER.value)
-
-        return num_records and num_records > 0
+        return Filter.fetch_num_records() > 0
 
     def is_empty_filter_condition(self):
         from typepy import is_null_string
