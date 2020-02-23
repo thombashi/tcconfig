@@ -198,17 +198,17 @@ class TcShapingRuleParser:
             return ({}, [])
 
         self.__parse_device(device)
-        where_query = Where(Tc.Param.DEVICE, device)
+        where_dev_query = Where(Tc.Param.DEVICE, device)
 
         try:
             class_params = self.__con.select_as_dict(
-                table_name=TcSubCommand.CLASS.value, where=where_query
+                table_name=TcSubCommand.CLASS.value, where=where_dev_query
             )
         except TableNotFoundError:
             class_params = []
 
         try:
-            filter_params = Filter.select(where=where_query)
+            filter_params = Filter.select(where=where_dev_query)
         except TableNotFoundError:
             filter_params = []
 
@@ -231,7 +231,7 @@ class TcShapingRuleParser:
 
             try:
                 qdisc_params = Qdisc.select(
-                    where=And([where_query, Where(Tc.Param.PARENT, qdisc_id)])
+                    where=And([where_dev_query, Where(Tc.Param.PARENT, qdisc_id)])
                 )
             except TableNotFoundError:
                 qdisc_params = []
