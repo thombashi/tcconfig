@@ -15,14 +15,11 @@ MODULE_NAME = "tcconfig"
 logger.disable(MODULE_NAME)
 
 
-def set_logger(is_enable, propagation_depth=3):
+def set_logger(is_enable):
     if is_enable:
         logger.enable(MODULE_NAME)
     else:
         logger.disable(MODULE_NAME)
-
-    if propagation_depth <= 0:
-        return
 
     simplesqlite.set_logger(is_enable)
     subprocrunner.set_logger(is_enable)
