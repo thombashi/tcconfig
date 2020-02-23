@@ -14,11 +14,12 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
-from ._const import Tc, TcSubCommand
+from ._const import Tc
 from ._error import NetworkInterfaceNotFoundError
 from ._logger import logger, set_logger
 from ._main import Main
 from ._network import verify_network_interface
+from .parser._model import Filter
 from .traffic_control import TrafficControl
 
 
@@ -91,27 +92,17 @@ class TcDelMain(Main):
                 logger=logger,
             )
             shaping_rule_parser.parse()
-            result = shaping_rule_parser.con.select_as_dict(
-                table_name=TcSubCommand.FILTER.value,
-                columns=[
-                    Tc.Param.SRC_NETWORK,
-                    Tc.Param.DST_NETWORK,
-                    Tc.Param.SRC_PORT,
-                    Tc.Param.DST_PORT,
-                ],
-                where=Where(Tc.Param.FILTER_ID, options.filter_id),
-            )
-            if not result:
+            for record in Filter.select(where=Where(Tc.Param.FILTER_ID, options.filter_id),):
+                dst_network = record.dst_network
+                src_network = record.src_network
+                dst_port = record.dst_port
+                src_port = record.src_port
+                break
+            else:
                 logger.error(
                     "shaping rule not found associated with the id ({}).".format(options.filter_id)
                 )
                 sys.exit(1)
-
-            filter_param = result[0]
-            dst_network = filter_param.get(Tc.Param.DST_NETWORK)
-            src_network = filter_param.get(Tc.Param.SRC_NETWORK)
-            dst_port = filter_param.get(Tc.Param.DST_PORT)
-            src_port = filter_param.get(Tc.Param.SRC_PORT)
         else:
             dst_network = self._extract_dst_network()
             src_network = self._extract_src_network()
