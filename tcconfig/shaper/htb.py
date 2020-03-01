@@ -5,6 +5,7 @@
 
 import errno
 import re
+from typing import List
 
 import typepy
 
@@ -263,27 +264,31 @@ class HtbShaper(AbstractShaper):
 
         return next_minor_id
 
-    def __get_unique_netem_major_id(self):
-        exist_netem_item_list = re.findall(
+    def __extract_exist_netem_major_ids(self) -> List[int]:
+        exist_netem_items = re.findall(
             "qdisc [a-z]+ [a-z0-9]+",
             run_tc_show(TcSubCommand.QDISC, self._tc_device, self._tc_obj.tc_command_output),
             re.MULTILINE,
         )
 
+        logger.debug("existing netem list with {:s}: {}".format(self._dev, exist_netem_items))
+
         exist_netem_major_id_list = []
-        for netem_item in exist_netem_item_list:
+        for netem_item in exist_netem_items:
             exist_netem_major_id_list.append(int(netem_item.split()[-1], 16))
 
-        logger.debug("existing netem list with {:s}: {}".format(self._dev, exist_netem_item_list))
+        return exist_netem_major_id_list
+
+    def __get_unique_netem_major_id(self):
+        exist_netem_major_ids = self.__extract_exist_netem_major_ids()
+
         logger.debug(
-            "existing netem major id list with {:s}: {}".format(
-                self._dev, exist_netem_major_id_list
-            )
+            "existing netem major id list with {:s}: {}".format(self._dev, exist_netem_major_ids)
         )
 
         next_netem_major_id = self._tc_obj.netem_param.calc_device_qdisc_major_id()
         while True:
-            if next_netem_major_id not in exist_netem_major_id_list:
+            if next_netem_major_id not in exist_netem_major_ids:
                 break
 
             next_netem_major_id += 1
