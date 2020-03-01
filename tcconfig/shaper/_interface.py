@@ -91,6 +91,19 @@ class AbstractShaper(ShaperInterface):
             ),
         )
 
+    def _get_filter_prio(self, is_exclude_filter: bool) -> int:
+        offset = 4
+        if is_exclude_filter:
+            offset = 0
+
+        if self._tc_obj.protocol == "ip":
+            return 1 + offset
+
+        if self._tc_obj.protocol == "ipv6":
+            return 2 + offset
+
+        return 3 + offset
+
     def _add_filter(self):
         if self._tc_obj.is_change_shaping_rule:
             return 0
@@ -100,7 +113,7 @@ class AbstractShaper(ShaperInterface):
             self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio 2",
+            "prio {:d}".format(self._get_filter_prio(is_exclude_filter=False)),
         ]
 
         if self._is_use_iptables():

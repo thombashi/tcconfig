@@ -159,7 +159,7 @@ class HtbShaper(AbstractShaper):
             self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
             "parent {:s}:".format(self._tc_obj.qdisc_major_id_str),
-            "prio 1",
+            "prio {:d}".format(self._get_filter_prio(is_exclude_filter=True)),
             "u32",
         ]
 
