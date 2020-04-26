@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import re
 
 import pyparsing as pp

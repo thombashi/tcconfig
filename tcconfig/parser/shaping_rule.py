@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import copy
 from collections import OrderedDict
 

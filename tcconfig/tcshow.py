@@ -4,7 +4,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import sys
 
 import msgfy
