@@ -64,7 +64,7 @@ setuptools.setup(
     },
     python_requires=">=3.5",
     install_requires=setuptools_require + install_requires,
-    setup_requires=setuptools_require,
+    setup_requires=setuptools_require + ["wheel"],
     extras_require={
         "all": color_requires,
         "buildexe": build_exe_requires,
