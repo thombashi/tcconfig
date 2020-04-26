@@ -1,5 +1,6 @@
+import json
+
 import pytest
-import simplejson as json
 
 import tcconfig
 from tcconfig._const import TrafficDirection

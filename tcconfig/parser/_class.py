@@ -4,12 +4,17 @@
 
 import re
 
-import simplejson as json
 import typepy
 
 from .._const import ShapingAlgorithm, Tc, TcSubCommand
 from .._logger import logger
 from ._interface import AbstractParser
+
+
+try:
+    import ujson as json
+except ImportError:
+    import json  # type: ignore
 
 
 class TcClassParser(AbstractParser):

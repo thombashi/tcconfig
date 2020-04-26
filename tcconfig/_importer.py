@@ -7,10 +7,15 @@ import re
 
 import msgfy
 import pyparsing as pp
-import simplejson as json
 import subprocrunner as spr
 
 from ._const import Network, Tc, TrafficDirection
+
+
+try:
+    import ujson as json
+except ImportError:
+    import json  # type: ignore
 
 
 RE_CONTAINER_ID = re.compile(r"[a-z0-9]{12}\s+\(device=[a-z0-9]+\)")
