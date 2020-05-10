@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import contextlib
 import errno
 import os
@@ -43,9 +42,9 @@ def find_bin_path(command):
     if command in _bin_path_cache:
         return _bin_path_cache.get(command)
 
-    bin_path = spr.Which(command)
+    bin_path = spr.Which(command, follow_symlinks=True)
     if bin_path.is_exist():
-        _bin_path_cache[command] = _to_regular_bin_path(bin_path.abspath())
+        _bin_path_cache[command] = bin_path.abspath()
         return _bin_path_cache[command]
 
     for sbin_path in ("/sbin/{:s}".format(command), "/usr/sbin/{:s}".format(command)):
