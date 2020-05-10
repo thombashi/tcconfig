@@ -2,7 +2,7 @@ language: python
 
 cache: pip
 
-matrix:
+jobs:
   include:
     - python: 3.5
       env: TOXENV=py35
