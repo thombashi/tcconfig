@@ -1,3 +1,4 @@
 allpairspy>=2.5
 pingparsing>=1
 pytest>=5
+pytest-md-report>=0.0.6
