@@ -219,7 +219,7 @@ Installation: dpkg (Debian/Ubuntu)
 --------------------------------------------
 .. code:: console
 
-    curl -sL https://raw.githubusercontent.com/thombashi/tcconfig/master/scripts/installer.sh | sudo bash
+    curl -sSL https://raw.githubusercontent.com/thombashi/tcconfig/master/scripts/installer.sh | sudo bash
 
 
 Dependencies
