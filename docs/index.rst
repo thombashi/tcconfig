@@ -17,6 +17,7 @@ Welcome to tcconfig's documentation!
    pages/installation
    pages/usage/index
    pages/troubleshooting
+   pages/sponsors
    pages/genindex
    pages/links
 
