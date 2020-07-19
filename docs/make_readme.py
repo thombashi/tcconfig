@@ -75,6 +75,8 @@ def main():
     maker.write_chapter("Docker image")
     maker.write_lines(["https://hub.docker.com/r/thombashi/tcconfig/"])
 
+    maker.write_file(maker.doc_page_root_dir_path.joinpath("sponsors.rst"))
+
     return 0
 
 
