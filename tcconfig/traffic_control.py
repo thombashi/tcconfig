@@ -11,7 +11,13 @@ import subprocrunner as spr
 import typepy
 from humanreadable import ParameterError
 
-from ._common import find_bin_path, logging_context, run_command_helper, validate_within_min_max
+from ._common import (
+    find_bin_path,
+    is_execute_tc_command,
+    logging_context,
+    run_command_helper,
+    validate_within_min_max,
+)
 from ._const import (
     LIST_MANGLE_TABLE_OPTION,
     ShapingAlgorithm,
@@ -490,7 +496,9 @@ class TrafficControl:
         with logging_context(logging_msg):
             verify_network_interface(self.ifb_device, self.__tc_command_output)
 
-            if not has_execution_authority("ip"):
+            if is_execute_tc_command(self.__tc_command_output) and not has_execution_authority(
+                "ip"
+            ):
                 logger.warning(get_permission_error_message("ip"))
 
                 return errno.EPERM
