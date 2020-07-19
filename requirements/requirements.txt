@@ -1,12 +1,12 @@
-DataProperty>=0.46.3,<2
+DataProperty>=0.49.0,<2
 docker>=1.9.0,<5
 humanreadable>=0.1.0,<1
 loguru>=0.4.1,<1
-msgfy>=0.0.6,<1
+msgfy>=0.1.0,<1
 path.py<13
 pyparsing>=2.0.3,<3
 pyroute2>=0.5.7,<1
-SimpleSQLite>=1.0.0,<2
-typepy>=0.6.6,<2
+SimpleSQLite>=1.1.1,<2
 subprocrunner>=1.2.1,<2
+typepy>=1.1.1,<2
 voluptuous<1
