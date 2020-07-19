@@ -78,8 +78,9 @@ class TcDelMain(Main):
         return self._get_return_code(return_code_list)
 
     def __create_tc_obj(self, tc_target):
-        from .parser.shaping_rule import TcShapingRuleParser
         from simplesqlite.query import Where
+
+        from .parser.shaping_rule import TcShapingRuleParser
 
         options = self._options
 

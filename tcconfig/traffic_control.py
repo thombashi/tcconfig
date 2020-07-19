@@ -484,7 +484,7 @@ class TrafficControl:
             return is_success
 
     def __delete_ifb_device(self):
-        from ._capabilities import has_execution_authority, get_permission_error_message
+        from ._capabilities import get_permission_error_message, has_execution_authority
 
         logging_msg = "delete {} ifb device ({})".format(self.device, self.ifb_device)
         with logging_context(logging_msg):

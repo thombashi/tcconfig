@@ -29,7 +29,7 @@ class TcConfigLoader:
         self.is_overwrite = False
 
     def load_tcconfig(self, config_file_path):
-        from voluptuous import Schema, Required, Any, ALLOW_EXTRA
+        from voluptuous import ALLOW_EXTRA, Any, Required, Schema
 
         schema = Schema(
             {Required(str): {Any(*TrafficDirection.LIST): {str: {str: Any(str, int, float)}}}},

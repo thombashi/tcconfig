@@ -96,8 +96,8 @@ def parse_option():
 def print_tc(text, is_colorize):
     try:
         from pygments import highlight
-        from pygments.lexers import JsonLexer
         from pygments.formatters import TerminalTrueColorFormatter
+        from pygments.lexers import JsonLexer
 
         pygments_installed = True
     except ImportError:
