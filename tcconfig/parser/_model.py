@@ -21,8 +21,8 @@ class Filter(Model):
 class Qdisc(Model):
     device = Text(attr_name=Tc.Param.DEVICE, not_null=True)
     direct_qlen = Integer()
-    parent = Text(attr_name=Tc.Param.PARENT, not_null=True)
-    handle = Text(attr_name=Tc.Param.HANDLE, not_null=True)
+    parent = Text(attr_name=Tc.Param.PARENT)
+    handle = Text(attr_name=Tc.Param.HANDLE)
     delay = Text()
     delay_distro = Text(attr_name="delay-distro")
     loss = Text()
