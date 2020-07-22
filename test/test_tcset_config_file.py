@@ -3,6 +3,7 @@
 """
 
 import json
+from textwrap import dedent
 
 import pytest
 from subprocrunner import SubprocessRunner
@@ -21,7 +22,7 @@ def device_value(request):
 
 class Test_tcconfig:
     @pytest.mark.parametrize(["overwrite"], [[""], ["--overwrite"]])
-    def test_config_file_smoke(self, tmpdir, device_value, overwrite):
+    def test_import_config_smoke(self, tmpdir, device_value, overwrite):
         if device_value is None:
             pytest.skip("device option is null")
 
