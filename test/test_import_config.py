@@ -38,7 +38,7 @@ class Test_tcconfig:
                             "rate": "250Kbps",
                             "delay-distro": "2.0ms"
                         }},
-                        "src-port=1234, protocol=ip": {{
+                        "src-network=192.168.44.0/24, src-port=1234, protocol=ip": {{
                             "delay": "50.0ms",
                             "rate": "1Gbps"
                         }}
