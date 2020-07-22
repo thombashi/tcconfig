@@ -26,33 +26,31 @@ class Test_tcconfig:
             pytest.skip("device option is null")
 
         p = tmpdir.join("tcconfig.json")
-        config = (
-            "{"
-            + '"{:s}"'.format(device_value)
-            + ": {"
-            + """
-        "outgoing": {
-            "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {
-                "delay": "10.0ms",
-                "loss": "0.01%",
-                "rate": "250Kbps",
-                "delay-distro": "2.0ms"
-            },
-            "src-port=1234, protocol=ip": {
-                "delay": "50.0ms",
-                "rate": "1Gbps"
-            }
-        },
-        "incoming": {
-            "dst-network=192.168.10.0/24, protocol=ip": {
-                "corrupt": "0.02%",
-                "rate": "1500Kbps"
-            }
-        }
-    }
-}
-"""
-        )
+        config = dedent(
+            """\
+            {{
+                "{:s}": {{
+                    "outgoing": {{
+                        "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {{
+                            "delay": "10.0ms",
+                            "loss": "0.01%",
+                            "rate": "250Kbps",
+                            "delay-distro": "2.0ms"
+                        }},
+                        "src-port=1234, protocol=ip": {{
+                            "delay": "50.0ms",
+                            "rate": "1Gbps"
+                        }}
+                    }},
+                    "incoming": {{
+                        "dst-network=192.168.10.0/24, protocol=ip": {{
+                            "corrupt": "0.02%",
+                            "rate": "1500Kbps"
+                        }}
+                    }}
+                }}
+            }}"""
+        ).format(device_value)
         print("[config]\n{}\n".format(config))
         p.write(config)
 
