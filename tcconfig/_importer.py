@@ -91,7 +91,14 @@ class TcConfigLoader:
                         option_list.append(arg_item)
 
                     try:
-                        dst_network = self.__parse_tc_filter_network(tc_filter)
+                        src_network = self.__parse_tc_filter_src_network(tc_filter)
+                        if src_network not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
+                            option_list.append("--src-network={:s}".format(src_network))
+                    except pp.ParseException:
+                        pass
+
+                    try:
+                        dst_network = self.__parse_tc_filter_dst_network(tc_filter)
                         if dst_network not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
                             option_list.append("--dst-network={:s}".format(dst_network))
                     except pp.ParseException:
@@ -119,7 +126,15 @@ class TcConfigLoader:
         return command_list
 
     @staticmethod
-    def __parse_tc_filter_network(text):
+    def __parse_tc_filter_src_network(text):
+        network_pattern = pp.SkipTo("{:s}=".format(Tc.Param.SRC_NETWORK), include=True) + pp.Word(
+            pp.alphanums + "." + "/"
+        )
+
+        return network_pattern.parseString(text)[-1]
+
+    @staticmethod
+    def __parse_tc_filter_dst_network(text):
         network_pattern = pp.SkipTo("{:s}=".format(Tc.Param.DST_NETWORK), include=True) + pp.Word(
             pp.alphanums + "." + "/"
         )
