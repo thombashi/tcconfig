@@ -20,6 +20,34 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
+def make_config(device_value):
+    return dedent(
+        """\
+        {{
+            "{:s}": {{
+                "outgoing": {{
+                    "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {{
+                        "delay": "10.0ms",
+                        "loss": "0.01%",
+                        "rate": "250Kbps",
+                        "delay-distro": "2.0ms"
+                    }},
+                    "src-network=192.168.44.0/24, src-port=1234, protocol=ip": {{
+                        "delay": "50.0ms",
+                        "rate": "1Gbps"
+                    }}
+                }},
+                "incoming": {{
+                    "dst-network=192.168.10.0/24, protocol=ip": {{
+                        "corrupt": "0.02%",
+                        "rate": "1500Kbps"
+                    }}
+                }}
+            }}
+        }}"""
+    ).format(device_value)
+
+
 class Test_import_config:
     @pytest.mark.parametrize(["overwrite"], [[""], ["--overwrite"]])
     def test_smoke(self, tmpdir, device_value, overwrite):
@@ -27,35 +55,11 @@ class Test_import_config:
             pytest.skip("device option is null")
 
         p = tmpdir.join("tcconfig.json")
-        config = dedent(
-            """\
-            {{
-                "{:s}": {{
-                    "outgoing": {{
-                        "dst-network=192.168.0.10/32, dst-port=8080, protocol=ip": {{
-                            "delay": "10.0ms",
-                            "loss": "0.01%",
-                            "rate": "250Kbps",
-                            "delay-distro": "2.0ms"
-                        }},
-                        "src-network=192.168.44.0/24, src-port=1234, protocol=ip": {{
-                            "delay": "50.0ms",
-                            "rate": "1Gbps"
-                        }}
-                    }},
-                    "incoming": {{
-                        "dst-network=192.168.10.0/24, protocol=ip": {{
-                            "corrupt": "0.02%",
-                            "rate": "1500Kbps"
-                        }}
-                    }}
-                }}
-            }}"""
-        ).format(device_value)
+        config = make_config(device_value)
         print("[config]\n{}\n".format(config))
         p.write(config)
 
-        for device_option in [device_value, "--device {}".format(device_value)]:
+        for device_option in [device_value]:
             delete_all_rules(device_value)
             command = " ".join([Tc.Command.TCSET, "--import-setting", str(p), overwrite])
             SubprocessRunner(command).run()
