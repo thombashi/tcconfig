@@ -20,7 +20,7 @@ def device_value(request):
     return request.config.getoption("--device")
 
 
-class Test_tcconfig:
+class Test_import_config:
     @pytest.mark.parametrize(["overwrite"], [[""], ["--overwrite"]])
     def test_import_config_smoke(self, tmpdir, device_value, overwrite):
         if device_value is None:
