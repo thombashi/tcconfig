@@ -458,6 +458,8 @@ class TrafficControl:
                 return False
             elif re.search("Cannot find device", runner.stderr):
                 raise NetworkInterfaceNotFoundError(target=self.device)
+            elif re.search("Error: Cannot delete qdisc with handle of zero.", runner.stderr):
+                return True
             else:
                 is_success = runner.returncode == 0
                 if is_success:
