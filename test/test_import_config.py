@@ -80,6 +80,9 @@ class Test_import_config:
             delete_all_rules(device_value)
 
     def test_normal_tc_command(self, tmpdir, device_value):
+        if device_value is None:
+            pytest.skip("device option is null")
+
         p = tmpdir.join("tcconfig.json")
         config = make_config(device_value)
         print("[config]\n{}\n".format(config))
