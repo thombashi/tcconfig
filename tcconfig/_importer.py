@@ -4,12 +4,13 @@
 
 import errno
 import re
+from typing import Optional
 
 import msgfy
 import pyparsing as pp
 import subprocrunner as spr
 
-from ._const import Network, Tc, TrafficDirection
+from ._const import Network, Tc, TcCommandOutput, TrafficDirection
 
 
 try:
@@ -27,6 +28,7 @@ class TcConfigLoader:
         self.__logger = logger
         self.__config_table = None
         self.is_overwrite = False
+        self.tc_command_output = TcCommandOutput.NOT_SET
 
     def load_tcconfig(self, config_file_path):
         from voluptuous import ALLOW_EXTRA, Any, Required, Schema
@@ -119,6 +121,11 @@ class TcConfigLoader:
                     if not is_first_set:
                         option_list.append("--add")
 
+                    if self.tc_command_output == TcCommandOutput.STDOUT:
+                        option_list.append("--tc-command")
+                    elif self.tc_command_output == TcCommandOutput.SCRIPT:
+                        option_list.append("--tc-script")
+
                     is_first_set = False
 
                     command_list.append(" ".join([Tc.Command.TCSET] + option_list))
@@ -154,11 +161,14 @@ class TcConfigLoader:
         return port_pattern.parseString(text)[-1]
 
 
-def set_tc_from_file(logger, config_file_path, is_overwrite):
+def set_tc_from_file(
+    logger, config_file_path: str, is_overwrite: bool, tc_command_output: Optional[str]
+) -> int:
     return_code = 0
 
     loader = TcConfigLoader(logger)
     loader.is_overwrite = is_overwrite
+    loader.tc_command_output = tc_command_output
 
     try:
         loader.load_tcconfig(config_file_path)
@@ -167,6 +177,12 @@ def set_tc_from_file(logger, config_file_path, is_overwrite):
         return errno.EIO
 
     for tcconfig_command in loader.get_tcconfig_commands():
-        return_code |= spr.SubprocessRunner(tcconfig_command).run()
+        runner = spr.SubprocessRunner(tcconfig_command)
+        return_code |= runner.run()
+
+        if return_code != 0:
+            logger.error(runner.stderr)
+        elif tc_command_output == TcCommandOutput.STDOUT:
+            print(runner.stdout.strip())
 
     return return_code

@@ -332,7 +332,8 @@ def main():
         if options.direction == TrafficDirection.INCOMING:
             check_execution_authority("ip")
     else:
-        spr.SubprocessRunner.default_is_dry_run = True
+        if not options.import_setting:
+            spr.SubprocessRunner.default_is_dry_run = True
 
     try:
         verify_netem_module()
@@ -340,7 +341,9 @@ def main():
         logger.debug(e)
 
     if options.import_setting:
-        return set_tc_from_file(logger, options.device, options.overwrite)
+        return set_tc_from_file(
+            logger, options.device, options.overwrite, options.tc_command_output
+        )
 
     spr.SubprocessRunner.clear_history()
 
