@@ -8,6 +8,7 @@ import enum
 
 LIST_MANGLE_TABLE_OPTION = "-t mangle --line-numbers -L"
 IPV6_OPTION_ERROR_MSG_FORMAT = "{}. --ipv6 option required to use IPv6 address."
+DELAY_DISTRIBUTIONS = ("normal", "pareto", "paretonormal")
 
 
 @enum.unique

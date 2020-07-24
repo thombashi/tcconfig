@@ -18,7 +18,13 @@ from .__version__ import __version__
 from ._argparse_wrapper import ArgparseWrapper
 from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
-from ._const import IPV6_OPTION_ERROR_MSG_FORMAT, ShapingAlgorithm, Tc, TrafficDirection
+from ._const import (
+    DELAY_DISTRIBUTIONS,
+    IPV6_OPTION_ERROR_MSG_FORMAT,
+    ShapingAlgorithm,
+    Tc,
+    TrafficDirection,
+)
 from ._error import ContainerNotFoundError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._importer import set_tc_from_file
 from ._logger import set_log_level
@@ -125,6 +131,15 @@ def get_arg_parser():
         """.format(
             unit=_get_unit_help_msg()
         ),
+    )
+    group.add_argument(
+        "--delay-distribution",
+        dest="latency_distribution",
+        choices=DELAY_DISTRIBUTIONS,
+        default=DELAY_DISTRIBUTIONS[0],
+        help="""choose the delay distribution. (default=%(default)s)",
+        [limitation] this parameter can not be shown by tcshow, and export/import as config.
+        """,
     )
     group.add_argument(
         "--loss",
@@ -299,6 +314,7 @@ class TcSetMain(Main):
                 bandwidth_rate=options.bandwidth_rate,
                 latency_time=options.latency_time,
                 latency_distro_time=options.latency_distro_time,
+                latency_distribution=options.latency_distribution,
                 packet_loss_rate=options.packet_loss_rate,
                 packet_duplicate_rate=options.packet_duplicate_rate,
                 corruption_rate=options.corruption_rate,

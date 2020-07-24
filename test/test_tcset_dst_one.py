@@ -144,6 +144,36 @@ class Test_tcset_one_network:
             # finalize ---
             delete_all_rules(tc_target)
 
+    @pytest.mark.parametrize(["delay_distribution"], [["normal"], ["pareto"], ["paretonormal"]])
+    def test_latency_distribution(
+        self, device_option, dst_host_option, transmitter, delay_distribution
+    ):
+        if typepy.is_null_string(dst_host_option):
+            pytest.skip("destination host is null")
+
+        for tc_target in [device_option]:
+            delete_all_rules(tc_target)
+            transmitter.destination = dst_host_option
+
+            # w/ latency tc ---
+            runner_helper(
+                " ".join(
+                    [
+                        Tc.Command.TCSET,
+                        tc_target,
+                        "--delay",
+                        "2ms",
+                        "--delay-distro",
+                        "5ms",
+                        "--delay-distribution",
+                        delay_distribution,
+                    ]
+                )
+            )
+
+            # finalize ---
+            delete_all_rules(tc_target)
+
     @pytest.mark.parametrize(["option", "value"], [["--loss", 10], ["--corrupt", 10]])
     def test_dst_net_packet_loss(
         self, device_option, dst_host_option, transmitter, pingparser, option, value

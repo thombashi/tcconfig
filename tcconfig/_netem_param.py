@@ -10,7 +10,7 @@ import typepy
 from typepy import RealNumber
 
 from ._common import validate_within_min_max
-from ._const import Tc
+from ._const import DELAY_DISTRIBUTIONS, Tc
 from ._logger import logger
 from ._network import get_upper_limit_rate
 
@@ -46,6 +46,7 @@ class NetemParameter:
         bandwidth_rate=None,
         latency_time=None,
         latency_distro_time=None,
+        latency_distribution=None,
         packet_loss_rate=None,
         packet_duplicate_rate=None,
         corruption_rate=None,
@@ -66,6 +67,12 @@ class NetemParameter:
         self.__latency_distro_time = None
         if latency_distro_time:
             self.__latency_distro_time = hr.Time(latency_distro_time, hr.Time.Unit.MILLISECOND)
+
+        self.__latency_distribution = (
+            "normal" if latency_distribution is None else latency_distribution
+        )
+        if self.__latency_distribution not in DELAY_DISTRIBUTIONS:
+            raise ValueError("latency_distribution must be one of {}".format(DELAY_DISTRIBUTIONS))
 
     def __normalize_bandwidth_rate(self, bandwidth_rate):
         if not bandwidth_rate:
@@ -183,7 +190,9 @@ class NetemParameter:
                 Tc.ValueRange.LatencyTime.MIN
             ):
                 item_list.append(
-                    "{}ms distribution normal".format(self.__latency_distro_time.milliseconds)
+                    "{}ms distribution {}".format(
+                        self.__latency_distro_time.milliseconds, self.__latency_distribution
+                    )
                 )
 
         if self.__corruption_rate > 0:
