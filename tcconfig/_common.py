@@ -119,30 +119,30 @@ def normalize_tc_value(tc_obj):
 
 
 def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_class=None):
-    proc = spr.SubprocessRunner(command, error_log_level="QUIET")
-    proc.run()
+    runner = spr.SubprocessRunner(command, error_log_level="QUIET")
+    runner.run()
 
-    if proc.returncode == 0:
+    if runner.returncode == 0:
         return 0
 
     if ignore_error_msg_regexp:
-        match = ignore_error_msg_regexp.search(proc.stderr)
+        match = ignore_error_msg_regexp.search(runner.stderr)
         if match is None:
             error_msg = "\n".join(
                 [
                     "command execution failed",
                     "  command={}".format(command),
-                    "  stderr={}".format(proc.stderr),
+                    "  stderr={}".format(runner.stderr),
                 ]
             )
 
-            if re.search("RTNETLINK answers: Operation not permitted", proc.stderr):
+            if re.search("RTNETLINK answers: Operation not permitted", runner.stderr):
                 logger.error(error_msg)
-                sys.exit(proc.returncode)
+                sys.exit(runner.returncode)
 
             logger.error(error_msg)
 
-            return proc.returncode
+            return runner.returncode
 
     if typepy.is_not_null_string(notice_msg):
         logger.warning(notice_msg)
@@ -150,4 +150,4 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
     if exception_class is not None:
         raise exception_class(command)
 
-    return proc.returncode
+    return runner.returncode
