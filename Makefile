@@ -24,9 +24,8 @@ build-remote:
 
 .PHONY: check
 check:
-	python setup.py check
+	@tox -e lint
 	travis lint
-	pylama
 
 .PHONY: clean
 clean:
