@@ -64,7 +64,7 @@ class Test_tcset_one_network:
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option]:
             delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
@@ -103,7 +103,7 @@ class Test_tcset_one_network:
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option]:
             delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
@@ -151,7 +151,7 @@ class Test_tcset_one_network:
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option]:
             delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
@@ -183,7 +183,7 @@ class Test_tcset_one_network:
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option]:
             delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
