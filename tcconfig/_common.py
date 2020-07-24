@@ -122,7 +122,8 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
     runner = spr.SubprocessRunner(command, error_log_level="QUIET")
     runner.run()
 
-    if runner.returncode == 0:
+    returncode = runner.returncode
+    if returncode == 0:
         return 0
 
     if ignore_error_msg_regexp:
@@ -137,11 +138,11 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
 
             if re.search("RTNETLINK answers: Operation not permitted", runner.stderr):
                 logger.error(error_msg)
-                sys.exit(runner.returncode)
+                sys.exit(returncode)
 
             logger.error(error_msg)
 
-            return runner.returncode
+            return returncode
 
     if typepy.is_not_null_string(notice_msg):
         logger.warning(notice_msg)
@@ -149,4 +150,4 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
     if exception_class is not None:
         raise exception_class(command)
 
-    return runner.returncode
+    return returncode
