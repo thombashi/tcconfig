@@ -460,6 +460,7 @@ class TrafficControl:
                     )
                 ),
                 notice_msg="no qdisc to delete for the outgoing device.",
+                msg_log_level="INFO",
             )
 
             is_success = returncode == 0
@@ -486,6 +487,7 @@ class TrafficControl:
                     )
                 ),
                 notice_msg="no qdisc to delete for the incoming device.",
+                msg_log_level="INFO",
             )
             is_success = returncode == 0
             if is_success:
