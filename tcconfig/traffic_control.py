@@ -447,24 +447,26 @@ class TrafficControl:
         logging_msg = "delete {} qdisc".format(self.device)
 
         with logging_context(logging_msg):
-            runner = spr.SubprocessRunner(
+            returncode = run_command_helper(
                 "{:s} del dev {:s} root".format(
                     get_tc_base_command(TcSubCommand.QDISC), self.device
-                )
+                ),
+                ignore_error_msg_regexp=re.compile(
+                    "|".join(
+                        [
+                            "RTNETLINK answers: No such file or directory",  # Debian/Ubuntu
+                            "Error: Cannot delete qdisc with handle of zero",  # Debian 10
+                        ]
+                    )
+                ),
+                notice_msg="no qdisc to delete for the outgoing device.",
             )
-            runner.run()
-            if re.search("RTNETLINK answers: No such file or directory", runner.stderr):
-                logger.info("no qdisc to delete for the outgoing device.")
-                return False
-            elif re.search("Cannot find device", runner.stderr):
-                raise NetworkInterfaceNotFoundError(target=self.device)
-            elif re.search("Error: Cannot delete qdisc with handle of zero.", runner.stderr):
-                return True
-            else:
-                is_success = runner.returncode == 0
-                if is_success:
-                    logger.info(logging_msg)
-                return is_success
+
+            is_success = returncode == 0
+            if is_success:
+                logger.info(logging_msg)
+
+            return is_success
 
     def __delete_ingress_qdisc(self):
         logging_msg = "delete {} ingress qdisc".format(self.device)
