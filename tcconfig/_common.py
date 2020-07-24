@@ -143,6 +143,9 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
             logger.error(error_msg)
 
             return returncode
+        else:
+            # ignorable error occurred
+            returncode = 0
 
     if typepy.is_not_null_string(notice_msg):
         logger.warning(notice_msg)
