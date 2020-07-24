@@ -126,8 +126,7 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
         return 0
 
     if ignore_error_msg_regexp:
-        match = ignore_error_msg_regexp.search(runner.stderr)
-        if match is None:
+        if ignore_error_msg_regexp.search(runner.stderr) is None:
             error_msg = "\n".join(
                 [
                     "command execution failed",
