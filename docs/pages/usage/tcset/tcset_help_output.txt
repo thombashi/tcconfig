@@ -3,7 +3,8 @@
     usage: tcset [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
                  [--debug-query] [--stacktrace] [--import-setting]
                  [--overwrite | --change | --add] [--rate BANDWIDTH_RATE]
-                 [--delay NETWORK_LATENCY] [--delay-distro LATENCY_DISTRO_TIME]
+                 [--delay LATENCY_TIME] [--delay-distro LATENCY_DISTRO_TIME]
+                 [--delay-distribution {normal,pareto,paretonormal}]
                  [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
                  [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE]
                  [--shaping-algo {htb,tbf}] [--iptables]
@@ -50,13 +51,12 @@
     Traffic Control Parameters:
       --rate BANDWIDTH_RATE, --bandwidth-rate BANDWIDTH_RATE
                             network bandwidth rate [bit per second]. the minimum
-                            bandwidth rate is 8 bps. valid units are either: bps,
-                            bit/s, [kK]bps, [kK]bit/s, [kK]ibps, [kK]ibit/s,
-                            [mM]bps, [mM]bit/s, [mM]ibps, [mM]ibit/s, [gG]bps,
-                            [gG]bit/s, [gG]ibps, [gG]ibit/s, [tT]bps, [tT]bit/s,
-                            [tT]ibps, [tT]ibit/s. e.g. tcset eth0 --rate 10Mbps
-      --delay NETWORK_LATENCY
-                            round trip network delay. the valid range is from 0ms
+                            bandwidth rate is 8 bps. valid units are either:
+                            [kK]bps, [kK]bit/s, [kK]ibps, [kK]ibit/s, [mM]bps,
+                            [mM]bit/s, [mM]ibps, [mM]ibit/s, [gG]bps, [gG]bit/s,
+                            [gG]ibps, [gG]ibit/s, [tT]bps, [tT]bit/s, [tT]ibps,
+                            [tT]ibit/s, bps, bit/s. e.g. tcset eth0 --rate 10Mbps
+      --delay LATENCY_TIME  round trip network delay. the valid range is from 0ms
                             to 60min. valid time units are: d/day/days,
                             h/hour/hours, m/min/mins/minute/minutes,
                             s/sec/secs/second/seconds,
@@ -75,6 +75,10 @@
                             us/usec/usecs/microsecond/microseconds. if no unit
                             string found, considered milliseconds as the time
                             unit.
+      --delay-distribution {normal,pareto,paretonormal}
+                            choose the delay distribution. (default=normal)",
+                            [limitation] this parameter can not be shown by
+                            tcshow, and export/import as config.
       --loss PACKET_LOSS_RATE
                             round trip packet loss rate [%]. the valid range is
                             from 0 to 100. (default=0)

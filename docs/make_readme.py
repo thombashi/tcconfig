@@ -5,10 +5,13 @@
 """
 
 
+import os
 import sys
+from textwrap import indent
 
 from path import Path
 from readmemaker import ReadmeMaker
+from subprocrunner import SubprocessRunner
 
 
 PROJECT_NAME = "tcconfig"
@@ -42,7 +45,22 @@ def write_examples(maker):
     )
 
 
+def update_help():
+    for command in ["tcset", "tcdel", "tcshow"]:
+        runner = SubprocessRunner("{:s} -h".format(command))
+        runner.run(env=dict(os.environ, LC_ALL="C.UTF-8"))
+        help_file_path = "pages/usage/{command:s}/{command:s}_help_output.txt".format(command=command)
+
+        print(help_file_path)
+
+        with open(help_file_path, "w") as f:
+            f.write("::\n\n")
+            f.write(indent(runner.stdout, "    "))
+
+
 def main():
+    update_help()
+
     maker = ReadmeMaker(
         PROJECT_NAME,
         OUTPUT_DIR,
