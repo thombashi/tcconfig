@@ -118,7 +118,9 @@ def normalize_tc_value(tc_obj):
         sys.exit(errno.EINVAL)
 
 
-def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_class=None):
+def run_command_helper(
+    command, ignore_error_msg_regexp, notice_msg, msg_log_level="WARNING", exception_class=None
+):
     runner = spr.SubprocessRunner(command, error_log_level="QUIET")
     runner.run()
 
@@ -148,7 +150,7 @@ def run_command_helper(command, ignore_error_msg_regexp, notice_msg, exception_c
             returncode = 0
 
     if typepy.is_not_null_string(notice_msg):
-        logger.warning(notice_msg)
+        logger.log(msg_log_level, notice_msg)
 
     if exception_class is not None:
         raise exception_class(command)
