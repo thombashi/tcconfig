@@ -103,7 +103,7 @@ def get_arg_parser():
     )
     group.add_argument(
         "--delay",
-        dest="network_latency",
+        dest="latency_time",
         default=Tc.ValueRange.LatencyTime.MIN,
         help="""round trip network delay. the valid range is from {min_value:} to {max_value:}.
         valid time units are: {unit}. if no unit string found, considered milliseconds as
@@ -297,7 +297,7 @@ class TcSetMain(Main):
             netem_param=NetemParameter(
                 device=device,
                 bandwidth_rate=options.bandwidth_rate,
-                latency_time=options.network_latency,
+                latency_time=options.latency_time,
                 latency_distro_time=options.latency_distro_time,
                 packet_loss_rate=options.packet_loss_rate,
                 packet_duplicate_rate=options.packet_duplicate_rate,
