@@ -9,6 +9,7 @@ exemptLabels:
   - pinned
   - security
   - bug
+  - call-for-opinion
   - enhancement
   - needs-triage
   - refactoring
