@@ -224,7 +224,8 @@ Installation: dpkg (Debian/Ubuntu)
 
 Dependencies
 ============
-Python 3.5+
+- Python 3.5+
+- `Python package dependencies (automatically installed) <https://github.com/thombashi/tcconfig/network/dependencies>`__
 
 Linux packages
 --------------
@@ -238,32 +239,9 @@ Linux kernel module
 ----------------------------
 - ``sch_netem``
 
-Python packages
----------------
-Dependency python packages are automatically installed during
-``tcconfig`` installation via pip.
-
-- `DataProperty <https://github.com/thombashi/DataProperty>`__
-- `docker <https://github.com/docker/docker-py>`__
-- `humanreadable <https://github.com/thombashi/humanreadable>`__
-- `loguru <https://github.com/Delgan/loguru>`__
-- `msgfy <https://github.com/thombashi/msgfy>`__
-- `pyparsing <https://github.com/pyparsing/pyparsing>`__
-- `pyroute2 <https://github.com/svinota/pyroute2>`__
-- `subprocrunner <https://github.com/thombashi/subprocrunner>`__
-- `typepy <https://github.com/thombashi/typepy>`__
-- `voluptuous <https://github.com/alecthomas/voluptuous>`__
-
 Optional Python packages
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+----------------------------
 - `Pygments <http://pygments.org/>`__
-
-Test dependencies
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-- `allpairspy <https://github.com/thombashi/allpairspy>`__
-- `pingparsing <https://github.com/thombashi/pingparsing>`__
-- `pytest <https://docs.pytest.org/en/latest/>`__
-- `tox <https://testrun.org/tox/latest/>`__
 
 Documentation
 ===============
@@ -281,7 +259,7 @@ Sponsors
 ====================================
 .. image:: https://avatars0.githubusercontent.com/u/44389260?s=48&u=6da7176e51ae2654bcfd22564772ef8a3bb22318&v=4
    :target: https://github.com/chasbecker
-   :alt: chasbecker
+   :alt: Charles Becker (chasbecker)
 
 `Become a sponsor <https://github.com/sponsors/thombashi>`__
 
