@@ -24,11 +24,15 @@ Steps to reproduce the behavior:
 
 
 # Environments
-Please complete the following information:
+Please execute the following command and past the output:
 
-- **Operating System**: …
-- **Python Version**: Python 3.X
-- **tcconfig Version**: …
+```
+pip install pyenvinfo
+python -m pyenvinfo --packages "tcconfig,docker,SimpleSQLite" --format markdown
+```
+
+and complete the following information:
+
 - **Docker Version (if you using docker)**: ...
 - **Installation Method**: `pip` / `deb package`
 
