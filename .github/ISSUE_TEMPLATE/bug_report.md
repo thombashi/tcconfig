@@ -27,8 +27,8 @@ Steps to reproduce the behavior:
 Please execute the following command and past the output:
 
 ```
-pip install pyenvinfo
-python -m pyenvinfo --packages "tcconfig,docker,SimpleSQLite" --format markdown
+pip install envinfopy
+python -m envinfopy --packages "tcconfig,docker,SimpleSQLite" --format markdown
 ```
 
 and complete the following information:
