@@ -4,6 +4,7 @@
 
 
 import errno
+import itertools
 import re
 from typing import List
 
@@ -140,21 +141,25 @@ class HtbShaper(AbstractShaper):
     def _add_exclude_filter(self):
         import subprocrunner
 
-        if all(
-            [
-                typepy.is_null_string(param)
-                for param in (
-                    self._tc_obj.exclude_dst_network,
-                    self._tc_obj.exclude_src_network,
-                    self._tc_obj.exclude_dst_port,
-                    self._tc_obj.exclude_src_port,
-                )
-            ]
-        ):
+        validations = {
+            typepy.is_not_empty_sequence: (
+                self._tc_obj.exclude_dst_network,
+                self._tc_obj.exclude_src_network,
+            ),
+            typepy.is_not_null_string: (
+                self._tc_obj.exclude_dst_port,
+                self._tc_obj.exclude_src_port,
+            ),
+        }
+        has_filter = False
+        for check, params in validations.items():
+            has_filter |= any(check(param) for param in params)
+
+        if not has_filter:
             logger.debug("no exclude filter found")
             return
 
-        command_item_list = [
+        base_command_item_list = [
             self._tc_obj.get_tc_command(TcSubCommand.FILTER),
             self._dev,
             "protocol {:s}".format(self._tc_obj.protocol),
@@ -163,37 +168,50 @@ class HtbShaper(AbstractShaper):
             "u32",
         ]
 
-        if typepy.is_not_null_string(self._tc_obj.exclude_dst_network):
-            command_item_list.append(
-                "match {:s} {:s} {:s}".format(
-                    self._tc_obj.protocol_match, "dst", self._tc_obj.exclude_dst_network
+        return_code = 0
+
+        null_string = [None]
+        exclude_dst_networks = self._tc_obj.exclude_dst_network or null_string
+        exclude_src_networks = self._tc_obj.exclude_src_network or null_string
+
+        for exclude_dst_network, exclude_src_network in itertools.product(
+                exclude_dst_networks,
+                exclude_src_networks,
+        ):
+            command_item_list = base_command_item_list[:]
+
+            if typepy.is_not_null_string(exclude_dst_network):
+                command_item_list.append(
+                    "match {:s} {:s} {:s}".format(
+                        self._tc_obj.protocol_match, "dst", exclude_dst_network
+                    )
                 )
-            )
 
-        if typepy.is_not_null_string(self._tc_obj.exclude_src_network):
-            command_item_list.append(
-                "match {:s} {:s} {:s}".format(
-                    self._tc_obj.protocol_match, "src", self._tc_obj.exclude_src_network
+            if typepy.is_not_null_string(exclude_src_network):
+                command_item_list.append(
+                    "match {:s} {:s} {:s}".format(
+                        self._tc_obj.protocol_match, "src", exclude_src_network
+                    )
                 )
-            )
 
-        if typepy.is_not_null_string(self._tc_obj.exclude_dst_port):
-            command_item_list.append(
-                "match {:s} {:s} {:s} 0xffff".format(
-                    self._tc_obj.protocol_match, "dport", self._tc_obj.exclude_dst_port
+            if typepy.is_not_null_string(self._tc_obj.exclude_dst_port):
+                command_item_list.append(
+                    "match {:s} {:s} {:s} 0xffff".format(
+                        self._tc_obj.protocol_match, "dport", self._tc_obj.exclude_dst_port
+                    )
                 )
-            )
 
-        if typepy.is_not_null_string(self._tc_obj.exclude_src_port):
-            command_item_list.append(
-                "match {:s} {:s} {:s} 0xffff".format(
-                    self._tc_obj.protocol_match, "sport", self._tc_obj.exclude_src_port
+            if typepy.is_not_null_string(self._tc_obj.exclude_src_port):
+                command_item_list.append(
+                    "match {:s} {:s} {:s} 0xffff".format(
+                        self._tc_obj.protocol_match, "sport", self._tc_obj.exclude_src_port
+                    )
                 )
-            )
 
-        command_item_list.append("flowid {:s}".format(self.__classid_wo_shaping))
+            command_item_list.append("flowid {:s}".format(self.__classid_wo_shaping))
+            return_code |= subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
 
-        return subprocrunner.SubprocessRunner(" ".join(command_item_list)).run()
+        return return_code
 
     def set_shaping(self):
         is_add_shaping_rule = self._tc_obj.is_add_shaping_rule
