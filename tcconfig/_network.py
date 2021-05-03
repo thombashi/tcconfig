@@ -82,7 +82,7 @@ def sanitize_network(network, ip_version):
 
     import ipaddress
 
-    if typepy.is_null_string(network) or network.lower() == "anywhere":
+    if typepy.is_null_string(network) or network.casefold() == "anywhere":
         return get_anywhere_network(ip_version)
 
     try:
