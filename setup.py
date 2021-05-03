@@ -41,7 +41,6 @@ with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
 
 build_exe_requires = ["pyinstaller>=3.4"]
 color_requires = ["Pygments>=2.2.0"]
-setuptools_require = ["setuptools>=38.3.0"]
 
 setuptools.setup(
     name=MODULE_NAME,
@@ -62,8 +61,7 @@ setuptools.setup(
         "Tracker": "{:s}/issues".format(REPOSITORY_URL),
     },
     python_requires=">=3.5",
-    install_requires=setuptools_require + install_requires,
-    setup_requires=setuptools_require + ["wheel"],
+    install_requires=install_requires,
     extras_require={
         "all": color_requires,
         "buildexe": build_exe_requires,
