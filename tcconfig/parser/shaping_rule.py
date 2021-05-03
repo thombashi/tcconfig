@@ -170,7 +170,7 @@ class TcShapingRuleParser:
             elif src_port is not None:
                 self.__logger.warning(
                     "expected a integer value for {}, actual {}: {}".format(
-                        Tc.Param.SRC_PORT, type(src_port), src_port,
+                        Tc.Param.SRC_PORT, type(src_port), src_port
                     )
                 )
 

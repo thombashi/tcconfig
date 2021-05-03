@@ -93,7 +93,7 @@ class TcDelMain(Main):
                 logger=logger,
             )
             shaping_rule_parser.parse()
-            for record in Filter.select(where=Where(Tc.Param.FILTER_ID, options.filter_id),):
+            for record in Filter.select(where=Where(Tc.Param.FILTER_ID, options.filter_id)):
                 dst_network = record.dst_network
                 src_network = record.src_network
                 dst_port = record.dst_port
