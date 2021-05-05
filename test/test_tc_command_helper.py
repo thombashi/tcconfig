@@ -21,7 +21,7 @@ class Test_get_tc_base_command:
     def test_normal(self, monkeypatch, subcommand, expected):
         monkeypatch.setattr(tcconfig._common, "find_bin_path", lambda _: "/sbin/tc")
 
-        assert get_tc_base_command(subcommand) == expected
+        assert expected in get_tc_base_command(subcommand)
 
     @pytest.mark.parametrize(
         ["subcommand", "expected"], [["qdisc", ValueError], [None, ValueError]]
