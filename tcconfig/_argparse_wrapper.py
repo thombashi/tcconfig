@@ -124,7 +124,12 @@ class ArgparseWrapper:
             dest="use_docker",
             action="store_true",
             default=False,
-            help="apply traffic control to a docker container.",
+            help="""
+            apply traffic control to a docker container.
+            to use this option, you will need to specify a container id as 'device' as follows:
+
+                tcset --container <container id>
+            """,
         )
         if is_add_srcdst:
             group.add_argument("--src-container", help="specify source container id or name.")
