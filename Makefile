@@ -8,14 +8,12 @@ PYTHON := python3
 
 
 .PHONY: build
-build:
-	@make clean
+build: clean
 	@tox -e buildwhl
 	ls -lh dist/*
 
 .PHONY: build-remote
-build-remote:
-	@rm -rf $(BUILD_WORK_DIR)
+build-remote: clean
 	@mkdir -p $(BUILD_WORK_DIR)
 	@cd $(BUILD_WORK_DIR) && \
 		git clone https://github.com/$(AUTHOR)/$(PACKAGE).git --depth 1 && \
