@@ -19,7 +19,7 @@ Installation: dpkg (Debian/Ubuntu)
 
 Dependencies
 ============
-- Python 3.5+
+- Python 3.6+
 - `Python package dependencies (automatically installed) <https://github.com/thombashi/tcconfig/network/dependencies>`__
 
 Linux packages
