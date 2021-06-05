@@ -130,7 +130,10 @@
                             exclude a specific source port from a shaping rule.
 
     Docker:
-      --docker              apply traffic control to a docker container.
+      --docker              apply traffic control to a docker container. to use
+                            this option, you will need to specify a container id
+                            as 'device' as follows: tcset --container <container
+                            id>
       --src-container SRC_CONTAINER
                             specify source container id or name.
       --dst-container DST_CONTAINER
