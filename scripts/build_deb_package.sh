@@ -23,8 +23,13 @@ echo "$PKG_NAME $PKG_VERSION"
 
 # build executable binary files
 pyinstaller cli_tcset.py --clean --onefile --distpath $DIST_DIR_PATH --name tcset
+${DIST_DIR_PATH}/tcset --help
+
 pyinstaller cli_tcdel.py --clean --onefile --distpath $DIST_DIR_PATH --name tcdel
+${DIST_DIR_PATH}/tcdel --help
+
 pyinstaller cli_tcshow.py --clean --onefile --distpath $DIST_DIR_PATH --name tcshow
+${DIST_DIR_PATH}/tcshow --help
 
 
 # build a deb package
