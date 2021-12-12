@@ -1,4 +1,4 @@
-DataProperty>=0.49.0,<2
+DataProperty>=0.51.0,<2
 docker>=1.9.0,<6
 humanreadable>=0.1.0,<1
 loguru>=0.4.1,<1
