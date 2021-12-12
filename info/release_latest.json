@@ -1,9 +1,9 @@
 {
-  "url": "https://api.github.com/repos/thombashi/tcconfig/releases/55130919",
-  "assets_url": "https://api.github.com/repos/thombashi/tcconfig/releases/55130919/assets",
-  "upload_url": "https://uploads.github.com/repos/thombashi/tcconfig/releases/55130919/assets{?name,label}",
-  "html_url": "https://github.com/thombashi/tcconfig/releases/tag/v0.27.0",
-  "id": 55130919,
+  "url": "https://api.github.com/repos/thombashi/tcconfig/releases/55135344",
+  "assets_url": "https://api.github.com/repos/thombashi/tcconfig/releases/55135344/assets",
+  "upload_url": "https://uploads.github.com/repos/thombashi/tcconfig/releases/55135344/assets{?name,label}",
+  "html_url": "https://github.com/thombashi/tcconfig/releases/tag/v0.27.1",
+  "id": 55135344,
   "author": {
     "login": "thombashi",
     "id": 15517661,
@@ -24,19 +24,19 @@
     "type": "User",
     "site_admin": false
   },
-  "node_id": "RE_kwDOAvhFo84DSTsn",
-  "tag_name": "v0.27.0",
+  "node_id": "RE_kwDOAvhFo84DSUxw",
+  "tag_name": "v0.27.1",
   "target_commitish": "master",
-  "name": "v0.27.0",
+  "name": "v0.27.1",
   "draft": false,
   "prerelease": false,
-  "created_at": "2021-12-12T12:20:47Z",
-  "published_at": "2021-12-12T12:22:51Z",
+  "created_at": "2021-12-12T15:39:45Z",
+  "published_at": "2021-12-12T15:40:56Z",
   "assets": [
     {
-      "url": "https://api.github.com/repos/thombashi/tcconfig/releases/assets/51594024",
-      "id": 51594024,
-      "node_id": "RA_kwDOAvhFo84DE0Mo",
+      "url": "https://api.github.com/repos/thombashi/tcconfig/releases/assets/51600970",
+      "id": 51600970,
+      "node_id": "RA_kwDOAvhFo84DE15K",
       "name": "sha256_tcconfig.txt",
       "label": "",
       "uploader": {
@@ -63,15 +63,15 @@
       "state": "uploaded",
       "size": 197,
       "download_count": 0,
-      "created_at": "2021-12-12T12:23:37Z",
-      "updated_at": "2021-12-12T12:23:37Z",
-      "browser_download_url": "https://github.com/thombashi/tcconfig/releases/download/v0.27.0/sha256_tcconfig.txt"
+      "created_at": "2021-12-12T15:42:57Z",
+      "updated_at": "2021-12-12T15:42:57Z",
+      "browser_download_url": "https://github.com/thombashi/tcconfig/releases/download/v0.27.1/sha256_tcconfig.txt"
     },
     {
-      "url": "https://api.github.com/repos/thombashi/tcconfig/releases/assets/51593989",
-      "id": 51593989,
-      "node_id": "RA_kwDOAvhFo84DE0MF",
-      "name": "tcconfig_0.27.0_bionic_amd64.deb",
+      "url": "https://api.github.com/repos/thombashi/tcconfig/releases/assets/51600953",
+      "id": 51600953,
+      "node_id": "RA_kwDOAvhFo84DE145",
+      "name": "tcconfig_0.27.1_bionic_amd64.deb",
       "label": "",
       "uploader": {
         "login": "github-actions[bot]",
@@ -95,17 +95,17 @@
       },
       "content_type": "application/octet-stream",
       "state": "uploaded",
-      "size": 50120672,
+      "size": 50779796,
       "download_count": 0,
-      "created_at": "2021-12-12T12:23:11Z",
-      "updated_at": "2021-12-12T12:23:13Z",
-      "browser_download_url": "https://github.com/thombashi/tcconfig/releases/download/v0.27.0/tcconfig_0.27.0_bionic_amd64.deb"
+      "created_at": "2021-12-12T15:42:33Z",
+      "updated_at": "2021-12-12T15:42:35Z",
+      "browser_download_url": "https://github.com/thombashi/tcconfig/releases/download/v0.27.1/tcconfig_0.27.1_bionic_amd64.deb"
     },
     {
-      "url": "https://api.github.com/repos/thombashi/tcconfig/releases/assets/51593985",
-      "id": 51593985,
-      "node_id": "RA_kwDOAvhFo84DE0MB",
-      "name": "tcconfig_0.27.0_focal_amd64.deb",
+      "url": "https://api.github.com/repos/thombashi/tcconfig/releases/assets/51600945",
+      "id": 51600945,
+      "node_id": "RA_kwDOAvhFo84DE14x",
+      "name": "tcconfig_0.27.1_focal_amd64.deb",
       "label": "",
       "uploader": {
         "login": "github-actions[bot]",
@@ -129,15 +129,14 @@
       },
       "content_type": "application/octet-stream",
       "state": "uploaded",
-      "size": 54803764,
+      "size": 55472412,
       "download_count": 0,
-      "created_at": "2021-12-12T12:23:09Z",
-      "updated_at": "2021-12-12T12:23:12Z",
-      "browser_download_url": "https://github.com/thombashi/tcconfig/releases/download/v0.27.0/tcconfig_0.27.0_focal_amd64.deb"
+      "created_at": "2021-12-12T15:42:23Z",
+      "updated_at": "2021-12-12T15:42:24Z",
+      "browser_download_url": "https://github.com/thombashi/tcconfig/releases/download/v0.27.1/tcconfig_0.27.1_focal_amd64.deb"
     }
   ],
-  "tarball_url": "https://api.github.com/repos/thombashi/tcconfig/tarball/v0.27.0",
-  "zipball_url": "https://api.github.com/repos/thombashi/tcconfig/zipball/v0.27.0",
-  "body": "- Fix `tcshow` parse error: #160 (Thanks to @personalcomputer)\r\n- Drop support for Python 3.5\r\n- Add support for Python 3.9/3.10\r\n- Add deb package for each Ubuntu version\r\n- Bump minimum `pyinstaller` version\r\n- Update `tcset` help message\r\n- Remove `setup_requires`\r\n- Replace `path.py` with `path`\r\n- Allow `pyparsing` v3\r\n- Allow `docker-py` v5\r\n- Update requirements\r\n\r\n## What's Changed\r\n* Update bug_report.md template to work with new envinfopy syntax by @personalcomputer in https://github.com/thombashi/tcconfig/pull/161\r\n\r\n## New Contributors\r\n* @personalcomputer made their first contribution in https://github.com/thombashi/tcconfig/pull/161\r\n\r\n**Full Changelog**: https://github.com/thombashi/tcconfig/compare/v0.26.0...v0.27.0",
-  "mentions_count": 1
+  "tarball_url": "https://api.github.com/repos/thombashi/tcconfig/tarball/v0.27.1",
+  "zipball_url": "https://api.github.com/repos/thombashi/tcconfig/zipball/v0.27.1",
+  "body": "- Fix `tcconfig` commands failed when installing via binary packages\r\n\r\n**Full Changelog**: https://github.com/thombashi/tcconfig/compare/v0.27.0...v0.27.1"
 }
