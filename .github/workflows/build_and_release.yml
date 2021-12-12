@@ -1,0 +1,106 @@
+name: Build and release
+
+on:
+  push:
+    tags:
+      - "v*.*.*"
+  workflow_dispatch:
+
+concurrency:
+  group: ci-${{ github.workflow }}
+  cancel-in-progress: true
+
+env:
+  BIN_NAME: tcconfig
+  DIST_DIR_NAME: dist
+  SHA_DIR: sha
+  SHA_TEXT_FILE: sha256_tcconfig.txt
+
+jobs:
+  build-and-release:
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-18.04, ubuntu-20.04]
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - name: Setup Python
+        uses: actions/setup-python@v2
+        with:
+          python-version: "3.8"
+
+      - name: Build a deb package
+        run: ./build_deb_package.sh
+
+      - name: List binaries
+        id: ls_dist
+        run: |
+          ls ${DIST_DIR_NAME}/${BIN_NAME}_*
+
+          echo "::set-output name=dist_files::$(ls ${DIST_DIR_NAME}/${BIN_NAME}_*)"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: binaries
+          path: ${{ env.DIST_DIR_NAME }}
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: ${{ env.DIST_DIR_NAME }}/${{ env.BIN_NAME }}_*
+
+  calc-hash:
+    needs: [build-and-release]
+    runs-on: ubuntu-latest
+    timeout-minutes: 20
+
+    steps:
+      - uses: actions/checkout@v2
+
+      - uses: actions/download-artifact@v2
+        with:
+          name: binaries
+          path: ${{ env.DIST_DIR_NAME }}
+
+      - name: Setup environment variables
+        run: echo "TCCONFIG_VERSION=$(grep -Po "(?<=__version__ = \")\d+\.\d+\.\d+(?=\")" tcconfig/__version__.py)" >> $GITHUB_ENV
+
+      - name: Calculate checksums of binary assets
+        run: |
+          set -x
+
+          WORK_DIR=work
+          mkdir -p "$WORK_DIR" "$SHA_DIR"
+
+          for asset in $(gh release view v${TCCONFIG_VERSION} --json assets | jq '.assets[] | select(.contentType != "text/plain") | .url'); do
+            wget -P "$WORK_DIR" "$asset"
+          done
+
+          cd "$DIST_DIR_NAME"
+          sha256sum ${BIN_NAME}_* > "../${SHA_DIR}/${SHA_TEXT_FILE}"
+
+      - uses: actions/upload-artifact@v2
+        with:
+          name: shasum
+          path: ${{ env.SHA_DIR }}
+          if-no-files-found: error
+          retention-days: 1
+
+      - name: Release
+        if: startsWith(github.ref, 'refs/tags/')
+        uses: softprops/action-gh-release@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          files: |
+            ${{ env.SHA_DIR }}/${{ env.SHA_TEXT_FILE }}
