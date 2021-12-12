@@ -45,7 +45,7 @@ jobs:
       - uses: actions/upload-artifact@v2
         with:
           name: binaries
-          path: ${{ env.DIST_DIR_NAME }}
+          path: ${{ env.DIST_DIR_NAME }}/${{ env.BIN_NAME }}_*.deb
           if-no-files-found: error
           retention-days: 1
 
