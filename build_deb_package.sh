@@ -9,14 +9,14 @@ DIST_DIR_PATH="./${DIST_DIR_NAME}/${INSTALL_DIR_PATH}"
 PKG_NAME="tcconfig"
 
 # initialize
+cd "$(git rev-parse --show-toplevel)"
 rm -rf $DIST_DIR_NAME
 mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 
 pip install --upgrade "pip>=19.0.2"
 pip install --upgrade .[buildexe,color]
 
-
-PKG_VERSION=$(python -c "import tcconfig; print(tcconfig.__version__)")
+PKG_VERSION=$(python -c "import ${PKG_NAME}; print(${PKG_NAME}.__version__)")
 
 echo "$PKG_NAME $PKG_VERSION"
 
@@ -28,14 +28,19 @@ pyinstaller cli_tcshow.py --clean --onefile --distpath $DIST_DIR_PATH --name tcs
 
 
 # build a deb package
+MACHINE=$(python -c "import platform; print(platform.machine().casefold())")
+if [ "$MACHINE" = "x86_64" ]; then
+  MACHINE="amd64"
+fi
+
 cat << _CONTROL_ > "${DIST_DIR_NAME}/DEBIAN/control"
 Package: $PKG_NAME
 Version: $PKG_VERSION
 Depends: iproute2
 Maintainer: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
-Architecture: amd64
+Architecture: $MACHINE
 Description: $(cat docs/pages/introduction/summary.txt)
-Homepage: https://github.com/thombashi/tcconfig
+Homepage: https://github.com/thombashi/${PKG_NAME}
 Priority: optional
 _CONTROL_
 
