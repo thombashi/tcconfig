@@ -5,7 +5,7 @@
 
 import abc
 
-from pyroute2 import IPRoute
+from pr2modules.iproute import IPRoute
 
 
 class TargetNotFoundError(Exception):
