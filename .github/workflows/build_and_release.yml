@@ -40,7 +40,7 @@ jobs:
           sudo apt-get install -qq -y --no-install-recommends fakeroot rename
 
       - name: Build a deb package
-        run: ./build_deb_package.sh
+        run: ./scripts/build_deb_package.sh
 
       - uses: actions/upload-artifact@v2
         with:
