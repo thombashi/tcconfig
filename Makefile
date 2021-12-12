@@ -51,3 +51,7 @@ release:
 setup:
 	@$(PYTHON) -m pip install -q --disable-pip-version-check --upgrade -e .[test] releasecmd tox
 	@$(PYTHON) -m pip check
+
+.PHONY: update-releases-info
+update-releases-info:
+	@curl -sSL https://api.github.com/repos/thombashi/tcconfig/releases/latest > info/release_latest.json
