@@ -116,6 +116,7 @@ class TcFilterParser(AbstractParser):
                     Filter.insert(tc_filter)
                     self._clear()
 
+                    self.__device = device
                     self.__parse_flow_id(line)
                     self.__parse_protocol(line)
                     self.__parse_priority(line)

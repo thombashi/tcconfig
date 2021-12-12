@@ -203,6 +203,46 @@ filter parent 1f1c: protocol ip pref 1 fw handle 0x65 classid 1f1c:1"""
                 ),
                 [Filter(**{Tc.Param.DEVICE: DEVICE, "classid": "1f1c:1", "handle": 101})],
             ],
+            [
+                six_b(
+                    """filter parent 120a: protocol ip pref 5 u32 chain 0
+filter parent 120a: protocol ip pref 5 u32 chain 0 fh 800: ht divisor 1
+filter parent 120a: protocol ip pref 5 u32 chain 0 fh 800::800 order 2048 key ht 800 bkt 0 flowid 120a:2 not_in_hw
+  match 00000000/00000000 at 16
+  match 00000000/00000000 at 12
+filter parent 120a: protocol ipv6 pref 6 u32 chain 0
+filter parent 120a: protocol ipv6 pref 6 u32 chain 0 fh 801: ht divisor 1
+filter parent 120a: protocol ipv6 pref 6 u32 chain 0 fh 801::800 order 2048 key ht 801 bkt 0 flowid 120a:3 not_in_hw"""
+                ),
+                [
+                    Filter(
+                        **{
+                            Tc.Param.DEVICE: DEVICE,
+                            Tc.Param.FILTER_ID: "800::800",
+                            Tc.Param.FLOW_ID: "120a:2",
+                            Tc.Param.SRC_NETWORK: "0.0.0.0/0",
+                            Tc.Param.DST_NETWORK: "0.0.0.0/0",
+                            Tc.Param.PROTOCOL: "ip",
+                            Tc.Param.PRIORITY: 5,
+                            Tc.Param.SRC_PORT: None,
+                            Tc.Param.DST_PORT: None,
+                        }
+                    ),
+                    Filter(
+                        **{
+                            Tc.Param.DEVICE: DEVICE,
+                            Tc.Param.FILTER_ID: "801::800",
+                            Tc.Param.FLOW_ID: "120a:3",
+                            Tc.Param.SRC_NETWORK: "0.0.0.0/0",
+                            Tc.Param.DST_NETWORK: "0.0.0.0/0",
+                            Tc.Param.PROTOCOL: "ipv6",
+                            Tc.Param.PRIORITY: 6,
+                            Tc.Param.SRC_PORT: None,
+                            Tc.Param.DST_PORT: None,
+                        }
+                    ),
+                ],
+            ],
         ],
     )
     def test_normal(self, filter_parser_ipv4, value, expected):
