@@ -14,13 +14,13 @@ Summary
     :target: https://pypi.org/project/tcconfig
     :alt: Supported Python versions
 
-.. image:: https://travis-ci.org/thombashi/tcconfig.svg?branch=master
-   :target: https://travis-ci.org/thombashi/tcconfig
-   :alt: Linux CI status
+.. image:: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml/badge.svg
+    :target: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml
+    :alt: Test CI status
 
-.. image:: https://img.shields.io/github/stars/thombashi/tcconfig.svg?style=social&label=Star
-    :target: https://github.com/thombashi/tcconfig
-    :alt: GitHub stars
+.. image:: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml/badge.svg
+   :target: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml
+   :alt: Build CI status
 
 Traffic control
 ------------------------
@@ -224,7 +224,7 @@ Installation: dpkg (Debian/Ubuntu)
 
 Dependencies
 ============
-- Python 3.5+
+- Python 3.6+
 - `Python package dependencies (automatically installed) <https://github.com/thombashi/tcconfig/network/dependencies>`__
 
 Linux packages
