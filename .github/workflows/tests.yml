@@ -30,10 +30,11 @@ jobs:
       - name: Cache pip
         uses: actions/cache@v2
         with:
-          path: ${{ steps.pip-cache.outputs.dir }}
-          key: ${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('**/requirements.txt') }}
-          restore-keys: |
-            ${{ matrix.os }}-${{ matrix.python-version }}-pip-
+          path: |
+            ${{ steps.pip-cache.outputs.dir }}
+            ./.tox
+          key: ${{ matrix.os }}-${{ matrix.python-version }}-pip-${{ hashFiles('setup.py', '**/requirements.txt') }}
+          restore-keys: ${{ matrix.os }}-${{ matrix.python-version }}-pip-
 
       - name: Install dependencies
         run: |
