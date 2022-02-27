@@ -7,6 +7,6 @@ path>=13,<17
 pyparsing>=2.0.3,<4
 pyroute2>=0.6.1,<1
 SimpleSQLite>=1.1.1,<2
-subprocrunner>=1.2.1,<2
+subprocrunner>=1.2.1,<3
 typepy>=1.1.1,<2
 voluptuous<1
