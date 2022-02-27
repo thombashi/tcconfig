@@ -18,6 +18,7 @@ exclude = '''
 )/
 | docs/conf.py
 '''
+target-version = ['py36', 'py37', 'py38', 'py39', 'py310']
 
 [tool.isort]
 known_third_party = [
