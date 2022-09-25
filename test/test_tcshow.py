@@ -59,6 +59,10 @@ class Test_tcshow:
             runner = SubprocessRunner(" ".join(base_commands + ["--color"]))
             assert runner.run() == 0, runner.stderr
 
+            # smoke test for --quiet option
+            runner = SubprocessRunner(" ".join(base_commands + ["--quiet"]))
+            assert runner.run() == 0, runner.stderr
+
     def test_normal_ipv4(self, device_value):
         if device_value is None:
             pytest.skip("device option is null")
