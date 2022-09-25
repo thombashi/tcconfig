@@ -5,7 +5,7 @@
 
 import humanreadable as hr
 import typepy
-from pr2modules.iproute import IPRoute
+from pyroute2 import IPRoute
 
 from ._const import Network
 from ._error import NetworkInterfaceNotFoundError
