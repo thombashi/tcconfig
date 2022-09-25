@@ -50,4 +50,4 @@ _CONTROL_
 VERSION_CODENAME=$(\grep -Po "(?<=VERSION_CODENAME=)[a-z]+" /etc/os-release)
 
 fakeroot dpkg-deb --build "$DIST_DIR_NAME" "$DIST_DIR_NAME"
-rename -v "s/_amd64.deb/_${VERSION_CODENAME}_amd64.deb/" ${DIST_DIR_NAME}/*
+rename -v "s/_${MACHINE}.deb/_${VERSION_CODENAME}_${MACHINE}.deb/" ${DIST_DIR_NAME}/*
