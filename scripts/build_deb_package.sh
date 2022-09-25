@@ -4,7 +4,7 @@ set -eux
 
 
 DIST_DIR_NAME="dist"
-INSTALL_DIR_PATH="/usr/bin"
+INSTALL_DIR_PATH="/usr/local/bin"
 DIST_DIR_PATH="./${DIST_DIR_NAME}/${INSTALL_DIR_PATH}"
 PKG_NAME="tcconfig"
 
