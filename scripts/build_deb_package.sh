@@ -14,8 +14,8 @@ cd "$(git rev-parse --show-toplevel)"
 rm -rf $DIST_DIR_NAME
 mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 
-pip install --upgrade "pip>=21.1"
-pip install --upgrade .[buildexe,color]
+$PYTHON -m pip install --upgrade "pip>=21.1"
+$PYTHON -m pip install --upgrade .[buildexe,color]
 
 PKG_VERSION=$($PYTHON -c "import ${PKG_NAME}; print(${PKG_NAME}.__version__)")
 
