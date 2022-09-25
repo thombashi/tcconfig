@@ -33,7 +33,8 @@ class Test_tcshow:
         for tc_target in [device_value, "--device {}".format(device_value)]:
             delete_all_rules(tc_target)
 
-            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target]))
+            base_commands = [Tc.Command.TCSHOW, tc_target]
+            runner = SubprocessRunner(" ".join(base_commands))
             expected = (
                 "{"
                 + '"{:s}"'.format(device_value)
@@ -55,7 +56,7 @@ class Test_tcshow:
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # smoke test for --color option
-            runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
+            runner = SubprocessRunner(" ".join(base_commands + ["--color"]))
             assert runner.run() == 0, runner.stderr
 
     def test_normal_ipv4(self, device_value):
