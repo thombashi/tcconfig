@@ -42,6 +42,9 @@ jobs:
       - name: Build a deb package
         run: ./scripts/build_deb_package.sh
 
+      - name: Test installation from a deb package
+        run: sudo dpkg -i ${{ env.DIST_DIR_NAME }}/${{ env.BIN_NAME }}_*.deb
+
       - uses: actions/upload-artifact@v2
         with:
           name: binaries
