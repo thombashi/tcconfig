@@ -2,6 +2,7 @@
 
 set -eux
 
+PYTHON=python3
 
 DIST_DIR_NAME="dist"
 INSTALL_DIR_PATH="/usr/local/bin"
@@ -16,7 +17,7 @@ mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 pip install --upgrade "pip>=21.1"
 pip install --upgrade .[buildexe,color]
 
-PKG_VERSION=$(python -c "import ${PKG_NAME}; print(${PKG_NAME}.__version__)")
+PKG_VERSION=$($PYTHON -c "import ${PKG_NAME}; print(${PKG_NAME}.__version__)")
 
 echo "$PKG_NAME $PKG_VERSION"
 
@@ -33,10 +34,7 @@ ${DIST_DIR_PATH}/tcshow --help
 
 
 # build a deb package
-MACHINE=$(python -c "import platform; print(platform.machine().casefold())")
-if [ "$MACHINE" = "x86_64" ]; then
-  MACHINE="amd64"
-fi
+MACHINE=$($PYTHON -c "import platform; machine=platform.machine().casefold(); print('amd64' if machine == 'x86_64' else machine)")
 
 cat << _CONTROL_ > "${DIST_DIR_NAME}/DEBIAN/control"
 Package: $PKG_NAME
