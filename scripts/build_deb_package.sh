@@ -23,13 +23,22 @@ echo "$PKG_NAME $PKG_VERSION"
 
 
 # build executable binary files
-pyinstaller cli_tcset.py --clean --onefile --distpath $DIST_DIR_PATH --name tcset
+pyinstaller cli_tcset.py --clean --onefile \
+    --collect-all pyroute2 \
+    --distpath $DIST_DIR_PATH \
+    --name tcset
 ${DIST_DIR_PATH}/tcset --help
 
-pyinstaller cli_tcdel.py --clean --onefile --distpath $DIST_DIR_PATH --name tcdel
+pyinstaller cli_tcdel.py --clean --onefile \
+    --collect-all pyroute2 \
+    --distpath $DIST_DIR_PATH \
+    --name tcdel
 ${DIST_DIR_PATH}/tcdel --help
 
-pyinstaller cli_tcshow.py --clean --onefile --distpath $DIST_DIR_PATH --name tcshow
+pyinstaller cli_tcshow.py --clean --onefile \
+    --collect-all pyroute2 \
+    --distpath $DIST_DIR_PATH \
+    --name tcshow
 ${DIST_DIR_PATH}/tcshow --help
 
 
