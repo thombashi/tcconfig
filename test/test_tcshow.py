@@ -54,7 +54,7 @@ class Test_tcshow:
             assert runner.returncode == 0
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            # smoe test for --color option
+            # smoke test for --color option
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
             assert runner.run() == 0, runner.stderr
 
@@ -195,7 +195,7 @@ class Test_tcshow:
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            # smoe test for --color option
+            # smoke test for --color option
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
             assert runner.run() == 0, runner.stderr
 
@@ -341,7 +341,7 @@ class Test_tcshow:
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
             assert json.loads(runner.stdout) == json.loads(expected)
 
-            # smoe test for --color option
+            # smoke test for --color option
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--color"]))
             assert runner.run() == 0, runner.stderr
 
