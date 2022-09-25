@@ -26,6 +26,10 @@ def set_logger(is_enable):
 
 
 def set_log_level(log_level):
+    if log_level == "QUIET":
+        logger.disable(MODULE_NAME)
+        return
+
     if log_level == "DEBUG":
         log_format = (
             "<level>{level: <8}</level> | "
