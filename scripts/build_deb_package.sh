@@ -1,19 +1,21 @@
 #!/usr/bin/env bash
 
+
+# initialize
 set -eux
 
 PYTHON=python3
-
 DIST_DIR_NAME="dist"
 INSTALL_DIR_PATH="/usr/local/bin"
 DIST_DIR_PATH="./${DIST_DIR_NAME}/${INSTALL_DIR_PATH}"
 PKG_NAME="tcconfig"
 
-# initialize
 cd "$(git rev-parse --show-toplevel)"
 rm -rf $DIST_DIR_NAME
 mkdir -p "${DIST_DIR_NAME}/DEBIAN"
 
+
+# setup
 $PYTHON -m pip install --upgrade "pip>=21.1"
 $PYTHON -m pip install --upgrade .[buildexe,color]
 
