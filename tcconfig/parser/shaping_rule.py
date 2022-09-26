@@ -14,6 +14,7 @@ from .._common import is_execute_tc_command
 from .._const import Tc, TcSubCommand, TrafficDirection
 from .._error import NetworkInterfaceNotFoundError
 from .._iptables import IptablesMangleController
+from .._logger import LogLevel
 from .._network import is_anywhere_network
 from .._tc_command_helper import get_tc_base_command, run_tc_show
 from ._class import TcClassParser
@@ -123,7 +124,7 @@ class TcShapingRuleParser:
 
         filter_runner = subprocrunner.SubprocessRunner(
             "{:s} show dev {:s} root".format(get_tc_base_command(TcSubCommand.FILTER), self.device),
-            error_log_level="QUIET",
+            error_log_level=LogLevel.QUIET,
             dry_run=False,
         )
         if filter_runner.run() != 0 and filter_runner.stderr.find("Cannot find device") != -1:

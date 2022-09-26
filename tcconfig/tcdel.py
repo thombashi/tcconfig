@@ -16,7 +16,7 @@ from ._capabilities import check_execution_authority
 from ._common import initialize_cli, is_execute_tc_command, normalize_tc_value
 from ._const import Tc
 from ._error import NetworkInterfaceNotFoundError
-from ._logger import logger, set_logger
+from ._logger import LogLevel, logger, set_logger
 from ._main import Main
 from ._network import verify_network_interface
 from .parser._model import Filter
@@ -60,7 +60,7 @@ class TcDelMain(Main):
 
         for tc_target in self._fetch_tc_targets():
             tc = self.__create_tc_obj(tc_target)
-            if self._options.log_level == "INFO":
+            if self._options.log_level == LogLevel.INFO:
                 spr.set_log_level("ERROR")
             normalize_tc_value(tc)
 

@@ -28,7 +28,7 @@ from ._const import (
 )
 from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController, get_iptables_base_command
-from ._logger import logger
+from ._logger import LogLevel, logger
 from ._network import sanitize_network, verify_network_interface
 from ._shaping_rule_finder import TcShapingRuleFinder
 from ._tc_command_helper import get_tc_base_command
@@ -460,7 +460,7 @@ class TrafficControl:
                     )
                 ),
                 notice_msg="no qdisc to delete for the outgoing device.",
-                msg_log_level="INFO",
+                msg_log_level=LogLevel.INFO,
             )
 
             is_success = returncode == 0
@@ -487,7 +487,7 @@ class TrafficControl:
                     )
                 ),
                 notice_msg="no qdisc to delete for the incoming device.",
-                msg_log_level="INFO",
+                msg_log_level=LogLevel.INFO,
             )
             is_success = returncode == 0
             if is_success:

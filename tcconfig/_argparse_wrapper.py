@@ -7,6 +7,7 @@ import argparse
 from textwrap import dedent
 
 from ._const import TcCommandOutput, TrafficDirection
+from ._logger import LogLevel
 
 
 class ArgparseWrapper:
@@ -102,16 +103,16 @@ class ArgparseWrapper:
             "--debug",
             dest=dest,
             action="store_const",
-            const="DEBUG",
-            default="INFO",
+            const=LogLevel.DEBUG,
+            default=LogLevel.INFO,
             help="for debug print.",
         )
         group.add_argument(
             "--quiet",
             dest=dest,
             action="store_const",
-            const="QUIET",
-            default="INFO",
+            const=LogLevel.QUIET,
+            default=LogLevel.INFO,
             help="suppress execution log messages.",
         )
 

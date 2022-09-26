@@ -27,7 +27,7 @@ from ._const import (
 )
 from ._error import ContainerNotFoundError, ModuleNotFoundError, NetworkInterfaceNotFoundError
 from ._importer import set_tc_from_file
-from ._logger import set_log_level
+from ._logger import LogLevel, set_log_level
 from ._main import Main
 from ._netem_param import (
     MAX_CORRUPTION_RATE,
@@ -250,7 +250,7 @@ class TcSetMain(Main):
             normalize_tc_value(tc)
 
             if self._options.overwrite:
-                if self._options.log_level == "INFO":
+                if self._options.log_level == LogLevel.INFO:
                     set_log_level("ERROR")
 
                 try:
