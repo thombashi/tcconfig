@@ -201,10 +201,12 @@ def get_arg_parser():
     group.add_argument(
         "--exclude-dst-network",
         help="exclude a specific destination IP-address/network from a shaping rule.",
+        nargs="*",
     )
     group.add_argument(
         "--exclude-src-network",
         help="exclude a specific source IP-address/network from a shaping rule.",
+        nargs="*",
     )
     group.add_argument(
         "--exclude-dst-port", help="exclude a specific destination port from a shaping rule."
