@@ -49,3 +49,14 @@ md_report_verbose = 0
 md_report_color = "auto"
 
 discord_verbose = 1
+
+[tool.ruff]
+line-length = 100
+target-version = "py37"
+exclude = [
+    ".eggs/",
+    ".tox/",
+    "_sandbox/*",
+    "build/",
+    "docs/conf.py",
+]
