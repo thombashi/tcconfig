@@ -118,6 +118,7 @@ dmypy.json
 # User settings
 _sandbox/
 *_profile
+*.sqlite3
 Untitled.ipynb
 
 .pytype
