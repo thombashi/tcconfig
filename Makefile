@@ -9,7 +9,7 @@ PYTHON := python3
 
 .PHONY: build
 build: clean
-	@tox -e buildwhl
+	$(PYTHON) -m tox -e buildwhl
 	ls -lh dist/*
 
 .PHONY: build-remote
@@ -23,24 +23,24 @@ build-remote: clean
 
 .PHONY: check
 check:
-	@tox -e lint
+	$(PYTHON) -m tox -e lint
 
 .PHONY: clean
 clean:
 	@rm -rf $(BUILD_WORK_DIR)
-	@tox -e clean
+	$(PYTHON) -m tox -e clean
 
 .PHONY: docs
 docs:
-	@tox -e docs
+	$(PYTHON) -m tox -e docs
 
 .PHONY: fmt
 fmt:
-	@tox -e fmt
+	$(PYTHON) -m tox -e fmt
 
 .PHONY: readme
 readme:
-	@tox -e readme
+	$(PYTHON) -m tox -e readme
 
 .PHONY: release
 release:
