@@ -47,7 +47,6 @@ color_requires = ["Pygments>=2.2.0,<3"]
 
 setuptools.setup(
     name=MODULE_NAME,
-    version=pkg_info["__version__"],
     url=REPOSITORY_URL,
     author=pkg_info["__author__"],
     author_email=pkg_info["__email__"],
