@@ -80,10 +80,10 @@ def get_arg_parser():
         dest="is_change_shaping_rule",
         action="store_true",
         default=False,
-        help="""change existing traffic shaping rules to the new one.
-        this option is effective to reduce the time between the shaping rule switching
+        help="""change existing traffic shaping rules to the new ones.
+        this option is effective in reducing the time between the shaping rule switching
         compared to --overwrite option.
-        note: just adds a shaping rule if there are no existing shaping rules.
+        note: just add a shaping rule if there are no existing shaping rules.
         """,
     )
     group.add_argument(
@@ -112,7 +112,7 @@ def get_arg_parser():
         dest="latency_time",
         default=Tc.ValueRange.LatencyTime.MIN,
         help="""round trip network delay. the valid range is from {min_value:} to {max_value:}.
-        valid time units are: {unit}. if no unit string found, considered milliseconds as
+        valid time units are: {unit}. if no unit string is found, consider milliseconds as
         the time unit. (default=%(default)s)
         """.format(
             min_value=Tc.ValueRange.LatencyTime.MIN,
@@ -127,10 +127,8 @@ def get_arg_parser():
         help="""distribution of network latency becomes X +- Y (normal distribution).
         Here X is the value of --delay option and Y is the value of --delay-dist option).
         network latency distribution is uniform, without this option. valid time units are: {unit}.
-        if no unit string found, considered milliseconds as the time unit.
-        """.format(
-            unit=_get_unit_help_msg()
-        ),
+        if no unit string is found, consider milliseconds as the time unit.
+        """.format(unit=_get_unit_help_msg()),
     )
     group.add_argument(
         "--delay-distribution",
@@ -166,7 +164,7 @@ def get_arg_parser():
         dest="corruption_rate",
         default=0,
         help="""packet corruption rate [%%]. the valid range is from {:d} to {:d}.
-        packet corruption means single bit error at a random offset in the packet.
+        packet corruption means a single-bit error at a random offset in the packet.
         (default=%(default)s)
         """.format(
             MIN_CORRUPTION_RATE, MAX_CORRUPTION_RATE
@@ -194,7 +192,7 @@ def get_arg_parser():
         dest="is_enable_iptables",
         action="store_true",
         default=False,
-        help="use iptables to traffic control.",
+        help="use iptables for traffic control.",
     )
 
     group = parser.add_routing_group()
@@ -207,7 +205,8 @@ def get_arg_parser():
         help="exclude a specific source IP-address/network from a shaping rule.",
     )
     group.add_argument(
-        "--exclude-dst-port", help="exclude a specific destination port from a shaping rule."
+        "--exclude-dst-port",
+        help="exclude a specific destination port from a shaping rule.",
     )
     group.add_argument(
         "--exclude-src-port", help="exclude a specific source port from a shaping rule."
@@ -268,7 +267,7 @@ class TcSetMain(Main):
                     "\n".join(
                         [
                             "adding a shaping rule failed. a shaping rule for the same "
-                            "network/port already exist. try to execute with:",
+                            "network/port already exists. try to execute with:",
                             "  (a) --overwrite option if you want to overwrite "
                             "the existing rules.",
                             "  (b) --change option if you want to change "

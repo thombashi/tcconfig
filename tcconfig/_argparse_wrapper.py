@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import argparse
 from textwrap import dedent
 
@@ -41,8 +40,8 @@ class ArgparseWrapper:
             dest="is_output_stacktrace",
             action="store_true",
             default=False,
-            help="""print stack trace for debug information.
-            --debug option required to see the debug print.
+            help="""print stack trace for debugging information.
+            --debug option is required to see the debug print.
             """,
         )
 
@@ -66,10 +65,10 @@ class ArgparseWrapper:
         )
         group.add_argument(
             "--src-network",
-            help="""specify source IP-address/network that applies traffic control.
+            help="""specify a source IP-address/network that applies traffic control.
             defaults to any.
             this option has no effect when executing with "--direction incoming" option.
-            note: this option required to execute with the --iptables option when using tbf
+            note: this option is required to execute with the --iptables option when using tbf
             algorithm.
             """,
         )
@@ -159,8 +158,8 @@ class ArgparseWrapper:
             const=TcCommandOutput.SCRIPT,
             default=TcCommandOutput.NOT_SET,
             help="""
-            generate a shell script file that described tc commands.
-            this tc script execution result nearly equivalent with the tcconfig command.
+            generate a shell script file that describes tc commands.
+            this tc script execution results are nearly equivalent to the tcconfig command.
             the script can be executed without tcconfig package installation.
             """,
         )

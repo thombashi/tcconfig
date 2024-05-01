@@ -42,7 +42,7 @@ def parse_option():
     group.add_argument(
         "--id",
         dest="filter_id",
-        help="""delete a shaping rule which has a specific id. you can get an id (filter_id)
+        help="""delete a shaping rule that has a specific id. you can get an id (filter_id)
         by tcshow command output.
         e.g. "filter_id": "800::801"
         """,
