@@ -39,6 +39,9 @@ with open(os.path.join(REQUIREMENT_DIR, "requirements.txt")) as f:
 with open(os.path.join(REQUIREMENT_DIR, "test_requirements.txt")) as f:
     tests_requires = [line.strip() for line in f if line.strip()]
 
+with open(os.path.join(REQUIREMENT_DIR, "docs_requirements.txt")) as f:
+    docs_requires = [line.strip() for line in f if line.strip()]
+
 build_exe_requires = ["pyinstaller>=4.7,<7"]
 color_requires = ["Pygments>=2.2.0,<3"]
 
@@ -66,6 +69,7 @@ setuptools.setup(
         "all": color_requires,
         "buildexe": build_exe_requires,
         "color": color_requires,
+        "docs": docs_requires,
         "test": tests_requires,
     },
     classifiers=[
