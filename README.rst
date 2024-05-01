@@ -6,19 +6,21 @@ Summary
 =========
 `tcconfig <https://github.com/thombashi/tcconfig>`__ is a tc command wrapper. Make it easy to set up traffic control of network bandwidth/latency/packet-loss/packet-corruption/etc. to a network-interface/Docker-container(veth).
 
-.. image:: https://badge.fury.io/py/tcconfig.svg
+|PyPI pkg ver| |Supported Python ver| |CI status| |CodeQL|
+
+.. |PyPI pkg ver| image:: https://badge.fury.io/py/tcconfig.svg
     :target: https://badge.fury.io/py/tcconfig
     :alt: PyPI package version
 
-.. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
+.. |Supported Python ver| image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
     :target: https://pypi.org/project/tcconfig
     :alt: Supported Python versions
 
-.. image:: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml/badge.svg
+.. |CI status| image:: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml/badge.svg
     :target: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml
     :alt: Test CI status
 
-.. image:: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml/badge.svg
+.. |CodeQL| image:: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml/badge.svg
    :target: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml
    :alt: Build CI status
 
@@ -27,7 +29,7 @@ Traffic control
 
 Setup traffic shaping rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Easy to apply traffic shaping rules to specific network:
+Easy to apply traffic shaping rules to specific networks:
 
 - Outgoing/Incoming packets
 - Source/Destination IP-address/network (IPv4/IPv6)
@@ -55,7 +57,7 @@ Usage
 =======
 Set traffic control (``tcset`` command)
 -----------------------------------------
-``tcset`` is a command to add traffic control rule to a network interface (device).
+``tcset`` is a command to add a traffic control rule to a network interface (device).
 
 e.g. Set a limit on bandwidth up to 100Kbps
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
@@ -67,14 +69,14 @@ e.g. Set network latency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can use time units (such as us/sec/min/etc.) to designate delay time.
 
-Set 100 milliseconds network latency
+Set 100 milliseconds of network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
     # tcset eth0 --delay 100ms
 
 
-Set 10 seconds network latency
+Set 10 seconds of network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
@@ -116,8 +118,8 @@ e.g. All of the above settings at once
 
     # tcset eth0 --rate 100Kbps --delay 100ms --loss 0.1%
 
-e.g. Specify the IP address of traffic control
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+e.g. Specify the IP address of the traffic control
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
     # tcset eth0 --delay 100ms --network 192.168.0.10
@@ -136,13 +138,13 @@ Execute ``tcconfig`` with ``--docker`` option on a Docker host:
 
     # tcset <container name or ID> --docker ...
 
-You could use ``--src-container``/``--dst-container`` options to specify source/destination container.
+You could use ``--src-container``/``--dst-container`` options to specify the source/destination container.
 
 
 Set traffic control within a docker container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You need to run a container with ``--cap-add NET_ADMIN`` option
-if you you would like to set a tc rule within a container:
+if you would like to set a tc rule within a container:
 
 .. code-block:: console
 
@@ -224,7 +226,7 @@ Installation: dpkg (Debian/Ubuntu)
 
 Dependencies
 ============
-- Python 3.6+
+- Python 3.7+
 - `Python package dependencies (automatically installed) <https://github.com/thombashi/tcconfig/network/dependencies>`__
 
 Linux packages
@@ -232,7 +234,7 @@ Linux packages
 - mandatory: required for ``tc`` command:
     - `Ubuntu`/`Debian`: ``iproute2``
     - `Fedora`/`RHEL`: ``iproute-tc``
-- optional: required to when you use ``--iptables`` option:
+- optional: required when you use the ``--iptables`` option:
     - ``iptables``
 
 Linux kernel module
@@ -257,16 +259,23 @@ https://hub.docker.com/r/thombashi/tcconfig/
 
 Sponsors
 ====================================
-.. image:: https://avatars.githubusercontent.com/u/44389260?s=48&u=6da7176e51ae2654bcfd22564772ef8a3bb22318&v=4
+|chasbecker| |shiguredo| |b4tman| |Arturi0| |github|
+
+.. |chasbecker| image:: https://avatars.githubusercontent.com/u/44389260?s=48&u=6da7176e51ae2654bcfd22564772ef8a3bb22318&v=4
    :target: https://github.com/chasbecker
-   :alt: Charles Becker (chasbecker)
-.. image:: https://avatars.githubusercontent.com/u/46711571?s=48&u=57687c0e02d5d6e8eeaf9177f7b7af4c9f275eb5&v=4
-   :target: https://github.com/Arturi0
-   :alt: onetime: Arturi0
-.. image:: https://avatars.githubusercontent.com/u/3658062?s=48&v=4
+   :alt: ex-sponsor: Charles Becker (chasbecker)
+.. |shiguredo| image:: https://avatars.githubusercontent.com/u/2549434?s=48&v=4
+   :target: https://github.com/shiguredo
+   :alt: ex-sponsor: 時雨堂 (shiguredo)
+.. |b4tman| image:: https://avatars.githubusercontent.com/u/3658062?s=48&v=4
    :target: https://github.com/b4tman
    :alt: onetime: Dmitry Belyaev (b4tman)
-
+.. |Arturi0| image:: https://avatars.githubusercontent.com/u/46711571?s=48&u=57687c0e02d5d6e8eeaf9177f7b7af4c9f275eb5&v=4
+   :target: https://github.com/Arturi0
+   :alt: onetime: Arturi0
+.. |github| image:: https://avatars.githubusercontent.com/u/9919?s=48&v=4
+   :target: https://github.com/github
+   :alt: onetime: GitHub (github)
 
 `Become a sponsor <https://github.com/sponsors/thombashi>`__
 
