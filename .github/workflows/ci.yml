@@ -1,6 +1,16 @@
 name: CI
 
-on: [push, pull_request]
+on:
+  push:
+    branches:
+      - master
+    paths-ignore:
+      - ".gitignore"
+      - "README.rst"
+  pull_request:
+    paths-ignore:
+      - ".gitignore"
+      - "README.rst"
 
 jobs:
   unit-test:
