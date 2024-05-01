@@ -20,7 +20,8 @@ class AbstractParser(ParserInterface, metaclass=abc.ABCMeta):
     def con(self):
         return self._con
 
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def _tc_subcommand(self):  # pragma: no cover
         pass
 

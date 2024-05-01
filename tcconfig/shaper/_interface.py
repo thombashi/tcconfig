@@ -17,7 +17,8 @@ from .._shaping_rule_finder import TcShapingRuleFinder
 
 
 class ShaperInterface(metaclass=abc.ABCMeta):
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def algorithm_name(self):  # pragma: no cover
         pass
 

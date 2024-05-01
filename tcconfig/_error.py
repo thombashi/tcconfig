@@ -9,7 +9,8 @@ from pyroute2 import IPRoute
 
 
 class TargetNotFoundError(Exception):
-    @abc.abstractproperty
+    @property
+    @abc.abstractmethod
     def _target_type(self):
         return None
 
