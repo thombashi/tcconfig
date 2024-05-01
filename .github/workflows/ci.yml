@@ -12,6 +12,9 @@ on:
       - ".gitignore"
       - "README.rst"
 
+permissions:
+  contents: read
+
 jobs:
   unit-test:
     runs-on: ${{ matrix.os }}
