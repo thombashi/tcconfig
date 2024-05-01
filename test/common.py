@@ -40,7 +40,7 @@ def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reorde
     )
 
     try:
-        hr.BitPerSecond(rate).bps
+        hr.BitsPerSecond(rate).bps
     except (TypeError, ValueError):
         pass
     else:
