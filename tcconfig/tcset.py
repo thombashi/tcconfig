@@ -104,7 +104,7 @@ def get_arg_parser():
         valid units are either: {}.
         e.g. tcset eth0 --rate 10Mbps
         """.format(
-            ", ".join([", ".join(values) for values in hr.BitPerSecond.get_text_units().values()])
+            ", ".join([", ".join(values) for values in hr.BitsPerSecond.get_text_units().values()])
         ),
     )
     group.add_argument(

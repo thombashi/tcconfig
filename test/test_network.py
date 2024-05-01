@@ -44,7 +44,7 @@ class Test_is_anywhere_network:
 
 class Test_get_iproute2_upper_limite_rate:
     def test_normal(self):
-        assert _get_iproute2_upper_limite_rate() == hr.BitPerSecond("32Gbps")
+        assert _get_iproute2_upper_limite_rate() == hr.BitsPerSecond("32Gbps")
 
 
 class Test_get_anywhere_network:

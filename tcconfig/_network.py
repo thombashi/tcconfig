@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import humanreadable as hr
 import typepy
 from pyroute2 import IPRoute
@@ -33,7 +32,7 @@ def _get_iproute2_upper_limite_rate():
     # bits per second older than 3.14.0
     # http://git.kernel.org/cgit/linux/kernel/git/shemminger/iproute2.git/commit/?id=8334bb325d5178483a3063c5f06858b46d993dc7
 
-    return hr.BitPerSecond("32Gbps")
+    return hr.BitsPerSecond("32Gbps")
 
 
 def _read_iface_speed(tc_device):
@@ -55,7 +54,10 @@ def get_upper_limit_rate(tc_device):
         # paravirtualized network interfaces
         return _get_iproute2_upper_limite_rate()
 
-    return min(hr.BitPerSecond("{}Mbps".format(speed_value)), _get_iproute2_upper_limite_rate())
+    return min(
+        hr.BitsPerSecond("{}Mbps".format(speed_value)),
+        _get_iproute2_upper_limite_rate(),
+    )
 
 
 def is_anywhere_network(network, ip_version):

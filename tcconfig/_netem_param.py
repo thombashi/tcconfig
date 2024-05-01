@@ -78,7 +78,7 @@ class NetemParameter:
         if not bandwidth_rate:
             return None
 
-        hr_bps = hr.BitPerSecond(bandwidth_rate)
+        hr_bps = hr.BitsPerSecond(bandwidth_rate)
         upper_limit_rate = get_upper_limit_rate(self.__device)
 
         if hr_bps > upper_limit_rate:
