@@ -42,15 +42,15 @@ class Tc:
         DIRECTION = "direction"
         FILTER_ID = "filter_id"
         CLASS_ID = "classid"
-        DST_NETWORK = "dst-network"
-        DST_PORT = "dst-port"
+        DST_NETWORK = "dst_network"
+        DST_PORT = "dst_port"
         FLOW_ID = "flowid"
         HANDLE = "handle"
         PARENT = "parent"
         PRIORITY = "priority"
         PROTOCOL = "protocol"
-        SRC_NETWORK = "src-network"
-        SRC_PORT = "src-port"
+        SRC_NETWORK = "src_network"
+        SRC_PORT = "src_port"
 
     class ValueRange:
         class LatencyTime:
