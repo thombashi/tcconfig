@@ -196,7 +196,7 @@ class Test_IptablesMangleMark_to_delete_command:
                 "PREROUTING",
                 "all",
                 1,
-                "{:s} -t mangle -D PREROUTING 1".format(get_iptables_base_command()),
+                f"{get_iptables_base_command():s} -t mangle -D PREROUTING 1",
             ],
             [
                 20,
@@ -205,7 +205,7 @@ class Test_IptablesMangleMark_to_delete_command:
                 "OUTPUT",
                 "all",
                 2,
-                "{:s} -t mangle -D OUTPUT 2".format(get_iptables_base_command()),
+                f"{get_iptables_base_command():s} -t mangle -D OUTPUT 2",
             ],
         ],
     )
@@ -306,7 +306,7 @@ class Test_IptablesMangleController_parse:
             assert iptables_ctrl_ipv4.add(mangle_mark) == 0
 
         for lhs_mangle, rhs_mangle in zip(iptables_ctrl_ipv4.parse(), reverse_mangle_mark_list):
-            print("lhs: {}".format(lhs_mangle))
-            print("rhs: {}".format(rhs_mangle))
+            print(f"lhs: {lhs_mangle}")
+            print(f"rhs: {rhs_mangle}")
 
             assert lhs_mangle == rhs_mangle

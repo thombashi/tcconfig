@@ -27,7 +27,7 @@ def get_iptables_base_command():
             return iptables_path
 
         # debian/ubuntu may return /sbin/xtables-multi
-        return "{:s} iptables".format(iptables_path)
+        return f"{iptables_path:s} iptables"
 
     return None
 
@@ -74,7 +74,7 @@ class IptablesMangleMarkEntry:
         self.__protocol = protocol
 
         if chain not in VALID_CHAIN_LIST:
-            raise ValueError("invalid chain: {}".format(chain))
+            raise ValueError(f"invalid chain: {chain}")
 
         self.__chain = chain
 
@@ -93,15 +93,15 @@ class IptablesMangleMarkEntry:
         str_list = []
 
         if Integer(self.line_number).is_type():
-            str_list.append("line-num={}".format(self.line_number))
+            str_list.append(f"line-num={self.line_number}")
 
         str_list.extend(
             [
-                "protocol={:s}".format(self.protocol),
-                "source={:s}".format(self.source),
-                "destination={:s}".format(self.destination),
-                "mark_id={:d}".format(self.mark_id),
-                "chain={:s}".format(self.chain),
+                f"protocol={self.protocol:s}",
+                f"source={self.source:s}",
+                f"destination={self.destination:s}",
+                f"mark_id={self.mark_id:d}",
+                f"chain={self.chain:s}",
             ]
         )
 
@@ -111,16 +111,16 @@ class IptablesMangleMarkEntry:
         Integer(self.mark_id).validate()
 
         command_item_list = [
-            "{:s} -A {:s} -t mangle -j MARK".format(get_iptables_base_command(), self.chain),
-            "--set-mark {}".format(self.mark_id),
+            f"{get_iptables_base_command():s} -A {self.chain:s} -t mangle -j MARK",
+            f"--set-mark {self.mark_id}",
         ]
 
         if typepy.is_not_null_string(self.protocol) or Integer(self.protocol).is_type():
-            command_item_list.append("-p {}".format(self.protocol))
+            command_item_list.append(f"-p {self.protocol}")
         if self.__is_valid_srcdst(self.source):
-            command_item_list.append("-s {:s}".format(self.source))
+            command_item_list.append(f"-s {self.source:s}")
         if self.__is_valid_srcdst(self.destination):
-            command_item_list.append("-d {:s}".format(self.destination))
+            command_item_list.append(f"-d {self.destination:s}")
 
         return " ".join(command_item_list)
 
@@ -167,9 +167,7 @@ class IptablesMangleController:
     def get_iptables(self):
         self.__check_execution_authority()
 
-        proc = SubprocessRunner(
-            "{:s} {:s}".format(get_iptables_base_command(), LIST_MANGLE_TABLE_OPTION)
-        )
+        proc = SubprocessRunner(f"{get_iptables_base_command():s} {LIST_MANGLE_TABLE_OPTION:s}")
         if proc.run() != 0:
             raise OSError(proc.returncode, proc.stderr)
 
@@ -179,7 +177,7 @@ class IptablesMangleController:
         self.__check_execution_authority()
 
         mark_id_list = [mangle.mark_id for mangle in self.parse()]
-        logger.debug("mangle mark list: {}".format(mark_id_list))
+        logger.debug(f"mangle mark list: {mark_id_list}")
 
         unique_mark_id = 1 + self.__MARK_ID_OFFSET
         while unique_mark_id < self.__MAX_MARK_ID:

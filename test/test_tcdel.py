@@ -118,7 +118,7 @@ class Test_tcdel:
             runner.run()
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {
@@ -180,7 +180,7 @@ class Test_tcdel:
             runner.run()
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {
@@ -218,7 +218,7 @@ class Test_tcdel:
             runner.run()
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
             "outgoing": {},
@@ -325,7 +325,7 @@ class Test_tcdel:
             runner = SubprocessRunner(tcshow_cmd + ["--ipv6"])
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {
@@ -390,7 +390,7 @@ class Test_tcdel:
             runner.run()
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {
@@ -430,7 +430,7 @@ class Test_tcdel:
             runner.run()
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {},

@@ -72,4 +72,4 @@ class Main:
             write_tc_script(tc_command, command_history, filename_suffix=filename_suffix)
             return
 
-        logger.debug("command history\n{}".format(command_history))
+        logger.debug(f"command history\n{command_history}")

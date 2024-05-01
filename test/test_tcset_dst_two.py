@@ -82,9 +82,9 @@ class Test_tcset_two_network:
             command_list = [
                 Tc.Command.TCSET,
                 tc_target,
-                "--delay {:d}ms".format(delay),
-                "--dst-network {:s}".format(dst_host_ex_option),
-                "--shaping-algo {:s}".format(shaping_algo),
+                f"--delay {delay:d}ms",
+                f"--dst-network {dst_host_ex_option:s}",
+                f"--shaping-algo {shaping_algo:s}",
             ]
             assert SubprocessRunner(" ".join(command_list)).run() == 0
 

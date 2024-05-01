@@ -39,13 +39,13 @@ class TcShapingRuleFinder:
     def find_filter_param(self):
         where_query = And(self.__get_filter_conditions())
         table_name = Filter.get_table_name()
-        self.__logger.debug("find filter param: table={}, where={}".format(table_name, where_query))
+        self.__logger.debug(f"find filter param: table={table_name}, where={where_query}")
 
         for record in Filter.select(where=where_query):
             return record.as_dict()
 
         self.__logger.debug(
-            "find filter param: empty result (table={}, where={})".format(table_name, where_query)
+            f"find filter param: empty result (table={table_name}, where={where_query})"
         )
 
         return None

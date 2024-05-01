@@ -100,7 +100,7 @@ class TcDelMain(Main):
                 break
             else:
                 logger.error(
-                    "shaping rule not found associated with the id ({}).".format(options.filter_id)
+                    f"shaping rule not found associated with the id ({options.filter_id})."
                 )
                 sys.exit(1)
         else:

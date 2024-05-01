@@ -129,7 +129,7 @@ class TcShapingRuleParser:
             return None
 
         filter_runner = subprocrunner.SubprocessRunner(
-            "{:s} show dev {:s} root".format(get_tc_base_command(TcSubCommand.FILTER), self.device),
+            f"{get_tc_base_command(TcSubCommand.FILTER):s} show dev {self.device:s} root",
             error_log_level=LogLevel.QUIET,
             dry_run=False,
         )
@@ -157,7 +157,7 @@ class TcShapingRuleParser:
 
                 break
             else:
-                raise ValueError("mangle mark not found: {}".format(mangle))
+                raise ValueError(f"mangle mark not found: {mangle}")
         else:
             src_network = filter_param.get(Tc.Param.SRC_NETWORK)
             if typepy.is_not_null_string(src_network) and not is_anywhere_network(
@@ -173,7 +173,7 @@ class TcShapingRuleParser:
 
             src_port = filter_param.get(Tc.Param.SRC_PORT)
             if typepy.Integer(src_port).is_type():
-                key_items[Tc.Param.SRC_PORT] = "{}".format(src_port)
+                key_items[Tc.Param.SRC_PORT] = f"{src_port}"
             elif src_port is not None:
                 self.__logger.warning(
                     "expected a integer value for {}, actual {}: {}".format(
@@ -183,7 +183,7 @@ class TcShapingRuleParser:
 
             dst_port = filter_param.get(Tc.Param.DST_PORT)
             if typepy.Integer(dst_port).is_type():
-                key_items[Tc.Param.DST_PORT] = "{}".format(dst_port)
+                key_items[Tc.Param.DST_PORT] = f"{dst_port}"
             elif src_port is not None:
                 self.__logger.warning(
                     "expected a integer value for {}, actual {}".format(
@@ -195,7 +195,7 @@ class TcShapingRuleParser:
             if typepy.is_not_null_string(protocol):
                 key_items[Tc.Param.PROTOCOL] = protocol
 
-        key = ", ".join(["{}={}".format(key, value) for key, value in key_items.items()])
+        key = ", ".join([f"{key}={value}" for key, value in key_items.items()])
 
         return key, key_items
 
@@ -223,12 +223,12 @@ class TcShapingRuleParser:
 
         for filter_param in filter_params:
             filter_param = filter_param.as_dict()
-            self.__logger.debug("{:s} param: {}".format(TcSubCommand.FILTER, filter_param))
+            self.__logger.debug(f"{TcSubCommand.FILTER:s} param: {filter_param}")
             shaping_rule = {}
 
             filter_key, rule_with_keys = self.__get_filter_key(filter_param)
             if typepy.is_null_string(filter_key):
-                self.__logger.debug("empty filter key: {}".format(filter_param))
+                self.__logger.debug(f"empty filter key: {filter_param}")
                 continue
 
             qdisc_id = filter_param.get(Tc.Param.FLOW_ID)
@@ -244,7 +244,7 @@ class TcShapingRuleParser:
 
             for qdisc_param in qdisc_params:
                 qdisc_param = qdisc_param.as_dict()
-                self.__logger.debug("{:s} param: {}".format(TcSubCommand.QDISC, qdisc_param))
+                self.__logger.debug(f"{TcSubCommand.QDISC:s} param: {qdisc_param}")
 
                 if self.is_parse_filter_id:
                     shaping_rule[Tc.Param.FILTER_ID] = filter_param.get(Tc.Param.FILTER_ID)
@@ -265,7 +265,7 @@ class TcShapingRuleParser:
                 )
 
             for class_param in class_params:
-                self.__logger.debug("{:s} param: {}".format(TcSubCommand.CLASS, class_param))
+                self.__logger.debug(f"{TcSubCommand.CLASS:s} param: {class_param}")
 
                 if class_param.get(Tc.Param.CLASS_ID) not in (
                     filter_param.get(Tc.Param.FLOW_ID),
@@ -284,10 +284,10 @@ class TcShapingRuleParser:
                 )
 
             if not shaping_rule:
-                self.__logger.debug("shaping rule not found for '{}'".format(filter_param))
+                self.__logger.debug(f"shaping rule not found for '{filter_param}'")
                 continue
 
-            self.__logger.debug("shaping rule found: {} {}".format(filter_key, shaping_rule))
+            self.__logger.debug(f"shaping rule found: {filter_key} {shaping_rule}")
 
             rule_with_keys.update(shaping_rule)
             shaping_rules.append(rule_with_keys)

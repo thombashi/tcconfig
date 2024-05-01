@@ -42,9 +42,8 @@ class TcConfigLoader:
             self.__config_table = json.load(fp)
 
         schema(self.__config_table)
-        self.__logger.debug(
-            "tc config file: {:s}".format(json.dumps(self.__config_table, indent=4))
-        )
+        dumped_config = json.dumps(self.__config_table, indent=4)
+        self.__logger.debug(f"tc config file: {dumped_config:s}")
 
     def get_tcconfig_commands(self):
         from .tcset import get_arg_parser
@@ -76,18 +75,16 @@ class TcConfigLoader:
                     if not filter_table:
                         continue
 
-                    option_list = [device, "--direction={:s}".format(direction)] + (
+                    option_list = [device, f"--direction={direction:s}"] + (
                         ["--docker"] if is_container else []
                     )
 
                     for key, value in filter_table.items():
-                        arg_item = "--{:s}={}".format(key, value)
+                        arg_item = f"--{key:s}={value}"
 
                         parse_result = get_arg_parser().parse_known_args(["dummy", arg_item])
                         if parse_result[1]:
-                            self.__logger.debug(
-                                "unknown parameter: key={}, value={}".format(key, value)
-                            )
+                            self.__logger.debug(f"unknown parameter: key={key}, value={value}")
                             continue
 
                         option_list.append(arg_item)
@@ -98,7 +95,7 @@ class TcConfigLoader:
                             Network.Ipv4.ANYWHERE,
                             Network.Ipv6.ANYWHERE,
                         ):
-                            option_list.append("--src-network={:s}".format(src_network))
+                            option_list.append(f"--src-network={src_network:s}")
                     except pp.ParseException:
                         pass
 
@@ -108,19 +105,19 @@ class TcConfigLoader:
                             Network.Ipv4.ANYWHERE,
                             Network.Ipv6.ANYWHERE,
                         ):
-                            option_list.append("--dst-network={:s}".format(dst_network))
+                            option_list.append(f"--dst-network={dst_network:s}")
                     except pp.ParseException:
                         pass
 
                     try:
                         src_port = self.__parse_tc_filter_src_port(tc_filter)
-                        option_list.append("--src-port={}".format(src_port))
+                        option_list.append(f"--src-port={src_port}")
                     except pp.ParseException:
                         pass
 
                     try:
                         dst_port = self.__parse_tc_filter_dst_port(tc_filter)
-                        option_list.append("--dst-port={}".format(dst_port))
+                        option_list.append(f"--dst-port={dst_port}")
                     except pp.ParseException:
                         pass
 
@@ -140,7 +137,7 @@ class TcConfigLoader:
 
     @staticmethod
     def __parse_tc_filter_src_network(text):
-        network_pattern = pp.SkipTo("{:s}=".format(Tc.Param.SRC_NETWORK), include=True) + pp.Word(
+        network_pattern = pp.SkipTo(f"{Tc.Param.SRC_NETWORK:s}=", include=True) + pp.Word(
             pp.alphanums + "." + "/"
         )
 
@@ -148,7 +145,7 @@ class TcConfigLoader:
 
     @staticmethod
     def __parse_tc_filter_dst_network(text):
-        network_pattern = pp.SkipTo("{:s}=".format(Tc.Param.DST_NETWORK), include=True) + pp.Word(
+        network_pattern = pp.SkipTo(f"{Tc.Param.DST_NETWORK:s}=", include=True) + pp.Word(
             pp.alphanums + "." + "/"
         )
 
@@ -156,13 +153,13 @@ class TcConfigLoader:
 
     @staticmethod
     def __parse_tc_filter_src_port(text):
-        port_pattern = pp.SkipTo("{:s}=".format(Tc.Param.SRC_PORT), include=True) + pp.Word(pp.nums)
+        port_pattern = pp.SkipTo(f"{Tc.Param.SRC_PORT:s}=", include=True) + pp.Word(pp.nums)
 
         return port_pattern.parseString(text)[-1]
 
     @staticmethod
     def __parse_tc_filter_dst_port(text):
-        port_pattern = pp.SkipTo("{:s}=".format(Tc.Param.DST_PORT), include=True) + pp.Word(pp.nums)
+        port_pattern = pp.SkipTo(f"{Tc.Param.DST_PORT:s}=", include=True) + pp.Word(pp.nums)
 
         return port_pattern.parseString(text)[-1]
 

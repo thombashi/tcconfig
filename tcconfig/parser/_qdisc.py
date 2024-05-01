@@ -61,7 +61,7 @@ class TcQdiscParser(AbstractParser):
             self.__parse_netem_param(line, "reorder", pp.nums + ".%")
             self.__parse_bandwidth_rate(line)
 
-            logger.debug("parse a qdisc entry: {}".format(self.__parsed_param))
+            logger.debug(f"parse a qdisc entry: {self.__parsed_param}")
 
             Qdisc.insert(Qdisc(**self.__parsed_param))
 

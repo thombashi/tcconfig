@@ -77,7 +77,7 @@ class Test_tcset_one_network:
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option, f"--device {device_option}"]:
             delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
@@ -91,9 +91,9 @@ class Test_tcset_one_network:
                         [
                             Tc.Command.TCSET,
                             tc_target,
-                            "--src-network {:s}".format(local_host_option),
-                            "--delay {:d}ms".format(delay),
-                            "--shaping-algo {:s}".format(shaping_algo),
+                            f"--src-network {local_host_option:s}",
+                            f"--delay {delay:d}ms",
+                            f"--shaping-algo {shaping_algo:s}",
                         ]
                     )
                 ).run()
@@ -105,8 +105,8 @@ class Test_tcset_one_network:
             # assertion ---
             rtt_diff = with_tc_rtt_avg - without_tc_rtt_avg
 
-            print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
-            print("w/ tc rtt: {} ms".format(with_tc_rtt_avg))
+            print(f"w/o tc rtt: {without_tc_rtt_avg} ms")
+            print(f"w/ tc rtt: {with_tc_rtt_avg} ms")
 
             assert rtt_diff > (delay * ASSERT_MARGIN)
 
@@ -147,7 +147,7 @@ class Test_tcset_exclude:
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")
 
-        for tc_target in [device_option, "--device {}".format(device_option)]:
+        for tc_target in [device_option, f"--device {device_option}"]:
             delete_all_rules(tc_target)
             transmitter.destination = dst_host_option
 
@@ -161,11 +161,11 @@ class Test_tcset_exclude:
                         [
                             Tc.Command.TCSET,
                             tc_target,
-                            "--direction {:s}".format(TrafficDirection.INCOMING),
-                            "--exclude-dst-network {:s}".format(local_host_option),
-                            "--exclude-src-network {:s}".format(dst_host_option),
-                            "--delay {:d}ms".format(delay),
-                            "--shaping-algo {:s}".format(shaping_algo),
+                            f"--direction {TrafficDirection.INCOMING:s}",
+                            f"--exclude-dst-network {local_host_option:s}",
+                            f"--exclude-src-network {dst_host_option:s}",
+                            f"--delay {delay:d}ms",
+                            f"--shaping-algo {shaping_algo:s}",
                         ]
                     )
                 ).run()
@@ -177,8 +177,8 @@ class Test_tcset_exclude:
             # assertion ---
             rtt_diff = exclude_tc_rtt_avg - without_tc_rtt_avg
 
-            print("w/o tc rtt: {} ms".format(without_tc_rtt_avg))
-            print("exclude tc rtt: {} ms".format(exclude_tc_rtt_avg))
+            print(f"w/o tc rtt: {without_tc_rtt_avg} ms")
+            print(f"exclude tc rtt: {exclude_tc_rtt_avg} ms")
 
             assert rtt_diff < (delay / 10)
 

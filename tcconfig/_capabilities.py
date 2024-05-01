@@ -47,7 +47,7 @@ def _has_capabilies(bin_path, capabilities):
         return False
 
     bin_path = os.path.realpath(bin_path)
-    proc = spr.SubprocessRunner("{:s} {:s}".format(getcap_bin_path, bin_path))
+    proc = spr.SubprocessRunner(f"{getcap_bin_path:s} {bin_path:s}")
     if proc.run() != 0:
         logger.error(proc.stderr)
         sys.exit(proc.returncode)
@@ -56,9 +56,9 @@ def _has_capabilies(bin_path, capabilities):
     has_capabilies = True
     for capability in capabilities:
         if re.search(capability, getcap_output):
-            logger.debug("{:s} has {:s} capability".format(bin_path, capability))
+            logger.debug(f"{bin_path:s} has {capability:s} capability")
         else:
-            logger.debug("{:s} has no {:s} capability".format(bin_path, capability))
+            logger.debug(f"{bin_path:s} has no {capability:s} capability")
             has_capabilies = False
 
     capability = "+ep"

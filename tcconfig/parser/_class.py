@@ -48,15 +48,13 @@ class TcClassParser(AbstractParser):
             self.__parse_classid(line)
             self.__parse_rate(line)
 
-            logger.debug("parse a class entry: {}".format(self.__parsed_param))
+            logger.debug(f"parse a class entry: {self.__parsed_param}")
             entry_list.append(self.__parsed_param)
 
         if entry_list:
             self._con.create_table_from_data_matrix(self._tc_subcommand, self.Key.LIST, entry_list)
 
-        logger.debug(
-            "tc {:s} parse result: {}".format(self._tc_subcommand, json.dumps(entry_list, indent=4))
-        )
+        logger.debug(f"tc {self._tc_subcommand:s} parse result: {json.dumps(entry_list, indent=4)}")
 
         return entry_list
 
@@ -65,9 +63,9 @@ class TcClassParser(AbstractParser):
 
     def __parse_classid(self, line):
         self.__parsed_param[self.Key.CLASS_ID] = None
-        tag = "class {:s} ".format(ShapingAlgorithm.HTB)
+        tag = f"class {ShapingAlgorithm.HTB:s} "
 
-        match = re.search("{:s}{:s}".format(tag, self.Pattern.CLASS_ID), line)
+        match = re.search(f"{tag:s}{self.Pattern.CLASS_ID:s}", line)
         if match is None:
             return
 
@@ -78,7 +76,7 @@ class TcClassParser(AbstractParser):
     def __parse_rate(self, line):
         self.__parsed_param[self.Key.RATE] = None
 
-        match = re.search("rate {:s}".format(self.Pattern.RATE), line)
+        match = re.search(f"rate {self.Pattern.RATE:s}", line)
         if match is None:
             return
 

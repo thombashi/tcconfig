@@ -21,9 +21,7 @@ def run_tc_show(subcommand, device, tc_command_output):
 
     verify_network_interface(device, tc_command_output)
 
-    runner = spr.SubprocessRunner(
-        "{:s} show dev {:s}".format(get_tc_base_command(subcommand), device)
-    )
+    runner = spr.SubprocessRunner(f"{get_tc_base_command(subcommand):s} show dev {device:s}")
     if runner.run() != 0 and runner.stderr.find("Cannot find device") != -1:
         # reach here if the device does not exist at the system and netiface
         # not installed.

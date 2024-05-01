@@ -72,7 +72,7 @@ class NetemParameter:
             "normal" if latency_distribution is None else latency_distribution
         )
         if self.__latency_distribution not in DELAY_DISTRIBUTIONS:
-            raise ValueError("latency_distribution must be one of {}".format(DELAY_DISTRIBUTIONS))
+            raise ValueError(f"latency_distribution must be one of {DELAY_DISTRIBUTIONS}")
 
     def __normalize_bandwidth_rate(self, bandwidth_rate):
         if not bandwidth_rate:
@@ -140,40 +140,40 @@ class NetemParameter:
         if hr_bps.bps < 8:
             raise hr.ParameterError(
                 "bandwidth rate must be greater or equals to 8bps",
-                value="{}bps".format(hr_bps.bps),
+                value=f"{hr_bps.bps}bps",
             )
 
         upper_limit_rate = get_upper_limit_rate(self.__device)
         if hr_bps > upper_limit_rate:
             raise hr.ParameterError(
                 "exceed bandwidth rate limit",
-                value="{} kbps".format(hr_bps.kilo_bps),
-                expected="less than {} kbps".format(upper_limit_rate.kilo_bps),
+                value=f"{hr_bps.kilo_bps} kbps",
+                expected=f"less than {upper_limit_rate.kilo_bps} kbps",
             )
 
     def make_param_name(self):
         item_list = [self.__device]
 
         if self.bandwidth_rate:
-            item_list.append("rate{}kbps".format(int(self.bandwidth_rate.kilo_bps)))
+            item_list.append(f"rate{int(self.bandwidth_rate.kilo_bps)}kbps")
 
         if self.__latency_time and self.__latency_time.milliseconds > 0:
-            item_list.append("delay{}".format(self.__latency_time.milliseconds))
+            item_list.append(f"delay{self.__latency_time.milliseconds}")
 
         if self.__latency_distro_time and self.__latency_distro_time.milliseconds > 0:
-            item_list.append("distro{}".format(self.__latency_distro_time.milliseconds))
+            item_list.append(f"distro{self.__latency_distro_time.milliseconds}")
 
         if self.__packet_loss_rate:
-            item_list.append("loss{}".format(self.__packet_loss_rate))
+            item_list.append(f"loss{self.__packet_loss_rate}")
 
         if self.__packet_duplicate_rate:
-            item_list.append("duplicate{}".format(self.__packet_duplicate_rate))
+            item_list.append(f"duplicate{self.__packet_duplicate_rate}")
 
         if self.__corruption_rate:
-            item_list.append("corrupt{}".format(self.__corruption_rate))
+            item_list.append(f"corrupt{self.__corruption_rate}")
 
         if self.__reordering_rate:
-            item_list.append("reordering{}".format(self.__reordering_rate))
+            item_list.append(f"reordering{self.__reordering_rate}")
 
         return "_".join(item_list)
 
@@ -181,13 +181,13 @@ class NetemParameter:
         item_list = ["netem"]
 
         if self.__packet_loss_rate > 0:
-            item_list.append("loss {:f}%".format(self.__packet_loss_rate))
+            item_list.append(f"loss {self.__packet_loss_rate:f}%")
 
         if self.__packet_duplicate_rate > 0:
-            item_list.append("duplicate {:f}%".format(self.__packet_duplicate_rate))
+            item_list.append(f"duplicate {self.__packet_duplicate_rate:f}%")
 
         if self.__latency_time and self.__latency_time > hr.Time(Tc.ValueRange.LatencyTime.MIN):
-            item_list.append("delay {}ms".format(self.__latency_time.milliseconds))
+            item_list.append(f"delay {self.__latency_time.milliseconds}ms")
 
             if self.__latency_distro_time and self.__latency_distro_time > hr.Time(
                 Tc.ValueRange.LatencyTime.MIN
@@ -200,10 +200,10 @@ class NetemParameter:
                 )
 
         if self.__corruption_rate > 0:
-            item_list.append("corrupt {:f}%".format(self.__corruption_rate))
+            item_list.append(f"corrupt {self.__corruption_rate:f}%")
 
         if self.__reordering_rate > 0:
-            item_list.append("reorder {:f}%".format(self.__reordering_rate))
+            item_list.append(f"reorder {self.__reordering_rate:f}%")
 
         return " ".join(item_list)
 
@@ -224,7 +224,7 @@ class NetemParameter:
                     max_value=Tc.ValueRange.LatencyTime.MAX,
                 )
             except hr.ParameterError as e:
-                raise hr.ParameterError("delay {}".format(e))
+                raise hr.ParameterError(f"delay {e}")
 
         if self.__latency_distro_time:
             try:
@@ -233,7 +233,7 @@ class NetemParameter:
                     max_value=Tc.ValueRange.LatencyTime.MAX,
                 )
             except hr.ParameterError as e:
-                raise hr.ParameterError("delay-distro {}".format(e))
+                raise hr.ParameterError(f"delay-distro {e}")
 
     def __validate_packet_loss_rate(self):
         validate_within_min_max(

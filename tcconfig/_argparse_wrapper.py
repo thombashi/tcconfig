@@ -25,9 +25,7 @@ class ArgparseWrapper:
                 """
             ),
         )
-        self.parser.add_argument(
-            "-V", "--version", action="version", version="%(prog)s {}".format(version)
-        )
+        self.parser.add_argument("-V", "--version", action="version", version=f"%(prog)s {version}")
         self._add_tc_command_arg_group()
         self._add_log_level_argument_group()
 

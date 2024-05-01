@@ -8,7 +8,7 @@ import setuptools
 
 
 MODULE_NAME = "tcconfig"
-REPOSITORY_URL = "https://github.com/thombashi/{:s}".format(MODULE_NAME)
+REPOSITORY_URL = f"https://github.com/thombashi/{MODULE_NAME:s}"
 REQUIREMENT_DIR = "requirements"
 ENCODING = "utf8"
 
@@ -58,9 +58,9 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(exclude=["test*"]),
     project_urls={
-        "Documentation": "https://{:s}.rtfd.io/".format(MODULE_NAME),
+        "Documentation": f"https://{MODULE_NAME:s}.rtfd.io/",
         "Source": REPOSITORY_URL,
-        "Tracker": "{:s}/issues".format(REPOSITORY_URL),
+        "Tracker": f"{REPOSITORY_URL:s}/issues",
     },
     python_requires=">=3.7",
     install_requires=install_requires,

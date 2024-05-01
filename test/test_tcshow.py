@@ -30,14 +30,14 @@ class Test_tcshow:
         if device_value is None:
             pytest.skip("device option is null")
 
-        for tc_target in [device_value, "--device {}".format(device_value)]:
+        for tc_target in [device_value, f"--device {device_value}"]:
             delete_all_rules(tc_target)
 
             base_commands = [Tc.Command.TCSHOW, tc_target]
             runner = SubprocessRunner(" ".join(base_commands))
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {
@@ -67,7 +67,7 @@ class Test_tcshow:
         if device_value is None:
             pytest.skip("device option is null")
 
-        for tc_target in [device_value, "--device {}".format(device_value)]:
+        for tc_target in [device_value, f"--device {device_value}"]:
             runner_helper(
                 " ".join(
                     [
@@ -156,7 +156,7 @@ class Test_tcshow:
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target]))
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {
@@ -210,7 +210,7 @@ class Test_tcshow:
         if device_value is None:
             pytest.skip("device option is null")
 
-        for tc_target in [device_value, "--device {}".format(device_value)]:
+        for tc_target in [device_value, f"--device {device_value}"]:
             runner_helper(
                 " ".join(
                     [
@@ -302,7 +302,7 @@ class Test_tcshow:
             runner = SubprocessRunner(" ".join([Tc.Command.TCSHOW, tc_target, "--ipv6"]))
             expected = (
                 "{"
-                + '"{:s}"'.format(device_value)
+                + f'"{device_value:s}"'
                 + ": {"
                 + """
                         "outgoing": {

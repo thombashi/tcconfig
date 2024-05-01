@@ -39,14 +39,14 @@ def write_examples(maker):
     maker.write_lines(
         [
             "More examples are available at ",
-            "https://{:s}.rtfd.io/en/latest/pages/usage/index.html".format(PROJECT_NAME),
+            f"https://{PROJECT_NAME:s}.rtfd.io/en/latest/pages/usage/index.html",
         ]
     )
 
 
 def update_help():
     for command in ["tcset", "tcdel", "tcshow"]:
-        runner = SubprocessRunner("{:s} -h".format(command))
+        runner = SubprocessRunner(f"{command:s} -h")
         runner.run(env=dict(os.environ, LC_ALL="C.UTF-8"))
         help_file_path = "pages/usage/{command:s}/{command:s}_help_output.txt".format(
             command=command
@@ -66,7 +66,7 @@ def main():
         PROJECT_NAME,
         OUTPUT_DIR,
         is_make_toc=True,
-        project_url="https://github.com/thombashi/{}".format(PROJECT_NAME),
+        project_url=f"https://github.com/thombashi/{PROJECT_NAME}",
     )
     maker.examples_dir_name = "usage"
 
@@ -84,12 +84,10 @@ def main():
 
     maker.set_indent_level(0)
     maker.write_chapter("Documentation")
-    maker.write_lines(["https://{:s}.rtfd.io/".format(PROJECT_NAME)])
+    maker.write_lines([f"https://{PROJECT_NAME:s}.rtfd.io/"])
 
     maker.write_chapter("Troubleshooting")
-    maker.write_lines(
-        ["https://{:s}.rtfd.io/en/latest/pages/troubleshooting.html".format(PROJECT_NAME)]
-    )
+    maker.write_lines([f"https://{PROJECT_NAME:s}.rtfd.io/en/latest/pages/troubleshooting.html"])
 
     maker.write_chapter("Docker image")
     maker.write_lines(["https://hub.docker.com/r/thombashi/tcconfig/"])

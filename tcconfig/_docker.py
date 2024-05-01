@@ -107,18 +107,16 @@ class DockerClient:
             sys.exit(errno.EPERM)
 
         container_info = self.extract_container_info(container)
-        logger.debug(
-            "found container: name={}, pid={}".format(container_info.name, container_info.pid)
-        )
+        logger.debug(f"found container: name={container_info.name}, pid={container_info.pid}")
 
         try:
             netns_path = self.__get_netns_path(container_info.name)
 
             if not os.path.lexists(netns_path):
-                logger.debug("make symlink to {}".format(netns_path))
+                logger.debug(f"make symlink to {netns_path}")
 
                 try:
-                    Path("/proc/{:d}/ns/net".format(container_info.pid)).symlink(netns_path)
+                    Path(f"/proc/{container_info.pid:d}/ns/net").symlink(netns_path)
                 except PermissionError as e:
                     logger.error(e)
                     sys.exit(errno.EPERM)
@@ -179,7 +177,7 @@ class DockerClient:
         IfIndex.create()
 
         proc = SubprocessRunner(
-            "ip netns exec {ns} ip link show type veth".format(ns=container_name),
+            f"ip netns exec {container_name} ip link show type veth",
             dry_run=False,
         )
         if proc.run() != 0:
@@ -195,7 +193,7 @@ class DockerClient:
                 if not match:
                     continue
 
-                logger.debug("parse veth @{} [{:02d}] {}".format(container_name, i, line))
+                logger.debug(f"parse veth @{container_name} [{i:02d}] {line}")
                 ifindex, ifname, peer_ifindex = match.groups()
                 IfIndex.insert(
                     IfIndex(
@@ -212,7 +210,7 @@ class DockerClient:
                 return proc.returncode
 
             for line in proc.stdout.splitlines():
-                logger.debug("parse veth @docker-host [{:02d}] {}".format(i, line))
+                logger.debug(f"parse veth @docker-host [{i:02d}] {line}")
                 match = veth_groups_regexp.search(line)
                 if not match:
                     continue

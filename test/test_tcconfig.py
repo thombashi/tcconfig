@@ -110,7 +110,7 @@ class Test_tcconfig:
         if is_invalid_param(rate, delay, loss, corrupt):
             pytest.skip("skip null parameters")
 
-        for device_option in [device_value, "--device {}".format(device_value)]:
+        for device_option in [device_value, f"--device {device_value}"]:
             delete_all_rules(device_value)
 
             command = " ".join(
@@ -129,7 +129,7 @@ class Test_tcconfig:
                     # is_enable_iptables,
                 ]
             )
-            print("command: {}".format(command))
+            print(f"command: {command}")
             tcset_proc = SubprocessRunner(command)
             assert tcset_proc.run() == 0, tcset_proc.stderr
 

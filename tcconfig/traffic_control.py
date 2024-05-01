@@ -60,7 +60,7 @@ class TrafficControl:
 
     @property
     def ifb_device(self):
-        return "ifb{:d}".format(self.__qdisc_major_id)
+        return f"ifb{self.__qdisc_major_id:d}"
 
     @property
     def direction(self):
@@ -120,7 +120,7 @@ class TrafficControl:
 
     @property
     def qdisc_major_id_str(self):
-        return "{:x}".format(self.__qdisc_major_id)
+        return f"{self.__qdisc_major_id:x}"
 
     @property
     def ip_version(self):
@@ -303,7 +303,7 @@ class TrafficControl:
             try:
                 self.iptables_ctrl.clear()
             except OSError as e:
-                logger.warning("{} (can not delete iptables entries)".format(e))
+                logger.warning(f"{e} (can not delete iptables entries)")
 
         return any(result_list)
 
@@ -316,14 +316,14 @@ class TrafficControl:
         filter_param = rule_finder.find_filter_param()
 
         if not filter_param:
-            message = "shaping rule not found ({}).".format(rule_finder.get_filter_string())
+            message = f"shaping rule not found ({rule_finder.get_filter_string()})."
             if rule_finder.is_empty_filter_condition():
                 message += " you can delete all of the shaping rules with --all option."
             logger.error(message)
 
             return 1
 
-        logger.info("delete a shaping rule: {}".format(dict(filter_param)))
+        logger.info(f"delete a shaping rule: {dict(filter_param)}")
 
         filter_del_command = (
             "{command:s} del dev {dev:s} protocol {protocol:s} "
@@ -417,15 +417,15 @@ class TrafficControl:
             "{:s} link set dev {:s} up".format(find_bin_path("ip"), self.ifb_device)
         ).run()
 
-        base_command = "{:s} add".format(get_tc_base_command(TcSubCommand.QDISC))
+        base_command = f"{get_tc_base_command(TcSubCommand.QDISC):s} add"
         if self.is_add_shaping_rule or self.is_change_shaping_rule:
             notice_message = None
         else:
             notice_message = self.EXISTS_MSG_TEMPLATE.format(
-                "failed to '{:s}': ingress qdisc already exists.".format(base_command)
+                f"failed to '{base_command:s}': ingress qdisc already exists."
             )
         return_code |= run_command_helper(
-            "{:s} dev {:s} ingress".format(base_command, self.device),
+            f"{base_command:s} dev {self.device:s} ingress",
             ignore_error_msg_regexp=self.REGEXP_FILE_EXISTS,
             notice_msg=notice_message,
         )
@@ -433,12 +433,12 @@ class TrafficControl:
         return_code |= spr.SubprocessRunner(
             " ".join(
                 [
-                    "{:s} add".format(get_tc_base_command(TcSubCommand.FILTER)),
-                    "dev {:s}".format(self.device),
-                    "parent ffff: protocol {:s} u32 match u32 0 0".format(self.protocol),
-                    "flowid {:x}:".format(self.__qdisc_major_id),
+                    f"{get_tc_base_command(TcSubCommand.FILTER):s} add",
+                    f"dev {self.device:s}",
+                    f"parent ffff: protocol {self.protocol:s} u32 match u32 0 0",
+                    f"flowid {self.__qdisc_major_id:x}:",
                     "action mirred egress redirect",
-                    "dev {:s}".format(self.ifb_device),
+                    f"dev {self.ifb_device:s}",
                 ]
             )
         ).run()
@@ -446,7 +446,7 @@ class TrafficControl:
         return return_code
 
     def __delete_qdisc(self):
-        logging_msg = "delete {} qdisc".format(self.device)
+        logging_msg = f"delete {self.device} qdisc"
 
         with logging_context(logging_msg):
             returncode = run_command_helper(
@@ -472,7 +472,7 @@ class TrafficControl:
             return is_success
 
     def __delete_ingress_qdisc(self):
-        logging_msg = "delete {} ingress qdisc".format(self.device)
+        logging_msg = f"delete {self.device} ingress qdisc"
 
         with logging_context(logging_msg):
             returncode = run_command_helper(
@@ -500,7 +500,7 @@ class TrafficControl:
     def __delete_ifb_device(self):
         from ._capabilities import get_permission_error_message, has_execution_authority
 
-        logging_msg = "delete {} ifb device ({})".format(self.device, self.ifb_device)
+        logging_msg = f"delete {self.device} ifb device ({self.ifb_device})"
         with logging_context(logging_msg):
             verify_network_interface(self.ifb_device, self.__tc_command_output)
 

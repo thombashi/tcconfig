@@ -19,7 +19,7 @@ def get_anywhere_network(ip_version):
     if ip_version_n == 6:
         return Network.Ipv6.ANYWHERE
 
-    raise ValueError("unknown ip version: {}".format(ip_version))
+    raise ValueError(f"unknown ip version: {ip_version}")
 
 
 def _get_iproute2_upper_limite_rate():
@@ -36,7 +36,7 @@ def _get_iproute2_upper_limite_rate():
 
 
 def _read_iface_speed(tc_device):
-    with open("/sys/class/net/{:s}/speed".format(tc_device)) as f:
+    with open(f"/sys/class/net/{tc_device:s}/speed") as f:
         return int(f.read().strip())
 
 
@@ -55,7 +55,7 @@ def get_upper_limit_rate(tc_device):
         return _get_iproute2_upper_limite_rate()
 
     return min(
-        hr.BitsPerSecond("{}Mbps".format(speed_value)),
+        hr.BitsPerSecond(f"{speed_value}Mbps"),
         _get_iproute2_upper_limite_rate(),
     )
 
@@ -72,7 +72,7 @@ def is_anywhere_network(network, ip_version):
     if ip_version == 6:
         return network in (get_anywhere_network(ip_version), "0:0:0:0:0:0:0:0/0")
 
-    raise ValueError("invalid ip version: {}".format(ip_version))
+    raise ValueError(f"invalid ip version: {ip_version}")
 
 
 def sanitize_network(network, ip_version):
@@ -105,7 +105,7 @@ def sanitize_network(network, ip_version):
     if ip_version == 6:
         return ipaddress.IPv6Network(str(network)).compressed
 
-    raise ValueError("unexpected ip version: {}".format(ip_version))
+    raise ValueError(f"unexpected ip version: {ip_version}")
 
 
 def verify_network_interface(device, tc_command_output):
