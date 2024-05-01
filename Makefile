@@ -56,6 +56,10 @@ setup-dev: setup-ci
 	$(PYTHON) -m pip install -q --disable-pip-version-check --upgrade -e .[test]
 	$(PYTHON) -m pip check
 
+.PHONY: test
+test:
+	$(PYTHON) -m tox -e py
+
 .PHONY: update-releases-info
 update-releases-info:
 	@curl -sSL https://api.github.com/repos/thombashi/tcconfig/releases/latest > info/release_latest.json

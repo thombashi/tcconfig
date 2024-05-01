@@ -28,7 +28,6 @@ jobs:
       - run: make setup-ci
 
       - name: Run tests
-        run: |
-          tox -e py
+        run: make test
         env:
           PYTEST_DISCORD_WEBHOOK: ${{ secrets.PYTEST_DISCORD_WEBHOOK }}
