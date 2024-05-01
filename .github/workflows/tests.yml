@@ -25,9 +25,7 @@ jobs:
             **/*requirements.txt
             tox.ini
 
-      - name: Install dependencies
-        run: |
-          python -m pip install --upgrade tox
+      - run: make setup-ci
 
       - name: Run tests
         run: |
