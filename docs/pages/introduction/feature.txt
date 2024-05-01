@@ -3,7 +3,7 @@ Traffic control
 
 Setup traffic shaping rules
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
-Easy to apply traffic shaping rules to specific network:
+Easy to apply traffic shaping rules to specific networks:
 
 - Outgoing/Incoming packets
 - Source/Destination IP-address/network (IPv4/IPv6)

@@ -1,64 +1,38 @@
 ::
 
-    usage: tcdel [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet]
-                 [--debug-query] [--stacktrace] [-a] [--id FILTER_ID]
-                 [--direction {outgoing,incoming}] [--network DST_NETWORK]
-                 [--src-network SRC_NETWORK] [--port DST_PORT]
-                 [--src-port SRC_PORT] [--ipv6] [--docker]
-                 [--src-container SRC_CONTAINER] [--dst-container DST_CONTAINER]
-                 device
+    usage: tcdel [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet] [--debug-query] [--stacktrace] [-a] [--id FILTER_ID] [--direction {outgoing,incoming}] [--network DST_NETWORK] [--src-network SRC_NETWORK] [--port DST_PORT] [--src-port SRC_PORT] [--ipv6] [--docker] [--src-container SRC_CONTAINER] [--dst-container DST_CONTAINER] device
 
-    optional arguments:
+    options:
       -h, --help            show this help message and exit
       -V, --version         show program's version number and exit
-      --tc-command          display tc commands to be executed and exit. these
-                            commands are not actually executed.
-      --tc-script           generate a shell script file that described tc
-                            commands. this tc script execution result nearly
-                            equivalent with the tcconfig command. the script can
-                            be executed without tcconfig package installation.
+      --tc-command          display tc commands to be executed and exit. these commands are not actually executed.
+      --tc-script           generate a shell script file that describes tc commands. this tc script execution results are nearly equivalent to the tcconfig command. the script can be executed without tcconfig package installation.
       --debug               for debug print.
       --quiet               suppress execution log messages.
 
     Debug:
       --debug-query         for debug print.
-      --stacktrace          print stack trace for debug information. --debug
-                            option required to see the debug print.
+      --stacktrace          print stack trace for debugging information. --debug option is required to see the debug print.
 
     Traffic Control:
       device                network device name (e.g. eth0)
       -a, --all             delete all of the shaping rules.
-      --id FILTER_ID        delete a shaping rule which has a specific id. you can
-                            get an id (filter_id) by tcshow command output. e.g.
-                            "filter_id": "800::801"
+      --id FILTER_ID        delete a shaping rule that has a specific id. you can get an id (filter_id) by tcshow command output. e.g. "filter_id": "800::801"
 
     Routing:
       --direction {outgoing,incoming}
-                            the direction of network communication that imposes
-                            traffic control. 'incoming' requires ifb kernel module
-                            and Linux kernel 2.6.20 or later. (default = outgoing)
+                            the direction of network communication that imposes traffic control. 'incoming' requires ifb kernel module and Linux kernel 2.6.20 or later. (default = outgoing)
       --network DST_NETWORK, --dst-network DST_NETWORK
-                            specify destination IP-address/network that applies
-                            traffic control. defaults to any.
+                            specify destination IP-address/network that applies traffic control. defaults to any.
       --src-network SRC_NETWORK
-                            specify source IP-address/network that applies traffic
-                            control. defaults to any. this option has no effect
-                            when executing with "--direction incoming" option.
-                            note: this option required to execute with the
-                            --iptables option when using tbf algorithm.
+                            specify a source IP-address/network that applies traffic control. defaults to any. this option has no effect when executing with "--direction incoming" option. note: this option is required to execute with the --iptables option when using tbf algorithm.
       --port DST_PORT, --dst-port DST_PORT
-                            specify destination port number that applies traffic
-                            control. defaults to any.
-      --src-port SRC_PORT   specify source port number that applies traffic
-                            control. defaults to any.
-      --ipv6                apply traffic control to IPv6 packets rather than
-                            IPv4.
+                            specify destination port number that applies traffic control. defaults to any.
+      --src-port SRC_PORT   specify source port number that applies traffic control. defaults to any.
+      --ipv6                apply traffic control to IPv6 packets rather than IPv4.
 
     Docker:
-      --docker              apply traffic control to a docker container. to use
-                            this option, you will need to specify a container id
-                            as 'device' as follows: tcset --container <container
-                            id>
+      --docker              apply traffic control to a docker container. to use this option, you will need to specify a container id as 'device' as follows: tcset --container <container id>
       --src-container SRC_CONTAINER
                             specify source container id or name.
       --dst-container DST_CONTAINER

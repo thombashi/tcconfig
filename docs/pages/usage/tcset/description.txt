@@ -1,1 +1,1 @@
-``tcset`` is a command to add traffic control rule to a network interface (device).
+``tcset`` is a command to add a traffic control rule to a network interface (device).

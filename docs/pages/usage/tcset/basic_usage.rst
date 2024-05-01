@@ -8,14 +8,14 @@ e.g. Set network latency
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You can use time units (such as us/sec/min/etc.) to designate delay time.
 
-Set 100 milliseconds network latency
+Set 100 milliseconds of network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
     # tcset eth0 --delay 100ms
 
 
-Set 10 seconds network latency
+Set 10 seconds of network latency
 '''''''''''''''''''''''''''''''''''''''''''''''''''
 .. code-block:: console
 
@@ -57,8 +57,8 @@ e.g. All of the above settings at once
 
     # tcset eth0 --rate 100Kbps --delay 100ms --loss 0.1%
 
-e.g. Specify the IP address of traffic control
-^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+e.g. Specify the IP address of the traffic control
+^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 .. code-block:: console
 
     # tcset eth0 --delay 100ms --network 192.168.0.10

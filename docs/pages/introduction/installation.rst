@@ -19,7 +19,7 @@ Installation: dpkg (Debian/Ubuntu)
 
 Dependencies
 ============
-- Python 3.6+
+- Python 3.7+
 - `Python package dependencies (automatically installed) <https://github.com/thombashi/tcconfig/network/dependencies>`__
 
 Linux packages
@@ -27,7 +27,7 @@ Linux packages
 - mandatory: required for ``tc`` command:
     - `Ubuntu`/`Debian`: ``iproute2``
     - `Fedora`/`RHEL`: ``iproute-tc``
-- optional: required to when you use ``--iptables`` option:
+- optional: required when you use the ``--iptables`` option:
     - ``iptables``
 
 Linux kernel module

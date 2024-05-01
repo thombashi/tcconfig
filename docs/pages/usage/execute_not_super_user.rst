@@ -1,11 +1,11 @@
 Execute with not a super-user
 -------------------------------------------------
-You can execute tcconfig commands with not super-user by using Linux capabilities.
+You can execute tcconfig commands with no super-user by using Linux capabilities.
 Setup Linux capabilities as follows:
 
 .. code-block:: sh
 
-    # the following execution binary paths may different for each environment:
+    # the following execution binary paths may be different for each environment:
     TC_BIN_PATH=/sbin/tc
     IP_BIN_PATH=/bin/ip
     IPTABLES_BIN_PATH=/sbin/xtables-multi

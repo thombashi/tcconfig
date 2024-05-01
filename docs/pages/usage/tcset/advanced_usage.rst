@@ -16,7 +16,7 @@ e.g. Set traffic control for both incoming and outgoing network
 Requirements
 ''''''''''''
 To set incoming packet traffic control requires an additional kernel module named ``ifb``,
-which need to the following conditions:
+which need the following conditions:
 
 -  Equal or later than Linux kernel version **2.6.20**
 -  Equal or later than ``iproute2`` package version **20070313**
@@ -25,7 +25,7 @@ which need to the following conditions:
 Set latency distribution
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 Network latency setting by ``--delay`` option is a uniform distribution.
-If you are using ``--delay-distro`` option, latency decided by a normal distribution.
+If you are using ``--delay-distro`` option, latency is decided by a normal distribution.
 
 e.g. Set 100ms +- 20ms network latency with normal distribution
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -88,8 +88,8 @@ Generate a ``tc`` script file
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 ``--tc-script`` option generates an executable script which includes
 tc commands to be executed by ``tcconfig`` commands.
-The created script can execute at other servers where tcconfig not installed
-(however, you need the tc command to run the script).
+The created script can execute at other servers where tcconfig is not installed
+(However, you need the tc command to run the script).
 
 :Example:
     .. code-block:: console
@@ -120,7 +120,7 @@ Set a shaping rule to multiple hosts
 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
 ``--dst-network``/``--src-network`` option can specify not only a host but also network.
 The following command executed at host ``A`` will set a shaping rule that incurs 100 msec network latency to packets
-from ``A (192.168.0.100)`` to specific network (``192.168.0.0/28`` which include ``B``/``C``/``D``).
+from ``A (192.168.0.100)`` to a specific network (``192.168.0.0/28`` which include ``B``/``C``/``D``).
 
 :Example:
     .. code-block:: console
@@ -137,7 +137,7 @@ from host ``A (192.168.0.100)`` to host ``B (192.168.0.2)``/``D (192.168.0.4)``.
         # tcset eth0 --dst-network 192.168.0.0/28 --exclude-dst-network 192.168.0.3 --delay 100ms
 
 
-Shaping rules for between multiple hosts
+Shaping rules between multiple hosts
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 
 Example Environment

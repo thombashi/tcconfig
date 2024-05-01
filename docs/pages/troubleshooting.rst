@@ -23,13 +23,13 @@ Phenomenon
 Solution
 ~~~~~~~~~~~~~~~~~~~~~~~~
 Execute the following command to load ``sch_netem`` module.
-The cause of the error is ``sch_netem`` kernel module not loaded in your system which required to set up traffic control. 
+The cause of the error is ``sch_netem`` kernel module is not loaded in your system which is required to set up traffic control. 
 
 .. code:: console
 
     $ sudo modprobe sch_netem
 
-If the command failed with the below message, you need to install additional kernel module.
+If the command fails with the below message, you need to install an additional kernel module.
 
 :Example - Fedora:
 
@@ -65,10 +65,10 @@ Phenomenon
 
 Solutions
 ~~~~~~~~~~~~~~~~~~~~~~~~
-Checking Linux kernel configurations and reconfigure it if required configurations are disabled.
+Checking Linux kernel configurations and reconfiguring them if required configurations are disabled.
 
 The cause may be some mandatory kernel configurations are disabled.
-Following configurations are needed to be enabled to use ``--direction incoming`` option.
+The following configurations are needed to be enabled to use ``--direction incoming`` option.
 
 - CONFIG_IP_ADVANCED_ROUTER
 - CONFIG_IP_MULTIPLE_TABLES
@@ -83,7 +83,7 @@ Following configurations are needed to be enabled to use ``--direction incoming`
 
 e.g. Kernel configurations that enabled the above configurations (Debian)
 
-.. code:: console
+.. sourcecode:: console
 
     $ cat /boot/config-3.16.0-4-amd64 | egrep "NETFILTER_NETLINK=|NETFILTER_NETLINK_QUEUE=|NETFILTER_NETLINK_LOG=|NF_CT_NETLINK=|SCSI_NETLINK=|IP_ADVANCED_ROUTER=|NET_SCH_INGRESS=|NET_SCHED=|IP_MULTIPLE_TABLES=|NETFILTER_XT_TARGET_MARK="
     CONFIG_IP_ADVANCED_ROUTER=y
@@ -97,13 +97,13 @@ e.g. Kernel configurations that enabled the above configurations (Debian)
     CONFIG_NET_SCH_INGRESS=m
     CONFIG_SCSI_NETLINK=y
 
-These configurations need to either ``y`` or ``m``.
+These configurations need to be either ``y`` or ``m``.
 If some of the configurations are disabled, you need to:
 
 1. enable the kernel configurations
 2. build kernel
-3. using the compiled kernel image as boot kernel
+3. using the compiled kernel image as the boot kernel
 
 .. note::
 
-    Name of the kernel configuration file (``/boot/config-3.16.0-4-amd64``) different depends on the environment.
+    The name of the kernel configuration file (``/boot/config-3.16.0-4-amd64``) differs depending on the environment.

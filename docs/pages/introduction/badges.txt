@@ -1,15 +1,17 @@
-.. image:: https://badge.fury.io/py/tcconfig.svg
+|PyPI pkg ver| |Supported Python ver| |CI status| |CodeQL|
+
+.. |PyPI pkg ver| image:: https://badge.fury.io/py/tcconfig.svg
     :target: https://badge.fury.io/py/tcconfig
     :alt: PyPI package version
 
-.. image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
+.. |Supported Python ver| image:: https://img.shields.io/pypi/pyversions/tcconfig.svg
     :target: https://pypi.org/project/tcconfig
     :alt: Supported Python versions
 
-.. image:: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml/badge.svg
+.. |CI status| image:: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml/badge.svg
     :target: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml
     :alt: Test CI status
 
-.. image:: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml/badge.svg
+.. |CodeQL| image:: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml/badge.svg
    :target: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml
    :alt: Build CI status

@@ -6,13 +6,13 @@ Execute ``tcconfig`` with ``--docker`` option on a Docker host:
 
     # tcset <container name or ID> --docker ...
 
-You could use ``--src-container``/``--dst-container`` options to specify source/destination container.
+You could use ``--src-container``/``--dst-container`` options to specify the source/destination container.
 
 
 Set traffic control within a docker container
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 You need to run a container with ``--cap-add NET_ADMIN`` option
-if you you would like to set a tc rule within a container:
+if you would like to set a tc rule within a container:
 
 .. code-block:: console
 
