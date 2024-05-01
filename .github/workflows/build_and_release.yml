@@ -10,6 +10,9 @@ concurrency:
   group: ci-${{ github.workflow }}
   cancel-in-progress: true
 
+permissions:
+  contents: write
+
 env:
   BIN_NAME: tcconfig
   DIST_DIR_NAME: dist
