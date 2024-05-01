@@ -10,6 +10,9 @@ jobs:
       matrix:
         python-version: ["3.7", "3.8", "3.9", "3.10", "3.11", "3.12"]
         os: [ubuntu-latest]
+    concurrency:
+      group: ${{ github.event_name }}-${{ github.workflow }}-unit-test-${{ matrix.os }}-${{ matrix.python-version }}
+      cancel-in-progress: true
     timeout-minutes: 20
 
     steps:
