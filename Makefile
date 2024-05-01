@@ -44,7 +44,7 @@ readme:
 
 .PHONY: release
 release:
-	@cd $(PKG_BUILD_DIR) && $(PYTHON) setup.py release --sign
+	$(PYTHON) -m tox -e release
 
 .PHONY: setup
 setup:
