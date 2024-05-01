@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 from simplesqlite.query import And, Where
 
 from ._const import Tc, TrafficDirection

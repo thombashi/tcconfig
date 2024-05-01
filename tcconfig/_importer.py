@@ -94,14 +94,20 @@ class TcConfigLoader:
 
                     try:
                         src_network = self.__parse_tc_filter_src_network(tc_filter)
-                        if src_network not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
+                        if src_network not in (
+                            Network.Ipv4.ANYWHERE,
+                            Network.Ipv6.ANYWHERE,
+                        ):
                             option_list.append("--src-network={:s}".format(src_network))
                     except pp.ParseException:
                         pass
 
                     try:
                         dst_network = self.__parse_tc_filter_dst_network(tc_filter)
-                        if dst_network not in (Network.Ipv4.ANYWHERE, Network.Ipv6.ANYWHERE):
+                        if dst_network not in (
+                            Network.Ipv4.ANYWHERE,
+                            Network.Ipv6.ANYWHERE,
+                        ):
                             option_list.append("--dst-network={:s}".format(dst_network))
                     except pp.ParseException:
                         pass

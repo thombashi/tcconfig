@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import datetime
 import os
 import sys
@@ -38,7 +37,8 @@ def write_tc_script(tcconfig_command, command_history, filename_suffix=None):
             "# the script execution result may different from '{}'".format(org_tcconfig_cmd),
             "#",
             "# created by {:s} on {:s}.".format(
-                tcconfig_command, datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z")
+                tcconfig_command,
+                datetime.datetime.now().strftime("%Y-%m-%dT%H:%M:%S%z"),
             ),
             "",
             command_history,

@@ -80,12 +80,18 @@ class TcShapingRuleParser:
 
         for out_rule in out_rules:
             out_rule.update(
-                {Tc.Param.DEVICE: self.device, Tc.Param.DIRECTION: TrafficDirection.OUTGOING}
+                {
+                    Tc.Param.DEVICE: self.device,
+                    Tc.Param.DIRECTION: TrafficDirection.OUTGOING,
+                }
             )
 
         for in_rule in in_rules:
             in_rule.update(
-                {Tc.Param.DEVICE: self.ifb_device, Tc.Param.DIRECTION: TrafficDirection.INCOMING}
+                {
+                    Tc.Param.DEVICE: self.ifb_device,
+                    Tc.Param.DIRECTION: TrafficDirection.INCOMING,
+                }
             )
 
         return (out_rules, in_rules)
@@ -249,7 +255,12 @@ class TcShapingRuleParser:
                 shaping_rule.update(
                     self.__strip_param(
                         qdisc_param,
-                        [Tc.Param.DEVICE, Tc.Param.PARENT, Tc.Param.HANDLE, "direct_qlen"],
+                        [
+                            Tc.Param.DEVICE,
+                            Tc.Param.PARENT,
+                            Tc.Param.HANDLE,
+                            "direct_qlen",
+                        ],
                     )
                 )
 

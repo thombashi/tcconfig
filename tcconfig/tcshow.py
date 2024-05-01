@@ -56,7 +56,11 @@ def parse_option():
     if {"-d", "--device"}.intersection(set(sys.argv)):
         # deprecated: remain for backward compatibility
         group.add_argument(
-            "-d", "--device", action="append", required=True, help="network device name (e.g. eth0)"
+            "-d",
+            "--device",
+            action="append",
+            required=True,
+            help="network device name (e.g. eth0)",
         )
     else:
         group.add_argument("device", nargs="+", help="network device name (e.g. eth0)")
@@ -106,7 +110,9 @@ def print_tc(text, is_colorize):
     if is_colorize and pygments_installed:
         print(
             highlight(
-                code=text, lexer=JsonLexer(), formatter=TerminalTrueColorFormatter(style="monokai")
+                code=text,
+                lexer=JsonLexer(),
+                formatter=TerminalTrueColorFormatter(style="monokai"),
             )
         )
     else:

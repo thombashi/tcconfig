@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import errno
 import re
 
@@ -229,7 +228,8 @@ class TrafficControl:
 
     def get_tc_command(self, subcommand):
         return "{:s} {:s}".format(
-            get_tc_base_command(subcommand), "change" if self.is_change_shaping_rule else "add"
+            get_tc_base_command(subcommand),
+            "change" if self.is_change_shaping_rule else "add",
         )
 
     def get_command_history(self):
@@ -362,7 +362,9 @@ class TrafficControl:
             return
 
         raise ParameterError(
-            "unknown shaping algorithm", expected=ShapingAlgorithm.LIST, value=shaping_algorithm
+            "unknown shaping algorithm",
+            expected=ShapingAlgorithm.LIST,
+            value=shaping_algorithm,
         )
 
     def __validate_port(self):

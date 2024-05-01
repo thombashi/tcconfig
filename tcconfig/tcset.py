@@ -4,7 +4,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import errno
 import ipaddress
 import sys
@@ -145,9 +144,7 @@ def get_arg_parser():
         default=0,
         help="""round trip packet loss rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
-        """.format(
-            MIN_PACKET_LOSS_RATE, MAX_PACKET_LOSS_RATE
-        ),
+        """.format(MIN_PACKET_LOSS_RATE, MAX_PACKET_LOSS_RATE),
     )
     group.add_argument(
         "--duplicate",
@@ -155,9 +152,7 @@ def get_arg_parser():
         default=0,
         help="""round trip packet duplicate rate [%%]. the valid range is
         from {:d} to {:d}. (default=%(default)s)
-        """.format(
-            MIN_PACKET_DUPLICATE_RATE, MAX_PACKET_DUPLICATE_RATE
-        ),
+        """.format(MIN_PACKET_DUPLICATE_RATE, MAX_PACKET_DUPLICATE_RATE),
     )
     group.add_argument(
         "--corrupt",
@@ -166,9 +161,7 @@ def get_arg_parser():
         help="""packet corruption rate [%%]. the valid range is from {:d} to {:d}.
         packet corruption means a single-bit error at a random offset in the packet.
         (default=%(default)s)
-        """.format(
-            MIN_CORRUPTION_RATE, MAX_CORRUPTION_RATE
-        ),
+        """.format(MIN_CORRUPTION_RATE, MAX_CORRUPTION_RATE),
     )
     group.add_argument(
         "--reordering",
@@ -176,9 +169,7 @@ def get_arg_parser():
         default=0,
         help="""packet reordering rate [%%]. the valid range is from {:d}
         to {:d}. (default=%(default)s)
-        """.format(
-            MIN_REORDERING_RATE, MAX_REORDERING_RATE
-        ),
+        """.format(MIN_REORDERING_RATE, MAX_REORDERING_RATE),
     )
     group.add_argument(
         "--shaping-algo",

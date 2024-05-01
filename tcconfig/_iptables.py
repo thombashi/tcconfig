@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import errno
 import re
 
@@ -59,7 +58,14 @@ class IptablesMangleMarkEntry:
         return self.__chain
 
     def __init__(
-        self, ip_version, mark_id, source, destination, chain, protocol="all", line_number=None
+        self,
+        ip_version,
+        mark_id,
+        source,
+        destination,
+        chain,
+        protocol="all",
+        line_number=None,
     ):
         self.__line_number = line_number
         self.__mark_id = mark_id
@@ -134,7 +140,6 @@ class IptablesMangleMarkEntry:
 
 
 class IptablesMangleController:
-
     __RE_CHAIN = re.compile("Chain {:s} |Chain {:s} |Chain {:s} ".format(*VALID_CHAIN_LIST))
     __RE_CHAIN_NAME = re.compile("{:s}|{:s}|{:s}".format(*VALID_CHAIN_LIST))
     __MAX_MARK_ID = 0xFFFFFFFF

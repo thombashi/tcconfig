@@ -89,7 +89,9 @@ class NetemParameter:
                     ({value}Mbps -> {limit}Mbps)
                     """
                 ).format(
-                    value=hr_bps.mega_bps, limit=upper_limit_rate.mega_bps, device=self.__device
+                    value=hr_bps.mega_bps,
+                    limit=upper_limit_rate.mega_bps,
+                    device=self.__device,
                 )
             )
             hr_bps = upper_limit_rate
@@ -137,7 +139,8 @@ class NetemParameter:
 
         if hr_bps.bps < 8:
             raise hr.ParameterError(
-                "bandwidth rate must be greater or equals to 8bps", value="{}bps".format(hr_bps.bps)
+                "bandwidth rate must be greater or equals to 8bps",
+                value="{}bps".format(hr_bps.bps),
             )
 
         upper_limit_rate = get_upper_limit_rate(self.__device)
@@ -191,7 +194,8 @@ class NetemParameter:
             ):
                 item_list.append(
                     "{}ms distribution {}".format(
-                        self.__latency_distro_time.milliseconds, self.__latency_distribution
+                        self.__latency_distro_time.milliseconds,
+                        self.__latency_distribution,
                     )
                 )
 
@@ -216,7 +220,8 @@ class NetemParameter:
         if self.__latency_time:
             try:
                 self.__latency_time.validate(
-                    min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+                    min_value=Tc.ValueRange.LatencyTime.MIN,
+                    max_value=Tc.ValueRange.LatencyTime.MAX,
                 )
             except hr.ParameterError as e:
                 raise hr.ParameterError("delay {}".format(e))
@@ -224,7 +229,8 @@ class NetemParameter:
         if self.__latency_distro_time:
             try:
                 self.__latency_distro_time.validate(
-                    min_value=Tc.ValueRange.LatencyTime.MIN, max_value=Tc.ValueRange.LatencyTime.MAX
+                    min_value=Tc.ValueRange.LatencyTime.MIN,
+                    max_value=Tc.ValueRange.LatencyTime.MAX,
                 )
             except hr.ParameterError as e:
                 raise hr.ParameterError("delay-distro {}".format(e))

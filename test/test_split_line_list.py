@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import re
 
 import pytest
@@ -43,7 +42,13 @@ class Test_split_line_list:
                 [["abcdefg"], ["ABCDEFG", "1234"]],
             ],
             [["a", "  ", "b", "c"], re.compile("^$"), False, True, [["a"], ["b", "c"]]],
-            [["a", "  ", "b", "c"], re.compile("^$"), False, False, [["a", "  ", "b", "c"]]],
+            [
+                ["a", "  ", "b", "c"],
+                re.compile("^$"),
+                False,
+                False,
+                [["a", "  ", "b", "c"]],
+            ],
             [["a", "b", "c"], None, False, True, [["a", "b", "c"]]],
         ],
     )

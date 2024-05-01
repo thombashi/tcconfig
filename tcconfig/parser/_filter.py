@@ -209,8 +209,9 @@ class TcFilterParser(AbstractParser):
         self.__classid = parsed_list[-1]
         self.__handle = int("0" + parsed_list[-3], 16)
         logger.debug(
-            "succeed to parse mangle mark: "
-            "classid={}, handle={}, line={}".format(self.__classid, self.__handle, line)
+            "succeed to parse mangle mark: " "classid={}, handle={}, line={}".format(
+                self.__classid, self.__handle, line
+            )
         )
 
     def __parse_filter_ip_line(self, line):

@@ -40,7 +40,17 @@ def device_option(request):
         for opt_list in AllPairs(
             [
                 ["0.1", "+1.25", "25"],
-                ["kbps", "Kbps", " Kibps", "mbps", "Mbps", " Mibps", "gbps", "Gbps", " Gibps"],
+                [
+                    "kbps",
+                    "Kbps",
+                    " Kibps",
+                    "mbps",
+                    "Mbps",
+                    " Mibps",
+                    "gbps",
+                    "Gbps",
+                    " Gibps",
+                ],
             ]
         )
     ],
@@ -128,15 +138,25 @@ class Test_TrafficControl_validate:
                 [
                     [None, "", "100Kbps", "0.5Mbps", "0.1Gbps"],  # rate
                     [TrafficDirection.OUTGOING],
-                    [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay
-                    [Tc.ValueRange.LatencyTime.MIN, Tc.ValueRange.LatencyTime.MAX],  # delay_distro
+                    [
+                        Tc.ValueRange.LatencyTime.MIN,
+                        Tc.ValueRange.LatencyTime.MAX,
+                    ],  # delay
+                    [
+                        Tc.ValueRange.LatencyTime.MIN,
+                        Tc.ValueRange.LatencyTime.MAX,
+                    ],  # delay_distro
                     [
                         None,
                         MIN_PACKET_LOSS_RATE,
                         MIN_VALID_PACKET_LOSS,
                         MAX_PACKET_LOSS_RATE,
                     ],  # loss
-                    [None, MIN_PACKET_DUPLICATE_RATE, MAX_PACKET_DUPLICATE_RATE],  # duplicate
+                    [
+                        None,
+                        MIN_PACKET_DUPLICATE_RATE,
+                        MAX_PACKET_DUPLICATE_RATE,
+                    ],  # duplicate
                     [None, MIN_CORRUPTION_RATE, MAX_CORRUPTION_RATE],  # corrupt
                     [None, "192.168.0.1", "192.168.0.0/24"],  # src_network
                     [None, "192.168.0.1", "192.168.0.0/25"],  # exclude_src_network
@@ -254,11 +274,17 @@ class Test_TrafficControl_validate:
             [{"packet_loss_rate": MIN_PACKET_LOSS_RATE - 0.1}, ParameterError],
             [{"packet_loss_rate": MAX_PACKET_LOSS_RATE + 0.1}, ParameterError],
             [
-                {"latency_time": "100ms", "packet_duplicate_rate": MIN_PACKET_DUPLICATE_RATE - 0.1},
+                {
+                    "latency_time": "100ms",
+                    "packet_duplicate_rate": MIN_PACKET_DUPLICATE_RATE - 0.1,
+                },
                 ParameterError,
             ],
             [
-                {"latency_time": "100ms", "packet_duplicate_rate": MAX_PACKET_DUPLICATE_RATE + 0.1},
+                {
+                    "latency_time": "100ms",
+                    "packet_duplicate_rate": MAX_PACKET_DUPLICATE_RATE + 0.1,
+                },
                 ParameterError,
             ],
             [{"corruption_rate": MIN_CORRUPTION_RATE - 0.1}, ParameterError],
@@ -304,7 +330,13 @@ class Test_TrafficControl_validate:
 
 class Test_TrafficControl_ipv4:
     @pytest.mark.parametrize(
-        ["network", "is_ipv6", "expected_ip_ver", "expected_protocol", "expected_protocol_match"],
+        [
+            "network",
+            "is_ipv6",
+            "expected_ip_ver",
+            "expected_protocol",
+            "expected_protocol_match",
+        ],
         [
             ["192.168.0.1", False, 4, "ip", "ip"],
             ["192.168.0.0/24", False, 4, "ip", "ip"],

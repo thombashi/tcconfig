@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import errno
 import os
 import re
@@ -180,7 +179,8 @@ class DockerClient:
         IfIndex.create()
 
         proc = SubprocessRunner(
-            "ip netns exec {ns} ip link show type veth".format(ns=container_name), dry_run=False
+            "ip netns exec {ns} ip link show type veth".format(ns=container_name),
+            dry_run=False,
         )
         if proc.run() != 0:
             logger.error(proc.stderr)

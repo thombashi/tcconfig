@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import errno
 import re
 from typing import List
@@ -226,7 +225,10 @@ class HtbShaper(AbstractShaper):
     def __get_unique_qdisc_minor_id(self):
         if not is_execute_tc_command(self._tc_obj.tc_command_output):
             return (
-                int(self._tc_obj.netem_param.calc_hash(self._tc_obj.make_srcdst_text())[-2:], 16)
+                int(
+                    self._tc_obj.netem_param.calc_hash(self._tc_obj.make_srcdst_text())[-2:],
+                    16,
+                )
                 + 1
             )
 
@@ -237,7 +239,8 @@ class HtbShaper(AbstractShaper):
 
         exist_class_item_list = re.findall(
             "class {algorithm:s} {qdisc_major_id:s}:[0-9]+".format(
-                algorithm=ShapingAlgorithm.HTB, qdisc_major_id=self._tc_obj.qdisc_major_id_str
+                algorithm=ShapingAlgorithm.HTB,
+                qdisc_major_id=self._tc_obj.qdisc_major_id_str,
             ),
             run_tc_show(TcSubCommand.CLASS, self._tc_device, self._tc_obj.tc_command_output),
             re.MULTILINE,

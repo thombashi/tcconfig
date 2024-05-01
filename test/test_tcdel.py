@@ -166,7 +166,14 @@ class Test_tcdel:
             runner_helper(
                 [Tc.Command.TCDEL]
                 + device_option
-                + ["--network", "192.168.11.0/24", "--port", "80", "--direction", "incoming"]
+                + [
+                    "--network",
+                    "192.168.11.0/24",
+                    "--port",
+                    "80",
+                    "--direction",
+                    "incoming",
+                ]
             )
 
             runner = SubprocessRunner(tcshow_cmd)

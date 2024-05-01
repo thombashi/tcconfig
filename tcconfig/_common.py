@@ -119,7 +119,11 @@ def normalize_tc_value(tc_obj):
 
 
 def run_command_helper(
-    command, ignore_error_msg_regexp, notice_msg, msg_log_level="WARNING", exception_class=None
+    command,
+    ignore_error_msg_regexp,
+    notice_msg,
+    msg_log_level="WARNING",
+    exception_class=None,
 ):
     runner = spr.SubprocessRunner(command, error_log_level=LogLevel.QUIET)
     runner.run()

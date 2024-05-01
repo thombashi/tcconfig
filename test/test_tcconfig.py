@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import pytest
 import typepy
 from allpairspy import AllPairs
@@ -105,7 +104,6 @@ class Test_tcconfig:
         port,
         overwrite,  # is_enable_iptables
     ):
-
         if device_value is None:
             pytest.skip("device is empty")
 

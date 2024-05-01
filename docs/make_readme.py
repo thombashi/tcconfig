@@ -4,7 +4,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import os
 import sys
 from textwrap import indent
@@ -49,7 +48,9 @@ def update_help():
     for command in ["tcset", "tcdel", "tcshow"]:
         runner = SubprocessRunner("{:s} -h".format(command))
         runner.run(env=dict(os.environ, LC_ALL="C.UTF-8"))
-        help_file_path = "pages/usage/{command:s}/{command:s}_help_output.txt".format(command=command)
+        help_file_path = "pages/usage/{command:s}/{command:s}_help_output.txt".format(
+            command=command
+        )
 
         print(help_file_path)
 

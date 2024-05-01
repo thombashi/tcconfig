@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import pytest
 from subprocrunner import SubprocessRunner
 
@@ -27,7 +26,11 @@ class Test_tcset_iface_speed:
             runner = SubprocessRunner(
                 [Tc.Command.TCSET, tc_target, "--rate", "1kbps", "--overwrite"]
             )
-            assert runner.run() == 0, (runner.command_str, runner.returncode, runner.stderr)
+            assert runner.run() == 0, (
+                runner.command_str,
+                runner.returncode,
+                runner.stderr,
+            )
 
             # finalize ---
             delete_all_rules(tc_target)
@@ -41,7 +44,11 @@ class Test_tcset_iface_speed:
             monkeypatch.setattr("tcconfig._network._read_iface_speed", lambda x: "1")
 
             runner = SubprocessRunner([Tc.Command.TCSET, tc_target, "--rate", rate, "--overwrite"])
-            assert runner.run() == 0, (runner.command_str, runner.returncode, runner.stderr)
+            assert runner.run() == 0, (
+                runner.command_str,
+                runner.returncode,
+                runner.stderr,
+            )
 
             # finalize ---
             delete_all_rules(tc_target)
@@ -57,7 +64,11 @@ class Test_tcset_iface_speed:
             runner = SubprocessRunner(
                 " ".join([Tc.Command.TCSET, tc_target, "--rate", rate, "--overwrite"])
             )
-            assert runner.run() != 0, (runner.command_str, runner.returncode, runner.stderr)
+            assert runner.run() != 0, (
+                runner.command_str,
+                runner.returncode,
+                runner.stderr,
+            )
 
             # finalize ---
             delete_all_rules(tc_target)

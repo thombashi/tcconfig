@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import pingparsing
 import pytest
 import typepy
@@ -67,7 +66,12 @@ class Test_tcset_two_network:
     ):
         if device_option is None:
             pytest.skip("device option is null")
-        if any([typepy.is_null_string(dst_host_option), typepy.is_null_string(dst_host_ex_option)]):
+        if any(
+            [
+                typepy.is_null_string(dst_host_option),
+                typepy.is_null_string(dst_host_ex_option),
+            ]
+        ):
             pytest.skip("destination host is null")
 
         for tc_target in [device_option]:

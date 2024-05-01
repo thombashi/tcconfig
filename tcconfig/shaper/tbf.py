@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import typepy
 from humanreadable import ParameterError
 from subprocrunner import SubprocessRunner
@@ -14,7 +13,6 @@ from ._interface import AbstractShaper
 
 
 class TbfShaper(AbstractShaper):
-
     __NETEM_QDISC_MAJOR_ID_OFFSET = 10
 
     __MIN_BUFFER_BYTE = 1600
@@ -34,7 +32,9 @@ class TbfShaper(AbstractShaper):
             return self.__IN_DEVICE_QDISC_MINOR_ID
 
         raise ParameterError(
-            "unknown direction", expected=TrafficDirection.LIST, value=self._tc_obj.direction
+            "unknown direction",
+            expected=TrafficDirection.LIST,
+            value=self._tc_obj.direction,
         )
 
     def _get_netem_qdisc_major_id(self, base_id):
@@ -71,7 +71,8 @@ class TbfShaper(AbstractShaper):
 
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         parent = "{:x}:{:d}".format(
-            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id), self._get_qdisc_minor_id()
+            self._get_netem_qdisc_major_id(self._tc_obj.qdisc_major_id),
+            self._get_qdisc_minor_id(),
         )
         handle = "{:d}:".format(20)
         upper_limit_rate = get_upper_limit_rate(self._tc_device)

@@ -2,7 +2,6 @@
 .. codeauthor:: Tsuyoshi Hombashi <tsuyoshi.hombashi@gmail.com>
 """
 
-
 import itertools
 
 import pingparsing
@@ -57,7 +56,13 @@ class Test_tcset_one_network:
         [[params[0], params[1]] for params in itertools.product(["htb"], [100])],
     )
     def test_dst_net_uniform_latency(
-        self, device_option, dst_host_option, transmitter, pingparser, shaping_algo, delay
+        self,
+        device_option,
+        dst_host_option,
+        transmitter,
+        pingparser,
+        shaping_algo,
+        delay,
     ):
         if device_option is None:
             pytest.skip("device option is null")
@@ -98,7 +103,13 @@ class Test_tcset_one_network:
 
     @pytest.mark.parametrize(["delay", "delay_distro"], [[100, 50]])
     def test_dst_net_latency_distro(
-        self, device_option, dst_host_option, transmitter, pingparser, delay, delay_distro
+        self,
+        device_option,
+        dst_host_option,
+        transmitter,
+        pingparser,
+        delay,
+        delay_distro,
     ):
         if typepy.is_null_string(dst_host_option):
             pytest.skip("destination host is null")

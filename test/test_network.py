@@ -35,7 +35,11 @@ class Test_is_anywhere_network:
 
     @pytest.mark.parametrize(
         ["network", "ip_version", "expected"],
-        [[None, 4, ValueError], ["0.0.0.0/0", 5, ValueError], ["0.0.0.0/0", None, ValueError]],
+        [
+            [None, 4, ValueError],
+            ["0.0.0.0/0", 5, ValueError],
+            ["0.0.0.0/0", None, ValueError],
+        ],
     )
     def test_exception(self, network, ip_version, expected):
         with pytest.raises(expected):
@@ -49,19 +53,37 @@ class Test_get_iproute2_upper_limite_rate:
 
 class Test_get_anywhere_network:
     @pytest.mark.parametrize(
-        ["value", "expected"], [[4, "0.0.0.0/0"], ["4", "0.0.0.0/0"], [6, "::/0"], ["6", "::/0"]]
+        ["value", "expected"],
+        [
+            [4, "0.0.0.0/0"],
+            ["4", "0.0.0.0/0"],
+            [6, "::/0"],
+            ["6", "::/0"],
+        ],
     )
     def test_normal(self, value, expected):
         assert get_anywhere_network(value) == expected
 
-    @pytest.mark.parametrize(["value", "expected"], [[None, ValueError], ["test", ValueError]])
+    @pytest.mark.parametrize(
+        ["value", "expected"],
+        [
+            [None, ValueError],
+            ["test", ValueError],
+        ],
+    )
     def test_exception(self, value, expected):
         with pytest.raises(expected):
             get_anywhere_network(value)
 
 
 class Test_get_upper_limit_rate:
-    @pytest.mark.parametrize(["speed", "expected"], [[1, 1000], [0, 0]])
+    @pytest.mark.parametrize(
+        ["speed", "expected"],
+        [
+            [1, 1000],
+            [0, 0],
+        ],
+    )
     def test_normal(self, monkeypatch, device_option, speed, expected):
         if device_option is None:
             pytest.skip("device option is null")

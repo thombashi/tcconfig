@@ -163,7 +163,10 @@ class AbstractShaper(ShaperInterface):
 
     def _is_use_iptables(self):
         return all(
-            [self._tc_obj.is_enable_iptables, self._tc_obj.direction == TrafficDirection.OUTGOING]
+            [
+                self._tc_obj.is_enable_iptables,
+                self._tc_obj.direction == TrafficDirection.OUTGOING,
+            ]
         )
 
     @abc.abstractmethod
@@ -182,7 +185,9 @@ class AbstractShaper(ShaperInterface):
             return "src"
 
         raise ParameterError(
-            "unknown direction", expected=TrafficDirection.LIST, value=self._tc_obj.direction
+            "unknown direction",
+            expected=TrafficDirection.LIST,
+            value=self._tc_obj.direction,
         )
 
     def _get_tc_handle(self, default_handle):
