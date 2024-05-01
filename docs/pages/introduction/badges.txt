@@ -8,8 +8,8 @@
     :target: https://pypi.org/project/tcconfig
     :alt: Supported Python versions
 
-.. |CI status| image:: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml/badge.svg
-    :target: https://github.com/thombashi/tcconfig/actions/workflows/tests.yml
+.. |CI status| image:: https://github.com/thombashi/tcconfig/actions/workflows/ci.yml/badge.svg
+    :target: https://github.com/thombashi/tcconfig/actions/workflows/ci.yml
     :alt: Test CI status
 
 .. |CodeQL| image:: https://github.com/thombashi/tcconfig/actions/workflows/build_and_release.yml/badge.svg
