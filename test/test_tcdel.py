@@ -159,7 +159,7 @@ class Test_tcdel:
             )
 
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
-
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             runner_helper([Tc.Command.TCDEL] + device_option + ["--network", "192.168.1.0/24"])
@@ -207,6 +207,7 @@ class Test_tcdel:
             )
 
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             runner_helper([Tc.Command.TCDEL] + device_option + ["--id", "800::800"])
@@ -228,6 +229,7 @@ class Test_tcdel:
             )
 
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # finalize ---
@@ -367,6 +369,7 @@ class Test_tcdel:
 
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             runner_helper(
@@ -417,6 +420,7 @@ class Test_tcdel:
             )
 
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             runner_helper([Tc.Command.TCDEL] + device_option + ["--id", "800::800", "--ipv6"])

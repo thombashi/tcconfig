@@ -93,4 +93,5 @@ class Test_import_config:
                 [Tc.Command.TCSET, "--import-setting", str(p), "--tc-command"]
             )
             assert runner.run() == 0
+            assert runner.stdout
             assert len(runner.stdout.splitlines()) > 10

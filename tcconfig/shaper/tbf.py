@@ -67,7 +67,7 @@ class TbfShaper(AbstractShaper):
         try:
             self._tc_obj.netem_param.validate_bandwidth_rate()
         except ParameterError:
-            return 0
+            return
 
         base_command = self._tc_obj.get_tc_command(TcSubCommand.QDISC)
         parent = "{:x}:{:d}".format(

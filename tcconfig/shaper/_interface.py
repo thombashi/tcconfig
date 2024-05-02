@@ -24,7 +24,7 @@ class ShaperInterface(metaclass=abc.ABCMeta):
 
     @abc.abstractmethod
     def set_shaping(self):  # pragma: no cover
-        pass
+        return 0
 
 
 class AbstractShaper(ShaperInterface):

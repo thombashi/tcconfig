@@ -53,6 +53,7 @@ class Test_tcshow:
 
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
             assert runner.returncode == 0
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # smoke test for --color option
@@ -198,6 +199,7 @@ class Test_tcshow:
 
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # smoke test for --color option
@@ -344,6 +346,7 @@ class Test_tcshow:
 
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # smoke test for --color option

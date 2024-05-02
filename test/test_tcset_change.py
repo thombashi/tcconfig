@@ -117,6 +117,7 @@ class Test_tcset_change:
             )
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             runner_helper(
@@ -164,6 +165,7 @@ class Test_tcset_change:
             )
             runner.run()
             print_test_result(expected=expected, actual=runner.stdout, error=runner.stderr)
+            assert runner.stdout
             assert json.loads(runner.stdout) == json.loads(expected)
 
             # finalize ---

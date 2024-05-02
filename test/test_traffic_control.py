@@ -62,6 +62,7 @@ def test_TrafficControl_validate_bandwidth_rate_normal(value):
         direction=TrafficDirection.OUTGOING,
         shaping_algorithm=ShapingAlgorithm.HTB,
     )
+    assert tc_obj.netem_param
     tc_obj.netem_param.validate_bandwidth_rate()
 
 
@@ -87,6 +88,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_1(value, expected):
             direction=TrafficDirection.OUTGOING,
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
+        assert tc_obj.netem_param
         tc_obj.netem_param.validate_bandwidth_rate()
 
 
@@ -109,6 +111,7 @@ def test_TrafficControl_validate_bandwidth_rate_exception_2(value, expected):
             ),
             shaping_algorithm=ShapingAlgorithm.HTB,
         )
+        assert tc_obj.netem_param
         tc_obj.netem_param.validate_bandwidth_rate()
 
 

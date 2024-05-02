@@ -3,6 +3,7 @@ import json
 import pytest
 
 import tcconfig
+import tcconfig.parser.shaping_rule
 from tcconfig._const import TrafficDirection
 from tcconfig._netem_param import NetemParameter
 from tcconfig.traffic_control import TrafficControl, delete_all_rules

@@ -132,7 +132,7 @@ def run_command_helper(
     if returncode == 0:
         return 0
 
-    if ignore_error_msg_regexp:
+    if ignore_error_msg_regexp and runner.stderr:
         if ignore_error_msg_regexp.search(runner.stderr) is None:
             error_msg = "\n".join(
                 [

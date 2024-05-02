@@ -17,7 +17,7 @@ PROJECT_NAME = "tcconfig"
 OUTPUT_DIR = ".."
 
 
-def write_examples(maker):
+def write_examples(maker: ReadmeMaker) -> None:
     maker.set_indent_level(0)
     maker.write_chapter("Usage")
 
@@ -44,7 +44,7 @@ def write_examples(maker):
     )
 
 
-def update_help():
+def update_help() -> None:
     for command in ["tcset", "tcdel", "tcshow"]:
         runner = SubprocessRunner(f"{command:s} -h")
         runner.run(env=dict(os.environ, LC_ALL="C.UTF-8"))
@@ -54,12 +54,14 @@ def update_help():
 
         print(help_file_path)
 
+        assert runner.returncode == 0
+        assert runner.stdout
         with open(help_file_path, "w") as f:
             f.write("::\n\n")
             f.write(indent(runner.stdout, "    "))
 
 
-def main():
+def main() -> int:
     update_help()
 
     maker = ReadmeMaker(
@@ -68,7 +70,6 @@ def main():
         is_make_toc=True,
         project_url=f"https://github.com/thombashi/{PROJECT_NAME}",
     )
-    maker.examples_dir_name = "usage"
 
     maker.write_chapter("Summary")
     maker.write_introduction_file("summary.txt")
