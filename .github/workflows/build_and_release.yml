@@ -44,8 +44,8 @@ jobs:
 
       - name: Install dependencies
         run: |
-          sudo apt-get update -qq 
-          sudo apt-get install -qq -y --no-install-recommends fakeroot rename
+          sudo apt-get update -qq
+          sudo apt-get install -qq -y --no-install-recommends fakeroot
 
       - name: Build a deb package
         run: ./scripts/build_deb_package.sh
@@ -55,7 +55,7 @@ jobs:
 
       - uses: actions/upload-artifact@v4
         with:
-          name: binaries
+          name: binaries-${{ matrix.os }}
           path: ${{ env.DIST_DIR_NAME }}/${{ env.BIN_NAME }}_*.deb
           if-no-files-found: error
           retention-days: 1
@@ -78,7 +78,12 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
-          name: binaries
+          name: binaries-ubuntu-20.04
+          path: ${{ env.DIST_DIR_NAME }}
+
+      - uses: actions/download-artifact@v4
+        with:
+          name: binaries-ubuntu-22.04
           path: ${{ env.DIST_DIR_NAME }}
 
       - name: Setup environment variables
