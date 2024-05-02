@@ -60,5 +60,11 @@ _CONTROL_
 
 VERSION_CODENAME=$(\grep -Po "(?<=VERSION_CODENAME=)[a-z]+" /etc/os-release)
 
-fakeroot dpkg-deb --build "$DIST_DIR_NAME" "$DIST_DIR_NAME"
-rename -v "s/_${MACHINE}.deb/_${VERSION_CODENAME}_${MACHINE}.deb/" ${DIST_DIR_NAME}/*
+TEMP_DIR="$(mktemp -d)"
+TEMP_DEB="${TEMP_DIR}/${PKG_NAME}_${PKG_VERSION}_${VERSION_CODENAME}_${MACHINE}.deb"
+
+trap "\rm -rf $TEMP_DIR" 0 1 2 3 15
+
+fakeroot dpkg-deb --build "$DIST_DIR_NAME" "$TEMP_DEB"
+mv  "$TEMP_DEB" "$DIST_DIR_NAME"
+ls "$DIST_DIR_NAME"
