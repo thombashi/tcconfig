@@ -20,11 +20,11 @@ class ShaperInterface(metaclass=abc.ABCMeta):
     @property
     @abc.abstractmethod
     def algorithm_name(self):  # pragma: no cover
-        pass
+        ...
 
     @abc.abstractmethod
     def set_shaping(self):  # pragma: no cover
-        return 0
+        ...
 
 
 class AbstractShaper(ShaperInterface):
@@ -171,11 +171,11 @@ class AbstractShaper(ShaperInterface):
 
     @abc.abstractmethod
     def _get_qdisc_minor_id(self):  # pragma: no cover
-        pass
+        ...
 
     @abc.abstractmethod
     def _get_netem_qdisc_major_id(self, base_id):  # pragma: no cover
-        pass
+        ...
 
     def _get_network_direction_str(self):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:
@@ -219,11 +219,11 @@ class AbstractShaper(ShaperInterface):
 
     @abc.abstractmethod
     def _make_qdisc(self):  # pragma: no cover
-        pass
+        ...
 
     @abc.abstractmethod
     def _add_rate(self):  # pragma: no cover
-        pass
+        ...
 
     def __add_mangle_mark(self, mark_id):
         dst_network = None
