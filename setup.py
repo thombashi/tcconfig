@@ -58,6 +58,7 @@ setuptools.setup(
     include_package_data=True,
     packages=setuptools.find_packages(exclude=["test*"]),
     project_urls={
+        "Changelog": f"{REPOSITORY_URL:s}/blob/master/CHANGELOG.md",
         "Documentation": f"https://{MODULE_NAME:s}.rtfd.io/",
         "Source": REPOSITORY_URL,
         "Tracker": f"{REPOSITORY_URL:s}/issues",

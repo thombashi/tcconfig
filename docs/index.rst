@@ -16,6 +16,7 @@ Welcome to tcconfig's documentation!
    pages/introduction/index
    pages/usage/index
    pages/troubleshooting
+   pages/changelog_ref
    pages/links
 
 

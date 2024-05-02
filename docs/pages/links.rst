@@ -1,8 +1,3 @@
-Changelog
-==========
-https://github.com/thombashi/tcconfig/releases
-
-
 .. include:: sponsors.rst
 
 .. include:: genindex.rst
