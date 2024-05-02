@@ -44,7 +44,8 @@ def _has_capabilies(bin_path, capabilities):
 
     if not getcap_bin_path:
         logger.error("command not found: getcap")
-        return False
+        # assume that the command has the required capabilities if getcap command is not found
+        return True
 
     bin_path = os.path.realpath(bin_path)
     proc = spr.SubprocessRunner(f"{getcap_bin_path:s} {bin_path:s}")
@@ -54,6 +55,11 @@ def _has_capabilies(bin_path, capabilities):
 
     getcap_output = proc.stdout
     has_capabilies = True
+
+    if not getcap_output:
+        logger.debug(f"no capabilities found for {bin_path:s}")
+        return False
+
     for capability in capabilities:
         if re.search(capability, getcap_output):
             logger.debug(f"{bin_path:s} has {capability:s} capability")
@@ -61,11 +67,13 @@ def _has_capabilies(bin_path, capabilities):
             logger.debug(f"{bin_path:s} has no {capability:s} capability")
             has_capabilies = False
 
-    capability = "+ep"
-    if re.search(re.escape(capability), getcap_output):
-        logger.debug("{:s} has {:s} capability".format(bin_path, capability))
+    # ubuntu: =ep
+    # debian: +ep
+    capability = "[+=]ep$"
+    if re.search(capability, getcap_output):
+        logger.debug(f"{bin_path:s} has {capability:s} capability")
     else:
-        logger.debug("{:s} has no {:s} capability".format(bin_path, capability))
+        logger.debug(f"{bin_path:s} has no {capability:s} capability: got={getcap_output}")
         has_capabilies = False
 
     return has_capabilies
