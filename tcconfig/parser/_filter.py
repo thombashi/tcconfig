@@ -303,9 +303,9 @@ class TcFilterParser(AbstractParser):
         ).compressed
 
     def __parse_filter_port(self, value_hex):
-        # Port filter consists eight hex digits.
-        # The upper-half represents source port filter and
-        # the bottom-half represents destination port filter.
+        # Port filter consists of eight hex digits.
+        # The upper half represents the source port filter and
+        # the bottom half represents the destination port filter.
 
         if len(value_hex) != 8:
             raise ValueError(f"invalid port filter value: {value_hex}")

@@ -50,7 +50,7 @@ def get_upper_limit_rate(tc_device):
         return _get_iproute2_upper_limite_rate()
 
     if speed_value < 0:
-        # default to the iproute2 upper limit when speed value is -1 in
+        # default to the iproute2 upper limit when the speed value is -1 in
         # paravirtualized network interfaces
         return _get_iproute2_upper_limite_rate()
 

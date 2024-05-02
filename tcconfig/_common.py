@@ -52,7 +52,7 @@ def find_bin_path(command):
             _bin_path_cache[command] = _to_regular_bin_path(sbin_path)
             return _bin_path_cache[command]
 
-    # return the command as it is when binary file not found
+    # return the command as it is when the binary file is not found
     return command
 
 
