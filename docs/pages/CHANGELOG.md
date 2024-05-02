@@ -1,3 +1,32 @@
+<a name="v0.28.1"></a>
+# [v0.28.1](https://github.com/thombashi/tcconfig/releases/tag/v0.28.1) - 02 May 2024
+
+### Bug Fixes
+* Fix sqlite error field not found [#178](https://github.com/thombashi/tcconfig/issues/178) (Thanks to [@rglonek](https://github.com/rglonek))
+* Fix to prevent generating garbage .deb files: [#179](https://github.com/thombashi/tcconfig/issues/179) (Thanks to [@Lastique](https://github.com/Lastique))
+
+### Other Changes
+* Update dependencies in requirements files
+  * Bump minimum version of `DataProperty` to `1.0.1`
+  * Bump minimum version of `humanreadable` to `0.3`
+  * Bump minimum version of `SimpleSQLite` to `1.3.2` (avoid [#177](https://github.com/thombashi/tcconfig/issues/177))
+* Update help messages
+* Add `docs` extras
+* Add CHANGELOG
+* Add support for Python 3.11/3.12
+* Drop support for Python 3.6
+* Modify to use `pypa/build` for package build
+* Modify to use `setuptools_scm` for package build
+* Improve capability detection
+* Update build and release workflow to publish to PyPI
+* Add Sigstore signatures to release assets
+
+---
+**Full Changelog**: https://github.com/thombashi/tcconfig/compare/v0.28.0...v0.28.1
+
+[Changes][v0.28.1]
+
+
 <a name="v0.28.0"></a>
 # [v0.28.0](https://github.com/thombashi/tcconfig/releases/tag/v0.28.0) - 26 Sep 2022
 
@@ -821,6 +850,7 @@ Add support for incoming packet traffic control
 [Changes][v0.1.0]
 
 
+[v0.28.1]: https://github.com/thombashi/tcconfig/compare/v0.28.0...v0.28.1
 [v0.28.0]: https://github.com/thombashi/tcconfig/compare/v0.27.1...v0.28.0
 [v0.27.1]: https://github.com/thombashi/tcconfig/compare/v0.27.0...v0.27.1
 [v0.27.0]: https://github.com/thombashi/tcconfig/compare/v0.26.0...v0.27.0
