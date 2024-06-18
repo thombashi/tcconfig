@@ -174,7 +174,7 @@ def get_arg_parser():
     group.add_argument(
         "--limit",
         dest="packet_limit_count",
-        default=1000,
+        default=0,
         help="""limits the maximum number of packets the qdisc may hold when doing delay.
         the minimum value is {:d}. (default=%(default)s)
         """.format(1),

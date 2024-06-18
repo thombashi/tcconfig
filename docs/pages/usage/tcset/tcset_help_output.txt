@@ -43,7 +43,7 @@
       --reordering REORDERING_RATE
                             packet reordering rate [%]. the valid range is from 0 to 100. (default=0)
       --limit PACKET_LIMIT_COUNT
-                            limits the maximum number of packets the qdisc may hold when doing delay. the minimum value is 1. (default=1000)
+                            limits the maximum number of packets the qdisc may hold when doing delay. the minimum value is 1. (default=0)
       --shaping-algo {htb,tbf}
                             shaping algorithm. defaults to htb (recommended).
       --iptables            use iptables for traffic control.

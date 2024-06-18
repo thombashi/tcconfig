@@ -180,7 +180,7 @@ class NetemParameter:
             item_list.append(f"reordering{self.__reordering_rate}")
 
         if self.__packet_limit_count:
-            item_list.append(f"limit{int(self.__packet_limit_count)}")
+            item_list.append(f"limit{self.__packet_limit_count}")
         return "_".join(item_list)
 
     def make_netem_command_parts(self):
@@ -284,5 +284,5 @@ class NetemParameter:
             raise hr.ParameterError("reordering needs latency to be specified: set latency > 0")
 
     def __validate_packet_limit_count(self):
-        if self.__packet_limit_count <= 0:
+        if self.__packet_limit_count and self.__packet_limit_count <= 0:
             raise hr.ParameterError("packets limit count can't be less than 1: set limit > 0")
