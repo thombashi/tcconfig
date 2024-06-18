@@ -30,3 +30,4 @@ class Qdisc(Model):
     corrupt = Text()
     reorder = Text()
     rate = Text()
+    limit = Integer()

@@ -172,6 +172,14 @@ def get_arg_parser():
         """.format(MIN_REORDERING_RATE, MAX_REORDERING_RATE),
     )
     group.add_argument(
+        "--limit",
+        dest="packet_limit_count",
+        default=1000,
+        help="""limits the maximum number of packets the qdisc may hold when doing delay.
+        the minimum value is {:d}. (default=%(default)s)
+        """.format(1),
+    )
+    group.add_argument(
         "--shaping-algo",
         dest="shaping_algorithm",
         choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.TBF],
@@ -309,6 +317,7 @@ class TcSetMain(Main):
                 packet_duplicate_rate=options.packet_duplicate_rate,
                 corruption_rate=options.corruption_rate,
                 reordering_rate=options.reordering_rate,
+                packet_limit_count=options.packet_limit_count,
             ),
             dst_network=self._extract_dst_network(),
             exclude_dst_network=options.exclude_dst_network,

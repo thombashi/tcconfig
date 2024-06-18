@@ -47,6 +47,7 @@ class ShapingRuleModel(Model):
     corrupt = Text()
     reorder = Text()
     rate = Text()
+    limit = Text()
 
 
 def parse_option():

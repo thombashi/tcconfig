@@ -51,6 +51,7 @@ class NetemParameter:
         packet_duplicate_rate=None,
         corruption_rate=None,
         reordering_rate=None,
+        packet_limit_count=None,
     ):
         self.__device = device
 
@@ -59,6 +60,7 @@ class NetemParameter:
         self.__packet_duplicate_rate = convert_rate_to_f(packet_duplicate_rate)  # [%]
         self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
         self.__reordering_rate = convert_rate_to_f(reordering_rate)  # [%]
+        self.__packet_limit_count = convert_rate_to_f(packet_limit_count)  # [COUNT]
 
         self.__latency_time = None
         if latency_time:
@@ -106,12 +108,14 @@ class NetemParameter:
         self.__validate_corruption_rate()
         self.__validate_reordering_rate()
         self.__validate_reordering_and_delay()
+        self.__validate_packet_limit_count()
 
         netem_param_values = [
             self.__packet_loss_rate,
             self.__packet_duplicate_rate,
             self.__corruption_rate,
             self.__reordering_rate,
+            self.__packet_limit_count,
         ]
         if self.__bandwidth_rate:
             netem_param_values.append(self.__bandwidth_rate.kilo_bps)
@@ -128,7 +132,7 @@ class NetemParameter:
             raise hr.ParameterError(
                 "there are no valid net emulation parameters found. "
                 "at least one or more following parameters are required: "
-                "--rate, --delay, --loss, --duplicate, --corrupt, --reordering"
+                "--rate, --delay, --loss, --duplicate, --corrupt, --reordering, --limit"
             )
 
     def validate_bandwidth_rate(self):
@@ -175,6 +179,8 @@ class NetemParameter:
         if self.__reordering_rate:
             item_list.append(f"reordering{self.__reordering_rate}")
 
+        if self.__packet_limit_count:
+            item_list.append(f"limit{int(self.__packet_limit_count)}")
         return "_".join(item_list)
 
     def make_netem_command_parts(self):
@@ -205,6 +211,8 @@ class NetemParameter:
         if self.__reordering_rate > 0:
             item_list.append(f"reorder {self.__reordering_rate:f}%")
 
+        if self.__packet_limit_count > 0:
+            item_list.append(f"limit {self.__packet_limit_count:f}")
         return " ".join(item_list)
 
     def calc_hash(self, extra=""):
@@ -274,3 +282,7 @@ class NetemParameter:
     def __validate_reordering_and_delay(self):
         if self.__reordering_rate and self.__latency_time and self.__latency_time.milliseconds <= 0:
             raise hr.ParameterError("reordering needs latency to be specified: set latency > 0")
+
+    def __validate_packet_limit_count(self):
+        if self.__packet_limit_count <= 0:
+            raise hr.ParameterError("packets limit count can't be less than 1: set limit > 0")

@@ -501,6 +501,7 @@ qdisc netem 2007: parent 1f87:2 limit 1000 delay 1.0ms loss 0.01%
                             Tc.Param.HANDLE: "2007:",
                             Tc.Param.PARENT: "1f87:2",
                             "direct_qlen": 1000,
+                            "limit": 1000,
                         }
                     )
                 ],
@@ -518,6 +519,7 @@ qdisc netem 1a9a: parent 1a1a:2 limit 1000
                             Tc.Param.HANDLE: "1a9a:",
                             Tc.Param.PARENT: "1a1a:2",
                             "direct_qlen": 1000,
+                            "limit": 1000,
                         }
                     )
                 ],
@@ -538,6 +540,7 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 50.0ms  1.0ms loss 5%
                             Tc.Param.HANDLE: "2007:",
                             Tc.Param.PARENT: "1f87:2",
                             "direct_qlen": 1000,
+                            "limit": 1000,
                         }
                     ),
                     Qdisc(
@@ -548,6 +551,7 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 50.0ms  1.0ms loss 5%
                             "delay-distro": "1.0ms",
                             Tc.Param.HANDLE: "2008:",
                             Tc.Param.PARENT: "1f87:3",
+                            "limit": 1000,
                         }
                     ),
                 ],
@@ -568,6 +572,7 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 0.5s  1.0ms loss 5%
                             Tc.Param.HANDLE: "2007:",
                             Tc.Param.PARENT: "1f87:2",
                             "direct_qlen": 1000,
+                            "limit": 1000,
                         }
                     ),
                     Qdisc(
@@ -578,6 +583,7 @@ qdisc netem 2008: parent 1f87:3 limit 1000 delay 0.5s  1.0ms loss 5%
                             "delay-distro": "1.0ms",
                             Tc.Param.HANDLE: "2008:",
                             Tc.Param.PARENT: "1f87:3",
+                            "limit": 1000,
                         }
                     ),
                 ],
