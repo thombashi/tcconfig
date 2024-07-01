@@ -28,8 +28,8 @@ def print_test_result(expected, actual, error=None):
         print(error, file=sys.stderr)
 
 
-def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reordering, packet_limit_count):
-    param_values = [packet_loss, packet_duplicate, corrupt, reordering, packet_limit_count]
+def is_invalid_param(rate, delay, packet_loss, packet_duplicate, corrupt, reordering, packet_limit):
+    param_values = [packet_loss, packet_duplicate, corrupt, reordering, packet_limit]
 
     print(f"rate={rate}, params={param_values}")
 
