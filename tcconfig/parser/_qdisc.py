@@ -59,6 +59,7 @@ class TcQdiscParser(AbstractParser):
             self.__parse_netem_param(line, "duplicate", pp.nums + ".%")
             self.__parse_netem_param(line, "corrupt", pp.nums + ".%")
             self.__parse_netem_param(line, "reorder", pp.nums + ".%")
+            self.__parse_netem_param(line, "limit", pp.nums)
             self.__parse_bandwidth_rate(line)
 
             logger.debug(f"parse a qdisc entry: {self.__parsed_param}")
