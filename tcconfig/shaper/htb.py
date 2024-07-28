@@ -269,7 +269,6 @@ class HtbShaper(AbstractShaper):
         tcshow_out = run_tc_show(
             TcSubCommand.QDISC, self._tc_device, self._tc_obj.tc_command_output
         )
-        assert tcshow_out
         exist_netem_items = re.findall(
             "qdisc [a-z]+ [a-z0-9]+",
             tcshow_out,
