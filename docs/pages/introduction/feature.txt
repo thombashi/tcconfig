@@ -19,6 +19,7 @@ The following parameters can be set to network interfaces:
 - Packet corruption rate ``[%]``
 - Packet duplicate rate ``[%]``
 - Packet reordering rate  ``[%]``
+- Packet limit count  ``[COUNT]``
 
 Targets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^

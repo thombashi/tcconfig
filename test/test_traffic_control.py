@@ -229,7 +229,7 @@ class Test_TrafficControl_validate:
             shaping_algorithm=shaping_algorithm,
         )
 
-        if is_invalid_param(rate, delay, loss, duplicate, corrupt, reordering=None):
+        if is_invalid_param(rate, delay, loss, duplicate, corrupt, reordering=None, limit=None):
             with pytest.raises(ParameterError):
                 tc_obj.validate()
         else:
