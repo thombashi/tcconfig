@@ -181,6 +181,7 @@ class NetemParameter:
 
         if self.__packet_limit_count:
             item_list.append(f"limit{self.__packet_limit_count}")
+
         return "_".join(item_list)
 
     def make_netem_command_parts(self):
@@ -213,6 +214,7 @@ class NetemParameter:
 
         if self.__packet_limit_count > 0:
             item_list.append(f"limit {self.__packet_limit_count:f}")
+
         return " ".join(item_list)
 
     def calc_hash(self, extra=""):
