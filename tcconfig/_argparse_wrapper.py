@@ -75,12 +75,12 @@ class ArgparseWrapper:
             "--dst-port",
             dest="dst_port",
             type=int,
-            help="specify destination port number that applies traffic control. defaults to any.",
+            help="specify a destination port number that applies traffic control. defaults to any.",
         )
         group.add_argument(
             "--src-port",
             type=int,
-            help="specify source port number that applies traffic control. defaults to any.",
+            help="specify a source port number that applies traffic control. defaults to any.",
         )
         group.add_argument(
             "--ipv6",
