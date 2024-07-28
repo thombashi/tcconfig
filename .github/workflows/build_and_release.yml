@@ -132,6 +132,11 @@ jobs:
 
       - uses: actions/download-artifact@v4
         with:
+          name: binaries-ubuntu-24.04
+          path: ${{ env.DIST_DIR_NAME }}
+
+      - uses: actions/download-artifact@v4
+        with:
           name: wheel
           path: ${{ env.DIST_DIR_NAME }}
 
