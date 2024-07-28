@@ -35,7 +35,7 @@ Easy to apply traffic shaping rules to specific networks:
 - Source/Destination IP-address/network (IPv4/IPv6)
 - Source/Destination ports
 
-Available parameters
+Available Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The following parameters can be set to network interfaces:
 
@@ -45,6 +45,7 @@ The following parameters can be set to network interfaces:
 - Packet corruption rate ``[%]``
 - Packet duplicate rate ``[%]``
 - Packet reordering rate  ``[%]``
+- Packet limit count  ``[COUNT]``
 
 Targets
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
