@@ -1,12 +1,14 @@
 ::
 
-    usage: tcshow [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet] [--debug-query] [--stacktrace] [--ipv6] [--docker] [--color] [--export EXPORT_PATH] [--exclude-filter-id] [--dump-db DUMP_DB_PATH] device [device ...]
+    usage: tcshow [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet] [--debug-query] [--stacktrace] [--ipv6] [--docker] [--color] [--export EXPORT_PATH] [--exclude-filter-id] [--dump-db DUMP_DB_PATH]
+                  device [device ...]
 
     options:
       -h, --help            show this help message and exit
       -V, --version         show program's version number and exit
       --tc-command          display tc commands to be executed and exit. these commands are not actually executed.
-      --tc-script           generate a shell script file that describes tc commands. this tc script execution results are nearly equivalent to the tcconfig command. the script can be executed without tcconfig package installation.
+      --tc-script           generate a shell script file that describes tc commands. this tc script execution results are nearly equivalent to the tcconfig command. the script can be executed without tcconfig package
+                            installation.
       --debug               for debug print.
       --quiet               suppress execution log messages.
       --color               colorize the output. require Pygments package.

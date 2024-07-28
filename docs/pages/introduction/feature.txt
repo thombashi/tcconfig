@@ -9,7 +9,7 @@ Easy to apply traffic shaping rules to specific networks:
 - Source/Destination IP-address/network (IPv4/IPv6)
 - Source/Destination ports
 
-Available parameters
+Available Parameters
 ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
 The following parameters can be set to network interfaces:
 

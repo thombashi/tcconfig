@@ -1,8 +1,10 @@
 ::
 
-    usage: tcset [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet] [--debug-query] [--stacktrace] [--import-setting] [--overwrite | --change | --add] [--rate BANDWIDTH_RATE] [--delay LATENCY_TIME] [--delay-distro LATENCY_DISTRO_TIME] [--delay-distribution {normal,pareto,paretonormal}] [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE]
-                 [--corrupt CORRUPTION_RATE] [--reordering REORDERING_RATE] [--limit PACKET_LIMIT_COUNT] [--shaping-algo {htb,tbf}] [--iptables] [--direction {outgoing,incoming}] [--network DST_NETWORK] [--src-network SRC_NETWORK] [--port DST_PORT] [--src-port SRC_PORT] [--ipv6] [--exclude-dst-network EXCLUDE_DST_NETWORK] [--exclude-src-network EXCLUDE_SRC_NETWORK]
-                 [--exclude-dst-port EXCLUDE_DST_PORT] [--exclude-src-port EXCLUDE_SRC_PORT] [--docker] [--src-container SRC_CONTAINER] [--dst-container DST_CONTAINER]
+    usage: tcset [-h] [-V] [--tc-command | --tc-script] [--debug | --quiet] [--debug-query] [--stacktrace] [--import-setting] [--overwrite | --change | --add] [--rate BANDWIDTH_RATE] [--delay LATENCY_TIME]
+                 [--delay-distro LATENCY_DISTRO_TIME] [--delay-distribution {normal,pareto,paretonormal}] [--loss PACKET_LOSS_RATE] [--duplicate PACKET_DUPLICATE_RATE] [--corrupt CORRUPTION_RATE]
+                 [--reordering REORDERING_RATE] [--limit PACKET_LIMIT_COUNT] [--shaping-algo {htb,tbf}] [--iptables] [--direction {outgoing,incoming}] [--network DST_NETWORK] [--src-network SRC_NETWORK] [--port DST_PORT]
+                 [--src-port SRC_PORT] [--ipv6] [--exclude-dst-network EXCLUDE_DST_NETWORK] [--exclude-src-network EXCLUDE_SRC_NETWORK] [--exclude-dst-port EXCLUDE_DST_PORT] [--exclude-src-port EXCLUDE_SRC_PORT] [--docker]
+                 [--src-container SRC_CONTAINER] [--dst-container DST_CONTAINER]
                  device
 
     positional arguments:
@@ -12,12 +14,14 @@
       -h, --help            show this help message and exit
       -V, --version         show program's version number and exit
       --tc-command          display tc commands to be executed and exit. these commands are not actually executed.
-      --tc-script           generate a shell script file that describes tc commands. this tc script execution results are nearly equivalent to the tcconfig command. the script can be executed without tcconfig package installation.
+      --tc-script           generate a shell script file that describes tc commands. this tc script execution results are nearly equivalent to the tcconfig command. the script can be executed without tcconfig package
+                            installation.
       --debug               for debug print.
       --quiet               suppress execution log messages.
       --import-setting      import traffic control settings from a configuration file.
       --overwrite           overwrite existing traffic shaping rules.
-      --change              change existing traffic shaping rules to the new ones. this option is effective in reducing the time between the shaping rule switching compared to --overwrite option. note: just add a shaping rule if there are no existing shaping rules.
+      --change              change existing traffic shaping rules to the new ones. this option is effective in reducing the time between the shaping rule switching compared to --overwrite option. note: just add a shaping
+                            rule if there are no existing shaping rules.
       --add                 add a traffic shaping rule in addition to existing rules.
 
     Debug:
@@ -26,12 +30,16 @@
 
     Traffic Control Parameters:
       --rate BANDWIDTH_RATE, --bandwidth-rate BANDWIDTH_RATE
-                            network bandwidth rate [bit per second]. the minimum bandwidth rate is 8 bps. valid units are either: [kK]bps, [kK]bits?(/|\s?per\s?)(s|sec|second), [kK]ibps, [kK]ibits?(/|\s?per\s?)(s|sec|second), [mM]bps, [mM]bits?(/|\s?per\s?)(s|sec|second), [mM]ibps, [mM]ibits?(/|\s?per\s?)(s|sec|second), [gG]bps, [gG]bits?(/|\s?per\s?)(s|sec|second),
-                            [gG]ibps, [gG]ibits?(/|\s?per\s?)(s|sec|second), [tT]bps, [tT]bits?(/|\s?per\s?)(s|sec|second), [tT]ibps, [tT]ibits?(/|\s?per\s?)(s|sec|second), bps, bits?(/|\s?per\s?)(s|sec|second). e.g. tcset eth0 --rate 10Mbps
-      --delay LATENCY_TIME  round trip network delay. the valid range is from 0ms to 60min. valid time units are: d/day/days, h/hour/hours, m/min/mins/minute/minutes, s/sec/secs/second/seconds, ms/msec/msecs/millisecond/milliseconds, us/usec/usecs/microsecond/microseconds. if no unit string is found, consider milliseconds as the time unit. (default=0ms)
+                            network bandwidth rate [bit per second]. the minimum bandwidth rate is 8 bps. valid units are either: [kK]bps, [kK]bits?(/|\s?per\s?)(s|sec|second), [kK]ibps,
+                            [kK]ibits?(/|\s?per\s?)(s|sec|second), [mM]bps, [mM]bits?(/|\s?per\s?)(s|sec|second), [mM]ibps, [mM]ibits?(/|\s?per\s?)(s|sec|second), [gG]bps, [gG]bits?(/|\s?per\s?)(s|sec|second), [gG]ibps,
+                            [gG]ibits?(/|\s?per\s?)(s|sec|second), [tT]bps, [tT]bits?(/|\s?per\s?)(s|sec|second), [tT]ibps, [tT]ibits?(/|\s?per\s?)(s|sec|second), bps, bits?(/|\s?per\s?)(s|sec|second). e.g. tcset eth0
+                            --rate 10Mbps
+      --delay LATENCY_TIME  round trip network delay. the valid range is from 0ms to 60min. valid time units are: d/day/days, h/hour/hours, m/min/mins/minute/minutes, s/sec/secs/second/seconds,
+                            ms/msec/msecs/millisecond/milliseconds, us/usec/usecs/microsecond/microseconds. if no unit string is found, consider milliseconds as the time unit. (default=0ms)
       --delay-distro LATENCY_DISTRO_TIME
-                            distribution of network latency becomes X +- Y (normal distribution). Here X is the value of --delay option and Y is the value of --delay-dist option). network latency distribution is uniform, without this option. valid time units are: d/day/days, h/hour/hours, m/min/mins/minute/minutes, s/sec/secs/second/seconds,
-                            ms/msec/msecs/millisecond/milliseconds, us/usec/usecs/microsecond/microseconds. if no unit string is found, consider milliseconds as the time unit.
+                            distribution of network latency becomes X +- Y (normal distribution). Here X is the value of --delay option and Y is the value of --delay-dist option). network latency distribution is uniform,
+                            without this option. valid time units are: d/day/days, h/hour/hours, m/min/mins/minute/minutes, s/sec/secs/second/seconds, ms/msec/msecs/millisecond/milliseconds,
+                            us/usec/usecs/microsecond/microseconds. if no unit string is found, consider milliseconds as the time unit.
       --delay-distribution {normal,pareto,paretonormal}
                             choose the delay distribution. (default=normal)", [limitation] this parameter can not be shown by tcshow, and export/import as config.
       --loss PACKET_LOSS_RATE
@@ -54,10 +62,11 @@
       --network DST_NETWORK, --dst-network DST_NETWORK
                             specify destination IP-address/network that applies traffic control. defaults to any.
       --src-network SRC_NETWORK
-                            specify a source IP-address/network that applies traffic control. defaults to any. this option has no effect when executing with "--direction incoming" option. note: this option is required to execute with the --iptables option when using tbf algorithm.
+                            specify a source IP-address/network that applies traffic control. defaults to any. this option has no effect when executing with "--direction incoming" option. note: this option is required to
+                            execute with the --iptables option when using tbf algorithm.
       --port DST_PORT, --dst-port DST_PORT
-                            specify destination port number that applies traffic control. defaults to any.
-      --src-port SRC_PORT   specify source port number that applies traffic control. defaults to any.
+                            specify a destination port number that applies traffic control. defaults to any.
+      --src-port SRC_PORT   specify a source port number that applies traffic control. defaults to any.
       --ipv6                apply traffic control to IPv6 packets rather than IPv4.
       --exclude-dst-network EXCLUDE_DST_NETWORK
                             exclude a specific destination IP-address/network from a shaping rule.
