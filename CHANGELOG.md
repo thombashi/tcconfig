@@ -1,3 +1,29 @@
+<a name="v0.29.1"></a>
+# [v0.29.1](https://github.com/thombashi/tcconfig/releases/tag/v0.29.1) - 28 Jul 2024
+
+* Add build binaries for Ubuntu 24.04
+
+**Full Changelog**: https://github.com/thombashi/tcconfig/compare/v0.29.0...v0.29.1
+
+[Changes][v0.29.1]
+
+
+<a name="v0.29.0"></a>
+# [v0.29.0](https://github.com/thombashi/tcconfig/releases/tag/v0.29.0) - 28 Jul 2024
+
+## What's Changed
+* add netem limit by [@Scorpionchiques](https://github.com/Scorpionchiques) in https://github.com/thombashi/tcconfig/pull/185
+* Bump sigstore/gh-action-sigstore-python from 2.1.1 to 3.0.0 in the actions-dependencies group by [@dependabot](https://github.com/dependabot) in https://github.com/thombashi/tcconfig/pull/186
+* Fix `tcset` failed with `--tc-command` option: [#187](https://github.com/thombashi/tcconfig/issues/187) (Thanks to [@soyacz](https://github.com/soyacz))
+
+## New Contributors
+* [@Scorpionchiques](https://github.com/Scorpionchiques) made their first contribution in https://github.com/thombashi/tcconfig/pull/185
+
+**Full Changelog**: https://github.com/thombashi/tcconfig/compare/v0.28.1...v0.29.0
+
+[Changes][v0.29.0]
+
+
 <a name="v0.28.1"></a>
 # [v0.28.1](https://github.com/thombashi/tcconfig/releases/tag/v0.28.1) - 02 May 2024
 
@@ -850,6 +876,8 @@ Add support for incoming packet traffic control
 [Changes][v0.1.0]
 
 
+[v0.29.1]: https://github.com/thombashi/tcconfig/compare/v0.29.0...v0.29.1
+[v0.29.0]: https://github.com/thombashi/tcconfig/compare/v0.28.1...v0.29.0
 [v0.28.1]: https://github.com/thombashi/tcconfig/compare/v0.28.0...v0.28.1
 [v0.28.0]: https://github.com/thombashi/tcconfig/compare/v0.27.1...v0.28.0
 [v0.27.1]: https://github.com/thombashi/tcconfig/compare/v0.27.0...v0.27.1
