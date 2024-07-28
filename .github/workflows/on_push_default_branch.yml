@@ -1,4 +1,4 @@
-name: CI
+name: Publish to TestPyPI and Sign with Sigstore
 
 on:
   push:
