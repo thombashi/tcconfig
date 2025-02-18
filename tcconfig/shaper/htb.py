@@ -4,6 +4,7 @@
 
 import errno
 import re
+from bisect import bisect_left
 from typing import List
 
 import typepy
@@ -141,11 +142,12 @@ class HtbShaper(AbstractShaper):
             mtu = 1600
             rate = bandwidth.byte_per_sec
             desired_burst = int(rate / get_hz() + mtu)
-            burst = desired_burst
-            while True:
-                if calc_xmitsize_true(rate, calc_xmittime_bug(rate, burst)) >= desired_burst:
-                    break
-                burst += 1
+
+            burst = bisect_left(
+                range(1 << 32),
+                True,
+                key=lambda b: calc_xmitsize_true(rate, calc_xmittime_bug(rate, b)) >= desired_burst,
+            )
 
             command_item_list.extend(
                 [
