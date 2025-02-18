@@ -7,6 +7,7 @@ import re
 from typing import List
 
 import typepy
+from pyroute2.netlink.rtnl.tcmsg.common import TIME_UNITS_PER_SEC, get_hz, tick_in_usec
 
 from .._common import is_execute_tc_command, logging_context, run_command_helper
 from .._const import ShapingAlgorithm, TcSubCommand
@@ -15,26 +16,25 @@ from .._logger import logger
 from .._network import get_upper_limit_rate
 from .._tc_command_helper import run_tc_show
 from ._interface import AbstractShaper
-from pyroute2.netlink.rtnl.tcmsg.common import  (
-    get_hz,
-    tick_in_usec,
-    TIME_UNITS_PER_SEC
-)
+
 
 # Emulation of tc's buggy time2tick implementation, which
 # rounds to int twice
 def time2tick_bug(time):
     return int(int(time) * tick_in_usec)
 
+
 # An accurate implementation of tick2time (unlike tc's), not rounding.
 def tick2time_true(tick):
     return tick / tick_in_usec
 
+
 def calc_xmittime_bug(rate, size):
     return int(time2tick_bug(TIME_UNITS_PER_SEC * (float(size) / rate)))
 
+
 def calc_xmitsize_true(rate, ticks):
-    return (float(rate)*tick2time_true(ticks))/TIME_UNITS_PER_SEC
+    return (float(rate) * tick2time_true(ticks)) / TIME_UNITS_PER_SEC
 
 
 class HtbShaper(AbstractShaper):
@@ -134,7 +134,7 @@ class HtbShaper(AbstractShaper):
         if bandwidth != upper_limit_rate:
             # This sets the burst/cburst values to the default tc tries to set,
             # but works around a bug in tc where values are rounded incorrectly.
-            
+
             # Note that "tc class show" will still show burst that are too small,
             # due to the inverse bug, but if you use "tc -r class show" you will see
             # the actual size of the cbuffer in bytes.
