@@ -133,12 +133,19 @@ class HtbShaper(AbstractShaper):
         ]
 
         if bandwidth != upper_limit_rate:
-            # This sets the burst/cburst values to the default tc tries to set,
-            # but works around a bug in tc where values are rounded incorrectly.
-
-            # Note that "tc class show" will still show burst that are too small,
-            # due to the inverse bug, but if you use "tc -r class show" you will see
-            # the actual size of the cbuffer in bytes.
+            # tc tries to set the default burst and cburst size to (int)(rate / get_hz() + mtu),
+            # with the comment
+            #     compute minimal allowed burst from rate; mtu is added here to make
+            #     sure that buffer is larger than mtu and to have some safeguard space */
+            #
+            # Unfortunately, in tc from iproute2 version 6.14 and earlier, there is a rounding
+            # bug such that the actual burst size set will often be too small, which will cause
+            # bandwidth limitations to be too aggressive.
+            #
+            # Calculate the minimum necessary size to set burst and cburst to, to ensure that they
+            # are at least the size that tc was trying to set them to.
+            #
+            # TODO: once iproute2 6.15 or later becomes common, bypass this code.
             mtu = 1600
             rate = bandwidth.byte_per_sec
             desired_burst = int(rate / get_hz() + mtu)
