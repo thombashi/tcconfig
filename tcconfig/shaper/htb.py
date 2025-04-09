@@ -4,11 +4,13 @@
 
 import errno
 import re
+import sys
 from bisect import bisect_left
 from typing import List
 
+import pyroute2
 import typepy
-from pyroute2.netlink.rtnl.tcmsg.common import TIME_UNITS_PER_SEC, get_hz, tick_in_usec
+from pyroute2.netlink.rtnl.tcmsg.common import TIME_UNITS_PER_SEC, get_hz
 
 from .._common import is_execute_tc_command, logging_context, run_command_helper
 from .._const import ShapingAlgorithm, TcSubCommand
@@ -19,15 +21,20 @@ from .._tc_command_helper import run_tc_show
 from ._interface import AbstractShaper
 
 
+# Make this a function, so we can mock it for testing
+def tick_in_usec() -> float:
+    return pyroute2.netlink.rtnl.tcmsg.common.tick_in_usec
+
+
 # Emulation of tc's buggy time2tick implementation, which
 # rounds to int twice
 def time2tick_bug(time: int) -> int:
-    return int(int(time) * tick_in_usec)
+    return int(int(time) * tick_in_usec())
 
 
 # An accurate implementation of tick2time (unlike tc's), not rounding.
 def tick2time_true(tick: float) -> float:
-    return tick / tick_in_usec
+    return tick / tick_in_usec()
 
 
 def calc_xmittime_bug(rate: int, size: int) -> int:
@@ -36,6 +43,39 @@ def calc_xmittime_bug(rate: int, size: int) -> int:
 
 def calc_xmitsize_true(rate: int, ticks: int) -> float:
     return (float(rate) * tick2time_true(ticks)) / TIME_UNITS_PER_SEC
+
+
+# tc tries to set the default burst and cburst size to (int)(rate / get_hz() + mtu),
+# with the comment
+#     compute minimal allowed burst from rate; mtu is added here to make
+#     sure that buffer is larger than mtu and to have some safeguard space
+#
+# Unfortunately, in tc from iproute2 version 6.14 and earlier, there is a rounding
+# bug such that the actual burst size set will often be too small, which will cause
+# bandwidth limitations to be too aggressive.
+#
+# Calculate the minimum necessary size to set burst and cburst to, to ensure that they
+# are at least the size that tc was trying to set them to.
+#
+# TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass this code.
+def desired_burst_size(rate: int, mtu: int) -> int:
+    return int(rate / get_hz() + mtu)
+
+
+def adjusted_burst_size(desired_burst: int, rate: int) -> int:
+    if sys.version_info >= (3, 10):
+        return bisect_left(
+            range(1 << 32),
+            True,
+            key=lambda b: calc_xmitsize_true(rate, calc_xmittime_bug(rate, b)) >= desired_burst,
+        )
+    else:
+        adjusted_burst = desired_burst
+        while adjusted_burst < (1 << 32):
+            if calc_xmitsize_true(rate, calc_xmittime_bug(rate, burst)) >= desired_burst:
+                return adjusted_burst
+            burst += 1
+        return adjusted_burst
 
 
 class HtbShaper(AbstractShaper):
@@ -132,29 +172,12 @@ class HtbShaper(AbstractShaper):
             f"ceil {bandwidth.kilo_bps}Kbit",
         ]
 
+        # TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass this code.
         if bandwidth != upper_limit_rate:
-            # tc tries to set the default burst and cburst size to (int)(rate / get_hz() + mtu),
-            # with the comment
-            #     compute minimal allowed burst from rate; mtu is added here to make
-            #     sure that buffer is larger than mtu and to have some safeguard space */
-            #
-            # Unfortunately, in tc from iproute2 version 6.14 and earlier, there is a rounding
-            # bug such that the actual burst size set will often be too small, which will cause
-            # bandwidth limitations to be too aggressive.
-            #
-            # Calculate the minimum necessary size to set burst and cburst to, to ensure that they
-            # are at least the size that tc was trying to set them to.
-            #
-            # TODO: once iproute2 6.15 or later becomes common, bypass this code.
             mtu = 1600
             rate = bandwidth.byte_per_sec
-            desired_burst = int(rate / get_hz() + mtu)
-
-            burst = bisect_left(
-                range(1 << 32),
-                True,
-                key=lambda b: calc_xmitsize_true(rate, calc_xmittime_bug(rate, b)) >= desired_burst,
-            )
+            desired_burst = desired_burst_size(rate, mtu)
+            burst = adjusted_burst_size(desired_burst, rate)
 
             command_item_list.extend(
                 [
