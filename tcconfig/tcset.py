@@ -193,6 +193,12 @@ def get_arg_parser():
         default=False,
         help="use iptables for traffic control.",
     )
+    group.add_argument(
+        "--mtu",
+        dest="mtu",
+        type=int,
+        help="MTU size to assume for interface, if not tc's default.  Only used for certain calculations, not enforced.",
+    )
 
     group = parser.add_routing_group()
     group.add_argument(
@@ -267,8 +273,7 @@ class TcSetMain(Main):
                         [
                             "adding a shaping rule failed. a shaping rule for the same "
                             "network/port already exists. try to execute with:",
-                            "  (a) --overwrite option if you want to overwrite "
-                            "the existing rules.",
+                            "  (a) --overwrite option if you want to overwrite the existing rules.",
                             "  (b) --change option if you want to change "
                             "the existing rule parameters.",
                         ]
@@ -318,6 +323,7 @@ class TcSetMain(Main):
                 corruption_rate=options.corruption_rate,
                 reordering_rate=options.reordering_rate,
                 packet_limit_count=options.packet_limit_count,
+                mtu=options.mtu,
             ),
             dst_network=self._extract_dst_network(),
             exclude_dst_network=options.exclude_dst_network,

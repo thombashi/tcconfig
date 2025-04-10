@@ -172,9 +172,14 @@ class HtbShaper(AbstractShaper):
             f"ceil {bandwidth.kilo_bps}Kbit",
         ]
 
+        mtu = self._tc_obj.netem_param.mtu
+        if mtu:
+            command_item_list.extend([f"mtu {mtu:d}"])
+
         # TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass this code.
         if bandwidth != upper_limit_rate:
-            mtu = 1600
+            if not mtu:
+                mtu = 1600  # Default size in tc
             rate = bandwidth.byte_per_sec
             desired_burst = desired_burst_size(rate, mtu)
             burst = adjusted_burst_size(desired_burst, rate)
