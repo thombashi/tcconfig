@@ -57,8 +57,9 @@ def calc_xmitsize_true(rate: int, ticks: int) -> float:
 # Calculate the minimum necessary size to set burst and cburst to, to ensure that they
 # are at least the size that tc was trying to set them to.
 #
-# TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass this code.
-def desired_burst_size(rate: int, mtu: int) -> int:
+# TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass the
+# adjustment and don't set the default.
+def default_burst_size(rate: int, mtu: int) -> int:
     return int(rate / get_hz() + mtu)
 
 
@@ -176,12 +177,15 @@ class HtbShaper(AbstractShaper):
         if mtu:
             command_item_list.extend([f"mtu {mtu:d}"])
 
-        # TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass this code.
         if bandwidth != upper_limit_rate:
-            if not mtu:
-                mtu = 1600  # Default size in tc
             rate = bandwidth.byte_per_sec
-            desired_burst = desired_burst_size(rate, mtu)
+            desired_burst = self._tc_obj.netem_param.burst
+            # TODO: check whether tc is from iproute2 version 6.15 or later, and if so bypass the default
+            # and adjustment.
+            if not desired_burst:
+                if not mtu:
+                    mtu = 1600
+                desired_burst = default_burst_size(rate, mtu)
             burst = adjusted_burst_size(desired_burst, rate)
 
             command_item_list.extend(
