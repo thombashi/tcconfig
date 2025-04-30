@@ -30,7 +30,7 @@ class IfIndex(Model):
     host = Text(not_null=True)
     ifindex = Integer(primary_key=True)
     ifname = Text(not_null=True)
-    peer_ifindex = Integer(not_null=True, unique=True)
+    peer_ifindex = Integer(not_null=True)
 
 
 class DockerClient:
