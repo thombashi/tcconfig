@@ -73,9 +73,9 @@ def adjusted_burst_size(desired_burst: int, rate: int) -> int:
     else:
         adjusted_burst = desired_burst
         while adjusted_burst < (1 << 32):
-            if calc_xmitsize_true(rate, calc_xmittime_bug(rate, burst)) >= desired_burst:
+            if calc_xmitsize_true(rate, calc_xmittime_bug(rate, adjusted_burst)) >= desired_burst:
                 return adjusted_burst
-            burst += 1
+            adjusted_burst += 1
         return adjusted_burst
 
 

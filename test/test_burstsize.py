@@ -5,7 +5,7 @@
 import humanreadable as hr
 import pytest
 
-from tcconfig.shaper.htb import adjusted_burst_size, desired_burst_size
+from tcconfig.shaper.htb import adjusted_burst_size, default_burst_size
 
 
 @pytest.mark.parametrize(
@@ -18,10 +18,10 @@ from tcconfig.shaper.htb import adjusted_burst_size, desired_burst_size
         ("80Gbps", 9000, 9010),
     ],
 )
-def test_desired_burst(rate_hr, mtu, expected):
+def test_default_burst(rate_hr, mtu, expected):
     rate = hr.BitsPerSecond(rate_hr).byte_per_sec
-    desired_burst = desired_burst_size(rate, mtu)
-    assert desired_burst == expected
+    default_burst = default_burst_size(rate, mtu)
+    assert default_burst == expected
 
 
 @pytest.mark.parametrize(
