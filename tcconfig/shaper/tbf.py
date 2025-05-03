@@ -81,20 +81,22 @@ class TbfShaper(AbstractShaper):
         if bandwidth is None:
             bandwidth = upper_limit_rate
 
-        command = " ".join(
-            [
-                base_command,
-                self._dev,
-                f"parent {parent:s}",
-                f"handle {handle:s}",
-                self.algorithm_name,
-                f"rate {bandwidth.kilo_bps}kbit",
-                "buffer {:d}".format(
-                    max(int(bandwidth.kilo_bps), self.__MIN_BUFFER_BYTE)
-                ),  # [byte]
-                "limit 10000",
-            ]
-        )
+        command_item_list = [
+            base_command,
+            self._dev,
+            f"parent {parent:s}",
+            f"handle {handle:s}",
+            self.algorithm_name,
+            f"rate {bandwidth.kilo_bps}kbit",
+            "buffer {:d}".format(max(int(bandwidth.kilo_bps), self.__MIN_BUFFER_BYTE)),  # [byte]
+            "limit 10000",
+        ]
+
+        mtu = self._tc_obj.netem_param.mtu
+        if mtu:
+            command_item_list.extend([f"mtu {mtu:d}"])
+
+        command = " ".join(command_item_list)
 
         run_command_helper(
             command,

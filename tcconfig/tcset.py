@@ -193,6 +193,18 @@ def get_arg_parser():
         default=False,
         help="use iptables for traffic control.",
     )
+    group.add_argument(
+        "--mtu",
+        dest="mtu",
+        type=int,
+        help="MTU size to assume for interface, if not tc's default.  Only used for certain calculations, not enforced.",
+    )
+    group.add_argument(
+        "--burst",
+        dest="burst",
+        type=int,
+        help="burst size to use for traffic shaping (htb only).",
+    )
 
     group = parser.add_routing_group()
     group.add_argument(
@@ -317,6 +329,8 @@ class TcSetMain(Main):
                 corruption_rate=options.corruption_rate,
                 reordering_rate=options.reordering_rate,
                 packet_limit_count=options.packet_limit_count,
+                mtu=options.mtu,
+                burst=options.burst,
             ),
             dst_network=self._extract_dst_network(),
             exclude_dst_network=options.exclude_dst_network,

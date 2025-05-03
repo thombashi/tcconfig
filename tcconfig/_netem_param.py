@@ -40,6 +40,14 @@ class NetemParameter:
     def bandwidth_rate(self):
         return self.__bandwidth_rate
 
+    @property
+    def mtu(self):
+        return self.__mtu
+
+    @property
+    def burst(self):
+        return self.__burst
+
     def __init__(
         self,
         device,
@@ -52,6 +60,8 @@ class NetemParameter:
         corruption_rate=None,
         reordering_rate=None,
         packet_limit_count=None,
+        mtu=None,
+        burst=None,
     ):
         self.__device = device
 
@@ -61,6 +71,8 @@ class NetemParameter:
         self.__corruption_rate = convert_rate_to_f(corruption_rate)  # [%]
         self.__reordering_rate = convert_rate_to_f(reordering_rate)  # [%]
         self.__packet_limit_count = convert_rate_to_f(packet_limit_count)  # [COUNT]
+        self.__mtu = mtu  # [bytes]
+        self.__burst = burst  # [bytes]
 
         self.__latency_time = None
         if latency_time:
@@ -116,6 +128,8 @@ class NetemParameter:
             self.__corruption_rate,
             self.__reordering_rate,
             self.__packet_limit_count,
+            self.__mtu,
+            self.__burst,
         ]
         if self.__bandwidth_rate:
             netem_param_values.append(self.__bandwidth_rate.kilo_bps)
