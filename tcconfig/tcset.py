@@ -267,8 +267,7 @@ class TcSetMain(Main):
                         [
                             "adding a shaping rule failed. a shaping rule for the same "
                             "network/port already exists. try to execute with:",
-                            "  (a) --overwrite option if you want to overwrite "
-                            "the existing rules.",
+                            "  (a) --overwrite option if you want to overwrite the existing rules.",
                             "  (b) --change option if you want to change "
                             "the existing rule parameters.",
                         ]
