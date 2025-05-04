@@ -88,7 +88,7 @@ class TbfShaper(AbstractShaper):
             f"handle {handle:s}",
             self.algorithm_name,
             f"rate {bandwidth.kilo_bps}kbit",
-            "buffer {:d}".format(max(int(bandwidth.kilo_bps), self.__MIN_BUFFER_BYTE)),  # [byte]
+            f"buffer {max(int(bandwidth.kilo_bps), self.__MIN_BUFFER_BYTE):d}",  # [byte]
             "limit 10000",
         ]
 

@@ -6,7 +6,6 @@ import errno
 import re
 import sys
 from bisect import bisect_left
-from typing import List
 
 import pyroute2
 import typepy
@@ -341,7 +340,7 @@ class HtbShaper(AbstractShaper):
 
         return next_minor_id
 
-    def __extract_exist_netem_major_ids(self) -> List[int]:
+    def __extract_exist_netem_major_ids(self) -> list[int]:
         tcshow_out = run_tc_show(
             TcSubCommand.QDISC, self._tc_device, self._tc_obj.tc_command_output
         )
