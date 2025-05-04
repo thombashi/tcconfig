@@ -17,11 +17,11 @@ from .traffic_control import TrafficControl
 
 
 class TcDelMain(Main):
-    def run(self, is_delete_all):
-        return_code_list = []
+    def run(self, is_delete_all: bool) -> int:
+        return_code_list: list[int] = []
 
         for tc_target in self._fetch_tc_targets():
-            tc = self.__create_tc_obj(tc_target)
+            tc: TrafficControl = self.__create_tc_obj(tc_target)
             if self._options.log_level == LogLevel.INFO:
                 spr.set_log_level("ERROR")
             normalize_tc_value(tc)
@@ -39,7 +39,7 @@ class TcDelMain(Main):
 
         return self._get_return_code(return_code_list)
 
-    def __create_tc_obj(self, tc_target):
+    def __create_tc_obj(self, tc_target: str) -> TrafficControl:
         from simplesqlite.query import Where
 
         from .parser.shaping_rule import TcShapingRuleParser
@@ -47,7 +47,7 @@ class TcDelMain(Main):
         options = self._options
 
         if options.filter_id:
-            ip_version = 6 if options.is_ipv6 else 4
+            ip_version: int = 6 if options.is_ipv6 else 4
             shaping_rule_parser = TcShapingRuleParser(
                 device=tc_target,
                 ip_version=ip_version,
@@ -56,10 +56,10 @@ class TcDelMain(Main):
             )
             shaping_rule_parser.parse()
             for record in Filter.select(where=Where(Tc.Param.FILTER_ID, options.filter_id)):
-                dst_network = record.dst_network
-                src_network = record.src_network
-                dst_port = record.dst_port
-                src_port = record.src_port
+                dst_network: str = record.dst_network
+                src_network: str = record.src_network
+                dst_port: int = record.dst_port
+                src_port: int = record.src_port
                 break
             else:
                 logger.error(
