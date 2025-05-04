@@ -15,6 +15,10 @@ on:
 permissions:
   contents: read
 
+env:
+  BIN_NAME: tcconfig
+  DIST_DIR_NAME: dist
+
 jobs:
   build-deb-package:
     runs-on: ${{ matrix.os }}
