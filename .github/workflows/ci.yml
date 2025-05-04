@@ -105,7 +105,7 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-20.04, ubuntu-22.04, ubuntu-24.04]
+        os: [ubuntu-22.04, ubuntu-24.04]
     concurrency:
       group: ${{ github.event_name }}-${{ github.workflow }}-installer-${{ matrix.os }}
       cancel-in-progress: true
