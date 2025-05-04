@@ -87,6 +87,7 @@ setuptools.setup(
         "Programming Language :: Python :: 3.10",
         "Programming Language :: Python :: 3.11",
         "Programming Language :: Python :: 3.12",
+        "Programming Language :: Python :: 3.13",
         "Topic :: System :: Operating System Kernels :: Linux",
         "Topic :: System :: Networking",
         "Topic :: System :: Systems Administration",
