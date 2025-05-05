@@ -5,6 +5,11 @@ DOCS_BUILD_DIR := $(DOCS_DIR)/_build
 PYTHON := python3
 BIN_CHANGELOG_FROM_RELEASE := $(BIN_DIR)/changelog-from-release
 
+AUTHOR := Tsuyoshi Hombashi
+PACKAGE := tcconfig
+FIRST_RELEASE_YEAR := 2016
+LAST_UPDATE_YEAR := $(shell git log -1 --format=%cd --date=format:%Y)
+
 
 $(BIN_CHANGELOG_FROM_RELEASE):
 	GOBIN=$(BIN_DIR) go install github.com/rhysd/changelog-from-release/v3@latest
@@ -61,3 +66,8 @@ test:
 .PHONY: update-releases-info
 update-releases-info:
 	@curl -sSL https://api.github.com/repos/thombashi/tcconfig/releases/latest > info/release_latest.json
+
+.PHONY: update-copyright
+update-copyright:
+	sed -i "s/f\"Copyright .*/f\"Copyright $(FIRST_RELEASE_YEAR)-$(LAST_UPDATE_YEAR), {__author__}\"/" $(PACKAGE)/__version__.py
+	sed -i "s/^Copyright (c) .* $(AUTHOR)/Copyright (c) $(FIRST_RELEASE_YEAR)-$(LAST_UPDATE_YEAR) $(AUTHOR)/" LICENSE
