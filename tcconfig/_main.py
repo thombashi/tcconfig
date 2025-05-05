@@ -1,4 +1,5 @@
 import sys
+from typing import Optional
 
 import msgfy
 from docker.errors import DockerException
@@ -7,10 +8,11 @@ from ._const import TcCommandOutput
 from ._docker import DockerClient
 from ._logger import logger
 from ._tc_script import write_tc_script
+from .traffic_control import TrafficControl
 
 
 class Main:
-    def __init__(self, options: BaseOptions) -> None:
+    def __init__(self, options) -> None:
         self._options = options
 
         self._dclient: Optional[DockerClient] = None
