@@ -10,10 +10,10 @@ from ._tc_script import write_tc_script
 
 
 class Main:
-    def __init__(self, options):
+    def __init__(self, options: BaseOptions) -> None:
         self._options = options
 
-        self._dclient = None
+        self._dclient: Optional[DockerClient] = None
         if self._options.use_docker:
             try:
                 self._dclient = DockerClient(options.tc_command_output)
@@ -21,19 +21,19 @@ class Main:
                 logger.error(msgfy.to_error_message(e))
                 sys.exit(1)
 
-    def _extract_dst_network(self):
+    def _extract_dst_network(self) -> Optional[str]:
         if self._options.dst_container:
             return self._dclient.extract_container_info(self._options.dst_container).ipaddr
 
         return self._options.dst_network
 
-    def _extract_src_network(self):
+    def _extract_src_network(self) -> Optional[str]:
         if self._options.src_container:
             return self._dclient.extract_container_info(self._options.src_container).ipaddr
 
         return self._options.src_network
 
-    def _fetch_tc_targets(self):
+    def _fetch_tc_targets(self) -> list[str]:
         if not self._options.use_docker:
             return [self._options.device]
 
@@ -44,8 +44,8 @@ class Main:
 
         return self._dclient.fetch_veth_list(self._dclient.extract_container_info(container).name)
 
-    def _get_return_code(self, return_code_list):
-        error_return_code = None
+    def _get_return_code(self, return_code_list: list[int]) -> Optional[int]:
+        error_return_code: Optional[int] = None
 
         for return_code in return_code_list:
             if return_code == 0:
@@ -55,7 +55,7 @@ class Main:
 
         return error_return_code
 
-    def _dump_history(self, tc, tc_command):
+    def _dump_history(self, tc: TrafficControl, tc_command: str) -> None:
         command_history = "\n".join(tc.get_command_history())
         command_output = self._options.tc_command_output
 

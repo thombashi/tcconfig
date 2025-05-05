@@ -3,10 +3,11 @@
 """
 
 import enum
+from typing import Final
 
 
-LIST_MANGLE_TABLE_OPTION = "-t mangle --line-numbers -L"
-IPV6_OPTION_ERROR_MSG_FORMAT = "{}. --ipv6 option required to use IPv6 address."
+LIST_MANGLE_TABLE_OPTION: Final = "-t mangle --line-numbers -L"
+IPV6_OPTION_ERROR_MSG_FORMAT: Final = "{}. --ipv6 option required to use IPv6 address."
 DELAY_DISTRIBUTIONS = ("normal", "pareto", "paretonormal")
 
 
@@ -19,58 +20,58 @@ class TcSubCommand(enum.Enum):
 
 class Network:
     class Ipv4:
-        ANYWHERE = "0.0.0.0/0"
+        ANYWHERE: Final = "0.0.0.0/0"
 
     class Ipv6:
-        ANYWHERE = "::/0"
+        ANYWHERE: Final = "::/0"
 
 
-class ShapingAlgorithm:
+@enum.unique
+class ShapingAlgorithm(enum.Enum):
     HTB = "htb"
     TBF = "tbf"
-    LIST = [HTB, TBF]
 
 
 class Tc:
     class Command:
-        TCSET = "tcset"
-        TCDEL = "tcdel"
-        TCSHOW = "tcshow"
+        TCSET: Final = "tcset"
+        TCDEL: Final = "tcdel"
+        TCSHOW: Final = "tcshow"
 
     class Param:
-        DEVICE = "device"
-        DIRECTION = "direction"
-        FILTER_ID = "filter_id"
-        CLASS_ID = "classid"
-        DST_NETWORK = "dst_network"
-        DST_PORT = "dst_port"
-        FLOW_ID = "flowid"
-        HANDLE = "handle"
-        PARENT = "parent"
-        PRIORITY = "priority"
-        PROTOCOL = "protocol"
-        SRC_NETWORK = "src_network"
-        SRC_PORT = "src_port"
+        DEVICE: Final = "device"
+        DIRECTION: Final = "direction"
+        FILTER_ID: Final = "filter_id"
+        CLASS_ID: Final = "classid"
+        DST_NETWORK: Final = "dst_network"
+        DST_PORT: Final = "dst_port"
+        FLOW_ID: Final = "flowid"
+        HANDLE: Final = "handle"
+        PARENT: Final = "parent"
+        PRIORITY: Final = "priority"
+        PROTOCOL: Final = "protocol"
+        SRC_NETWORK: Final = "src_network"
+        SRC_PORT: Final = "src_port"
 
     class ValueRange:
         class LatencyTime:
-            MIN = "0ms"
-            MAX = "60min"
+            MIN: Final = "0ms"
+            MAX: Final = "60min"
 
     class Min:
-        LATENCY_TIME = "0ms"
+        LATENCY_TIME: Final = "0ms"
 
     class Max:
-        LATENCY_TIME = "60min"
+        LATENCY_TIME: Final = "60min"
 
 
 class TcCommandOutput:
-    NOT_SET = None
-    STDOUT = "STDOUT"
-    SCRIPT = "SCRIPT"
+    NOT_SET: Final = None
+    STDOUT: Final = "STDOUT"
+    SCRIPT: Final = "SCRIPT"
 
 
 class TrafficDirection:
-    OUTGOING = "outgoing"
-    INCOMING = "incoming"
-    LIST = [OUTGOING, INCOMING]
+    OUTGOING: Final = "outgoing"
+    INCOMING: Final = "incoming"
+    LIST: Final = [OUTGOING, INCOMING]

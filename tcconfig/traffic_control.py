@@ -4,6 +4,7 @@
 
 import errno
 import re
+from typing import Optional
 
 import msgfy
 import subprocrunner as spr
@@ -28,6 +29,7 @@ from ._const import (
 from ._error import NetworkInterfaceNotFoundError
 from ._iptables import IptablesMangleController, get_iptables_base_command
 from ._logger import LogLevel, logger
+from ._netem_param import NetemParameter
 from ._network import sanitize_network, verify_network_interface
 from ._shaping_rule_finder import TcShapingRuleFinder
 from ._tc_command_helper import get_tc_base_command
@@ -144,22 +146,22 @@ class TrafficControl:
 
     def __init__(
         self,
-        device,
-        direction=None,
-        netem_param=None,
-        dst_network=None,
-        exclude_dst_network=None,
-        src_network=None,
-        exclude_src_network=None,
-        dst_port=None,
-        exclude_dst_port=None,
-        src_port=None,
-        exclude_src_port=None,
-        is_ipv6=False,
-        is_change_shaping_rule=False,
-        is_add_shaping_rule=False,
-        is_enable_iptables=False,
-        shaping_algorithm=None,
+        device: str,
+        direction: Optional[TrafficDirection] = None,
+        netem_param: Optional[NetemParameter] = None,
+        dst_network: Optional[str] = None,
+        exclude_dst_network: Optional[str] = None,
+        src_network: Optional[str] = None,
+        exclude_src_network: Optional[str] = None,
+        dst_port: Optional[int] = None,
+        exclude_dst_port: Optional[int] = None,
+        src_port: Optional[int] = None,
+        exclude_src_port: Optional[int] = None,
+        is_ipv6: bool = False,
+        is_change_shaping_rule: bool = False,
+        is_add_shaping_rule: bool = False,
+        is_enable_iptables: bool = False,
+        shaping_algorithm: ShapingAlgorithm = ShapingAlgorithm.HTB,
         tc_command_output=TcCommandOutput.NOT_SET,
     ):
         self.__device = device
@@ -186,13 +188,16 @@ class TrafficControl:
 
         self.__init_shaper(shaping_algorithm)
 
-    def validate(self):
+    def validate(self) -> None:
         verify_network_interface(self.device, self.__tc_command_output)
-        self.__netem_param.validate_netem_parameter()
+
+        if self.__netem_param:
+            self.__netem_param.validate_netem_parameter()
+
         self.__validate_src_network()
         self.__validate_port()
 
-    def __validate_src_network(self):
+    def __validate_src_network(self) -> None:
         if any(
             [
                 typepy.is_null_string(self.src_network),
@@ -348,11 +353,7 @@ class TrafficControl:
 
         return result
 
-    def __init_shaper(self, shaping_algorithm):
-        if shaping_algorithm is None:
-            self.__shaper = None
-            return
-
+    def __init_shaper(self, shaping_algorithm: ShapingAlgorithm) -> None:
         if shaping_algorithm == ShapingAlgorithm.HTB:
             self.__shaper = HtbShaper(self)
             return
@@ -363,7 +364,7 @@ class TrafficControl:
 
         raise ParameterError(
             "unknown shaping algorithm",
-            expected=ShapingAlgorithm.LIST,
+            expected=list(ShapingAlgorithm),
             value=shaping_algorithm,
         )
 

@@ -21,8 +21,8 @@ class TbfShaper(AbstractShaper):
     __IN_DEVICE_QDISC_MINOR_ID = 3
 
     @property
-    def algorithm_name(self):
-        return ShapingAlgorithm.TBF
+    def algorithm_name(self) -> str:
+        return ShapingAlgorithm.TBF.value
 
     def _get_qdisc_minor_id(self):
         if self._tc_obj.direction == TrafficDirection.OUTGOING:

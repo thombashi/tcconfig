@@ -63,7 +63,7 @@ class TcClassParser(AbstractParser):
 
     def __parse_classid(self, line):
         self.__parsed_param[self.Key.CLASS_ID] = None
-        tag = f"class {ShapingAlgorithm.HTB:s} "
+        tag = f"class {ShapingAlgorithm.HTB.value:s} "
 
         match = re.search(f"{tag:s}{self.Pattern.CLASS_ID:s}", line)
         if match is None:

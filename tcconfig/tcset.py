@@ -43,7 +43,7 @@ from ._shaping_rule_finder import TcShapingRuleFinder
 from .traffic_control import TrafficControl
 
 
-def _get_unit_help_msg():
+def _get_unit_help_msg() -> str:
     return ", ".join(["/".join(values) for values in hr.Time.get_text_units().values()])
 
 
@@ -182,8 +182,8 @@ def get_arg_parser():
     group.add_argument(
         "--shaping-algo",
         dest="shaping_algorithm",
-        choices=[ShapingAlgorithm.HTB, ShapingAlgorithm.TBF],
-        default=ShapingAlgorithm.HTB,
+        choices=[ShapingAlgorithm.HTB.value, ShapingAlgorithm.TBF.value],
+        default=ShapingAlgorithm.HTB.value,
         help="shaping algorithm. defaults to %(default)s (recommended).",
     )
     group.add_argument(
@@ -228,7 +228,7 @@ def get_arg_parser():
     return parser.parser
 
 
-def verify_netem_module():
+def verify_netem_module() -> None:
     import re
 
     runner = spr.SubprocessRunner("lsmod")
@@ -246,7 +246,7 @@ def verify_netem_module():
 
 
 class TcSetMain(Main):
-    def run(self):
+    def run(self) -> int:
         return_code_list = []
 
         for device in self._fetch_tc_targets():
@@ -297,7 +297,7 @@ class TcSetMain(Main):
 
         return self._get_return_code(return_code_list)
 
-    def __check_tc(self, tc):
+    def __check_tc(self, tc: TrafficControl) -> None:
         try:
             tc.validate()
         except (NetworkInterfaceNotFoundError, ContainerNotFoundError) as e:
@@ -312,7 +312,7 @@ class TcSetMain(Main):
 
         return 0
 
-    def __create_tc(self, device):
+    def __create_tc(self, device: str) -> TrafficControl:
         options = self._options
 
         return TrafficControl(
@@ -344,7 +344,7 @@ class TcSetMain(Main):
             is_change_shaping_rule=options.is_change_shaping_rule,
             is_add_shaping_rule=options.is_add_shaping_rule,
             is_enable_iptables=options.is_enable_iptables,
-            shaping_algorithm=options.shaping_algorithm,
+            shaping_algorithm=ShapingAlgorithm[options.shaping_algorithm],
             tc_command_output=options.tc_command_output,
         )
 

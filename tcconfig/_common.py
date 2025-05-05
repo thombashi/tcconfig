@@ -31,7 +31,7 @@ def logging_context(name):
         logger.debug("----- {:s}: {:s} ----|".format("complete", name))
 
 
-def find_bin_path(command):
+def find_bin_path(command: str) -> str:
     def _to_regular_bin_path(file_path):
         path_obj = Path(file_path)
         if path_obj.islink():
