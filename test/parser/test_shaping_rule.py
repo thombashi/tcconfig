@@ -4,7 +4,7 @@ import pytest
 
 import tcconfig
 import tcconfig.parser.shaping_rule
-from tcconfig._const import TrafficDirection
+from tcconfig._const import ShapingAlgorithm, TrafficDirection
 from tcconfig._netem_param import NetemParameter
 from tcconfig.traffic_control import TrafficControl, delete_all_rules
 
@@ -25,7 +25,7 @@ class Test_TcShapingRuleParser:
 
         tc = TrafficControl(
             device=device_value,
-            shaping_algorithm="htb",
+            shaping_algorithm=ShapingAlgorithm.HTB,
             direction=TrafficDirection.INCOMING,
             netem_param=NetemParameter(
                 device=device_value,
@@ -43,7 +43,7 @@ class Test_TcShapingRuleParser:
 
         tc = TrafficControl(
             device=device_value,
-            shaping_algorithm="htb",
+            shaping_algorithm=ShapingAlgorithm.HTB,
             direction=TrafficDirection.OUTGOING,
             netem_param=NetemParameter(
                 device=device_value,
