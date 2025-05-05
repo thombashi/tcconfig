@@ -54,7 +54,11 @@ def update_help() -> None:
 
         print(help_file_path)
 
-        assert runner.returncode == 0
+        if runner.returncode != 0:
+            print(f"Command failed: {command:s}")
+            print(runner.stderr, file=sys.stderr)
+            sys.exit(runner.returncode)
+
         assert runner.stdout
         with open(help_file_path, "w") as f:
             f.write("::\n\n")
