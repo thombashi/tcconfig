@@ -314,6 +314,7 @@ class TcSetMain(Main):
 
     def __create_tc(self, device: str) -> TrafficControl:
         options = self._options
+        shaping_algorithm = options.shaping_algorithm.strip().lower()
 
         return TrafficControl(
             device,
@@ -344,7 +345,7 @@ class TcSetMain(Main):
             is_change_shaping_rule=options.is_change_shaping_rule,
             is_add_shaping_rule=options.is_add_shaping_rule,
             is_enable_iptables=options.is_enable_iptables,
-            shaping_algorithm=ShapingAlgorithm[options.shaping_algorithm],
+            shaping_algorithm=ShapingAlgorithm(shaping_algorithm),
             tc_command_output=options.tc_command_output,
         )
 
