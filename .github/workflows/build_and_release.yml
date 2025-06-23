@@ -140,7 +140,7 @@ jobs:
         run: echo "TCCONFIG_VERSION=$(grep -Po "(?<=__version__ = \")\d+\.\d+\.\d+(?=\")" tcconfig/__version__.py)" >> $GITHUB_ENV
 
       - name: Sign the dists with Sigstore
-        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        uses: sigstore/gh-action-sigstore-python@v3.0.1
         with:
           inputs: >-
             ${{ env.DIST_DIR_NAME }}/*.tar.gz
