@@ -30,7 +30,7 @@ jobs:
         os: [ubuntu-22.04, ubuntu-24.04]
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
       - name: Setup Python
         uses: actions/setup-python@v5
@@ -65,7 +65,7 @@ jobs:
     timeout-minutes: 20
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
         with:
           fetch-depth: 0
           fetch-tags: true
@@ -99,7 +99,7 @@ jobs:
       id-token: write  # IMPORTANT: this permission is mandatory for trusted publishing
 
     steps:
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: wheel
           path: ${{ env.DIST_DIR_NAME }}
@@ -119,19 +119,19 @@ jobs:
       contents: write
 
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v5
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: binaries-ubuntu-22.04
           path: ${{ env.DIST_DIR_NAME }}
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: binaries-ubuntu-24.04
           path: ${{ env.DIST_DIR_NAME }}
 
-      - uses: actions/download-artifact@v4
+      - uses: actions/download-artifact@v5
         with:
           name: wheel
           path: ${{ env.DIST_DIR_NAME }}
@@ -140,7 +140,7 @@ jobs:
         run: echo "TCCONFIG_VERSION=$(grep -Po "(?<=__version__ = \")\d+\.\d+\.\d+(?=\")" tcconfig/__version__.py)" >> $GITHUB_ENV
 
       - name: Sign the dists with Sigstore
-        uses: sigstore/gh-action-sigstore-python@v3.0.0
+        uses: sigstore/gh-action-sigstore-python@v3.0.1
         with:
           inputs: >-
             ${{ env.DIST_DIR_NAME }}/*.tar.gz
