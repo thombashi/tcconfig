@@ -41,7 +41,18 @@ class TrafficControl:
     __MIN_PORT = 0
     __MAX_PORT = 65535
 
-    REGEXP_FILE_EXISTS = re.compile("RTNETLINK answers: File exists")
+    # tc may report duplicate qdisc creation as either:
+    # - "RTNETLINK answers: File exists"
+    # - "Error: Exclusivity flag on, cannot modify."
+    # Both mean "the base plumbing already exists", which is non-fatal for --add/--change flows.
+    REGEXP_FILE_EXISTS = re.compile(
+        "|".join(
+            [
+                r"RTNETLINK answers: File exists",
+                r"Exclusivity flag on, cannot modify",
+            ]
+        )
+    )
 
     EXISTS_MSG_TEMPLATE = "\n".join(
         [
