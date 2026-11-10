@@ -32,6 +32,9 @@ def convert_rate_to_f(rate):
     if typepy.is_not_null_string(rate):
         return float(rate.rstrip("% "))
 
+    if isinstance(rate, str):
+        raise ValueError(f"invalid rate value: {rate!r}")
+
     return rate
 
 

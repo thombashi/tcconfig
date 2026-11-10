@@ -25,6 +25,8 @@ class Test_convert_rate_to_f:
             ["hoge", ValueError],
             ["1&", ValueError],
             ["%1", ValueError],
+            ["", ValueError],
+            ["   ", ValueError],
         ],
     )
     def test_exception(self, value, expected):
